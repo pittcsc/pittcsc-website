@@ -30,6 +30,10 @@ permalink: /officers/
 							{% if officer.github %}
 								<a href="mailto:{{ officer.email }}">Email</a>
 							{% endif %}
+							{% if officer.email and officer.linkedin %} | {% endif %}
+							{% if officer.linkedin %}
+								<a href="mailto:{{ officer.linkedin.url }}">LinkedIn</a>
+							{% endif %}
 						</div>
 					</div>					                               
 				</div>
