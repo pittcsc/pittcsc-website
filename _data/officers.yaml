@@ -1,0 +1,42 @@
+- title: President
+  name: Rohit Ganguly
+  email: rohit.ganguly@pitt.edu
+  portrait_path: "/img/officers/rohit.jpg"
+  github:
+    url: https://github.com/rohit-ganguly
+  website:
+    url: http://rohitganguly.com/
+
+- title: Vice President
+  name: Mathew Varughese
+  email: mat.varughese3@gmail.com
+  portrait_path: "/img/officers/mat.jpg"
+  github:
+    url: https://github.com/varughese
+  website:
+    url: http://matvarughese.me/
+
+- title: Business Manager
+  name: Alex Zharichenko
+  email: azharichenko@gmail.com
+  portrait_path: "/img/officers/alex.jpg"
+  github:
+    url: https://github.com/azharichenko
+  website:
+    url: http://alexzharichenko.me/
+
+- title: Event Coordinator
+  name: Zhengming (Ming) Wang
+  email: jnf23@pitt.edu
+  portrait_path:  "/img/officers/ming.jpg"
+  github:
+    url: https://github.com/Zmwang622
+  website:
+    url: https://zmwang622.github.io/
+
+- title: Outreach Coordinator
+  name: Hayden Stec
+  email: hrs24@pitt.edu
+  portrait_path:  "/img/officers/hayden.jpg"
+  github:
+    url: https://github.com/haydenstec
