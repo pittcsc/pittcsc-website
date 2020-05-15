@@ -4,11 +4,9 @@
             <div class="col-lg-5 col-md-6 col-sm-6">
                 <div class="single-footer-widget">
                     <h4 class="colored-text">2019-2020 Pitt CSC</h4>
-                    <li class="colored-text">President - Rohit Ganguly </li>
-                    <li class="colored-text">Vice President - Mathew Varughese </li>
-                    <li class="colored-text">Business Manager - Alex Zharichenko</li>
-                    <li class="colored-text">Event Coordinator - Ming Wang</li>
-                    <li class="colored-text">Outreach Coordinator - Hayden Stec</li>
+                    {% for officer in site.data.officers %}
+                    <li class="colored-text">{{ officer.title }} - {{ officer.name }}</li>
+                    {% endfor %}
                 </div>
             </div>
             <div class="col-lg-5 col-md-6 col-sm-6">

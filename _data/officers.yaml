@@ -1,8 +1,7 @@
 - title: President
   name: Rohit Ganguly
   email: rohit.ganguly@pitt.edu
-  bio: "Sophomore Computer Science Major"
-  portrait_path: "/assets/images/officers/2018_rohit.jpg"
+  portrait_path: "/img/officers/rohit.jpg"
   github:
     url: https://github.com/rohit-ganguly
   website:
@@ -11,8 +10,7 @@
 - title: Vice President
   name: Mathew Varughese
   email: mat.varughese3@gmail.com
-  bio: "Sophomore Computer Science and Mathematics Major"
-  portrait_path: "/assets/images/officers/2018_mat.jpg"
+  portrait_path: "/img/officers/mat.jpg"
   github:
     url: https://github.com/varughese
   website:
@@ -21,8 +19,7 @@
 - title: Business Manager
   name: Alex Zharichenko
   email: azharichenko@gmail.com
-  bio: "Sophomore Computer Science and Statistics Major"
-  portrait_path: "/assets/images/officers/2018_alex.jpg"
+  portrait_path: "/img/officers/alex.jpg"
   github:
     url: https://github.com/azharichenko
   website:
@@ -31,15 +28,15 @@
 - title: Event Coordinator
   name: Zhengming (Ming) Wang
   email: jnf23@pitt.edu
-  bio: "Sophomore Computer Science Major"
-  portrait_path:  "/assets/images/officers/2018_john.jpg"
+  portrait_path:  "/img/officers/ming.jpg"
   github:
-    url: https://github.com/JohnF8
+    url: https://github.com/Zmwang622
+  website:
+    url: https://zmwang622.github.io/
 
 - title: Outreach Coordinator
   name: Hayden Stec
   email: hrs24@pitt.edu
-  bio: "Sophomore Computer Science Major"
-  portrait_path:  "/assets/images/officers/2018_hayden.jpg"
+  portrait_path:  "/img/officers/hayden.jpg"
   github:
     url: https://github.com/haydenstec
