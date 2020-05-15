@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-5 col-md-6 col-sm-6">
                 <div class="single-footer-widget">
-                    <h4 class="colored-text">2019-2020 Pitt CSC</h4>
+                    <h4 class="colored-text">{{ site.current_class }}-{{ site.current_class | plus: 1 }} Pitt CSC Officers</h4>
                     {% for officer in site.data.officers %}
                     <li class="colored-text">{{ officer.title }} - {{ officer.name }}</li>
                     {% endfor %}
