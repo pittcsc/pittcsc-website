@@ -18,6 +18,14 @@
   linkedin:
     url: https://www.linkedin.com/in/oliviawininsky/  
 
+- title: Business Manager
+  name: Gordon Lu
+  email: gol6@pitt.edu
+  portrait_path: "/img/officers/gordon.jpg"
+  github:
+    url: https://github.com/glu99331 
+  linkedin:
+    url: https://www.linkedin.com/in/gordon-lu-aa1008152/  
 
 - title: PR Manager
   name: Janet Majekodunmi
@@ -27,15 +35,6 @@
     url: https://github.com/joyousjay
   linkedin:
     url: https://www.linkedin.com/in/janet-majekodunmi-5a8474190/  
-
-- title: Business Manager
-  name: Gordon Lu
-  email: gol6@pitt.edu
-  portrait_path: "/img/officers/gordon.jpg"
-  github:
-    url: https://github.com/glu99331 
-  linkedin:
-    url: https://www.linkedin.com/in/gordon-lu-aa1008152/  
 
 - title: Director of Initiatives
   name: Richie Goulazian
