@@ -2053,12 +2053,20 @@ h1, h2, h3, h4, h5, h6 {
   right: 0;
   transition: all 0.5s;
   z-index: 997;
+  /* background: url("../img/logo.png") no-repeat; */
+  /* background: #fff; */
+}
+
+#header:hover {
   background: #fff;
+  box-shadow: -21.213px 21.213px 30px 0px rgba(158, 158, 158, 0.3);
+  transition: all 0.5s;
+  /* background: url("...\img\full_logo.png") no-repeat; */
 }
 
 #header.header-scrolled {
-  transition: all 0.5s;
-  box-shadow: -21.213px 21.213px 30px 0px rgba(158, 158, 158, 0.3);
+  background: #fff;
+  /* box-shadow: -21.213px 21.213px 30px 0px rgba(158, 158, 158, 0.3); */
 }
 
 #header.header-scrolled .main-menu {
