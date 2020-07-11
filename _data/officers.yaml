@@ -2,6 +2,7 @@
   name: Zhengming Wang
   email: zhw78@pitt.edu
   portrait_path: "/img/officers/ming.jpg"
+  position: "e-board"
   github:
     url: https://github.com/zmwang622
   website:
@@ -13,6 +14,7 @@
   name: Olivia Wininsky
   email: onw5@pitt.edu
   portrait_path: "/img/officers/olivia.png"
+  position: "e-board"
   github:
     url: https://github.com/owini
   linkedin:
@@ -22,8 +24,11 @@
   name: Gordon Lu
   email: gol6@pitt.edu
   portrait_path: "/img/officers/gordon.jpg"
+  position: "e-board"
   github:
     url: https://github.com/glu99331 
+  website:
+    url: https://glu99331.github.io
   linkedin:
     url: https://www.linkedin.com/in/gordon-lu-aa1008152/  
 
@@ -31,6 +36,7 @@
   name: Janet Majekodunmi
   email: jam580@pitt.edu
   portrait_path: "/img/officers/janet.jpeg"
+  position: "e-board"
   github:
     url: https://github.com/joyousjay
   linkedin:
@@ -40,6 +46,7 @@
   name: Richie Goulazian
   email: rhg13@pitt.edu
   portrait_path: "/img/officers/richie.jpg"
+  position: "e-board"
   github:
     url: https://github.com/Richie78321 
   linkedin:
@@ -49,6 +56,7 @@
   name: Ryan Yang
   email: rcy7@pitt.edu
   portrait_path:  "/img/officers/ryan.jpg"
+  position: "e-board"
   github:
     url: https://github.com/Ruzakiff
   linkedin:
@@ -58,6 +66,7 @@
   name: Justin Kramer
   email: jpk91@pitt.edu
   portrait_path:  "/img/officers/justin.jpg"
+  position: "e-board"
   github:
     url: https://github.com/kjustin2
   linkedin:
@@ -78,6 +87,8 @@
   portrait_path:  "/img/officers/alex.jpg"
   github:
     url: https://github.com/azharichenko
+  website:
+    url: https://alexzharichenko.me/
   linkedin:
     url: https://www.linkedin.com/in/azharichenko/  
 
@@ -87,5 +98,7 @@
   portrait_path:  "/img/officers/mat.jpg"
   github:
     url: https://github.com/varughese
+  website:
+    url: https://matvarughese.me/
   linkedin:
     url: https://www.linkedin.com/in/matvarughese/  
