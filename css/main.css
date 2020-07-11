@@ -4313,6 +4313,7 @@ dl.accordion.time-line:before {
 /* =================================== */
 .footer-area {
   background-color: #1C2957;
+  box-shadow: 0 50vh 0 50vh #1C2957;
 }
 
 .colored-text {
