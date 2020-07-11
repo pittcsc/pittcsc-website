@@ -21,7 +21,7 @@
 title: Pitt CSC
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "pittcsc.org" # the base hostname & protocol for your site, e.g. http://example.com
-current_class: 2021
+current_class: 2020
 # sass settings
 sass:
   sass_dir: _sass
