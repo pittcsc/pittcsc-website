@@ -5,7 +5,9 @@
                 <div class="single-footer-widget">
                     <h4 class="colored-text">{{ site.current_class }}-{{ site.current_class | plus: 1 }} Pitt CSC Officers</h4>
                     {% for officer in site.data.officers %}
-                    <li class="colored-text">{{ officer.title }} - {{ officer.name }}</li>
+                        {% if officer.position == "e-board" %}
+                            <li class="colored-text">{{ officer.title }} - {{ officer.name }}</li>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -25,7 +27,7 @@
                     <p class="colored-text">Hit us up!</p>
                     <div class="footer-social d-flex align-items-center">
                         <a href="http://instagram.com/pittcsc"><i class="fa fa-instagram"></i></a>
-                        <a href="http://twitter.com/pittcsc"><i class="fa fa-twitter"></i></a>
+                        <a href="http://linkedin.com/company/pittcsc"><i class="fa fa-linkedin"></i></a>
                         <a href="http://github.com/pitt-csc"><i class="fa fa-github"></i></a>
                         <a href="http://pittcsc.slack.com"><i class="fa fa-slack"></i></a>	
                     </div>
