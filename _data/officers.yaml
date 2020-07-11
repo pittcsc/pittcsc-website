@@ -62,3 +62,30 @@
     url: https://github.com/kjustin2
   linkedin:
     url: https://www.linkedin.com/in/kjustin2/  
+
+- title: Initiative Lead
+  name: Ashley Sokol
+  email: als464@pitt.edu
+  portrait_path:  "/img/officers/ashley.jpg"
+  github:
+    url: https://github.com/ashleysokol
+  linkedin:
+    url: https://www.linkedin.com/in/ashley-sokol-baa00a1a3/
+
+- title: Initiative Lead
+  name: Alex Zharichenko
+  email: alex.zharichenko@pitt.edu
+  portrait_path:  "/img/officers/alex.jpg"
+  github:
+    url: https://github.com/azharichenko
+  linkedin:
+    url: https://www.linkedin.com/in/azharichenko/  
+
+- title: Initiative Lead
+  name: Mat Varughese
+  email: mav120@pitt.edu
+  portrait_path:  "/img/officers/mat.jpg"
+  github:
+    url: https://github.com/varughese
+  linkedin:
+    url: https://www.linkedin.com/in/matvarughese/  
