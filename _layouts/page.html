@@ -3,7 +3,9 @@
 {% include head.html %}
 <body>	
     {% include header.html %}
-    {% include banner.html %}
+    {% unless page.include_banner == false %}
+      {% include banner.html %}
+    {% endunless %}
     {{ content }}
     {% include footer.html %}
     {% include scripts.html %}
