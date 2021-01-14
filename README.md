@@ -1,5 +1,5 @@
 # Pitt CSC Website
-The Gatsby migration of the original Jekyll website (minus like 5,000 lines of CSS).
+The new Pitt CSC Website, now built with Gatsby, Tailwind, and someone who knows how to style things properly.
 
 ## How to run locally
 
