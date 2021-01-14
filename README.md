@@ -1,9 +1,9 @@
-# [PittCSC.org](https://pittcsc.org/)
+# Pitt CSC Website
+The Gatsby migration of the original Jekyll website (minus like 5,000 lines of CSS).
 
-```
-bundle install
-```
+## How to run locally
 
-```
-bundle exec jekyll serve
+```console
+npm install
+npm run develop
 ```
