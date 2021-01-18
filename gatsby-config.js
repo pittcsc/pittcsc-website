@@ -11,10 +11,17 @@ module.exports = {
         trackingId: "UA-58446605-1",
       },
     },
+    {
+      resolve: `gatsby-plugin-sass`,
+      options: {
+        postCssPlugins: [
+          require("tailwindcss")(require("./tailwind.config.js")),
+        ],
+      },
+    },
     "gatsby-plugin-sharp",
     "gatsby-plugin-react-helmet",
     "gatsby-transformer-sharp",
-    "gatsby-plugin-postcss",
     "gatsby-transformer-json",
     {
       resolve: "gatsby-source-filesystem",
