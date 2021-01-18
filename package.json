@@ -24,6 +24,7 @@
     "gatsby-plugin-react-helmet": "^3.8.0",
     "gatsby-plugin-sharp": "^2.12.1",
     "gatsby-source-filesystem": "^2.9.0",
+    "gatsby-transformer-json": "^2.9.0",
     "gatsby-transformer-sharp": "^2.10.1",
     "postcss": "^8.2.4",
     "prop-types": "^15.7.2",
