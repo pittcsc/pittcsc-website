@@ -2,9 +2,9 @@ import React from "react";
 
 function Footer() {
   return (
-    <footer>
+    <footer className="container mx-auto flex space-x-4 h-16 w-full">
       <nav>
-        <ul>
+        <ul className="flex space-x-4">
           <li>About Us</li>
           <li>Blog</li>
           <li>Sponsors</li>

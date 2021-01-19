@@ -6,11 +6,13 @@ import Footer from "../components/Footer";
 const IndexPage = () => (
   <div>
     <Header />
-    <main>
+    <main className="container mx-auto space-y-16">
       <section>
         <div>
-          <p>2020-2021 SCHOOL YEAR</p>
-          <h2 className="text-6xl">Pitt Computer Science Club</h2>
+          <p className="font-light text-lg">2020-2021 SCHOOL YEAR</p>
+          <h2 className="text-6xl font-bold py-4">
+            Pitt Computer Science Club
+          </h2>
           <h3>
             The University of Pittsburgh's largest CS-related student
             organization. Proudly pushing the boundaries on what it means to be
