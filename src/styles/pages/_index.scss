@@ -1,4 +1,33 @@
 .polka-background {
-  background-image: radial-gradient(#ffb81c 1px, #ffffff 1px);
+  background-image: radial-gradient(#ffb81c 1px, transparent 1px);
   background-size: 20px 20px;
+  background-position: 75% 75%;
+  width: calc(min(75%, 300px));
+  height: 400px;
+  @media screen and (min-width: $desktopWidth) {
+    width: 600px;
+    height: 750px;
+  }
+}
+
+.track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 16s linear infinite;
+  font-style: italic;
+}
+.track2 {
+  display: inline-block;
+  padding-left: 100%;
+  white-space: nowrap;
+  animation: marquee 5s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
 }
