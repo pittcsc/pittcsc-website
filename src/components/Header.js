@@ -13,7 +13,7 @@ function Header() {
     <header className="container mx-auto w-full p-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center">
       <div className="flex justify-between items-center mx-auto md:block md:mx-0">
         <img src={logo} alt="pitt-csc-logo" className="w-32 relative" />
-        <div
+        <button
           className={`cursor-pointer md:hidden z-40 
           `}
           onClick={() => setNav(!nav)}
@@ -23,7 +23,7 @@ function Header() {
           ) : (
             <FontAwesomeIcon icon={faBars} className="text-xl" />
           )}
-        </div>
+        </button>
       </div>
       <nav
         className={`transition-all relative bg-white p-4 max-h-0 opacity-0 ${
