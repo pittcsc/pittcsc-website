@@ -6,11 +6,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 
+import { motion } from "framer-motion";
+
 function Header() {
   const [nav, setNav] = useState(false);
 
   return (
-    <header className="container mx-auto w-full p-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center">
+    <motion.header
+      initial={{
+        opacity: 0,
+        y: -100,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        delay: 0.2,
+      }}
+      className="container mx-auto w-full p-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center"
+    >
       <div className="flex justify-between items-center mx-auto md:block md:mx-0">
         <img src={logo} alt="pitt-csc-logo" className="w-32 relative" />
         <button
@@ -26,8 +41,8 @@ function Header() {
         </button>
       </div>
       <nav
-        className={`transition-all relative bg-white p-4 max-h-0 opacity-0 ${
-          nav ? "max-h-96 opacity-100" : ""
+        className={`transition-all relative bg-white max-h-0 opacity-0 ${
+          nav ? "max-h-96 opacity-100 p-4" : ""
         } md:max-h-96 md:bg-none md:opacity-100`}
       >
         <ul
@@ -43,7 +58,7 @@ function Header() {
           </li>
         </ul>
       </nav>
-    </header>
+    </motion.header>
   );
 }
 

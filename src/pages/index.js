@@ -8,58 +8,124 @@ import {
   faSlack,
 } from "@fortawesome/free-brands-svg-icons";
 
+import { motion } from "framer-motion";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import heroImage from "../images/hero-img2-cropped.png";
 import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.4,
+    },
+  },
+};
+
+const text = {
+  hidden: {
+    opacity: 0,
+    y: 25,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+  },
+};
+
 const IndexPage = () => (
   <div className="overflow-hidden">
     <Header />
-    <main className="space-y-24 min-h-screen my-8 xl:my-24">
+    <main className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
       <section className="container mx-auto flex w-full flex-col xl:flex-row justify-center items-center px-8 xl:px-0">
-        <div className="xl:w-1/2 break-normal relative">
-          <p className="font-light text-lg font-body z-10 relative">
-            2020-2021 SCHOOL YEAR
-          </p>
-          <h2 className="text-4xl lg:text-8xl font-bold font-body mt-4 w-full z-10 relative">
-            Pitt Computer <br /> Science Club
-          </h2>
-          <svg
-            className="relative z-10 mb-8 w-64 lg:w-5/6"
-            viewBox="0 0 422 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="xl:w-1/2 break-normal relative"
+        >
+          <motion.p
+            variants={text}
+            className="font-light text-lg font-body z-10 relative"
           >
-            <path
-              d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
-              stroke="#FFB81C"
-              stroke-width="5"
-              stroke-linecap="round"
-            />
-          </svg>
-          <h3 className="font-body w-3/4 xl:w-3/4 lg:text-lg z-10 relative ">
+            2020-2021 SCHOOL YEAR
+          </motion.p>
+          <motion.h2
+            variants={text}
+            className="text-4xl lg:text-8xl font-bold font-body mb-8 mt-4 w-full z-10 relative"
+          >
+            Pitt Computer <br /> Science Club
+            <svg
+              className="relative z-10 w-64 lg:w-5/6"
+              viewBox="0 0 422 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
+                stroke="#FFB81C"
+                stroke-width="5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </motion.h2>
+
+          <motion.h3
+            variants={text}
+            className="font-body w-3/4 xl:w-3/4 lg:text-lg z-10 relative "
+          >
             The University of Pittsburgh's largest CS-related student
             organization. Proudly pushing the boundaries on what it means to be
             a Pitt student.
-          </h3>
-          <div className="py-4 space-x-4 xl:space-x-8 z-10 relative">
-            <button className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg">
+          </motion.h3>
+          <motion.div
+            variants={text}
+            className="py-4 space-x-4 xl:space-x-8 z-20 relative"
+          >
+            <motion.button className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg">
               Join the Club
-            </button>
-            <button className="border-4 font-body transition border-primary font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg">
+            </motion.button>
+            <motion.button className="border-4 font-body transition border-primary bg-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg">
               What We Do
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
           <div className="w-40 h-40 xl:w-80 xl:h-80 absolute bg-secondary-200 rounded-2xl top-0 -left-20 z-0 transform -rotate-12"></div>
-        </div>
+        </motion.div>
         <div className="w-full xl:w-1/2 relative flex justify-center items-center flex-col">
-          <img
+          <motion.img
+            initial={{
+              opacity: 0,
+              x: 50,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            transition={{
+              duration: 0.6,
+            }}
             className="w-3/4 xl:w-9/12 z-20 mx-auto relative"
             src={heroImage}
             alt="pitt_csc_logo"
           />
-          <div className="polka-background absolute z-10 -top-10 -right-10"></div>
+          <motion.div
+            initial={{
+              opacity: 0,
+              x: 50,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            transition={{
+              duration: 0.6,
+              delay: 0.2,
+            }}
+            className="polka-background absolute z-10 -top-10 -right-10"
+          ></motion.div>
         </div>
       </section>
       <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
