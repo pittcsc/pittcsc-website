@@ -104,6 +104,9 @@ const IndexPage = () => (
               opacity: 1,
               x: 0,
             }}
+            transition={{
+              delay: 0.2,
+            }}
             className="w-3/4 xl:w-9/12 z-20 mx-auto relative"
             src={heroImage}
             alt="pitt_csc_logo"
@@ -118,7 +121,7 @@ const IndexPage = () => (
               x: 0,
             }}
             transition={{
-              delay: 0.2,
+              delay: 0.4,
             }}
             className="polka-background absolute z-10 -top-10 -right-10"
           ></motion.div>
