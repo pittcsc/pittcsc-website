@@ -9,7 +9,7 @@ function Footer() {
           <li>Blog</li>
           <li>Sponsors</li>
         </ul>
-        <p className="font-body">Built by Pitt CSC</p>
+        <p className="font-body">Built with ❤ by Pitt CSC</p>
       </nav>
     </footer>
   );

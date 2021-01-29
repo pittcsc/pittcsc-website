@@ -31,3 +31,9 @@
     transform: translateX(-100%);
   }
 }
+
+.min-width-btn {
+  @media screen and (min-width: $desktopWidth) {
+    min-width: 250px;
+  }
+}

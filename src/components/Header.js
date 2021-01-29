@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "gatsby";
 
 import logo from "../images/horizontal-logo.svg";
 
@@ -12,22 +13,11 @@ function Header() {
   const [nav, setNav] = useState(false);
 
   return (
-    <motion.header
-      initial={{
-        opacity: 0,
-        y: -100,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        delay: 0.2,
-      }}
-      className="container mx-auto w-full p-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center"
-    >
+    <header className="container mx-auto w-full p-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center">
       <div className="flex justify-between items-center mx-auto md:block md:mx-0">
-        <img src={logo} alt="pitt-csc-logo" className="w-32 relative" />
+        <Link to="/">
+          <img src={logo} alt="pitt-csc-logo" className="w-32 relative" />
+        </Link>
         <button
           className={`cursor-pointer md:hidden z-40 
           `}
@@ -48,17 +38,29 @@ function Header() {
         <ul
           className={`flex flex-col justify-center items-center space-y-4 font-body md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
         >
-          <li className="font-bold">About Us</li>
-          <li className="font-bold">Blog</li>
-          <li className="font-bold">Sponsors</li>
-          <li>
-            <button className="bg-primary w-24 text-white font-bold font-body py-2 px-4 rounded-full shadow-md hover:shadow-lg transition">
-              Join
-            </button>
-          </li>
+          <Link to="/">
+            <li className="font-bold">About Us</li>
+          </Link>
+          <Link to="/">
+            <li className="font-bold">Blog</li>
+          </Link>
+          <Link to="/">
+            <li className="font-bold">Sponsors</li>
+          </Link>
+          <Link to="/join">
+            <li>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="bg-primary w-24 text-white font-bold font-body py-2 px-4 rounded-full shadow-md hover:shadow-lg transition"
+              >
+                Join
+              </motion.button>
+            </li>
+          </Link>
         </ul>
       </nav>
-    </motion.header>
+    </header>
   );
 }
 

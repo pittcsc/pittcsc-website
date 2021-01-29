@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "gatsby";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -20,7 +21,8 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.4,
+      when: "beforeChildren",
+      staggerChildren: 0.6,
     },
   },
 };
@@ -85,10 +87,20 @@ const IndexPage = () => (
             variants={text}
             className="py-4 space-x-4 xl:space-x-8 z-20 relative"
           >
-            <motion.button className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg">
-              Join the Club
-            </motion.button>
-            <motion.button className="border-4 font-body transition border-primary bg-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg">
+            <Link to="/join">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg"
+              >
+                Join the Club
+              </motion.button>
+            </Link>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="border-4 font-body transition border-primary bg-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg"
+            >
               What We Do
             </motion.button>
           </motion.div>
