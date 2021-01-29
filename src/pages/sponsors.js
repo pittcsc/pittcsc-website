@@ -12,39 +12,15 @@ import { motion } from "framer-motion";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import heroImage from "../images/hero-img2-cropped.png";
-import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.6,
-    },
-  },
-};
-
-const text = {
-  hidden: {
-    opacity: 0,
-    y: 25,
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-  },
-};
-
-const JoinPage = () => (
+const SponsorPage = () => (
   <div className="overflow-hidden">
     <Header />
     <main className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
       <section className="container mx-auto flex w-full flex-col justify-center items-center">
         <div>
-          <h2 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center">
-            Join Pitt CSC
+          <h2 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative">
+            We Love Our Sponsors
             <svg
               className="relative z-10 w-64 lg:w-full"
               viewBox="0 0 422 12"
@@ -145,4 +121,4 @@ const JoinPage = () => (
   </div>
 );
 
-export default JoinPage;
+export default SponsorPage;
