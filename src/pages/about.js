@@ -1,14 +1,14 @@
 import React from "react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import {
-  faGithub,
-  faLinkedin,
-  faSlack,
-} from "@fortawesome/free-brands-svg-icons";
+// import {
+//   faGithub,
+//   faLinkedin,
+//   faSlack,
+// } from "@fortawesome/free-brands-svg-icons";
 
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -36,19 +36,23 @@ const AboutPage = () => (
             </svg>
           </h2>
         </div>
-        <div className="w-10/12 flex flex-col justify-center items-center xl:w-3/4">
-          <h3 className="text-2xl font-semibold font-body lg:justify-self-start lg:mr-auto">
+        <div className="w-10/12 flex flex-col justify-center items-center xl:w-3/4 py-4 text-center lg:text-left lg:py-8">
+          <h3 className="text-xl lg:text-2xl font-semibold font-body lg:justify-self-start lg:mr-auto">
             Supporting the Pitt CS Community
           </h3>
           <div className="w-full flex flex-col justify-between items-center lg:flex-row">
-            <div className="w-96 h-32 lg:h-48 p-8 rounded-2xl my-4 bg-primary flex justify-center items-center shadow-md lg:my-2">
-              <span className="text-white text-8xl font-body font-bold">
-                48%
+            <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
+              <span className="text-white font-body text-6xl lg:text-8xl font-bold">
+                214
               </span>
+              <span className="text-white font-body  text-lg">Members</span>
             </div>
-            <div className="w-96 h-32 lg:h-48 p-8 my-4 rounded-2xl bg-primary flex justify-center items-center shadow-md lg:my-2">
-              <span className="text-white text-8xl font-body font-bold">
-                48%
+            <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
+              <span className="text-white text-6xl lg:text-8xl font-body font-bold">
+                25%
+              </span>
+              <span className="text-white font-body  text-lg">
+                Job Placement?
               </span>
             </div>
           </div>

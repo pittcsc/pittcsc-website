@@ -33,7 +33,7 @@
 }
 
 .min-width-btn {
-  @media screen and (min-width: $desktopWidth) {
+  @media screen and (min-width: $tabletWidth) {
     min-width: 250px;
   }
 }

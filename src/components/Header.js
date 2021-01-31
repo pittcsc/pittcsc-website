@@ -38,13 +38,17 @@ function Header() {
         <ul
           className={`flex flex-col justify-center items-center space-y-4 font-body md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
         >
-          <Link to="/">
+          <Link to="/about">
             <li className="font-bold">About Us</li>
           </Link>
-          <Link to="/">
+          <a
+            href="https://pittcsc.medium.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <li className="font-bold">Blog</li>
-          </Link>
-          <Link to="/">
+          </a>
+          <Link to="/sponsors">
             <li className="font-bold">Sponsors</li>
           </Link>
           <Link to="/join">

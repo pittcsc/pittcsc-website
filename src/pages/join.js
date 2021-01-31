@@ -8,34 +8,37 @@ import {
   faSlack,
 } from "@fortawesome/free-brands-svg-icons";
 
+import { faVideo } from "@fortawesome/free-solid-svg-icons";
+
 import { motion } from "framer-motion";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import heroImage from "../images/hero-img2-cropped.png";
-import MaskImage from "../images/Pitt_CSC_Mask.jpg";
+import { Link } from "gatsby";
+// import heroImage from "../images/hero-img2-cropped.png";
+// import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.6,
-    },
-  },
-};
+// const container = {
+//   hidden: { opacity: 0 },
+//   show: {
+//     opacity: 1,
+//     transition: {
+//       when: "beforeChildren",
+//       staggerChildren: 0.6,
+//     },
+//   },
+// };
 
-const text = {
-  hidden: {
-    opacity: 0,
-    y: 25,
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-  },
-};
+// const text = {
+//   hidden: {
+//     opacity: 0,
+//     y: 25,
+//   },
+//   show: {
+//     opacity: 1,
+//     y: 0,
+//   },
+// };
 
 const JoinPage = () => (
   <div className="overflow-hidden">
@@ -60,8 +63,8 @@ const JoinPage = () => (
             </svg>
           </h2>
         </div>
-        <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row">
-          <ul className="grid grid-cols-3 place-items-center w-9/10 gap-4 lg:gap-4 mx-auto px-4 box-border">
+        <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row py-8">
+          <ul className="grid grid-cols-3 place-items-center w-9/10 gap-4 lg:gap-8 mx-auto px-4 box-border">
             <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
               1.
             </span>
@@ -140,6 +143,67 @@ const JoinPage = () => (
           </div>
         </div>
       </section>
+      <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
+        <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
+          <div className="w-full flex flex-row justify-around items-center">
+            <div className="w-96 h-96 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative">
+              <svg
+                className="w-32 absolute -bottom-10 -left-20 md:w-64 md:-bottom-20"
+                viewBox="0 0 306 200"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M29 3C71.5 3.5 152.3 10.3 183.5 73.5C214.7 136.7 281.5 155.167 305 151.5"
+                  stroke="#FFB81C"
+                  stroke-width="5"
+                />
+                <path
+                  d="M1 48C43.5 48.5 124.3 55.3 155.5 118.5C186.7 181.7 253.5 200.167 277 196.5"
+                  stroke="#FFB81C"
+                  stroke-width="5"
+                />
+              </svg>
+              <div> Google Calendar?</div>
+              <div className="flex justify-center items-center text-lg">
+                <p className="mx-2"> Join our zoom meetings: </p>
+                <a
+                  href="https://pitt.zoom.us/my/zhw78"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FontAwesomeIcon
+                    icon={faVideo}
+                    className="text-primary text-lg lg:text-xl xl:text-2xl"
+                  />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-2xl lg:text-5xl font-bold font-body text-white my-4">
+                Pop in to a meeting
+                <svg
+                  width="156"
+                  height="12"
+                  viewBox="0 0 156 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M153 9.00001C106.723 9.00006 14.1702 -4.49999 3 8.99995"
+                    stroke="#FFB81C"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </h3>
+              <p className="font-body text-white text-base w-96">
+                We typically host meetings on Mondays and Wednesdays at 8pm.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
     <Footer />
   </div>
