@@ -24,7 +24,7 @@ const container = {
     opacity: 1,
     transition: {
       when: "beforeChildren",
-      staggerChildren: 0.6,
+      staggerChildren: 0.4,
     },
   },
 };
@@ -51,10 +51,42 @@ const maskAnimate = {
   },
 };
 
+const missionAnimate = {
+  hidden: {
+    opacity: 0,
+    x: 25,
+  },
+  missionShow: {
+    opacity: 1,
+    x: 0,
+  },
+};
+
+const socialAnimate = {
+  hidden: {
+    opacity: 0,
+    y: 25,
+  },
+  socialShow: {
+    opacity: 1,
+    y: 0,
+  },
+};
+
 const IndexPage = () => {
   const controls = useAnimation();
-  const { ref: homeRef, inView: homeInView } = useInView();
-  const { ref: imageRef, inView: imageInView } = useInView();
+  const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
+  const { ref: imageRef, inView: imageInView } = useInView({
+    triggerOnce: true,
+    rootMargin: "-100px 0px",
+  });
+  const { ref: missionRef, inView: missionInView } = useInView({
+    triggerOnce: true,
+  });
+  const { ref: socialRef, inView: socialInView } = useInView({
+    triggerOnce: true,
+    rootMargin: "-150px 0px",
+  });
 
   useEffect(() => {
     if (homeInView) {
@@ -63,7 +95,13 @@ const IndexPage = () => {
     if (imageInView) {
       controls.start("imageShow");
     }
-  }, [controls, homeInView, imageInView]);
+    if (missionInView) {
+      controls.start("missionShow");
+    }
+    if (socialInView) {
+      controls.start("socialShow");
+    }
+  }, [controls, homeInView, imageInView, missionInView, socialInView]);
 
   return (
     <div className="overflow-hidden">
@@ -199,7 +237,13 @@ const IndexPage = () => {
                 className="w-3/4 xl:w-9/12 rounded-3xl mx-auto shadow-lg"
               />
             </div>
-            <div className="w-full lg:w-1/2">
+            <motion.div
+              className="w-full lg:w-1/2"
+              variants={missionAnimate}
+              ref={missionRef}
+              initial="hidden"
+              animate={controls}
+            >
               <div className="w-3/4 xl:w-full bg-secondary-200 rounded-3xl p-8 xl:py-12 xl:px-8 max-w-lg my-4 xl:my-0 shadow-lg mx-auto">
                 <h3 className="font-bold text-2xl xl:text-4xl font-body my-4">
                   Our Mission
@@ -209,11 +253,17 @@ const IndexPage = () => {
                   the University of Pittsburgh.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </section>
         </div>
 
-        <section className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-16">
+        <motion.section
+          className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-16"
+          variants={socialAnimate}
+          ref={socialRef}
+          initial="hidden"
+          animate={controls}
+        >
           <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative">
             <h3 className="font-bold text-2xl lg:text-3xl xl:text-4xl font-body">
               Hit us up while you're here
@@ -266,7 +316,7 @@ const IndexPage = () => {
               </a>
             </div>
           </div>
-        </section>
+        </motion.section>
         <section className="w-screen bg-gradient-to-r from-primary to-blue-800">
           <div className="w-full h-64 mx-auto whitespace-nowwrap overflow-hidden flex flex-col justify-center items-center">
             <h3 className="font-bold font-body text-white text-4xl my-4">
