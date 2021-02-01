@@ -69,23 +69,35 @@ const JoinPage = () => (
               1.
             </span>
             <li className="flex justify-center items-center col-span-2">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg"
+              <a
+                href="http://eepurl.com/bgY5c9"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Join the email list
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg"
+                >
+                  Join the email list
+                </motion.button>
+              </a>
             </li>
             <span className="text-3xl font-bold font-body col-span-1">2.</span>
             <li className="flex justify-center items-center col-span-2">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg"
+              <a
+                href="http://pittcsc.slack.com/"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Join our Slack
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg"
+                >
+                  Join our Slack
+                </motion.button>
+              </a>
             </li>
             <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
               3.
