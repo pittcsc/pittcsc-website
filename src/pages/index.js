@@ -123,7 +123,7 @@ const IndexPage = () => {
             </motion.p>
             <motion.h2
               variants={text}
-              className="text-4xl lg:text-8xl font-bold font-body mb-8 mt-4 w-full z-10 relative"
+              className="text-4xl xl:text-7xl 2xl:text-8xl font-bold font-body mb-8 mt-4 w-full z-10 relative"
             >
               Pitt Computer <br /> Science Club
               <svg
@@ -141,14 +141,14 @@ const IndexPage = () => {
               </svg>
             </motion.h2>
 
-            <motion.h3
+            <motion.p
               variants={text}
-              className="font-body w-3/4 xl:w-3/4 lg:text-lg z-10 relative "
+              className="font-body w-3/4 xl:w-3/4 xl:text-lg z-10 relative"
             >
               The University of Pittsburgh's largest CS-related student
               organization. Proudly pushing the boundaries on what it means to
               be a Pitt student.
-            </motion.h3>
+            </motion.p>
             <motion.div
               variants={text}
               className="py-4 space-x-4 xl:space-x-8 z-20 relative"
