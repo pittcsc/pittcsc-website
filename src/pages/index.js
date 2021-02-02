@@ -107,7 +107,7 @@ const IndexPage = () => {
     <div className="overflow-hidden">
       <Header />
       <main className="space-y-32 min-h-screen my-8 mt-24 xl:my-24">
-        <section className="container mx-auto flex w-full flex-col xl:flex-row justify-center items-center px-8 xl:px-0">
+        <section className="container mx-auto flex w-full flex-col xl:flex-row justify-center items-center px-8 lg:w-10/12 lg:px-0">
           <motion.div
             variants={container}
             initial="hidden"
@@ -117,17 +117,17 @@ const IndexPage = () => {
           >
             <motion.p
               variants={text}
-              className="font-light text-lg font-body z-10 relative"
+              className="font-light text-lg 2xl:text-xl font-body z-10 relative"
             >
               2020-2021 SCHOOL YEAR
             </motion.p>
             <motion.h2
               variants={text}
-              className="text-4xl xl:text-7xl 2xl:text-8xl font-bold font-body mb-8 mt-4 w-full z-10 relative"
+              className="text-4xl lg:text-6xl 2xl:text-8xl font-bold font-body mb-8 mt-4 w-full z-10 relative"
             >
               Pitt Computer <br /> Science Club
               <svg
-                className="relative z-10 w-64 lg:w-5/6"
+                className="relative z-10 w-64 lg:w-1/2 xl:w-5/6"
                 viewBox="0 0 422 12"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +143,7 @@ const IndexPage = () => {
 
             <motion.p
               variants={text}
-              className="font-body w-3/4 xl:w-3/4 xl:text-lg z-10 relative"
+              className="font-body w-3/4 xl:w-3/4 2xl:text-lg z-10 relative"
             >
               The University of Pittsburgh's largest CS-related student
               organization. Proudly pushing the boundaries on what it means to

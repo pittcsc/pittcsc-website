@@ -13,7 +13,7 @@ function Header() {
   const [nav, setNav] = useState(false);
 
   return (
-    <header className="container mx-auto w-full p-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center">
+    <header className="container mx-auto w-full p-4 md:w-10/12 md:p-0 md:py-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center">
       <div className="flex justify-between items-center mx-auto md:block md:mx-0">
         <Link to="/">
           <img src={logo} alt="pitt-csc-logo" className="w-32 relative" />
