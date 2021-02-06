@@ -102,7 +102,7 @@ const JoinPage = () => (
               3.
             </span>
             <li className="flex justify-center items-center col-span-2">
-              <span className="text-2xl lg:text-4xl font-bold font-body relative">
+              <span className="text-xl lg:text-4xl font-bold font-body relative">
                 Keep in contact!
                 <svg
                   width="196"
@@ -176,7 +176,7 @@ const JoinPage = () => (
           <div className="w-full flex flex-row justify-around items-center flex-wrap">
             <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative">
               <svg
-                className="w-32 absolute bottom-0 -left-20 lg:w-64 lg:-bottom-10"
+                className="w-32 absolute -bottom-10 -left-10 lg:-left-20 lg:w-64"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
