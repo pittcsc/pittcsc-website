@@ -96,7 +96,7 @@ const AboutPage = () => (
             </div>
             <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">
               <svg
-                className="w-32 absolute -bottom-10 left-0 md:w-48"
+                className="w-32 absolute -bottom-10 -left-10 lg:left-0 md:w-48"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"

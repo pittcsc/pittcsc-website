@@ -63,7 +63,7 @@ const JoinPage = () => (
           </h2>
         </div>
         <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row py-8 relative">
-          <ul className="relative z-10 grid grid-cols-3 place-items-center w-9/10 gap-4 lg:gap-8 mx-auto px-4 box-border">
+          <ul className="relative z-10 grid grid-cols-3 place-items-center gap-4 lg:gap-8 mx-auto box-border">
             <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
               1.
             </span>
