@@ -73,6 +73,47 @@ const socialAnimate = {
   },
 };
 
+const underlineAnimate = {
+  hidden: {
+    pathLength: 0,
+    opacity: 0,
+  },
+  homeShow: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+    },
+  },
+};
+
+const swirlyAnimate = {
+  hidden: {
+    pathLength: 0,
+    opacity: 0,
+  },
+  imageShow: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+    },
+  },
+};
+const hitUnderlineAnimate = {
+  hidden: {
+    pathLength: 0,
+    opacity: 0,
+  },
+  socialShow: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+    },
+  },
+};
+
 const IndexPage = () => {
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
@@ -132,16 +173,14 @@ const IndexPage = () => {
             >
               Pitt Computer <br /> Science Club
               <svg
-                className="relative z-10 w-64 lg:w-1/2 xl:w-5/6"
+                className="relative z-10 w-64 lg:w-1/2 xl:w-5/6 underline"
                 viewBox="0 0 422 12"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
+                <motion.path
+                  variants={underlineAnimate}
                   d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
-                  stroke="#FFB81C"
-                  stroke-width="5"
-                  stroke-linecap="round"
                 />
               </svg>
             </motion.h2>
@@ -215,23 +254,25 @@ const IndexPage = () => {
         <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
           <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
             <div className="w-full lg:w-1/2 text-center my-4 xl:my-0 relative">
-              <svg
-                className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20"
+              <motion.svg
+                className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20 underline"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
+                <motion.path
+                  variants={swirlyAnimate}
+                  initial="hidden"
+                  animate={controls}
                   d="M29 3C71.5 3.5 152.3 10.3 183.5 73.5C214.7 136.7 281.5 155.167 305 151.5"
-                  stroke="#FFB81C"
-                  stroke-width="5"
                 />
-                <path
+                <motion.path
+                  variants={swirlyAnimate}
+                  initial="hidden"
+                  animate={controls}
                   d="M1 48C43.5 48.5 124.3 55.3 155.5 118.5C186.7 181.7 253.5 200.167 277 196.5"
-                  stroke="#FFB81C"
-                  stroke-width="5"
                 />
-              </svg>
+              </motion.svg>
               <motion.img
                 variants={maskAnimate}
                 ref={imageRef}
@@ -275,16 +316,16 @@ const IndexPage = () => {
               Hit us up while you're here
             </h3>
             <svg
-              className="mx-auto w-80 lg:w-4/6 xl:w-5/6"
-              viewBox="0 0 470 12"
+              className="mx-auto w-80 lg:w-4/6 xl:w-5/6 underline"
+              viewBox="0 0 479 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995"
-                stroke="#FFB81C"
-                stroke-width="5"
-                stroke-linecap="round"
+              <motion.path
+                variants={hitUnderlineAnimate}
+                initial="hidden"
+                animate={controls}
+                d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
               />
             </svg>
           </div>
