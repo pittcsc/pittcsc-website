@@ -175,7 +175,7 @@ const IndexPage = () => {
             >
               Pitt Computer <br /> Science Club
               <svg
-                className="relative z-10 w-64 lg:w-1/2 xl:w-5/6 underline"
+                className="relative z-10 w-64 lg:w-1/2 xl:w-5/6 svg-underline"
                 viewBox="0 0 422 12"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -257,7 +257,7 @@ const IndexPage = () => {
           <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
             <div className="w-full lg:w-1/2 text-center my-4 xl:my-0 relative">
               <motion.svg
-                className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20 underline"
+                className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20 svg-underline"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -318,7 +318,7 @@ const IndexPage = () => {
               Hit us up while you're here
             </h3>
             <svg
-              className="mx-auto w-80 lg:w-4/6 xl:w-5/6 underline"
+              className="mx-auto w-80 lg:w-4/6 xl:w-5/6 svg-underline"
               viewBox="0 0 479 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
