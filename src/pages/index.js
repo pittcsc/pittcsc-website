@@ -331,7 +331,9 @@ const IndexPage = () => {
           </div>
           <div className="w-full my-4 lg:my-0 lg:w-1/2">
             <div className="w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
-              <a
+              <motion.a
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 href="https://github.com/pittcsc"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -340,8 +342,10 @@ const IndexPage = () => {
                   icon={faGithub}
                   className="text-primary text-6xl lg:text-7xl xl:text-8xl"
                 />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 href="https://www.linkedin.com/company/pittcsc/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -350,8 +354,10 @@ const IndexPage = () => {
                   icon={faLinkedin}
                   className="text-primary text-6xl lg:text-7xl xl:text-8xl"
                 />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 href="http://pittcsc.slack.com/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -360,7 +366,7 @@ const IndexPage = () => {
                   icon={faSlack}
                   className="text-primary text-6xl lg:text-7xl xl:text-8xl"
                 />
-              </a>
+              </motion.a>
             </div>
           </div>
         </motion.section>

@@ -76,7 +76,7 @@ const JoinPage = () => (
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg"
+                  className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
                 >
                   Join the email list
                 </motion.button>
@@ -92,7 +92,7 @@ const JoinPage = () => (
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg"
+                  className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
                 >
                   Join our Slack
                 </motion.button>
@@ -122,7 +122,9 @@ const JoinPage = () => (
           </ul>
           <div className="polka-background-subPage absolute top-0 -right-48 lg:-right-24"></div>
           <div className="relative w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
-            <a
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               href="https://github.com/pittcsc"
               target="_blank"
               rel="noopener noreferrer"
@@ -131,8 +133,10 @@ const JoinPage = () => (
                 icon={faGithub}
                 className="text-primary text-6xl lg:text-7xl xl:text-8xl"
               />
-            </a>
-            <a
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               href="https://www.linkedin.com/company/pittcsc/"
               target="_blank"
               rel="noopener noreferrer"
@@ -141,8 +145,10 @@ const JoinPage = () => (
                 icon={faLinkedin}
                 className="text-primary text-6xl lg:text-7xl xl:text-8xl"
               />
-            </a>
-            <a
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               href="http://pittcsc.slack.com/"
               target="_blank"
               rel="noopener noreferrer"
@@ -151,7 +157,7 @@ const JoinPage = () => (
                 icon={faSlack}
                 className="text-primary text-6xl lg:text-7xl xl:text-8xl"
               />
-            </a>
+            </motion.a>
           </div>
         </div>
       </section>
