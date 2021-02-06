@@ -14,7 +14,6 @@ import { motion } from "framer-motion";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Link } from "gatsby";
 // import heroImage from "../images/hero-img2-cropped.png";
 // import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 
@@ -41,7 +40,12 @@ import { Link } from "gatsby";
 // };
 
 const JoinPage = () => (
-  <div className="overflow-hidden">
+  <motion.div
+    className="overflow-hidden"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
     <Header />
     <main className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
       <section className="container mx-auto flex w-full flex-col justify-center items-center">
@@ -63,8 +67,8 @@ const JoinPage = () => (
             </svg>
           </h2>
         </div>
-        <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row py-8">
-          <ul className="grid grid-cols-3 place-items-center w-9/10 gap-4 lg:gap-8 mx-auto px-4 box-border">
+        <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row py-8 relative">
+          <ul className="relative z-10 grid grid-cols-3 place-items-center w-9/10 gap-4 lg:gap-8 mx-auto px-4 box-border">
             <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
               1.
             </span>
@@ -121,7 +125,8 @@ const JoinPage = () => (
               </span>
             </li>
           </ul>
-          <div className="w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
+          <div className="polka-background-subPage absolute top-0 -right-48 lg:-right-24"></div>
+          <div className="relative w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
             <a
               href="https://github.com/pittcsc"
               target="_blank"
@@ -178,6 +183,7 @@ const JoinPage = () => (
               </svg>
               <iframe
                 src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
+                title="Pitt CSC Google Calendar"
                 frameborder="0"
                 scrolling="no"
                 height="600"
@@ -224,7 +230,7 @@ const JoinPage = () => (
       </div>
     </main>
     <Footer />
-  </div>
+  </motion.div>
 );
 
 export default JoinPage;

@@ -1,7 +1,5 @@
 import React from "react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import ArgoAI from "../images/sponsors/Argo-AI-logo.png";
 import NS from "../images/sponsors/norfolk_southern_logo.png";
 import PNC from "../images/sponsors/PNC_logo.png";
@@ -11,19 +9,18 @@ import FallReportImage from "../images/Pitt_CSC_Fall_Report_2020-1.png";
 
 import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
-import {
-  faGithub,
-  faLinkedin,
-  faSlack,
-} from "@fortawesome/free-brands-svg-icons";
-
 import { motion } from "framer-motion";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const SponsorPage = () => (
-  <div className="overflow-hidden">
+  <motion.div
+    className="overflow-hidden"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
     <Header />
     <main className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
       <section className="container mx-auto flex w-full flex-col justify-center items-center">
@@ -142,7 +139,7 @@ const SponsorPage = () => (
       </div>
     </main>
     <Footer />
-  </div>
+  </motion.div>
 );
 
 export default SponsorPage;

@@ -1,10 +1,8 @@
 import React from "react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { faVideo } from "@fortawesome/free-solid-svg-icons";
-
 import groupImage from "../images/uber_csc_image.jpg";
+
+import { motion } from "framer-motion";
 
 // import {
 //   faGithub,
@@ -18,7 +16,12 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const AboutPage = () => (
-  <div className="overflow-hidden">
+  <motion.div
+    className="overflow-hidden"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
     <Header />
     <main className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
       <section className="container mx-auto flex w-full flex-col justify-center items-center">
@@ -41,8 +44,9 @@ const AboutPage = () => (
           </h2>
         </div>
         <div className="w-10/12 flex flex-col justify-center items-center xl:w-3/4 py-4 text-center lg:text-left lg:py-8">
-          <div className="w-full flex flex-col justify-around items-center lg:flex-row">
-            <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
+          <div className="w-full flex flex-col justify-around items-center lg:flex-row relative">
+            <div className="polka-background-subPage absolute -top-10 -left-10"></div>
+            <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
               <span className="text-white font-body text-6xl lg:text-8xl font-bold">
                 214
               </span>
@@ -50,7 +54,7 @@ const AboutPage = () => (
                 Members
               </span>
             </div>
-            <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
+            <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
               <span className="text-white text-6xl lg:text-8xl font-body font-bold">
                 30+
               </span>
@@ -62,8 +66,8 @@ const AboutPage = () => (
         </div>
       </section>
       <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-        <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
-          <div className="w-9/12 lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
+        <section className="container relative mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
+          <div className="w-9/12  lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
             <div className="mb-4 lg:mb-0">
               <h3 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white my-4">
                 Supporting CS at Pitt
@@ -119,7 +123,7 @@ const AboutPage = () => (
       </div>
     </main>
     <Footer />
-  </div>
+  </motion.div>
 );
 
 export default AboutPage;

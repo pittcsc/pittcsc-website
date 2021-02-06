@@ -104,7 +104,12 @@ const IndexPage = () => {
   }, [controls, homeInView, imageInView, missionInView, socialInView]);
 
   return (
-    <div className="overflow-hidden">
+    <motion.div
+      className="overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Header />
       <main className="space-y-32 min-h-screen my-8 mt-24 xl:my-24">
         <section className="container mx-auto flex w-full flex-col xl:flex-row justify-center items-center px-8 lg:w-10/12 lg:px-0">
@@ -208,7 +213,7 @@ const IndexPage = () => {
           </div>
         </section>
         <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-          <section className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
+          <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
             <div className="w-full lg:w-1/2 text-center my-4 xl:my-0 relative">
               <svg
                 className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20"
@@ -238,7 +243,7 @@ const IndexPage = () => {
               />
             </div>
             <motion.div
-              className="w-full lg:w-1/2"
+              className="w-full lg:w-1/2 relative"
               variants={missionAnimate}
               ref={missionRef}
               initial="hidden"
@@ -332,7 +337,7 @@ const IndexPage = () => {
         </section> */}
       </main>
       <Footer />
-    </div>
+    </motion.div>
   );
 };
 
