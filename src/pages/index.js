@@ -15,7 +15,7 @@ import { useInView } from "react-intersection-observer";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import heroImage from "../images/hero-img2-cropped.png";
+import heroImage from "../images/hero_image.png";
 import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 
 const container = {
@@ -249,8 +249,9 @@ const IndexPage = () => {
                   Our Mission
                 </h3>
                 <p className="font-body xl:text-md">
-                  To grow and strengthen the student developer community here at
-                  the University of Pittsburgh.
+                  To help create an engaging atmosphere for students to learn
+                  more about the field of computer science and develop
+                  professionally.
                 </p>
               </div>
             </motion.div>
@@ -265,11 +266,11 @@ const IndexPage = () => {
           animate={controls}
         >
           <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative">
-            <h3 className="font-bold text-2xl lg:text-3xl xl:text-4xl font-body">
+            <h3 className="font-bold text-2xl lg:text-3xl xl:text-5xl font-body">
               Hit us up while you're here
             </h3>
             <svg
-              className="mx-auto w-80 lg:w-4/6"
+              className="mx-auto w-80 lg:w-4/6 xl:w-5/6"
               viewBox="0 0 470 12"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -283,7 +284,7 @@ const IndexPage = () => {
             </svg>
           </div>
           <div className="w-full my-4 lg:my-0 lg:w-1/2">
-            <div className="w-3/4 h-32 lg:h-48 p-8 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
+            <div className="w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
               <a
                 href="https://github.com/pittcsc"
                 target="_blank"

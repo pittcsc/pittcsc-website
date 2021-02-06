@@ -121,7 +121,7 @@ const JoinPage = () => (
               </span>
             </li>
           </ul>
-          <div className="w-3/4 max-w-lg lg:w-full h-32 lg:h-48 p-8 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
+          <div className="w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
             <a
               href="https://github.com/pittcsc"
               target="_blank"
@@ -158,7 +158,7 @@ const JoinPage = () => (
       <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
         <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
           <div className="w-full flex flex-row justify-around items-center">
-            <div className="w-96 h-96 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative">
+            <div className="w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative">
               <svg
                 className="w-32 absolute -bottom-10 -left-20 md:w-64 md:-bottom-20"
                 viewBox="0 0 306 200"
@@ -176,8 +176,14 @@ const JoinPage = () => (
                   stroke-width="5"
                 />
               </svg>
-              <div> Google Calendar?</div>
-              <div className="flex justify-center items-center text-lg">
+              <iframe
+                src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
+                frameborder="0"
+                scrolling="no"
+                height="600"
+                className="w-full mt-4"
+              ></iframe>
+              <div className="flex justify-center items-center text-lg my-4">
                 <p className="mx-2"> Join our zoom meetings: </p>
                 <a
                   href="https://pitt.zoom.us/my/zhw78"
