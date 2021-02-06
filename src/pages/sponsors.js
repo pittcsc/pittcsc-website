@@ -103,7 +103,7 @@ const SponsorPage = () => (
 
             <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">
               <svg
-                className="w-32 absolute -bottom-10 left-0 md:w-48"
+                className="w-32 absolute -bottom-10 -left-10 lg:left-0 md:w-48"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ const SponsorPage = () => (
                 whileTap={{ scale: 0.9 }}
                 href={FallReport}
                 target="_blank"
-                className="bg-white border-secondary-100 border-4 font-body absolute -bottom-5 right-10 transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
+                className="bg-white border-secondary-100 border-4 font-body absolute -bottom-6 lg:right-10 transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
               >
                 See Our Report
               </motion.a>

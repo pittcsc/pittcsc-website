@@ -9,6 +9,8 @@ import {
   faSlack,
 } from "@fortawesome/free-brands-svg-icons";
 
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+
 import { motion, useAnimation } from "framer-motion";
 
 import { useInView } from "react-intersection-observer";
@@ -330,7 +332,7 @@ const IndexPage = () => {
             </svg>
           </div>
           <div className="w-full my-4 lg:my-0 lg:w-1/2">
-            <div className="w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
+            <div className="w-5/6 max-w-md lg:w-3/4 xl:max-w-lg h-32 lg:h-48 p-6 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
               <motion.a
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -340,7 +342,7 @@ const IndexPage = () => {
               >
                 <FontAwesomeIcon
                   icon={faGithub}
-                  className="text-primary text-6xl lg:text-7xl xl:text-8xl"
+                  className="text-primary text-5xl lg:text-7xl"
                 />
               </motion.a>
               <motion.a
@@ -352,7 +354,7 @@ const IndexPage = () => {
               >
                 <FontAwesomeIcon
                   icon={faLinkedin}
-                  className="text-primary text-6xl lg:text-7xl xl:text-8xl"
+                  className="text-primary text-5xl lg:text-7xl"
                 />
               </motion.a>
               <motion.a
@@ -364,7 +366,17 @@ const IndexPage = () => {
               >
                 <FontAwesomeIcon
                   icon={faSlack}
-                  className="text-primary text-6xl lg:text-7xl xl:text-8xl"
+                  className="text-primary text-5xl lg:text-7xl"
+                />
+              </motion.a>
+              <motion.a
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                href="mailto:pittcsc@gmail.com"
+              >
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  className="text-primary text-5xl lg:text-7xl"
                 />
               </motion.a>
             </div>

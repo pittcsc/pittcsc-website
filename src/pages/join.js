@@ -8,7 +8,7 @@ import {
   faSlack,
 } from "@fortawesome/free-brands-svg-icons";
 
-import { faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 import { motion } from "framer-motion";
 
@@ -121,7 +121,7 @@ const JoinPage = () => (
             </li>
           </ul>
           <div className="polka-background-subPage absolute top-0 -right-48 lg:-right-24"></div>
-          <div className="relative w-3/4 max-w-md xl:max-w-lg h-32 lg:h-48 p-8 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
+          <div className="relative w-5/6 max-w-md lg:w-3/4 xl:max-w-lg h-32 lg:h-48 p-6 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
             <motion.a
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -131,7 +131,7 @@ const JoinPage = () => (
             >
               <FontAwesomeIcon
                 icon={faGithub}
-                className="text-primary text-6xl lg:text-7xl xl:text-8xl"
+                className="text-primary text-5xl lg:text-7xl"
               />
             </motion.a>
             <motion.a
@@ -143,7 +143,7 @@ const JoinPage = () => (
             >
               <FontAwesomeIcon
                 icon={faLinkedin}
-                className="text-primary text-6xl lg:text-7xl xl:text-8xl"
+                className="text-primary text-5xl lg:text-7xl"
               />
             </motion.a>
             <motion.a
@@ -155,7 +155,17 @@ const JoinPage = () => (
             >
               <FontAwesomeIcon
                 icon={faSlack}
-                className="text-primary text-6xl lg:text-7xl xl:text-8xl"
+                className="text-primary text-5xl lg:text-7xl"
+              />
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              href="mailto:pittcsc@gmail.com"
+            >
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                className="text-primary text-5xl lg:text-7xl"
               />
             </motion.a>
           </div>
