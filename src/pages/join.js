@@ -157,10 +157,10 @@ const JoinPage = () => (
       </section>
       <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
         <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
-          <div className="w-full flex flex-row justify-around items-center">
-            <div className="w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative">
+          <div className="w-full flex flex-row justify-around items-center flex-wrap">
+            <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative">
               <svg
-                className="w-32 absolute -bottom-10 -left-20 md:w-64 md:-bottom-20"
+                className="w-32 absolute bottom-0 -left-20 lg:w-64 lg:-bottom-10"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -181,7 +181,7 @@ const JoinPage = () => (
                 frameborder="0"
                 scrolling="no"
                 height="600"
-                className="w-full mt-4"
+                className="w-full"
               ></iframe>
               <div className="flex justify-center items-center text-lg my-4">
                 <p className="mx-2"> Join our zoom meetings: </p>
@@ -197,7 +197,7 @@ const JoinPage = () => (
                 </a>
               </div>
             </div>
-            <div>
+            <div className="w-9/12 lg:w-auto p-4">
               <h3 className="text-2xl lg:text-5xl font-bold font-body text-white my-4">
                 Pop in to a meeting
                 <svg
@@ -215,7 +215,7 @@ const JoinPage = () => (
                   />
                 </svg>
               </h3>
-              <p className="font-body text-white text-base w-96">
+              <p className="font-body text-white text-base max-w-lg">
                 We typically host meetings on Mondays and Wednesdays at 8pm.
               </p>
             </div>

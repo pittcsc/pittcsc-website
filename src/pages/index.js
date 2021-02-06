@@ -318,7 +318,7 @@ const IndexPage = () => {
             </div>
           </div>
         </motion.section>
-        <section className="w-screen bg-gradient-to-r from-primary to-blue-800">
+        {/* <section className="w-screen bg-gradient-to-r from-primary to-blue-800">
           <div className="w-full h-64 mx-auto whitespace-nowwrap overflow-hidden flex flex-col justify-center items-center">
             <h3 className="font-bold font-body text-white text-4xl my-4">
               Members
@@ -329,7 +329,7 @@ const IndexPage = () => {
               Zharichenko - Mat Varughese
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
       <Footer />
     </div>
