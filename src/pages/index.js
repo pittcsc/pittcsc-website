@@ -116,7 +116,7 @@ const hitUnderlineAnimate = {
   },
 };
 
-const IndexPage = () => {
+const IndexPage = ({ data }) => {
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: imageRef, inView: imageInView } = useInView({
@@ -237,6 +237,7 @@ const IndexPage = () => {
               src={heroImage}
               alt="pitt_csc_logo"
             />
+
             <motion.div
               initial={{
                 opacity: 0,
@@ -257,7 +258,7 @@ const IndexPage = () => {
           <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
             <div className="w-full lg:w-1/2 text-center my-4 xl:my-0 relative">
               <motion.svg
-                className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20 svg-underline"
+                className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20 svg-underline z-10"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -276,12 +277,12 @@ const IndexPage = () => {
                 />
               </motion.svg>
               <motion.img
-                variants={maskAnimate}
                 ref={imageRef}
+                src={MaskImage}
+                alt="Masked CSC Members"
+                variants={maskAnimate}
                 initial="hidden"
                 animate={controls}
-                src={MaskImage}
-                alt="Members_with_masks"
                 className="w-3/4 xl:w-9/12 rounded-3xl mx-auto shadow-lg"
               />
             </div>

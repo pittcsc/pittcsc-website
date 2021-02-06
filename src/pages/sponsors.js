@@ -11,10 +11,13 @@ import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
 import { motion } from "framer-motion";
 
+import Img from "gatsby-image";
+import { graphql } from "gatsby";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-const SponsorPage = () => (
+const SponsorPage = ({ data }) => (
   <motion.div
     className="overflow-hidden"
     initial={{ opacity: 0 }}
@@ -44,7 +47,7 @@ const SponsorPage = () => (
         </div>
         <div className="w-full flex justify-center items-center flex-row flex-wrap">
           <img
-            className="w-48 lg:w-80 m-4 lg:m-8"
+            className="w-64 lg:w-72 xl:w-80 m-4 lg:m-8"
             src={ArgoAI}
             alt="Argo AI Logo"
           />
