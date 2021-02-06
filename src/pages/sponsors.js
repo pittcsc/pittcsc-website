@@ -11,8 +11,8 @@ import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
 import { motion } from "framer-motion";
 
-import Img from "gatsby-image";
-import { graphql } from "gatsby";
+// import Img from "gatsby-image";
+// import { graphql } from "gatsby";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
