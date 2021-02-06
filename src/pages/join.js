@@ -45,11 +45,7 @@ const JoinPage = () => (
     <main className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
       <section className="container mx-auto flex w-full flex-col justify-center items-center">
         <div>
-          <motion.h2
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center"
-          >
+          <h2 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center">
             Join Pitt CSC
             <svg
               className="relative z-10 w-64 lg:w-full"
@@ -64,7 +60,7 @@ const JoinPage = () => (
                 stroke-linecap="round"
               />
             </svg>
-          </motion.h2>
+          </h2>
         </div>
         <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row py-8 relative">
           <ul className="relative z-10 grid grid-cols-3 place-items-center w-9/10 gap-4 lg:gap-8 mx-auto px-4 box-border">
