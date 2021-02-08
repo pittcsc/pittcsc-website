@@ -2,7 +2,8 @@ module.exports = {
   siteMetadata: {
     title: "Pitt CSC",
     author: "Pitt CSC",
-    description: "Website for the largest computer science student organization at the University of Pittsburgh.",
+    description:
+      "Website for the largest computer science student organization at the University of Pittsburgh.",
   },
   plugins: [
     {
@@ -22,6 +23,7 @@ module.exports = {
     "gatsby-plugin-sharp",
     "gatsby-plugin-react-helmet",
     "gatsby-transformer-sharp",
+    `gatsby-plugin-sharp`,
     "gatsby-transformer-json",
     {
       resolve: "gatsby-source-filesystem",
@@ -48,6 +50,6 @@ module.exports = {
         display: "browser",
         icon: "src/images/icon.svg",
       },
-    }
+    },
   ],
 };
