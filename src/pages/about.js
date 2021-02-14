@@ -36,9 +36,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TeamCard from "../components/TeamCard";
 
-const AboutPage = () => {
-  SwiperCore.use([Navigation, Pagination, A11y]);
+SwiperCore.use([Navigation, Pagination, A11y]);
 
+const AboutPage = () => {
   const [swiperNum, setSwiperNum] = useState(1);
 
   useEffect(() => {
