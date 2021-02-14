@@ -2,7 +2,7 @@ import React from "react";
 
 function TeamCard({ image, name, title }) {
   return (
-    <figure className="bg-gray-100 rounded-2xl p-8 shadow-md w-72">
+    <figure className="bg-gray-100 rounded-2xl p-8 shadow-md w-64 md:w-72">
       <img
         className="w-48 h-48 object-cover rounded-full -mt-16 mx-auto"
         src={image}
