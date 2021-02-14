@@ -43,24 +43,24 @@ function Header() {
           className={`flex flex-col justify-center items-center space-y-4 font-body md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
         >
           <Link to="/about">
-            <li className="font-bold">About Us</li>
+            <li className="font-bold text-lg md:text-base">About Us</li>
           </Link>
           <a
             href="https://pittcsc.medium.com/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <li className="font-bold">Blog</li>
+            <li className="font-bold text-lg md:text-base">Blog</li>
           </a>
           <Link to="/sponsors">
-            <li className="font-bold">Sponsors</li>
+            <li className="font-bold text-lg md:text-base">Sponsors</li>
           </Link>
           <Link to="/join">
             <li>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="bg-primary w-24 text-white font-bold font-body py-2 px-4 rounded-full shadow-md hover:shadow-lg transition focus:outline-none"
+                className="bg-primary text-lg md:text-base w-32 md:w-24 text-white font-bold font-body py-2 px-4 rounded-full shadow-md hover:shadow-lg transition focus:outline-none"
               >
                 Join
               </motion.button>
