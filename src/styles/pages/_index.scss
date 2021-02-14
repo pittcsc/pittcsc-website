@@ -57,6 +57,20 @@
   }
 }
 
+.swiper-container {
+  width: 100%;
+  height: 24rem;
+  @media screen and (min-width: $tabletWidth) {
+    width: 80%;
+  }
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .swiper-button-prev {
   color: #243e8b;
 }

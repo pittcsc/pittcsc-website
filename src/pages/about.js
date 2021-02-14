@@ -19,11 +19,6 @@ import SwiperCore, { Navigation, Pagination, A11y } from "swiper";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import "swiper/swiper.scss";
-import "swiper/components/navigation/navigation.scss";
-import "swiper/components/pagination/pagination.scss";
-import "swiper/components/scrollbar/scrollbar.scss";
-
 // import {
 //   faGithub,
 //   faLinkedin,
@@ -205,80 +200,77 @@ const AboutPage = () => {
             />
           </div> */}
           <Swiper
-            className="w-full lg:w-10/12 h-96"
+            slidesPerView={swiperNum}
             navigation
             pagination={{ clickable: true }}
-            slidesPerView={swiperNum}
-            onSwiper={(swiper) => console.log(swiper)}
-            onSlideChange={() => console.log("slide change")}
           >
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard image={ming} name="Zhengming Wang" title="President" />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={olivia}
                 name="Olivia Wininsky"
                 title="Vice President"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={gordon}
                 name="Gordon Lu"
                 title="Business Manager"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={janet}
                 name="Janet Majekodunmi"
                 title="PR Manager"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={justin}
                 name="Justin Kramer"
                 title="Internal Affairs Coordinator"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={richie}
                 name="Richie Goulazian"
                 title="Director of Initiatives"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={ryan}
                 name="Ryan Yang"
                 title="Event Coordinator"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={courtney}
                 name="Courtney Sheridan"
                 title="Outreach Director"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={jamir}
                 name="Jamir Grier"
                 title="Initiative Lead"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={dylan}
                 name="Dylan Feehan"
                 title="Director of Partnerships"
               />
             </SwiperSlide>
-            <SwiperSlide className="flex justify-center items-center">
+            <SwiperSlide>
               <TeamCard
                 image={alexander}
                 name="Alexander Grattan"
