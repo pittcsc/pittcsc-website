@@ -47,7 +47,7 @@ const maskAnimate = {
     opacity: 0,
     x: -25,
   },
-  imageShow: {
+  missionShow: {
     opacity: 1,
     x: 0,
   },
@@ -61,6 +61,9 @@ const missionAnimate = {
   missionShow: {
     opacity: 1,
     x: 0,
+    transition: {
+      delay: 0.2,
+    },
   },
 };
 
@@ -94,7 +97,7 @@ const swirlyAnimate = {
     pathLength: 0,
     opacity: 0,
   },
-  imageShow: {
+  missionShow: {
     pathLength: 1,
     opacity: 1,
     transition: {
@@ -119,12 +122,9 @@ const hitUnderlineAnimate = {
 const IndexPage = ({ data }) => {
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
-  const { ref: imageRef, inView: imageInView } = useInView({
-    triggerOnce: true,
-    rootMargin: "-100px 0px",
-  });
   const { ref: missionRef, inView: missionInView } = useInView({
     triggerOnce: true,
+    rootMargin: "-100px 0px",
   });
   const { ref: socialRef, inView: socialInView } = useInView({
     triggerOnce: true,
@@ -135,16 +135,13 @@ const IndexPage = ({ data }) => {
     if (homeInView) {
       controls.start("homeShow");
     }
-    if (imageInView) {
-      controls.start("imageShow");
-    }
     if (missionInView) {
       controls.start("missionShow");
     }
     if (socialInView) {
       controls.start("socialShow");
     }
-  }, [controls, homeInView, imageInView, missionInView, socialInView]);
+  }, [controls, homeInView, missionInView, socialInView]);
 
   return (
     <motion.div
@@ -277,7 +274,7 @@ const IndexPage = ({ data }) => {
                 />
               </motion.svg>
               <motion.img
-                ref={imageRef}
+                ref={missionRef}
                 src={MaskImage}
                 alt="Masked CSC Members"
                 variants={maskAnimate}
@@ -289,7 +286,6 @@ const IndexPage = ({ data }) => {
             <motion.div
               className="w-full lg:w-1/2 relative"
               variants={missionAnimate}
-              ref={missionRef}
               initial="hidden"
               animate={controls}
             >
