@@ -37,14 +37,12 @@ const AboutPage = () => {
   SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
   const [swiperNum, setSwiperNum] = useState(1);
-  const [navigationShow, setNavigationShow] = useState(false);
 
   useEffect(() => {
     let swiperQuery = window.matchMedia("(min-width: 768px)");
 
     if (swiperQuery.matches) {
       setSwiperNum(3);
-      setNavigationShow(true);
     }
   }, []);
 
