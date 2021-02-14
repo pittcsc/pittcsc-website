@@ -12,7 +12,7 @@ import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 
 import { motion } from "framer-motion";
 
-import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper";
+import SwiperCore, { Navigation, Pagination, A11y } from "swiper";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -34,7 +34,7 @@ import Footer from "../components/Footer";
 import TeamCard from "../components/TeamCard";
 
 const AboutPage = () => {
-  SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
+  SwiperCore.use([Navigation, Pagination, A11y]);
 
   const [swiperNum, setSwiperNum] = useState(1);
 
