@@ -8,6 +8,9 @@ import janet from "../images/officers/janet.jpeg";
 import richie from "../images/officers/richie.jpg";
 import ryan from "../images/officers/ryan.jpg";
 import justin from "../images/officers/justin.jpg";
+import courtney from "../images/officers/courtney.jpg";
+import jamir from "../images/officers/jamir.jpg";
+import dylan from "../images/officers/dylan.jpg";
 import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 
 import { motion } from "framer-motion";
@@ -256,21 +259,21 @@ const AboutPage = () => {
             </SwiperSlide>
             <SwiperSlide className="flex justify-center items-center">
               <TeamCard
-                image={ming}
+                image={courtney}
                 name="Courtney Sheridan"
                 title="Outreach Director"
               />
             </SwiperSlide>
             <SwiperSlide className="flex justify-center items-center">
               <TeamCard
-                image={ming}
+                image={jamir}
                 name="Jamir Grier"
                 title="Initiative Lead"
               />
             </SwiperSlide>
             <SwiperSlide className="flex justify-center items-center">
               <TeamCard
-                image={ming}
+                image={dylan}
                 name="Dylan Feehan"
                 title="Director of Partnerships"
               />
