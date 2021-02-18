@@ -48,16 +48,25 @@ const JoinPage = () => (
           <h2 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center">
             Join Pitt CSC
             <svg
-              className="relative z-10 w-64 lg:w-full"
+              className="relative z-10 w-64 lg:w-full svg-underline"
               viewBox="0 0 422 12"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
+              <motion.path
+                initial={{
+                  pathLength: 0,
+                  opacity: 0,
+                }}
+                animate={{
+                  pathLength: 1,
+                  opacity: 1,
+                }}
+                transition={{
+                  delay: 0.2,
+                  duration: 0.8,
+                }}
                 d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
-                stroke="#FFB81C"
-                stroke-width="5"
-                stroke-linecap="round"
               />
             </svg>
           </h2>
@@ -120,7 +129,20 @@ const JoinPage = () => (
               </span>
             </li>
           </ul>
-          <div className="polka-background-subPage absolute top-0 -right-48 lg:-right-24"></div>
+          <motion.div
+            initial={{
+              opacity: 0,
+              x: 100,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            transition={{
+              delay: 0.4,
+            }}
+            className="polka-background-subPage absolute top-0 -right-48 lg:-right-24"
+          ></motion.div>
           <div className="relative w-5/6 max-w-md lg:w-3/4 xl:max-w-lg h-32 lg:h-48 p-6 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
             <motion.a
               whileHover={{ scale: 1.1 }}

@@ -58,23 +58,45 @@ const AboutPage = () => {
             <h2 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center">
               About the Club
               <svg
-                className="relative z-10 w-64 lg:w-full"
+                className="relative z-10 w-64 lg:w-full svg-underline"
                 viewBox="0 0 422 12"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
+                <motion.path
+                  initial={{
+                    pathLength: 0,
+                    opacity: 0,
+                  }}
+                  animate={{
+                    pathLength: 1,
+                    opacity: 1,
+                  }}
+                  transition={{
+                    delay: 0.2,
+                    duration: 0.8,
+                  }}
                   d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
-                  stroke="#FFB81C"
-                  stroke-width="5"
-                  stroke-linecap="round"
                 />
               </svg>
             </h2>
           </div>
           <div className="w-10/12 flex flex-col justify-center items-center xl:w-3/4 py-4 text-center lg:text-left lg:py-8">
             <div className="w-full flex flex-col justify-around items-center lg:flex-row relative">
-              <div className="polka-background-subPage absolute -top-10 -left-10"></div>
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  x: -100,
+                }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
+                transition={{
+                  delay: 0.4,
+                }}
+                className="polka-background-subPage absolute -top-10 -left-10"
+              ></motion.div>
               <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
                 <span className="text-white font-body text-6xl lg:text-8xl font-bold">
                   214
@@ -205,13 +227,21 @@ const AboutPage = () => {
             pagination={{ clickable: true }}
           >
             <SwiperSlide>
-              <TeamCard image={ming} name="Zhengming Wang" title="President" />
+              <TeamCard
+                image={ming}
+                name="Zhengming Wang"
+                title="President"
+                linkedIn="https://www.linkedin.com/in/zhengmingwang/"
+                email="zhw78@pitt.edu"
+              />
             </SwiperSlide>
             <SwiperSlide>
               <TeamCard
                 image={olivia}
                 name="Olivia Wininsky"
                 title="Vice President"
+                linkedIn="https://www.linkedin.com/in/oliviawininsky/"
+                email="onw5@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -219,6 +249,8 @@ const AboutPage = () => {
                 image={gordon}
                 name="Gordon Lu"
                 title="Business Manager"
+                linkedIn="https://www.linkedin.com/in/gordon-lu-aa1008152/"
+                email="gol6@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -226,6 +258,8 @@ const AboutPage = () => {
                 image={janet}
                 name="Janet Majekodunmi"
                 title="PR Manager"
+                linkedIn="https://www.linkedin.com/in/janet-majekodunmi-5a8474190/"
+                email="jam580@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -233,6 +267,8 @@ const AboutPage = () => {
                 image={justin}
                 name="Justin Kramer"
                 title="Internal Affairs Coordinator"
+                linkedIn="https://www.linkedin.com/in/kjustin2/"
+                email="jpk91@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -240,6 +276,8 @@ const AboutPage = () => {
                 image={richie}
                 name="Richie Goulazian"
                 title="Director of Initiatives"
+                linkedIn="https://www.linkedin.com/in/rgoulazian/"
+                email="rhg13@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -247,6 +285,8 @@ const AboutPage = () => {
                 image={ryan}
                 name="Ryan Yang"
                 title="Event Coordinator"
+                linkedIn="https://www.linkedin.com/in/ruzakiff/"
+                email="rcy7@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -254,6 +294,8 @@ const AboutPage = () => {
                 image={courtney}
                 name="Courtney Sheridan"
                 title="Outreach Director"
+                linkedIn="https://www.linkedin.com/in/courtneyrsheridan/"
+                email="crs173@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -261,6 +303,8 @@ const AboutPage = () => {
                 image={jamir}
                 name="Jamir Grier"
                 title="Initiative Lead"
+                linkedIn="https://www.linkedin.com/in/jamir-grier-594518182/"
+                email="jlg21@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
@@ -268,13 +312,17 @@ const AboutPage = () => {
                 image={dylan}
                 name="Dylan Feehan"
                 title="Director of Partnerships"
+                linkedIn="https://www.linkedin.com/in/dylan-feehan/"
+                email="djf92@pitt.edu"
               />
             </SwiperSlide>
             <SwiperSlide>
               <TeamCard
                 image={alexander}
                 name="Alexander Grattan"
-                title="Software Engineer"
+                title="Software Developer"
+                linkedIn="https://www.linkedin.com/in/alexander-grattan-11a187149/"
+                email="ajg162@pitt.edu"
               />
             </SwiperSlide>
           </Swiper>

@@ -17,6 +17,21 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
+const imageContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.4,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 100 },
+  show: { opacity: 1, y: 0 },
+};
+
 const SponsorPage = ({ data }) => (
   <motion.div
     className="overflow-hidden"
@@ -31,42 +46,76 @@ const SponsorPage = ({ data }) => (
           <h2 className="text-3xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative">
             We Love Our Sponsors
             <svg
-              className="relative z-10 w-full"
+              className="relative z-10 w-full svg-underline"
               viewBox="0 0 422 12"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
+              <motion.path
+                initial={{
+                  pathLength: 0,
+                  opacity: 0,
+                }}
+                animate={{
+                  pathLength: 1,
+                  opacity: 1,
+                }}
+                transition={{
+                  delay: 0.2,
+                  duration: 0.8,
+                }}
                 d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
-                stroke="#FFB81C"
-                stroke-width="5"
-                stroke-linecap="round"
               />
             </svg>
           </h2>
         </div>
-        <div className="w-full flex justify-center items-center flex-row flex-wrap">
-          <img
-            className="w-64 lg:w-72 xl:w-80 m-4 lg:m-8"
-            src={ArgoAI}
-            alt="Argo AI Logo"
-          />
-          <img
-            className="w-64 lg:w-72 xl:w-80 m-4 lg:m-8"
-            src={PNC}
-            alt="PNC Logo"
-          />
-          <img
-            className="w-64 lg:w-72 xl:w-80 m-4 lg:m-8"
-            src={SAP}
-            alt="SAP Logo"
-          />
-          <img
-            className="w-48 lg:w-80 m-4 lg:m-8"
-            src={NS}
-            alt="Norfolk Southern Logo"
-          />
-        </div>
+        <motion.div
+          variants={imageContainer}
+          initial="hidden"
+          animate="show"
+          className="w-full grid grid-cols-2 lg:grid-cols-4 place-items-center gap-4 lg:gap-8"
+        >
+          <motion.a variants={item} href="https://www.argo.ai/" target="_blank">
+            <img
+              className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+              src={ArgoAI}
+              alt="Argo AI Logo"
+            />
+          </motion.a>
+          <motion.a
+            variants={item}
+            href="https://www.pnc.com/en/personal-banking.html"
+            target="_blank"
+          >
+            <img
+              className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+              src={PNC}
+              alt="PNC Logo"
+            />
+          </motion.a>
+          <motion.a
+            variants={item}
+            href="https://www.sap.com/index.html"
+            target="_blank"
+          >
+            <img
+              className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+              src={SAP}
+              alt="SAP Logo"
+            />
+          </motion.a>
+          <motion.a
+            variants={item}
+            href="http://www.nscorp.com/content/nscorp/en.html"
+            target="_blank"
+          >
+            <img
+              className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+              src={NS}
+              alt="Norfolk Southern Logo"
+            />
+          </motion.a>
+        </motion.div>
       </section>
       <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
         <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
@@ -75,27 +124,22 @@ const SponsorPage = ({ data }) => (
               <h3 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white text-center mb-8">
                 Why Sponsor?
                 <svg
-                  className="w-full my-2"
+                  className="w-full my-2 svg-underline"
                   viewBox="0 0 470 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995"
-                    stroke="#FFB81C"
-                    stroke-width="5"
-                    stroke-linecap="round"
-                  />
+                  <path d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995" />
                 </svg>
               </h3>
-              <h5 className="text-2xl font-medium font-body text-white my-2">
+              <h5 className="text-2xl font-semibold font-body text-white my-2">
                 Collaborative
               </h5>
-              <p className="font-body text-white text-base max-w-lg leading-loose mb-6">
+              <p className="font-body text-white text-base max-w-lg leading-loose mb-8">
                 We work with you in order to help reach amazing students an
                 create a stronger community.
               </p>
-              <h5 className="text-2xl font-medium font-body text-white my-2">
+              <h5 className="text-2xl font-semibold font-body text-white my-2">
                 Connected
               </h5>
               <p className="font-body text-white text-base max-w-lg leading-loose">

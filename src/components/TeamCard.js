@@ -1,19 +1,44 @@
 import React from "react";
 
-function TeamCard({ image, name, title }) {
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
+import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { motion } from "framer-motion";
+
+function TeamCard({ image, name, title, linkedIn, email }) {
   return (
-    <figure className="bg-gray-100 rounded-2xl p-8 shadow-md w-64 md:w-72">
+    <figure className="relative bg-gray-100 rounded-2xl p-8 shadow-md w-64 md:w-72">
       <img
         className="w-48 h-48 object-cover rounded-full -mt-16 mx-auto"
         src={image}
         alt={name}
       />
+
       <figcaption className="text-center font-body">
         <div className="font-body font-medium text-lg md:text-xl pt-4">
           {name}
         </div>
-        <div className="text-base">{title}</div>
+        <div className="text-sm">{title}</div>
       </figcaption>
+      <motion.a
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        href={linkedIn}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute flex justify-center items-center left-4 bottom-4 text-2xl"
+      >
+        <FontAwesomeIcon icon={faLinkedin} />
+      </motion.a>
+      <motion.a
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        href={`mailto:${email}`}
+        rel="noopener noreferrer"
+        className="absolute right-4 bottom-4 text-2xl"
+      >
+        <FontAwesomeIcon icon={faPaperPlane} />
+      </motion.a>
     </figure>
   );
 }
