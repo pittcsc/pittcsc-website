@@ -1,9 +1,12 @@
 module.exports = {
   siteMetadata: {
-    title: "Pitt CSC",
-    author: "Pitt CSC",
+    title: "Pitt Computer Science Club",
+    titleTemplate: "%s | Organization Dedicated to Supporting the CS Community",
     description:
       "Website for the largest computer science student organization at the University of Pittsburgh.",
+    image: "/images/hero_image.png",
+    lang: "en",
+    twitterUsername: "@PittCSC",
   },
   plugins: [
     {
@@ -43,11 +46,14 @@ module.exports = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
-        name: "Pitt CSC",
+        name: "Pitt Computer Science Club",
         short_name: "Pitt CSC",
+        description:
+          "Website for the largest computer science student organization at the University of Pittsburgh.",
+        lang: `en`,
         start_url: "/",
         background_color: "#FFFFFF",
-        display: "browser",
+        display: `standalone`,
         icon: "src/images/icon.svg",
       },
     },
