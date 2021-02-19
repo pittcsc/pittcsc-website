@@ -120,7 +120,7 @@ const AboutPage = () => {
             <section className="container relative mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
               <div className="w-9/12  lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
                 <div className="mb-4 lg:mb-0">
-                  <h3 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white my-4">
+                  <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white my-4">
                     Supporting CS at Pitt
                     <svg
                       className="w-full my-2"
@@ -135,7 +135,7 @@ const AboutPage = () => {
                         stroke-linecap="round"
                       />
                     </svg>
-                  </h3>
+                  </h2>
                   <p className="font-body text-white text-base max-w-lg leading-loose">
                     The University of Pittsburgh Computer Science Club,
                     shortened as Pitt CSC, is the University of Pittsburgh's
@@ -173,9 +173,9 @@ const AboutPage = () => {
             </section>
           </div>
           <section className="container mx-auto flex w-full flex-col justify-center items-center">
-            <h3 className="text-2xl lg:text-5xl max-w-lg font-bold font-body mt-4 mb-8">
+            <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body mt-4 mb-8">
               The Officers
-            </h3>
+            </h2>
             {/* <div className="grid gap-16 grid-cols-4 my-8">
             <TeamCard image={ming} name="Zhengming Wang" title="President" />
             <TeamCard

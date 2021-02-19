@@ -289,9 +289,9 @@ const IndexPage = ({ data }) => {
                 animate={controls}
               >
                 <div className="w-3/4 xl:w-full bg-secondary-200 rounded-3xl p-8 xl:py-12 xl:px-8 max-w-lg my-4 xl:my-0 shadow-lg mx-auto">
-                  <h3 className="font-bold text-2xl xl:text-4xl font-body my-4">
+                  <h2 className="font-bold text-2xl xl:text-4xl font-body my-4">
                     Our Mission
-                  </h3>
+                  </h2>
                   <p className="font-body xl:text-md">
                     To help create an engaging atmosphere for students to learn
                     more about the field of computer science and develop
@@ -310,9 +310,9 @@ const IndexPage = ({ data }) => {
             animate={controls}
           >
             <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative">
-              <h3 className="font-bold text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-body">
+              <h2 className="font-bold text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-body">
                 Hit us up while you're here
-              </h3>
+              </h2>
               <svg
                 className="mx-auto w-80 lg:w-4/6 xl:w-5/6 svg-underline"
                 viewBox="0 0 479 20"

@@ -26,7 +26,7 @@ function Header() {
           className={`cursor-pointer md:hidden z-40 focus:outline-none 
           `}
           onClick={() => setNav(!nav)}
-          value="home button"
+          aria-label="Home"
         >
           {nav ? (
             <FontAwesomeIcon icon={faTimes} className="text-xl" />

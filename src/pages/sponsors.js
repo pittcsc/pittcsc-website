@@ -124,7 +124,7 @@ const SponsorPage = ({ data }) => (
           <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
             <div className="w-9/12 lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
               <div className="mb-4 lg:mb-0">
-                <h3 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white text-center mb-8">
+                <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white text-center mb-8">
                   Why Sponsor?
                   <svg
                     className="w-full my-2 svg-underline"
@@ -134,17 +134,17 @@ const SponsorPage = ({ data }) => (
                   >
                     <path d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995" />
                   </svg>
-                </h3>
-                <h5 className="text-2xl font-semibold font-body text-white my-2">
+                </h2>
+                <h3 className="text-2xl font-semibold font-body text-white my-2">
                   Collaborative
-                </h5>
+                </h3>
                 <p className="font-body text-white text-base max-w-lg leading-loose mb-8">
                   We work with you in order to help reach amazing students an
                   create a stronger community.
                 </p>
-                <h5 className="text-2xl font-semibold font-body text-white my-2">
+                <h3 className="text-2xl font-semibold font-body text-white my-2">
                   Connected
-                </h5>
+                </h3>
                 <p className="font-body text-white text-base max-w-lg leading-loose">
                   With our Alumni program, we actively give back and form
                   connections between underclassmen, upperclassmen, and alumni.

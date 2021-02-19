@@ -250,7 +250,7 @@ const JoinPage = () => (
                 </div>
               </div>
               <div className="w-9/12 lg:w-auto p-4">
-                <h3 className="text-2xl lg:text-5xl font-bold font-body text-white my-4">
+                <h2 className="text-2xl lg:text-5xl font-bold font-body text-white my-4">
                   Pop in to an event
                   <svg
                     width="156"
@@ -266,7 +266,7 @@ const JoinPage = () => (
                       stroke-linecap="round"
                     />
                   </svg>
-                </h3>
+                </h2>
                 <p className="font-body text-white text-base max-w-lg leading-loose">
                   There are always a variety of different things to attend
                   including hackathons, talks, and coffee chats! We typically
