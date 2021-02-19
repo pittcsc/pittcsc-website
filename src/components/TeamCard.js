@@ -11,7 +11,7 @@ function TeamCard({ image, name, title, linkedIn, email }) {
       <img
         className="w-48 h-48 object-cover rounded-full -mt-16 mx-auto"
         src={image}
-        alt={name}
+        alt={`Portrait of ${name}`}
       />
 
       <figcaption className="text-center font-body">
