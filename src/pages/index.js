@@ -165,7 +165,7 @@ const IndexPage = ({ data }) => {
               >
                 2020-2021 SCHOOL YEAR
               </motion.p>
-              <motion.h2
+              <motion.h1
                 variants={text}
                 className="text-4xl lg:text-7xl 2xl:text-8xl font-bold font-body mb-4 mt-2 lg:mb-8 lg:mt-4 w-full z-10 relative"
               >
@@ -181,7 +181,7 @@ const IndexPage = ({ data }) => {
                     d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
                   />
                 </svg>
-              </motion.h2>
+              </motion.h1>
 
               <motion.p
                 variants={text}
@@ -335,10 +335,12 @@ const IndexPage = ({ data }) => {
                   href="https://github.com/pittcsc"
                   target="_blank"
                   rel="noopener noreferrer"
+                  value="home button"
                 >
                   <FontAwesomeIcon
                     icon={faGithub}
                     className="text-primary text-5xl lg:text-7xl"
+                    aria-label="Pitt Computer Science Club GitHub"
                   />
                 </motion.a>
                 <motion.a
@@ -351,6 +353,7 @@ const IndexPage = ({ data }) => {
                   <FontAwesomeIcon
                     icon={faLinkedin}
                     className="text-primary text-5xl lg:text-7xl"
+                    aria-label="Pitt Computer Science Club LinkedIn"
                   />
                 </motion.a>
                 <motion.a
@@ -363,6 +366,7 @@ const IndexPage = ({ data }) => {
                   <FontAwesomeIcon
                     icon={faSlack}
                     className="text-primary text-5xl lg:text-7xl"
+                    aria-label="Pitt Computer Science Club Slack"
                   />
                 </motion.a>
                 <motion.a
@@ -373,6 +377,7 @@ const IndexPage = ({ data }) => {
                   <FontAwesomeIcon
                     icon={faEnvelope}
                     className="text-primary text-5xl lg:text-7xl"
+                    aria-label="Pitt Computer Science Club Email"
                   />
                 </motion.a>
               </div>

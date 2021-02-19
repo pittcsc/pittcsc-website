@@ -161,6 +161,7 @@ const JoinPage = () => (
                 <FontAwesomeIcon
                   icon={faGithub}
                   className="text-primary text-5xl lg:text-7xl"
+                  aria-label="Pitt Computer Science Club GitHub"
                 />
               </motion.a>
               <motion.a
@@ -173,6 +174,7 @@ const JoinPage = () => (
                 <FontAwesomeIcon
                   icon={faLinkedin}
                   className="text-primary text-5xl lg:text-7xl"
+                  aria-label="Pitt Computer Science Club LinkedIn"
                 />
               </motion.a>
               <motion.a
@@ -185,6 +187,7 @@ const JoinPage = () => (
                 <FontAwesomeIcon
                   icon={faSlack}
                   className="text-primary text-5xl lg:text-7xl"
+                  aria-label="Pitt Computer Science Club Slack"
                 />
               </motion.a>
               <motion.a
@@ -195,6 +198,7 @@ const JoinPage = () => (
                 <FontAwesomeIcon
                   icon={faEnvelope}
                   className="text-primary text-5xl lg:text-7xl"
+                  aria-label="Pitt Computer Science Club Email"
                 />
               </motion.a>
             </div>
@@ -240,6 +244,7 @@ const JoinPage = () => (
                     <FontAwesomeIcon
                       icon={faVideo}
                       className="text-primary text-lg lg:text-xl xl:text-2xl"
+                      aria-label="Pitt Computer Science Club Zoom Meetings"
                     />
                   </a>
                 </div>
