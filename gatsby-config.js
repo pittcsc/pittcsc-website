@@ -1,7 +1,6 @@
 module.exports = {
   siteMetadata: {
     title: "Pitt Computer Science Club",
-    titleTemplate: "%s | Organization Dedicated to Supporting the CS Community",
     description:
       "Website for the largest computer science student organization at the University of Pittsburgh.",
     image: "/images/hero_image.png",

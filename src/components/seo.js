@@ -8,14 +8,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Helmet } from "react-helmet";
-import { useLocation } from "@react/router";
+import { useLocation } from "@reach/router";
 import { useStaticQuery, graphql } from "gatsby";
 const SEO = ({ title, description, image }) => {
   const { pathname } = useLocation();
   const { site } = useStaticQuery(query);
   const {
     defaultTitle,
-    titleTemplate,
     defaultDescription,
     siteUrl,
     defaultImage,
@@ -28,7 +27,7 @@ const SEO = ({ title, description, image }) => {
     url: `${pathname}`,
   };
   return (
-    <Helmet title={seo.title} titleTemplate={titleTemplate}>
+    <Helmet title={seo.title}>
       <meta name="description" content={seo.description} />
       <meta name="image" content={seo.image} />
       {seo.url && <meta property="og:url" content={seo.url} />}
@@ -66,7 +65,6 @@ const query = graphql`
     site {
       siteMetadata {
         defaultTitle: title
-        titleTemplate
         defaultDescription: description
         defaultImage: image
         twitterUsername
