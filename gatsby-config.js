@@ -5,6 +5,7 @@ module.exports = {
       "Website for the largest computer science student organization at the University of Pittsburgh.",
     image: "/images/hero_image.png",
     lang: "en",
+    url: "https://pittcsc-crashtestdummy.netlify.app",
     twitterUsername: "@PittCSC",
   },
   plugins: [

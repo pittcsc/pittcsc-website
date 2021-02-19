@@ -24,7 +24,7 @@ const SEO = ({ title, description, image }) => {
     title: title || defaultTitle,
     description: description || defaultDescription,
     image: `${siteUrl}${image || defaultImage}`,
-    url: `${pathname}`,
+    url: `${siteUrl}${pathname}`,
   };
   return (
     <Helmet title={seo.title}>
@@ -59,6 +59,7 @@ SEO.defaultProps = {
   description:
     "Website for the largest computer science student organization at the University of Pittsburgh.",
   image: null,
+  url: "https://pittcsc-crashtestdummy.netlify.app",
 };
 const query = graphql`
   query SEO {
@@ -67,6 +68,7 @@ const query = graphql`
         defaultTitle: title
         defaultDescription: description
         defaultImage: image
+        siteUrl: url
         twitterUsername
       }
     }
