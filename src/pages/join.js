@@ -157,11 +157,11 @@ const JoinPage = () => (
                 href="https://github.com/pittcsc"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Pitt Computer Science Club GitHub"
               >
                 <FontAwesomeIcon
                   icon={faGithub}
                   className="text-primary text-5xl lg:text-7xl"
-                  aria-label="Pitt Computer Science Club GitHub"
                 />
               </motion.a>
               <motion.a
@@ -170,11 +170,11 @@ const JoinPage = () => (
                 href="https://www.linkedin.com/company/pittcsc/"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Pitt Computer Science Club LinkedIn"
               >
                 <FontAwesomeIcon
                   icon={faLinkedin}
                   className="text-primary text-5xl lg:text-7xl"
-                  aria-label="Pitt Computer Science Club LinkedIn"
                 />
               </motion.a>
               <motion.a
@@ -183,22 +183,22 @@ const JoinPage = () => (
                 href="http://pittcsc.slack.com/"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Pitt Computer Science Club Slack"
               >
                 <FontAwesomeIcon
                   icon={faSlack}
                   className="text-primary text-5xl lg:text-7xl"
-                  aria-label="Pitt Computer Science Club Slack"
                 />
               </motion.a>
               <motion.a
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 href="mailto:pittcsc@gmail.com"
+                aria-label="Pitt Computer Science Club Email"
               >
                 <FontAwesomeIcon
                   icon={faEnvelope}
                   className="text-primary text-5xl lg:text-7xl"
-                  aria-label="Pitt Computer Science Club Email"
                 />
               </motion.a>
             </div>
@@ -240,11 +240,11 @@ const JoinPage = () => (
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex justify-center items-center"
+                    aria-label="Pitt Computer Science Club Zoom Meetings"
                   >
                     <FontAwesomeIcon
                       icon={faVideo}
                       className="text-primary text-lg lg:text-xl xl:text-2xl"
-                      aria-label="Pitt Computer Science Club Zoom Meetings"
                     />
                   </a>
                 </div>
