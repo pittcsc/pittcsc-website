@@ -15,7 +15,7 @@ import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 
 import { motion } from "framer-motion";
 
-import SwiperCore, { Navigation, Pagination, A11y } from "swiper";
+import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -31,7 +31,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TeamCard from "../components/TeamCard";
 
-SwiperCore.use([Navigation, Pagination, A11y]);
+SwiperCore.use([Navigation, Pagination, Mousewheel, A11y]);
 
 const AboutPage = () => {
   const [swiperNum, setSwiperNum] = useState(1);
@@ -225,6 +225,7 @@ const AboutPage = () => {
             slidesPerView={swiperNum}
             navigation
             pagination={{ clickable: true }}
+            mousewheel
           >
             <SwiperSlide>
               <TeamCard
