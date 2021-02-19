@@ -18,6 +18,7 @@ const SEO = ({ title, description, image }) => {
     defaultDescription,
     siteUrl,
     defaultImage,
+    lang,
     twitterUsername,
   } = site.siteMetadata;
   const seo = {
@@ -25,9 +26,11 @@ const SEO = ({ title, description, image }) => {
     description: description || defaultDescription,
     image: `${siteUrl}${image || defaultImage}`,
     url: `${siteUrl}${pathname}`,
+    lang: lang,
   };
   return (
     <Helmet title={seo.title}>
+      <html lang={seo.lang} amp />
       <meta name="description" content={seo.description} />
       <meta name="image" content={seo.image} />
       {seo.url && <meta property="og:url" content={seo.url} />}
@@ -60,6 +63,7 @@ SEO.defaultProps = {
     "Website for the largest computer science student organization at the University of Pittsburgh.",
   image: null,
   url: "https://pittcsc-crashtestdummy.netlify.app",
+  lang: "en",
 };
 const query = graphql`
   query SEO {
@@ -69,6 +73,7 @@ const query = graphql`
         defaultDescription: description
         defaultImage: image
         siteUrl: url
+        lang
         twitterUsername
       }
     }
