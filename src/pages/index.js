@@ -151,7 +151,7 @@ const IndexPage = ({ data }) => {
       exit={{ opacity: 0 }}
     >
       <Header />
-      <main className="space-y-32 min-h-screen my-8 mt-24 xl:my-24">
+      <main className="space-y-40 min-h-screen my-8 mt-24 xl:my-32">
         <section className="container mx-auto flex w-full flex-col xl:flex-row justify-center items-center px-8 lg:w-10/12 lg:px-0">
           <motion.div
             variants={container}
@@ -168,7 +168,7 @@ const IndexPage = ({ data }) => {
             </motion.p>
             <motion.h2
               variants={text}
-              className="text-4xl lg:text-6xl 2xl:text-8xl font-bold font-body mb-8 mt-4 w-full z-10 relative"
+              className="text-4xl lg:text-7xl 2xl:text-8xl font-bold font-body mb-4 mt-2 lg:mb-8 lg:mt-4 w-full z-10 relative"
             >
               Pitt Computer <br /> Science Club
               <svg
@@ -186,7 +186,7 @@ const IndexPage = ({ data }) => {
 
             <motion.p
               variants={text}
-              className="font-body w-3/4 xl:w-3/4 2xl:text-lg z-10 relative"
+              className="font-body text-sm md:text-base w-3/4 xl:w-3/4 2xl:text-lg leading-loose z-10 relative"
             >
               The University of Pittsburgh's largest CS-related student
               organization. Proudly pushing the boundaries on what it means to
@@ -247,7 +247,7 @@ const IndexPage = ({ data }) => {
               transition={{
                 delay: 0.4,
               }}
-              className="polka-background absolute z-10 -top-10 -right-10"
+              className="polka-background absolute z-10 -top-10 -right-10 lg:-top-20"
             ></motion.div>
           </div>
         </section>
@@ -255,7 +255,7 @@ const IndexPage = ({ data }) => {
           <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
             <div className="w-full lg:w-1/2 text-center my-4 xl:my-0 relative">
               <motion.svg
-                className="w-32 absolute -top-10 right-0 md:w-64 md:-top-20 svg-underline z-10"
+                className="w-32 absolute -top-10 right-0 md:w-64 lg:w-48 xl:w-64 md:-top-20 svg-underline z-10"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -311,7 +311,7 @@ const IndexPage = ({ data }) => {
           animate={controls}
         >
           <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative">
-            <h3 className="font-bold text-2xl lg:text-3xl xl:text-5xl font-body">
+            <h3 className="font-bold text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-body">
               Hit us up while you're here
             </h3>
             <svg

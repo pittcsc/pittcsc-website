@@ -228,6 +228,7 @@ const JoinPage = () => (
                   href="https://pitt.zoom.us/my/zhw78"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="flex justify-center items-center"
                 >
                   <FontAwesomeIcon
                     icon={faVideo}
@@ -238,7 +239,7 @@ const JoinPage = () => (
             </div>
             <div className="w-9/12 lg:w-auto p-4">
               <h3 className="text-2xl lg:text-5xl font-bold font-body text-white my-4">
-                Pop in to a meeting
+                Pop in to an event
                 <svg
                   width="156"
                   height="12"
@@ -254,8 +255,10 @@ const JoinPage = () => (
                   />
                 </svg>
               </h3>
-              <p className="font-body text-white text-base max-w-lg">
-                We typically host meetings on Mondays and Wednesdays at 8pm.
+              <p className="font-body text-white text-base max-w-lg leading-loose">
+                There are always a variety of different things to attend
+                including hackathons, talks, and coffee chats! We typically host
+                meetings on Mondays and Wednesdays at 8pm.
               </p>
             </div>
           </div>
