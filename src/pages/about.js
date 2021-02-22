@@ -176,7 +176,7 @@ const AboutPage = () => {
             <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body mt-4 mb-8">
               The Officers
             </h2>
-            <div className="grid gap-24 grid-cols-4 my-8">
+            <div className="grid gap-24 grid-cols-1 lg:grid-cols-4 my-8">
               <TeamCard
                 image={ming}
                 name="Zhengming Wang"
