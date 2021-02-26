@@ -176,52 +176,86 @@ const AboutPage = () => {
             <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body mt-4 mb-8">
               The Officers
             </h2>
-            {/* <div className="grid gap-16 grid-cols-4 my-8">
-            <TeamCard image={ming} name="Zhengming Wang" title="President" />
-            <TeamCard
-              image={olivia}
-              name="Olivia Wininsky"
-              title="Vice President"
-            />
-            <TeamCard
-              image={gordon}
-              name="Gordon Lu"
-              title="Business Manager"
-            />
-            <TeamCard
-              image={janet}
-              name="Janet Majekodunmi"
-              title="PR Manager"
-            />
-            <TeamCard
-              image={justin}
-              name="Justin Kramer"
-              title="Internal Affairs Coordinator"
-            />
-            <TeamCard
-              image={richie}
-              name="Richie Goulazian"
-              title="Director of Initiatives"
-            />
-            <TeamCard image={ryan} name="Ryan Yang" title="Event Coordinator" />
-            <TeamCard
-              image={ming}
-              name="Courtney Sheridan"
-              title="Outreach Director"
-            />
-            <TeamCard image={ming} name="Jamir Grier" title="Initiative Lead" />
-            <TeamCard
-              image={ming}
-              name="Dylan Feehan"
-              title="Director of Partnerships"
-            />
-            <TeamCard
-              image={ming}
-              name="Alexander Grattan"
-              title="Software Engineer"
-            />
-          </div> */}
-            <Swiper
+            <div className="grid gap-24 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 my-8">
+              <TeamCard
+                image={ming}
+                name="Zhengming Wang"
+                title="President"
+                linkedIn="https://www.linkedin.com/in/zhengmingwang/"
+                email="zhw78@pitt.edu"
+              />
+              <TeamCard
+                image={olivia}
+                name="Olivia Wininsky"
+                title="Vice President"
+                linkedIn="https://www.linkedin.com/in/oliviawininsky/"
+                email="onw5@pitt.edu"
+              />
+              <TeamCard
+                image={gordon}
+                name="Gordon Lu"
+                title="Business Manager"
+                linkedIn="https://www.linkedin.com/in/gordon-lu-aa1008152/"
+                email="gol6@pitt.edu"
+              />
+              <TeamCard
+                image={janet}
+                name="Janet Majekodunmi"
+                title="PR Manager"
+                linkedIn="https://www.linkedin.com/in/janet-majekodunmi-5a8474190/"
+                email="jam580@pitt.edu"
+              />
+              <TeamCard
+                image={justin}
+                name="Justin Kramer"
+                title="Internal Affairs Coordinator"
+                linkedIn="https://www.linkedin.com/in/kjustin2/"
+                email="jpk91@pitt.edu"
+              />
+              <TeamCard
+                image={richie}
+                name="Richie Goulazian"
+                title="Director of Initiatives"
+                linkedIn="https://www.linkedin.com/in/rgoulazian/"
+                email="rhg13@pitt.edu"
+              />
+              <TeamCard
+                image={ryan}
+                name="Ryan Yang"
+                title="Event Coordinator"
+                linkedIn="https://www.linkedin.com/in/ruzakiff/"
+                email="rcy7@pitt.edu"
+              />
+              <TeamCard
+                image={courtney}
+                name="Courtney Sheridan"
+                title="Outreach Director"
+                linkedIn="https://www.linkedin.com/in/courtneyrsheridan/"
+                email="crs173@pitt.edu"
+              />
+              <TeamCard
+                image={jamir}
+                name="Jamir Grier"
+                title="Initiative Lead"
+                linkedIn="https://www.linkedin.com/in/jamir-grier-594518182/"
+                email="jlg21@pitt.edu"
+              />
+              <TeamCard
+                image={dylan}
+                name="Dylan Feehan"
+                title="Director of Partnerships"
+                linkedIn="https://www.linkedin.com/in/dylan-feehan/"
+                email="djf92@pitt.edu"
+              />
+              <TeamCard
+                image={alexander}
+                name="Alexander Grattan"
+                title="Software Developer"
+                linkedIn="https://www.linkedin.com/in/alexander-grattan-11a187149/"
+                email="ajg162@pitt.edu"
+              />
+            </div>
+            {/* <Swiper
               slidesPerView={swiperNum}
               navigation
               pagination={{ clickable: true }}
@@ -326,7 +360,7 @@ const AboutPage = () => {
                   email="ajg162@pitt.edu"
                 />
               </SwiperSlide>
-            </Swiper>
+            </Swiper> */}
           </section>
         </div>
       </motion.div>
