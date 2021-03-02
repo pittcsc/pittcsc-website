@@ -18,6 +18,7 @@ import { useInView } from "react-intersection-observer";
 import heroImage from "../images/hero_image.png";
 import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 import Layout from "../layouts/layout";
+import { hotjar } from "react-hotjar";
 
 const container = {
   hidden: { opacity: 0 },
@@ -140,6 +141,9 @@ const IndexPage = ({ data }) => {
     if (socialInView) {
       controls.start("socialShow");
     }
+
+    // Hotjar
+    hotjar.initialize(2276434, 6);
   }, [controls, homeInView, missionInView, socialInView]);
 
   return (
@@ -251,7 +255,7 @@ const IndexPage = ({ data }) => {
             </div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
+            <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24">
               <div className="w-full lg:w-1/2 text-center my-4 xl:my-0 relative">
                 <motion.svg
                   className="w-32 absolute -top-10 right-0 md:w-64 lg:w-48 xl:w-64 md:-top-20 svg-underline z-10"
@@ -289,10 +293,10 @@ const IndexPage = ({ data }) => {
                 animate={controls}
               >
                 <div className="w-3/4 xl:w-full bg-secondary-200 rounded-3xl p-8 xl:py-12 xl:px-8 max-w-lg my-4 xl:my-0 shadow-lg mx-auto">
-                  <h2 className="font-bold text-2xl xl:text-4xl font-body my-4">
+                  <h2 className="font-bold text-3xl xl:text-4xl font-body my-4">
                     Our Mission
                   </h2>
-                  <p className="font-body xl:text-md">
+                  <p className="font-body text-sm md:text-base xl:text-md italic">
                     To help create an engaging atmosphere for students to learn
                     more about the field of computer science and develop
                     professionally.
