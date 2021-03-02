@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import groupImage from "../images/uber_csc_image.jpg";
 import ming from "../images/officers/ming.jpg";
@@ -15,9 +15,9 @@ import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 
 import { motion } from "framer-motion";
 
-// import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
+import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
 
-// import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 import Layout from "../layouts/layout";
 
@@ -31,18 +31,18 @@ import Layout from "../layouts/layout";
 
 import TeamCard from "../components/TeamCard";
 
-// SwiperCore.use([Navigation, Pagination, Mousewheel, A11y]);
+SwiperCore.use([Navigation, Pagination, Mousewheel, A11y]);
 
 const AboutPage = () => {
-  // const [swiperNum, setSwiperNum] = useState(1);
+  const [swiperNum, setSwiperNum] = useState(1);
 
-  // useEffect(() => {
-  //   let swiperQuery = window.matchMedia("(min-width: 768px)");
+  useEffect(() => {
+    let swiperQuery = window.matchMedia("(min-width: 768px)");
 
-  //   if (swiperQuery.matches) {
-  //     setSwiperNum(3);
-  //   }
-  // }, []);
+    if (swiperQuery.matches) {
+      setSwiperNum(3);
+    }
+  }, []);
 
   return (
     <Layout title="About Us | Pitt Computer Science Club">
