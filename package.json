@@ -38,6 +38,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
+    "react-hotjar": "^2.2.1",
     "react-intersection-observer": "^8.31.0",
     "swiper": "^6.4.11"
   },
