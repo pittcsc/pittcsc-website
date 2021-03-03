@@ -12,13 +12,13 @@ import {
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 import { motion, useAnimation } from "framer-motion";
+import { hotjar } from "react-hotjar";
 
 import { useInView } from "react-intersection-observer";
 
 import heroImage from "../images/hero_image.png";
 import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 import Layout from "../layouts/layout";
-import { hotjar } from "react-hotjar";
 
 const container = {
   hidden: { opacity: 0 },

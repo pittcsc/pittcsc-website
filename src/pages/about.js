@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import groupImage from "../images/uber_csc_image.jpg";
 import ming from "../images/officers/ming.jpg";
@@ -12,7 +12,7 @@ import courtney from "../images/officers/courtney.jpg";
 import jamir from "../images/officers/jamir.jpg";
 import dylan from "../images/officers/dylan.jpg";
 import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
-
+import { hotjar } from "react-hotjar";
 import { motion } from "framer-motion";
 
 // import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
@@ -36,13 +36,9 @@ import TeamCard from "../components/TeamCard";
 const AboutPage = () => {
   // const [swiperNum, setSwiperNum] = useState(1);
 
-  // useEffect(() => {
-  //   let swiperQuery = window.matchMedia("(min-width: 768px)");
-
-  //   if (swiperQuery.matches) {
-  //     setSwiperNum(3);
-  //   }
-  // }, []);
+  useEffect(() => {
+    hotjar.initialize(2276434, 6);
+  }, []);
 
   return (
     <Layout title="About Us | Pitt Computer Science Club">
