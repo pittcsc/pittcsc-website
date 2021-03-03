@@ -141,6 +141,8 @@ const IndexPage = ({ data }) => {
     if (socialInView) {
       controls.start("socialShow");
     }
+
+    hotjar.initialize(2276434, 6);
   }, [controls, homeInView, missionInView, socialInView]);
 
   return (
