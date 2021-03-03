@@ -15,9 +15,9 @@ import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 import { hotjar } from "react-hotjar";
 import { motion } from "framer-motion";
 
-// import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
+import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
 
-// import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 import Layout from "../layouts/layout";
 
@@ -31,10 +31,10 @@ import Layout from "../layouts/layout";
 
 import TeamCard from "../components/TeamCard";
 
-// SwiperCore.use([Navigation, Pagination, Mousewheel, A11y]);
+SwiperCore.use([Navigation, Pagination, Mousewheel, A11y]);
 
 const AboutPage = () => {
-  // const [swiperNum, setSwiperNum] = useState(1);
+  const [swiperNum, setSwiperNum] = useState(1);
 
   useEffect(() => {
     hotjar.initialize(2276434, 6);
