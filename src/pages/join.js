@@ -13,6 +13,7 @@ import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 import { motion } from "framer-motion";
 import { hotjar } from "react-hotjar";
+import ReactGA from "react-ga";
 
 import Layout from "../layouts/layout";
 

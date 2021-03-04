@@ -13,6 +13,7 @@ import jamir from "../images/officers/jamir.jpg";
 import dylan from "../images/officers/dylan.jpg";
 import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 import { hotjar } from "react-hotjar";
+import ReactGA from "react-ga";
 import { motion } from "framer-motion";
 
 // import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";

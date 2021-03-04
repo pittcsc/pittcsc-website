@@ -11,6 +11,7 @@ import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
 import { motion } from "framer-motion";
 import { hotjar } from "react-hotjar";
+import ReactGA from "react-ga";
 
 import Layout from "../layouts/layout";
 
