@@ -7,6 +7,7 @@ import {
   faGithub,
   faLinkedin,
   faSlack,
+  faDiscord,
 } from "@fortawesome/free-brands-svg-icons";
 
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -154,27 +155,27 @@ const IndexPage = ({ data }) => {
         exit={{ opacity: 0 }}
       >
         <div className="space-y-40 min-h-screen my-8 mt-24 xl:my-32">
-          <section className="container mx-auto flex w-full flex-col xl:flex-row justify-center items-center px-8 lg:w-10/12 lg:px-0">
+          <section className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center px-8 lg:w-10/12 lg:px-0">
             <motion.div
               variants={container}
               initial="hidden"
               animate={controls}
               ref={homeRef}
-              className="xl:w-1/2 break-normal relative"
+              className="xl:w-3/4 break-normal relative"
             >
               <motion.p
                 variants={text}
-                className="font-light text-lg 2xl:text-xl font-body z-10 relative"
+                className="font-light text-lg xl:text-xl font-body z-10 relative"
               >
                 2020-2021 SCHOOL YEAR
               </motion.p>
               <motion.h1
                 variants={text}
-                className="text-4xl lg:text-7xl 2xl:text-8xl font-bold font-body mb-4 mt-2 lg:mb-8 lg:mt-4 w-full z-10 relative"
+                className="text-4xl md:text-5xl lg:text-7xl 2xl:text-8xl font-bold font-body mb-4 mt-2 lg:mb-8 lg:mt-4 w-full z-10 relative"
               >
                 Pitt Computer <br /> Science Club
                 <svg
-                  className="relative z-10 w-64 lg:w-1/2 xl:w-5/6 svg-underline"
+                  className="relative z-10 w-64 lg:w-1/2 xl:w-3/4 svg-underline"
                   viewBox="0 0 422 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +197,7 @@ const IndexPage = ({ data }) => {
               </motion.p>
               <motion.div
                 variants={text}
-                className="py-4 space-x-4 xl:space-x-8 z-20 relative"
+                className="pt-4 pb-12 lg:py-4 space-x-4 xl:space-x-8 z-20 relative"
               >
                 <Link to="/join">
                   <motion.button
@@ -219,7 +220,7 @@ const IndexPage = ({ data }) => {
               </motion.div>
               <div className="w-40 h-40 xl:w-80 xl:h-80 absolute bg-secondary-200 rounded-2xl top-0 -left-20 z-0 transform -rotate-12"></div>
             </motion.div>
-            <div className="w-full xl:w-1/2 relative flex justify-center items-center flex-col">
+            <div className="w-full lg:w-1/2 relative flex justify-center items-center flex-col">
               <motion.img
                 initial={{
                   opacity: 0,
@@ -232,7 +233,7 @@ const IndexPage = ({ data }) => {
                 transition={{
                   delay: 0.2,
                 }}
-                className="w-3/4 xl:w-9/12 z-20 mx-auto relative"
+                className="w-3/4 md:w-1/2 lg:w-full z-20 mx-auto relative"
                 src={heroImage}
                 alt="pitt_csc_logo"
               />
@@ -331,7 +332,7 @@ const IndexPage = ({ data }) => {
               </svg>
             </div>
             <div className="w-full my-4 lg:my-0 lg:w-1/2">
-              <div className="w-5/6 max-w-md lg:w-3/4 xl:max-w-lg h-32 lg:h-48 p-6 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
+              <div className="w-5/6 max-w-md  xl:max-w-lg p-6 lg:py-12 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center flex-wrap shadow-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -339,10 +340,11 @@ const IndexPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club GitHub"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faGithub}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -352,10 +354,11 @@ const IndexPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club LinkedIn"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faLinkedin}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -365,10 +368,25 @@ const IndexPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club Slack"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faSlack}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl xl:text-7xl"
+                  />
+                </motion.a>
+                <motion.a
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  href="https://discord.gg/bfMAYrsMFf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Pitt Computer Science Club Discord"
+                  className="p-4 lg:p-2"
+                >
+                  <FontAwesomeIcon
+                    icon={faDiscord}
+                    className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -376,10 +394,11 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href="mailto:pittcsc@gmail.com"
                   aria-label="Pitt Computer Science Club Email"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faEnvelope}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
               </div>

@@ -6,6 +6,7 @@ import {
   faGithub,
   faLinkedin,
   faSlack,
+  faDiscord,
 } from "@fortawesome/free-brands-svg-icons";
 
 import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -155,7 +156,7 @@ const JoinPage = () => {
                 }}
                 className="polka-background-subPage absolute top-0 -right-48 lg:-right-24"
               ></motion.div>
-              <div className="relative w-5/6 max-w-md lg:w-3/4 xl:max-w-lg h-32 lg:h-48 p-6 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md">
+              <div className="relative w-5/6 max-w-md lg:w-3/4 xl:max-w-lg h-32 lg:h-48 p-6 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md flex-wrap">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -163,10 +164,11 @@ const JoinPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club GitHub"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faGithub}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -176,10 +178,11 @@ const JoinPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club LinkedIn"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faLinkedin}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -189,10 +192,25 @@ const JoinPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club Slack"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faSlack}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
+                  />
+                </motion.a>
+                <motion.a
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  href="https://discord.gg/bfMAYrsMFf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Pitt Computer Science Club Discord"
+                  className="p-4 lg:p-2"
+                >
+                  <FontAwesomeIcon
+                    icon={faDiscord}
+                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -200,10 +218,11 @@ const JoinPage = () => {
                   whileTap={{ scale: 0.9 }}
                   href="mailto:pittcsc@gmail.com"
                   aria-label="Pitt Computer Science Club Email"
+                  className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
                     icon={faEnvelope}
-                    className="text-primary text-5xl lg:text-7xl"
+                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
                   />
                 </motion.a>
               </div>
