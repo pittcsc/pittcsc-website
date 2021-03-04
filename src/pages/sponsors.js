@@ -35,6 +35,8 @@ const item = {
 const SponsorPage = ({ data }) => {
   useEffect(() => {
     hotjar.initialize(2276434, 6);
+    ReactGA.initialize("UA-58446605-1");
+    ReactGA.pageview("/sponsors");
   }, []);
 
   return (

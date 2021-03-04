@@ -44,6 +44,8 @@ import Layout from "../layouts/layout";
 const JoinPage = () => {
   useEffect(() => {
     hotjar.initialize(2276434, 6);
+    ReactGA.initialize("UA-58446605-1");
+    ReactGA.pageview("/join");
   }, []);
   return (
     <Layout title="Join the Club | Pitt Computer Science Club ">

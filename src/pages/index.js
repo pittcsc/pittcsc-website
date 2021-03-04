@@ -14,6 +14,7 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 import { motion, useAnimation } from "framer-motion";
 import { hotjar } from "react-hotjar";
+import ReactGA from "react-ga";
 
 import { useInView } from "react-intersection-observer";
 
@@ -144,6 +145,8 @@ const IndexPage = ({ data }) => {
     }
 
     hotjar.initialize(2276434, 6);
+    ReactGA.initialize("UA-58446605-1");
+    ReactGA.pageview("/");
   }, [controls, homeInView, missionInView, socialInView]);
 
   return (
