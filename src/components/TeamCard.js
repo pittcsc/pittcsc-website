@@ -7,13 +7,12 @@ import { motion } from "framer-motion";
 
 function TeamCard({ image, name, title, linkedIn, email }) {
   return (
-    <figure className="relative bg-gray-100 rounded-2xl p-8 shadow-md w-64 md:w-72">
+    <figure className="relative bg-gray-100 rounded-2xl p-8 shadow-md w-64 md:w-72 transform transition hover:shadow-lg hover:scale-105">
       <img
         className="w-48 h-48 object-cover rounded-full -mt-16 mx-auto"
         src={image}
         alt={`Portrait of ${name}`}
       />
-
       <figcaption className="text-center font-body">
         <div className="font-body font-medium text-lg md:text-xl pt-4">
           {name}
