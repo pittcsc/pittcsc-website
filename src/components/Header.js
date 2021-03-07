@@ -43,21 +43,27 @@ function Header() {
         <ul
           className={`flex flex-col justify-center items-center space-y-4 font-body md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
         >
-          <Link to="/about">
-            <li className="font-bold text-lg md:text-base">About Us</li>
-          </Link>
-          <a
-            href="https://pittcsc.medium.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <li className="font-bold text-lg md:text-base">Blog</li>
-          </a>
-          <Link to="/sponsors">
-            <li className="font-bold text-lg md:text-base">Sponsors</li>
-          </Link>
-          <Link to="/join">
-            <li>
+          <li>
+            <Link to="/about">
+              <div className="font-bold text-lg md:text-base">About Us</div>
+            </Link>
+          </li>
+          <li>
+            <a
+              href="https://pittcsc.medium.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="font-bold text-lg md:text-base">Blog</div>
+            </a>
+          </li>
+          <li>
+            <Link to="/sponsors">
+              <div className="font-bold text-lg md:text-base">Sponsors</div>
+            </Link>
+          </li>
+          <li>
+            <Link to="/join">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -65,8 +71,8 @@ function Header() {
               >
                 Join
               </motion.button>
-            </li>
-          </Link>
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>
