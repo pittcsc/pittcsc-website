@@ -157,7 +157,7 @@ const IndexPage = ({ data }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="space-y-40 min-h-screen my-8 mt-24 xl:my-32">
+        <div className="space-y-24 lg:space-y-40 min-h-screen my-8 mt-24 xl:my-32">
           <section className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center px-8 lg:w-10/12 lg:px-0">
             <motion.div
               variants={container}
@@ -174,7 +174,7 @@ const IndexPage = ({ data }) => {
               </motion.p>
               <motion.h1
                 variants={text}
-                className="text-4xl md:text-5xl lg:text-7xl 2xl:text-8xl font-bold font-body mb-4 mt-2 lg:mb-8 lg:mt-4 w-full z-10 relative"
+                className="text-4xl md:text-5xl lg:text-7xl 2xl:text-8xl font-bold font-body my-2 lg:my-4 w-full z-10 relative"
               >
                 Pitt Computer <br /> Science Club
                 <svg
@@ -192,9 +192,9 @@ const IndexPage = ({ data }) => {
 
               <motion.p
                 variants={text}
-                className="font-body text-sm md:text-base w-3/4 xl:w-3/4 2xl:text-lg leading-loose z-10 relative"
+                className="font-body text-sm md:text-base w-3/4 xl:w-3/4 2xl:text-lg leading-loose md:leading-loose xl:leading-loose 2xl:leading-loose z-10 relative"
               >
-                The University of Pittsburgh's largest CS-related student
+                The University of Pittsburgh's largest tech-related student
                 organization. Proudly pushing the boundaries on what it means to
                 be a Pitt student.
               </motion.p>
@@ -221,7 +221,7 @@ const IndexPage = ({ data }) => {
                   </motion.button>
                 </Link>
               </motion.div>
-              <div className="w-40 h-40 xl:w-80 xl:h-80 absolute bg-secondary-200 rounded-2xl top-0 -left-20 z-0 transform -rotate-12"></div>
+              <div className="w-40 h-40 xl:w-80 xl:h-80 absolute bg-secondary-200 rounded-2xl top-0 -left-20 lg:-top-8 lg:-left-40 z-0 transform -rotate-12"></div>
             </motion.div>
             <div className="w-full lg:w-1/2 relative flex justify-center items-center flex-col">
               <motion.img
@@ -296,7 +296,7 @@ const IndexPage = ({ data }) => {
                 animate={controls}
               >
                 <div className="w-3/4 xl:w-full bg-secondary-200 rounded-3xl p-8 xl:py-12 xl:px-8 max-w-lg my-4 xl:my-0 shadow-lg mx-auto">
-                  <h2 className="font-bold text-2xl xl:text-4xl font-body my-4">
+                  <h2 className="font-bold text-3xl xl:text-4xl font-body mb-4 lg:my-4">
                     Our Mission
                   </h2>
                   <p className="font-body xl:text-md">
@@ -335,7 +335,7 @@ const IndexPage = ({ data }) => {
               </svg>
             </div>
             <div className="w-full my-4 lg:my-0 lg:w-1/2">
-              <div className="w-5/6 max-w-md  xl:max-w-lg p-6 lg:py-12 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center flex-wrap shadow-lg">
+              <div className="w-5/6 max-w-md  xl:max-w-lg p-4 lg:px-6 lg:py-12 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center flex-wrap shadow-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}

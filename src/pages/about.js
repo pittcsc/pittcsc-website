@@ -96,7 +96,7 @@ const AboutPage = () => {
                 ></motion.div>
                 <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
                   <span className="text-white font-body text-6xl lg:text-8xl font-bold">
-                    214
+                    200+
                   </span>
                   <span className="text-white font-body text-lg lg:text-xl">
                     Members
@@ -117,8 +117,8 @@ const AboutPage = () => {
             <section className="container relative mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
               <div className="w-9/12  lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
                 <div className="mb-4 lg:mb-0">
-                  <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white my-4">
-                    Supporting CS at Pitt
+                  <h2 className="text-2xl lg:text-4xl xl:text-5xl max-w-xl font-bold font-body text-white my-4">
+                    Supporting Tech at Pitt
                     <svg
                       className="w-full my-2"
                       viewBox="0 0 470 12"
@@ -136,10 +136,11 @@ const AboutPage = () => {
                   <p className="font-body text-white text-base max-w-lg leading-loose">
                     The University of Pittsburgh Computer Science Club,
                     shortened as Pitt CSC, is the University of Pittsburgh's
-                    largest and premier computer science student organization.
+                    largest and premier technology-related student organization.
                     Open to all majors, we host a variety of events that help us
                     build a welcoming and inclusive community of motivated
-                    students interested in computer science at Pitt.
+                    students interested in fields such as computer science,
+                    information science, digital design, and much more.
                   </p>
                 </div>
                 <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">
