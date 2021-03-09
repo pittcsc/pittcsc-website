@@ -15,6 +15,7 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { motion, useAnimation } from "framer-motion";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
+import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
 import { useInView } from "react-intersection-observer";
 
@@ -288,6 +289,18 @@ const IndexPage = ({ data }) => {
                   animate={controls}
                   className="w-3/4 xl:w-9/12 rounded-3xl mx-auto shadow-lg"
                 />
+                <motion.a
+                  variants={maskAnimate}
+                  initial="hidden"
+                  animate={controls}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  href={FallReport}
+                  target="_blank"
+                  className="bg-white border-secondary-100 border-4 z-20 font-body relative bottom-4 text-center transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
+                >
+                  See Our Report
+                </motion.a>
               </div>
               <motion.div
                 className="w-full lg:w-1/2 relative"

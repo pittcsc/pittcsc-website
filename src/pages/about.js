@@ -15,6 +15,7 @@ import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
+import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
 // import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
 
@@ -137,11 +138,23 @@ const AboutPage = () => {
                     The University of Pittsburgh Computer Science Club,
                     shortened as Pitt CSC, is the University of Pittsburgh's
                     largest and premier technology-related student organization.
+                  </p>
+                  <br />
+                  <p className="font-body text-white text-base max-w-lg leading-loose">
                     Open to all majors, we host a variety of events that help us
                     build a welcoming and inclusive community of motivated
                     students interested in fields such as computer science,
                     information science, digital design, and much more.
                   </p>
+                  <motion.a
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    href={FallReport}
+                    target="_blank"
+                    className="text-center inline-block bg-white border-secondary-100 border-4 font-body transition text-black font-bold min-w-min my-4 py-2 px-4 rounded-full shadow-md hover:shadow-lg focus:outline-none"
+                  >
+                    See Our Report
+                  </motion.a>
                 </div>
                 <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">
                   <svg
