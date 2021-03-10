@@ -153,7 +153,7 @@ const AboutPage = () => {
                     target="_blank"
                     className="text-center inline-block bg-white border-secondary-100 border-4 font-body transition text-black font-bold min-w-min my-4 py-2 px-4 rounded-full shadow-md hover:shadow-lg focus:outline-none"
                   >
-                    See Our Report
+                    See Fall Report
                   </motion.a>
                 </div>
                 <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">

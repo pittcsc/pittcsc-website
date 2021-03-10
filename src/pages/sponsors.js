@@ -186,7 +186,7 @@ const SponsorPage = ({ data }) => {
                     target="_blank"
                     className="bg-white border-secondary-100 border-4 font-body absolute -bottom-6 lg:right-10 transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
                   >
-                    See Our Report
+                    See Fall Report
                   </motion.a>
                   <img
                     className="w-full lg:w-9/12 rounded-3xl mx-auto shadow-lg"
