@@ -110,7 +110,7 @@ const JoinPage = () => {
                 </span>
                 <li className="flex justify-center items-center col-span-2">
                   <a
-                    href="http://pittcsc.slack.com/"
+                    href="https://calendar.google.com/calendar/u/0/render?cid=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -119,7 +119,7 @@ const JoinPage = () => {
                       whileTap={{ scale: 0.9 }}
                       className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
                     >
-                      Join our Slack
+                      Add the Google Calendar
                     </motion.button>
                   </a>
                 </li>
@@ -163,28 +163,14 @@ const JoinPage = () => {
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://github.com/pittcsc"
+                  href="https://discord.gg/bfMAYrsMFf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club GitHub"
+                  aria-label="Pitt Computer Science Club Discord"
                   className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
-                    icon={faGithub}
-                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
-                  />
-                </motion.a>
-                <motion.a
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  href="https://www.linkedin.com/company/pittcsc/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club LinkedIn"
-                  className="p-4 lg:p-2"
-                >
-                  <FontAwesomeIcon
-                    icon={faLinkedin}
+                    icon={faDiscord}
                     className="text-primary text-5xl lg:text-6xl xl:text-7xl"
                   />
                 </motion.a>
@@ -205,14 +191,28 @@ const JoinPage = () => {
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://discord.gg/bfMAYrsMFf"
+                  href="https://www.linkedin.com/company/pittcsc/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club Discord"
+                  aria-label="Pitt Computer Science Club LinkedIn"
                   className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
-                    icon={faDiscord}
+                    icon={faLinkedin}
+                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
+                  />
+                </motion.a>
+                <motion.a
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  href="https://github.com/pittcsc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Pitt Computer Science Club GitHub"
+                  className="p-4 lg:p-2"
+                >
+                  <FontAwesomeIcon
+                    icon={faGithub}
                     className="text-primary text-5xl lg:text-6xl xl:text-7xl"
                   />
                 </motion.a>

@@ -352,28 +352,14 @@ const IndexPage = ({ data }) => {
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://github.com/pittcsc"
+                  href="https://discord.gg/bfMAYrsMFf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club GitHub"
+                  aria-label="Pitt Computer Science Club Discord"
                   className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
-                    icon={faGithub}
-                    className="text-primary text-5xl xl:text-7xl"
-                  />
-                </motion.a>
-                <motion.a
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  href="https://www.linkedin.com/company/pittcsc/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club LinkedIn"
-                  className="p-4 lg:p-2"
-                >
-                  <FontAwesomeIcon
-                    icon={faLinkedin}
+                    icon={faDiscord}
                     className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
@@ -394,14 +380,28 @@ const IndexPage = ({ data }) => {
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://discord.gg/bfMAYrsMFf"
+                  href="https://www.linkedin.com/company/pittcsc/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club Discord"
+                  aria-label="Pitt Computer Science Club LinkedIn"
                   className="p-4 lg:p-2"
                 >
                   <FontAwesomeIcon
-                    icon={faDiscord}
+                    icon={faLinkedin}
+                    className="text-primary text-5xl xl:text-7xl"
+                  />
+                </motion.a>
+                <motion.a
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  href="https://github.com/pittcsc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Pitt Computer Science Club GitHub"
+                  className="p-4 lg:p-2"
+                >
+                  <FontAwesomeIcon
+                    icon={faGithub}
                     className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
