@@ -10,7 +10,11 @@ import {
   faDiscord,
 } from "@fortawesome/free-brands-svg-icons";
 
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faVideo,
+  faEnvelope,
+  faCoffee,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { motion, useAnimation } from "framer-motion";
 import { hotjar } from "react-hotjar";
@@ -323,18 +327,19 @@ const IndexPage = ({ data }) => {
           </div>
 
           <motion.section
-            className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-16"
+            className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-8"
             variants={socialAnimate}
             ref={socialRef}
             initial="hidden"
             animate={controls}
           >
-            <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative">
-              <h2 className="font-bold text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-body">
-                Hit us up while you're here
+            {/* <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative"> */}
+            <div className="w-full my-4 lg:my-0 lg:w-1/2">
+              <h2 className="font-bold text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-body text-center">
+                Hit us up
               </h2>
               <svg
-                className="mx-auto w-80 lg:w-4/6 xl:w-5/6 svg-underline"
+                className="mx-auto mb-8 lg:mb-16 w-64 lg:w-1/4 xl:w-1/2 svg-underline"
                 viewBox="0 0 479 20"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -346,9 +351,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-            </div>
-            <div className="w-full my-4 lg:my-0 lg:w-1/2">
-              <div className="w-5/6 max-w-md  xl:max-w-lg p-4 lg:px-6 lg:py-12 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center flex-wrap shadow-lg">
+              <div className="w-5/6 max-w-md xl:max-w-lg mb-8 p-4 lg:px-6 lg:mb-0 lg:py-12 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center flex-wrap shadow-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -417,6 +420,65 @@ const IndexPage = ({ data }) => {
                     className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
+              </div>
+            </div>
+            <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative shadow-lg">
+              <svg
+                className="w-32 absolute -bottom-10 -left-10 lg:-left-20 lg:w-64"
+                viewBox="0 0 306 200"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M29 3C71.5 3.5 152.3 10.3 183.5 73.5C214.7 136.7 281.5 155.167 305 151.5"
+                  stroke="#FFB81C"
+                  stroke-width="5"
+                />
+                <path
+                  d="M1 48C43.5 48.5 124.3 55.3 155.5 118.5C186.7 181.7 253.5 200.167 277 196.5"
+                  stroke="#FFB81C"
+                  stroke-width="5"
+                />
+              </svg>
+              <iframe
+                src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
+                title="Pitt CSC Google Calendar"
+                frameborder="0"
+                scrolling="no"
+                height="600"
+                className="w-full"
+              ></iframe>
+              <div className="flex justify-center items-center flex-wrap">
+                <div className="flex justify-center items-center text-lg my-2 mx-2">
+                  <p className="mx-2"> Join our zoom meetings: </p>
+                  <a
+                    href="https://pitt.zoom.us/my/zhw78"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-center items-center"
+                    aria-label="Pitt Computer Science Club Zoom Meetings"
+                  >
+                    <FontAwesomeIcon
+                      icon={faVideo}
+                      className="text-primary text-lg lg:text-xl xl:text-2xl"
+                    />
+                  </a>
+                </div>
+                <div className="flex justify-center items-center text-lg my-2 mx-2">
+                  <p className="mx-2"> Sign up for a coffee chat: </p>
+                  <a
+                    href="https://www.signupgenius.com/go/10c0c4daca628a5fcc34-alumni"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-center items-center"
+                    aria-label="Pitt Computer Science Club Coffee Chats"
+                  >
+                    <FontAwesomeIcon
+                      icon={faCoffee}
+                      className="text-primary text-lg lg:text-xl xl:text-2xl"
+                    />
+                  </a>
+                </div>
               </div>
             </div>
           </motion.section>

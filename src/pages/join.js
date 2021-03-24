@@ -9,7 +9,11 @@ import {
   faDiscord,
 } from "@fortawesome/free-brands-svg-icons";
 
-import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faVideo,
+  faEnvelope,
+  faCoffee,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { motion } from "framer-motion";
 import { hotjar } from "react-hotjar";
@@ -234,7 +238,7 @@ const JoinPage = () => {
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
             <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
               <div className="w-full flex flex-row justify-around items-center flex-wrap">
-                <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative">
+                <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative shadow-lg">
                   <svg
                     className="w-32 absolute -bottom-10 -left-10 lg:-left-20 lg:w-64"
                     viewBox="0 0 306 200"
@@ -260,20 +264,37 @@ const JoinPage = () => {
                     height="600"
                     className="w-full"
                   ></iframe>
-                  <div className="flex justify-center items-center text-lg my-4">
-                    <p className="mx-2"> Join our zoom meetings: </p>
-                    <a
-                      href="https://pitt.zoom.us/my/zhw78"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex justify-center items-center"
-                      aria-label="Pitt Computer Science Club Zoom Meetings"
-                    >
-                      <FontAwesomeIcon
-                        icon={faVideo}
-                        className="text-primary text-lg lg:text-xl xl:text-2xl"
-                      />
-                    </a>
+                  <div className="flex justify-center items-center flex-wrap">
+                    <div className="flex justify-center items-center text-lg my-2 mx-2">
+                      <p className="mx-2"> Join our zoom meetings: </p>
+                      <a
+                        href="https://pitt.zoom.us/my/zhw78"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex justify-center items-center"
+                        aria-label="Pitt Computer Science Club Zoom Meetings"
+                      >
+                        <FontAwesomeIcon
+                          icon={faVideo}
+                          className="text-primary text-lg lg:text-xl xl:text-2xl"
+                        />
+                      </a>
+                    </div>
+                    <div className="flex justify-center items-center text-lg my-2 mx-2">
+                      <p className="mx-2"> Sign up for a coffee chat: </p>
+                      <a
+                        href="https://www.signupgenius.com/go/10c0c4daca628a5fcc34-alumni"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex justify-center items-center"
+                        aria-label="Pitt Computer Science Club Coffee Chats"
+                      >
+                        <FontAwesomeIcon
+                          icon={faCoffee}
+                          className="text-primary text-lg lg:text-xl xl:text-2xl"
+                        />
+                      </a>
+                    </div>
                   </div>
                 </div>
                 <div className="w-9/12 lg:w-auto p-4">
