@@ -1,39 +1,13 @@
 import React, { useEffect } from "react";
-
+import { officerList } from "../components/data";
 import groupImage from "../images/uber_csc_image.jpg";
-import ming from "../images/officers/ming.jpg";
-import olivia from "../images/officers/olivia.png";
-import gordon from "../images/officers/gordon.jpg";
-import janet from "../images/officers/janet.jpeg";
-import richie from "../images/officers/richie.jpg";
-import ryan from "../images/officers/ryan.jpg";
-import justin from "../images/officers/justin.jpg";
-import courtney from "../images/officers/courtney.jpg";
-import jamir from "../images/officers/jamir.jpg";
-import dylan from "../images/officers/dylan.jpg";
-import alexander from "../images/officers/Alexander_Grattan_Picture.jpg";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
 import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
-// import SwiperCore, { Navigation, Pagination, A11y, Mousewheel } from "swiper";
-
-// import { Swiper, SwiperSlide } from "swiper/react";
-
 import Layout from "../layouts/layout";
-
-// import {
-//   faGithub,
-//   faLinkedin,
-//   faSlack,
-// } from "@fortawesome/free-brands-svg-icons";
-
-// import { motion } from "framer-motion";
-
 import TeamCard from "../components/TeamCard";
-
-// SwiperCore.use([Navigation, Pagination, Mousewheel, A11y]);
 
 const AboutPage = () => {
   useEffect(() => {
@@ -188,83 +162,15 @@ const AboutPage = () => {
               The Officers
             </h2>
             <div className="grid gap-24 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 my-8">
-              <TeamCard
-                image={ming}
-                name="Zhengming Wang"
-                title="President"
-                linkedIn="https://www.linkedin.com/in/zhengmingwang/"
-                email="zhw78@pitt.edu"
-              />
-              <TeamCard
-                image={olivia}
-                name="Olivia Wininsky"
-                title="Vice President"
-                linkedIn="https://www.linkedin.com/in/oliviawininsky/"
-                email="onw5@pitt.edu"
-              />
-              <TeamCard
-                image={gordon}
-                name="Gordon Lu"
-                title="Business Manager"
-                linkedIn="https://www.linkedin.com/in/gordon-lu-aa1008152/"
-                email="gol6@pitt.edu"
-              />
-              <TeamCard
-                image={janet}
-                name="Janet Majekodunmi"
-                title="PR Manager"
-                linkedIn="https://www.linkedin.com/in/janet-majekodunmi-5a8474190/"
-                email="jam580@pitt.edu"
-              />
-              <TeamCard
-                image={justin}
-                name="Justin Kramer"
-                title="Internal Affairs Coordinator"
-                linkedIn="https://www.linkedin.com/in/kjustin2/"
-                email="jpk91@pitt.edu"
-              />
-              <TeamCard
-                image={richie}
-                name="Richie Goulazian"
-                title="Director of Initiatives"
-                linkedIn="https://www.linkedin.com/in/rgoulazian/"
-                email="rhg13@pitt.edu"
-              />
-              <TeamCard
-                image={ryan}
-                name="Ryan Yang"
-                title="Event Coordinator"
-                linkedIn="https://www.linkedin.com/in/ruzakiff/"
-                email="rcy7@pitt.edu"
-              />
-              <TeamCard
-                image={courtney}
-                name="Courtney Sheridan"
-                title="Outreach Director"
-                linkedIn="https://www.linkedin.com/in/courtneyrsheridan/"
-                email="crs173@pitt.edu"
-              />
-              <TeamCard
-                image={jamir}
-                name="Jamir Grier"
-                title="Initiative Lead"
-                linkedIn="https://www.linkedin.com/in/jamir-grier-594518182/"
-                email="jlg21@pitt.edu"
-              />
-              <TeamCard
-                image={dylan}
-                name="Dylan Feehan"
-                title="Director of Partnerships"
-                linkedIn="https://www.linkedin.com/in/dylan-feehan/"
-                email="djf92@pitt.edu"
-              />
-              <TeamCard
-                image={alexander}
-                name="Alexander Grattan"
-                title="Software Developer"
-                linkedIn="https://www.linkedin.com/in/alexander-grattan-11a187149/"
-                email="ajg162@pitt.edu"
-              />
+              {officerList.map(({ name, title, linkedIn, email, image }) => (
+                <TeamCard
+                  image={image}
+                  name={name}
+                  title={title}
+                  linkedIn={linkedIn}
+                  email={email}
+                />
+              ))}
             </div>
             {/* <Swiper
               slidesPerView={swiperNum}
