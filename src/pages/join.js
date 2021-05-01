@@ -123,7 +123,7 @@ const JoinPage = () => {
                       whileTap={{ scale: 0.9 }}
                       className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
                     >
-                      Add the Google Calendar
+                      Add Google Calendar
                     </motion.button>
                   </a>
                 </li>

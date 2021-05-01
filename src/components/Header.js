@@ -14,9 +14,9 @@ function Header() {
 
   return (
     <header
-      className={`container mx-auto w-full p-4 ${
+      className={`mx-auto w-full p-4 header-max-width ${
         nav ? "shadow-md" : ""
-      } md:* md:w-10/12 md:p-0 md:py-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center`}
+      } md:shadow-none md:w-10/12 md:p-0 md:py-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center`}
     >
       <div className="flex justify-between items-center mx-auto md:block md:mx-0">
         <Link to="/">
@@ -36,9 +36,9 @@ function Header() {
         </button>
       </div>
       <nav
-        className={`transition-all relative bg-white max-h-0 opacity-0 ${
-          nav ? "max-h-96 opacity-100 p-4" : ""
-        } md:max-h-96 md:bg-none md:opacity-100`}
+        className={`transition-all relative bg-white pointer-events-none max-h-0 opacity-0 ${
+          nav ? "max-h-96 opacity-100 p-4 pointer-events-auto" : ""
+        } md:max-h-96 md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
         <ul
           className={`flex flex-col justify-center items-center space-y-4 font-body md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
