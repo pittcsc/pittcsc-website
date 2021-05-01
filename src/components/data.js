@@ -11,7 +11,7 @@ export const officerList = [
     title: "Vice President",
     linkedIn: "https://www.linkedin.com/in/courtneyrsheridan/",
     email: "crs173@pitt.edu",
-    image: "../images/officers/courtney.jpg",
+    image: "../images/officers/courtney_image.jpg",
   },
   {
     name: "Sean Steinle",
