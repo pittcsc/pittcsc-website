@@ -26,7 +26,7 @@ import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
 import { useInView } from "react-intersection-observer";
 
-import heroImage from "../images/hero_image.png";
+// import heroImage from "../images/hero_image.png";
 import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 import Layout from "../layouts/layout";
 
