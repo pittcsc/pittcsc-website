@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
 import { Link } from "gatsby";
+import Lottie from "react-lottie";
+
+import animationData from "../animations/pittcscLogoAnimation.json";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -26,6 +29,15 @@ import { useInView } from "react-intersection-observer";
 import heroImage from "../images/hero_image.png";
 import MaskImage from "../images/Pitt_CSC_Mask.jpg";
 import Layout from "../layouts/layout";
+
+const logoAnimationOptions = {
+  loop: false,
+  autoplay: true,
+  animationData: animationData,
+  renderSettings: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
 
 const container = {
   hidden: { opacity: 0 },
@@ -179,9 +191,11 @@ const IndexPage = ({ data }) => {
               </motion.p>
               <motion.h1
                 variants={text}
-                className="text-4xl md:text-5xl lg:text-7xl 2xl:text-8xl font-bold font-body my-2 lg:my-4 w-full z-10 relative"
+                className="text-4xl md:text-5xl lg:text-7xl 2xl:text-8xl font-bold font-body my-2 lg:my-4 w-full z-10 whitespace-pre relative"
               >
-                Pitt Computer <br /> Science Club
+                Pitt Computer
+                <br />
+                Science Club
                 <svg
                   className="relative z-10 w-64 lg:w-1/2 xl:w-3/4 svg-underline"
                   viewBox="0 0 422 12"
@@ -229,7 +243,7 @@ const IndexPage = ({ data }) => {
               <div className="w-40 h-40 xl:w-80 xl:h-80 absolute bg-secondary-200 rounded-2xl top-0 -left-20 lg:-top-8 lg:-left-40 z-0 transform -rotate-12"></div>
             </motion.div>
             <div className="w-full lg:w-1/2 relative flex justify-center items-center flex-col">
-              <motion.img
+              {/* <motion.img
                 initial={{
                   opacity: 0,
                   x: 50,
@@ -244,7 +258,21 @@ const IndexPage = ({ data }) => {
                 className="w-3/4 md:w-1/2 lg:w-full z-20 mx-auto relative"
                 src={heroImage}
                 alt="pitt_csc_logo"
-              />
+              /> */}
+              <motion.div
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                }}
+                transition={{
+                  delay: 0.4,
+                }}
+                className=" svg-lottie z-20 relative"
+              >
+                <Lottie options={logoAnimationOptions} className="" />
+              </motion.div>
 
               <motion.div
                 initial={{

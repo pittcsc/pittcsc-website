@@ -41,6 +41,7 @@
     "react-helmet": "^6.1.0",
     "react-hotjar": "^2.2.1",
     "react-intersection-observer": "^8.31.0",
+    "react-lottie": "^1.2.3",
     "swiper": "^6.4.11"
   },
   "devDependencies": {
