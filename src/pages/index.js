@@ -329,7 +329,7 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href={FallReport}
                   target="_blank"
-                  className="block relative bottom-4 z-20"
+                  className="inline-block relative bottom-4 z-20"
                 >
                   <button className="bg-white border-secondary-100 border-4 font-body text-center transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none">
                     See Fall Report
