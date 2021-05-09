@@ -240,7 +240,7 @@ const IndexPage = ({ data }) => {
                   </motion.button>
                 </Link>
               </motion.div>
-              <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
+              <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
             </motion.div>
             <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
               {/* <motion.img

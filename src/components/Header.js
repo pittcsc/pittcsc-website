@@ -18,9 +18,9 @@ function Header() {
         nav ? "shadow-md" : ""
       } md:shadow-none md:w-10/12 md:p-0 md:py-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center`}
     >
-      <div className="flex justify-between items-center mx-auto md:block md:mx-0">
+      <div className="flex items-center justify-between mx-auto md:block md:mx-0">
         <Link to="/">
-          <img src={logo} alt="pitt-csc-logo" className="w-32 relative" />
+          <img src={logo} alt="pitt-csc-logo" className="relative w-32" />
         </Link>
         <button
           className={`cursor-pointer md:hidden z-40 focus:outline-none 
@@ -45,10 +45,10 @@ function Header() {
         >
           <li>
             <Link to="/about">
-              <div className="w-full relative font-bold text-lg text-center md:text-base group">
+              <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 About Us
                 <svg
-                  className="absolute bottom-0 mx-auto w-full left-1/2 svg-underline transition transform opacity-0 group-hover:opacity-100 -translate-x-1/2"
+                  className="svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition"
                   viewBox="0 0 479 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -64,10 +64,10 @@ function Header() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div className="w-full relative font-bold text-lg text-center md:text-base group">
+              <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 Blog
                 <svg
-                  className="absolute bottom-0 mx-auto w-full left-1/2 svg-underline transition transform opacity-0 group-hover:opacity-100 -translate-x-1/2"
+                  className="svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition"
                   viewBox="0 0 479 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -79,10 +79,10 @@ function Header() {
           </li>
           <li>
             <Link to="/sponsors">
-              <div className="w-full relative font-bold text-lg text-center md:text-base group">
+              <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 Sponsors
                 <svg
-                  className="absolute bottom-0 mx-auto w-full left-1/2 svg-underline transition transform opacity-0 group-hover:opacity-100 -translate-x-1/2"
+                  className="svg-underline transform-gpu-gpu absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 -translate-x-1/2 transition"
                   viewBox="0 0 479 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ function Header() {
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="bg-primary text-lg md:text-base w-32 md:w-24 text-white font-bold  py-2 px-4 rounded-full shadow-md hover:shadow-lg transition focus:outline-none"
+                className="px-4 py-2 w-32 text-white text-lg font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition md:w-24 md:text-base"
               >
                 Join
               </motion.button>

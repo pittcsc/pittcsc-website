@@ -10,7 +10,7 @@ const Layout = ({ title, children }) => (
     <Header />
     <SEO title={title} />
     <AnimatePresence exitBeforeEnter>
-      <main>{children}</main>
+      <main key="main">{children}</main>
     </AnimatePresence>
     <Footer />
   </div>
