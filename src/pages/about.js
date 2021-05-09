@@ -24,13 +24,13 @@ const AboutPage = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
-          <section className="container mx-auto flex w-full flex-col justify-center items-center">
+        <div className="mt-24 my-8 min-h-screen space-y-24 xl:my-24">
+          <section className="container flex flex-col items-center justify-center mx-auto w-full">
             <div>
-              <h1 className="text-4xl lg:text-6xl font-bold  mb-8 mt-4 w-full z-10 relative text-center">
+              <h1 className="relative z-10 mb-8 mt-4 w-full text-center text-4xl font-bold lg:text-6xl">
                 About the Club
                 <svg
-                  className="relative z-10 w-64 lg:w-full svg-underline"
+                  className="svg-underline relative z-10 w-64 lg:w-full"
                   viewBox="0 0 422 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -53,8 +53,8 @@ const AboutPage = () => {
                 </svg>
               </h1>
             </div>
-            <div className="w-10/12 flex flex-col justify-center items-center xl:w-3/4 py-4 text-center lg:text-left lg:py-8">
-              <div className="w-full flex flex-col justify-around items-center lg:flex-row relative">
+            <div className="flex flex-col items-center justify-center py-4 w-10/12 text-center lg:py-8 lg:text-left xl:w-3/4">
+              <div className="relative flex flex-col items-center justify-around w-full lg:flex-row">
                 <motion.div
                   initial={{
                     opacity: 0,
@@ -67,33 +67,31 @@ const AboutPage = () => {
                   transition={{
                     delay: 0.4,
                   }}
-                  className="polka-background-subPage absolute -top-10 -left-10"
+                  className="polka-background-subPage absolute -left-10 -top-10"
                 ></motion.div>
-                <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
-                  <span className="text-white  text-6xl lg:text-8xl font-bold">
+                <div className="relative flex flex-col items-center justify-center my-4 p-8 w-5/6 h-32 bg-primary rounded-2xl shadow-md lg:my-2 lg:w-96 lg:h-48">
+                  <span className="text-white text-6xl font-bold lg:text-8xl">
                     200+
                   </span>
-                  <span className="text-white  text-lg lg:text-xl">
-                    Members
-                  </span>
+                  <span className="text-white text-lg lg:text-xl">Members</span>
                 </div>
-                <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
-                  <span className="text-white text-6xl lg:text-8xl  font-bold">
+                <div className="relative flex flex-col items-center justify-center my-4 p-8 w-5/6 h-32 bg-primary rounded-2xl shadow-md lg:my-2 lg:w-96 lg:h-48">
+                  <span className="text-white text-6xl font-bold lg:text-8xl">
                     30+
                   </span>
-                  <span className="text-white  text-lg lg:text-xl">Events</span>
+                  <span className="text-white text-lg lg:text-xl">Events</span>
                 </div>
               </div>
             </div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container relative mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
-              <div className="w-9/12  lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
+            <section className="container relative flex flex-col items-center justify-center mx-auto py-24 w-full lg:py-32">
+              <div className="flex flex-col items-center justify-center w-9/12 lg:flex-row lg:justify-around lg:w-full">
                 <div className="mb-4 lg:mb-0">
-                  <h2 className="text-2xl lg:text-4xl xl:text-5xl max-w-xl font-bold  text-white my-4">
+                  <h2 className="my-4 max-w-xl text-white text-2xl font-bold lg:text-4xl xl:text-5xl">
                     Supporting Tech at Pitt
                     <svg
-                      className="w-full my-2"
+                      className="my-2 w-full"
                       viewBox="0 0 470 12"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -106,13 +104,13 @@ const AboutPage = () => {
                       />
                     </svg>
                   </h2>
-                  <p className=" text-white text-base max-w-lg leading-loose">
+                  <p className="max-w-lg text-white text-base leading-loose">
                     The University of Pittsburgh Computer Science Club,
                     shortened as Pitt CSC, is the University of Pittsburgh's
                     largest and premier technology-related student organization.
                   </p>
                   <br />
-                  <p className=" text-white text-base max-w-lg leading-loose">
+                  <p className="max-w-lg text-white text-base leading-loose">
                     Open to all majors, we host a variety of events that help us
                     build a welcoming and inclusive community of motivated
                     students interested in fields such as computer science,
@@ -123,14 +121,14 @@ const AboutPage = () => {
                     whileTap={{ scale: 0.9 }}
                     href={FallReport}
                     target="_blank"
-                    className="text-center inline-block bg-white border-secondary-100 border-4  transition text-black font-bold min-w-min my-4 py-2 px-4 rounded-full shadow-md hover:shadow-lg focus:outline-none"
+                    className="inline-block my-4 px-4 py-2 min-w-min text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
                   >
                     See Fall Report
                   </motion.a>
                 </div>
-                <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center  relative">
+                <div className="relative flex flex-col items-center justify-center mt-4 w-full lg:mt-0 lg:w-1/2">
                   <svg
-                    className="w-32 absolute -bottom-10 -left-10 lg:left-0 md:w-48"
+                    className="absolute -bottom-10 -left-10 w-32 md:w-48 lg:left-0"
                     viewBox="0 0 306 200"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -147,7 +145,7 @@ const AboutPage = () => {
                     />
                   </svg>
                   <img
-                    className="w-full lg:w-9/12 rounded-3xl mx-auto shadow-lg"
+                    className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
                     src={groupImage}
                     alt="Club at Uber"
                   />
@@ -155,11 +153,11 @@ const AboutPage = () => {
               </div>
             </section>
           </div>
-          <section className="container mx-auto flex w-full flex-col justify-center items-center">
-            <h2 className="text-2xl lg:text-5xl max-w-lg font-bold  mt-4 mb-8">
+          <section className="container flex flex-col items-center justify-center mx-auto w-full">
+            <h2 className="mb-8 mt-4 max-w-lg text-2xl font-bold lg:text-5xl">
               The Officers
             </h2>
-            <div className="grid gap-24 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 my-8">
+            <div className="grid gap-24 grid-cols-1 2xl:grid-cols-4 my-8 md:grid-cols-2 lg:grid-cols-3">
               {officerList.map(({ name, title, linkedIn, email, image }) => (
                 <TeamCard
                   image={image}
@@ -170,112 +168,6 @@ const AboutPage = () => {
                 />
               ))}
             </div>
-            {/* <Swiper
-              slidesPerView={swiperNum}
-              navigation
-              pagination={{ clickable: true }}
-              mousewheel
-            >
-              <SwiperSlide>
-                <TeamCard
-                  image={ming}
-                  name="Zhengming Wang"
-                  title="President"
-                  linkedIn="https://www.linkedin.com/in/zhengmingwang/"
-                  email="zhw78@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={olivia}
-                  name="Olivia Wininsky"
-                  title="Vice President"
-                  linkedIn="https://www.linkedin.com/in/oliviawininsky/"
-                  email="onw5@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={gordon}
-                  name="Gordon Lu"
-                  title="Business Manager"
-                  linkedIn="https://www.linkedin.com/in/gordon-lu-aa1008152/"
-                  email="gol6@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={janet}
-                  name="Janet Majekodunmi"
-                  title="PR Manager"
-                  linkedIn="https://www.linkedin.com/in/janet-majekodunmi-5a8474190/"
-                  email="jam580@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={justin}
-                  name="Justin Kramer"
-                  title="Internal Affairs Coordinator"
-                  linkedIn="https://www.linkedin.com/in/kjustin2/"
-                  email="jpk91@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={richie}
-                  name="Richie Goulazian"
-                  title="Director of Initiatives"
-                  linkedIn="https://www.linkedin.com/in/rgoulazian/"
-                  email="rhg13@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={ryan}
-                  name="Ryan Yang"
-                  title="Event Coordinator"
-                  linkedIn="https://www.linkedin.com/in/ruzakiff/"
-                  email="rcy7@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={courtney}
-                  name="Courtney Sheridan"
-                  title="Outreach Director"
-                  linkedIn="https://www.linkedin.com/in/courtneyrsheridan/"
-                  email="crs173@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={jamir}
-                  name="Jamir Grier"
-                  title="Initiative Lead"
-                  linkedIn="https://www.linkedin.com/in/jamir-grier-594518182/"
-                  email="jlg21@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={dylan}
-                  name="Dylan Feehan"
-                  title="Director of Partnerships"
-                  linkedIn="https://www.linkedin.com/in/dylan-feehan/"
-                  email="djf92@pitt.edu"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TeamCard
-                  image={alexander}
-                  name="Alexander Grattan"
-                  title="Software Developer"
-                  linkedIn="https://www.linkedin.com/in/alexander-grattan-11a187149/"
-                  email="ajg162@pitt.edu"
-                />
-              </SwiperSlide>
-            </Swiper> */}
           </section>
         </div>
       </motion.div>
