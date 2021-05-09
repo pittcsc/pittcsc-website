@@ -24,43 +24,44 @@ function Modal({ open, children, onClose }) {
     },
   };
 
-  if (!open) return null;
   return ReactDom.createPortal(
     <AnimatePresence exitBeforeEnter>
-      <motion.div
-        variants={backdrop}
-        initial="hidden"
-        animate="show"
-        exit="hidden"
-        className="modal-overlay"
-        onClick={onClose}
-        onKeyDown={onClose}
-        role="button"
-        tabIndex="0"
-      >
+      {open && (
         <motion.div
-          variants={modal}
-          className="modal"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          onKeyDown={(e) => {
-            e.stopPropagation();
-          }}
+          variants={backdrop}
+          initial="hidden"
+          animate="show"
+          exit="hidden"
+          className="modal-overlay"
+          onClick={onClose}
+          onKeyDown={onClose}
           role="button"
-          tabIndex="-1"
+          tabIndex="0"
         >
-          {children}
-          <button
-            onClick={onClose}
-            onKeyDown={onClose}
-            className="absolute right-0 top-0 m-4 w-8 h-8 text-black text-2xl focus:outline-none"
+          <motion.div
+            variants={modal}
+            className="modal"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
+            role="button"
             tabIndex="-1"
           >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+            {children}
+            <button
+              onClick={onClose}
+              onKeyDown={onClose}
+              className="absolute right-0 top-0 m-4 w-8 h-8 text-black text-2xl focus:outline-none"
+              tabIndex="-1"
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </AnimatePresence>,
     portalRoot
   );
