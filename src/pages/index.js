@@ -329,9 +329,11 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href={FallReport}
                   target="_blank"
-                  className="bg-white border-secondary-100 border-4 z-20 font-body relative bottom-4 text-center transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
+                  className="block relative bottom-4 z-20"
                 >
-                  See Fall Report
+                  <button className="bg-white border-secondary-100 border-4 font-body text-center transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none">
+                    See Fall Report
+                  </button>
                 </motion.a>
               </div>
               <motion.div
