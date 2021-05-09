@@ -45,7 +45,17 @@ function Header() {
         >
           <li>
             <Link to="/about">
-              <div className="font-bold text-lg md:text-base">About Us</div>
+              <div className="w-full relative font-bold text-lg text-center md:text-base group">
+                About Us
+                <svg
+                  className="absolute bottom-0 mx-auto w-full left-1/2 svg-underline transition transform opacity-0 group-hover:opacity-100 -translate-x-1/2"
+                  viewBox="0 0 479 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
+                </svg>
+              </div>
             </Link>
           </li>
           <li>
@@ -54,12 +64,32 @@ function Header() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div className="font-bold text-lg md:text-base">Blog</div>
+              <div className="w-full relative font-bold text-lg text-center md:text-base group">
+                Blog
+                <svg
+                  className="absolute bottom-0 mx-auto w-full left-1/2 svg-underline transition transform opacity-0 group-hover:opacity-100 -translate-x-1/2"
+                  viewBox="0 0 479 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
+                </svg>
+              </div>
             </a>
           </li>
           <li>
             <Link to="/sponsors">
-              <div className="font-bold text-lg md:text-base">Sponsors</div>
+              <div className="w-full relative font-bold text-lg text-center md:text-base group">
+                Sponsors
+                <svg
+                  className="absolute bottom-0 mx-auto w-full left-1/2 svg-underline transition transform opacity-0 group-hover:opacity-100 -translate-x-1/2"
+                  viewBox="0 0 479 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
+                </svg>
+              </div>
             </Link>
           </li>
           <li>
