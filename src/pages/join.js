@@ -63,7 +63,7 @@ const JoinPage = () => {
         <div className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
           <section className="container mx-auto flex w-full flex-col justify-center items-center">
             <div>
-              <h1 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center">
+              <h1 className="text-4xl lg:text-6xl font-bold  mb-8 mt-4 w-full z-10 relative text-center">
                 Join Pitt CSC
                 <svg
                   className="relative z-10 w-64 lg:w-full svg-underline"
@@ -91,7 +91,7 @@ const JoinPage = () => {
             </div>
             <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row py-8 relative">
               <ul className="relative z-10 grid grid-cols-3 place-items-center w-11/12 md:w-auto gap-4 lg:gap-8 mx-auto box-border">
-                <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
+                <span className="text-3xl lg:text-4xl font-bold  col-span-1">
                   1.
                 </span>
                 <li className="flex justify-center items-center col-span-2">
@@ -103,15 +103,13 @@ const JoinPage = () => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
+                      className="bg-primary transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md focus:outline-none hover:shadow-lg"
                     >
                       Join the email list
                     </motion.button>
                   </a>
                 </li>
-                <span className="text-3xl font-bold font-body col-span-1">
-                  2.
-                </span>
+                <span className="text-3xl font-bold  col-span-1">2.</span>
                 <li className="flex justify-center items-center col-span-2">
                   <a
                     href="https://calendar.google.com/calendar/u/0/render?cid=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com"
@@ -121,17 +119,17 @@ const JoinPage = () => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
+                      className="bg-primary  transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
                     >
                       Add Google Calendar
                     </motion.button>
                   </a>
                 </li>
-                <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
+                <span className="text-3xl lg:text-4xl font-bold  col-span-1">
                   3.
                 </span>
                 <li className="flex justify-center items-center col-span-2">
-                  <span className="text-2xl lg:text-4xl font-bold font-body relative">
+                  <span className="text-2xl lg:text-4xl font-bold  relative">
                     Keep in contact!
                     <svg
                       width="196"
@@ -238,7 +236,7 @@ const JoinPage = () => {
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
             <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
               <div className="w-full flex flex-row justify-around items-center flex-wrap">
-                <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative shadow-lg">
+                <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center  relative shadow-lg">
                   <svg
                     className="w-32 absolute -bottom-10 -left-10 lg:-left-20 lg:w-64"
                     viewBox="0 0 306 200"
@@ -298,7 +296,7 @@ const JoinPage = () => {
                   </div>
                 </div>
                 <div className="w-9/12 lg:w-auto p-4">
-                  <h2 className="text-2xl lg:text-5xl font-bold font-body text-white my-4">
+                  <h2 className="text-2xl lg:text-5xl font-bold  text-white my-4">
                     Pop in to an event
                     <svg
                       width="156"
@@ -315,7 +313,7 @@ const JoinPage = () => {
                       />
                     </svg>
                   </h2>
-                  <p className="font-body text-white text-base max-w-lg leading-loose">
+                  <p className=" text-white text-base max-w-lg leading-loose">
                     There are always a variety of different things to attend
                     including hackathons, talks, and coffee chats! We typically
                     host meetings on Mondays and Wednesdays at 8pm.

@@ -41,7 +41,7 @@ function Header() {
         } md:max-h-96 md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
         <ul
-          className={`flex flex-col justify-center items-center space-y-4 font-body md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
+          className={`flex flex-col justify-center items-center space-y-4  md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
         >
           <li>
             <Link to="/about">
@@ -97,7 +97,7 @@ function Header() {
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="bg-primary text-lg md:text-base w-32 md:w-24 text-white font-bold font-body py-2 px-4 rounded-full shadow-md hover:shadow-lg transition focus:outline-none"
+                className="bg-primary text-lg md:text-base w-32 md:w-24 text-white font-bold  py-2 px-4 rounded-full shadow-md hover:shadow-lg transition focus:outline-none"
               >
                 Join
               </motion.button>

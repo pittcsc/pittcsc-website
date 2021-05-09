@@ -174,30 +174,30 @@ const IndexPage = ({ data }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="space-y-24 lg:space-y-40 min-h-screen my-8 mt-24 xl:my-32">
-          <section className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center px-8 lg:w-10/12 lg:px-0">
+        <div className="mt-24 my-8 min-h-screen space-y-24 lg:space-y-40 xl:my-32">
+          <section className="container flex flex-col items-center justify-center mx-auto px-8 w-full lg:flex-row lg:px-0 lg:w-10/12">
             <motion.div
               variants={container}
               initial="hidden"
               animate={controls}
               ref={homeRef}
-              className="xl:w-3/4 break-normal relative"
+              className="relative break-normal xl:w-3/4"
             >
               <motion.p
                 variants={text}
-                className="font-light text-lg xl:text-xl font-body z-10 relative"
+                className="relative z-10 text-lg font-light xl:text-xl"
               >
                 2020-2021 SCHOOL YEAR
               </motion.p>
               <motion.h1
                 variants={text}
-                className="text-4xl md:text-5xl lg:text-7xl 2xl:text-8xl font-bold font-body my-2 lg:my-4 w-full z-10 whitespace-pre relative"
+                className="relative z-10 my-2 w-full whitespace-pre text-4xl 2xl:text-8xl font-bold md:text-5xl lg:my-4 lg:text-7xl"
               >
                 Pitt Computer
                 <br />
                 Science Club
                 <svg
-                  className="relative z-10 w-64 lg:w-1/2 xl:w-3/4 svg-underline"
+                  className="svg-underline relative z-10 w-64 lg:w-1/2 xl:w-3/4"
                   viewBox="0 0 422 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -211,7 +211,7 @@ const IndexPage = ({ data }) => {
 
               <motion.p
                 variants={text}
-                className="font-body text-sm md:text-base w-3/4 xl:w-3/4 2xl:text-lg leading-loose md:leading-loose xl:leading-loose 2xl:leading-loose z-10 relative"
+                className="relative z-10 w-3/4 2xl:text-lg text-sm leading-loose 2xl:leading-loose md:text-base md:leading-loose xl:w-3/4 xl:leading-loose"
               >
                 The University of Pittsburgh's largest tech-related student
                 organization. Proudly pushing the boundaries on what it means to
@@ -219,13 +219,13 @@ const IndexPage = ({ data }) => {
               </motion.p>
               <motion.div
                 variants={text}
-                className="pt-4 pb-12 lg:py-4 space-x-4 xl:space-x-8 z-20 relative"
+                className="relative z-20 pb-12 pt-4 space-x-4 lg:py-4 xl:space-x-8"
               >
                 <Link to="/join">
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
+                    className="min-w-300 px-4 py-2 text-white font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
                   >
                     Join the Club
                   </motion.button>
@@ -234,15 +234,15 @@ const IndexPage = ({ data }) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="border-4 font-body transition border-primary bg-white font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
+                    className="min-w-300 px-4 py-2 font-bold bg-white border-4 border-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
                   >
                     What We Do
                   </motion.button>
                 </Link>
               </motion.div>
-              <div className="w-40 h-40 xl:w-80 xl:h-80 absolute bg-secondary-200 rounded-2xl top-0 -left-20 lg:-top-8 lg:-left-40 z-0 transform -rotate-12"></div>
+              <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
             </motion.div>
-            <div className="w-full lg:w-1/2 relative flex justify-center items-center flex-col">
+            <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
               {/* <motion.img
                 initial={{
                   opacity: 0,
@@ -269,7 +269,7 @@ const IndexPage = ({ data }) => {
                 transition={{
                   delay: 0.4,
                 }}
-                className=" svg-lottie z-20 relative"
+                className="svg-lottie relative z-20"
               >
                 <Lottie options={logoAnimationOptions} className="" />
               </motion.div>
@@ -286,15 +286,15 @@ const IndexPage = ({ data }) => {
                 transition={{
                   delay: 0.4,
                 }}
-                className="polka-background absolute z-10 -top-10 -right-10 lg:-top-20"
+                className="polka-background absolute z-10 -right-10 -top-10 lg:-top-20"
               ></motion.div>
             </div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container relative z-10 mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-24 lg:py-32">
-              <div className="w-full lg:w-1/2 text-center my-4 xl:my-0 relative">
+            <section className="container relative z-10 flex flex-col items-center justify-center mx-auto py-24 w-full lg:flex-row lg:py-32">
+              <div className="relative my-4 w-full text-center lg:w-1/2 xl:my-0">
                 <motion.svg
-                  className="w-32 absolute -top-10 right-0 md:w-64 lg:w-48 xl:w-64 md:-top-20 svg-underline z-10"
+                  className="svg-underline absolute z-10 -top-10 right-0 w-32 md:-top-20 md:w-64 lg:w-48 xl:w-64"
                   viewBox="0 0 306 200"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -319,7 +319,7 @@ const IndexPage = ({ data }) => {
                   variants={maskAnimate}
                   initial="hidden"
                   animate={controls}
-                  className="w-3/4 xl:w-9/12 rounded-3xl mx-auto shadow-lg"
+                  className="mx-auto w-3/4 rounded-3xl shadow-lg xl:w-9/12"
                 />
                 <motion.a
                   variants={maskAnimate}
@@ -329,24 +329,24 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href={FallReport}
                   target="_blank"
-                  className="inline-block relative bottom-4 z-20"
+                  className="relative z-20 bottom-4 inline-block"
                 >
-                  <button className="bg-white border-secondary-100 border-4 font-body text-center transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none">
+                  <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
                     See Fall Report
                   </button>
                 </motion.a>
               </div>
               <motion.div
-                className="w-full lg:w-1/2 relative"
+                className="relative w-full lg:w-1/2"
                 variants={missionAnimate}
                 initial="hidden"
                 animate={controls}
               >
-                <div className="w-3/4 xl:w-full bg-secondary-200 rounded-3xl p-8 xl:py-12 xl:px-8 max-w-lg my-4 xl:my-0 shadow-lg mx-auto">
-                  <h2 className="font-bold text-3xl xl:text-4xl font-body mb-4 lg:my-4">
+                <div className="mx-auto my-4 p-8 w-3/4 max-w-lg bg-secondary-200 rounded-3xl shadow-lg xl:my-0 xl:px-8 xl:py-12 xl:w-full">
+                  <h2 className="mb-4 text-3xl font-bold lg:my-4 xl:text-4xl">
                     Our Mission
                   </h2>
-                  <p className="font-body xl:text-md">
+                  <p className="xl:text-md">
                     To help create an engaging atmosphere for students to learn
                     more about the field of computer science and develop
                     professionally.
@@ -357,19 +357,19 @@ const IndexPage = ({ data }) => {
           </div>
 
           <motion.section
-            className="container mx-auto flex w-full flex-col lg:flex-row justify-center items-center py-8"
+            className="container flex flex-col items-center justify-center mx-auto py-8 w-full lg:flex-row"
             variants={socialAnimate}
             ref={socialRef}
             initial="hidden"
             animate={controls}
           >
             {/* <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative"> */}
-            <div className="w-full my-4 lg:my-0 lg:w-1/2">
-              <h2 className="font-bold text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-body text-center">
+            <div className="my-4 w-full lg:my-0 lg:w-1/2">
+              <h2 className="text-center text-4xl 2xl:text-7xl font-bold lg:text-5xl xl:text-6xl">
                 Hit us up
               </h2>
               <svg
-                className="mx-auto mb-8 lg:mb-16 w-64 lg:w-1/4 xl:w-1/2 svg-underline"
+                className="svg-underline mb-8 mx-auto w-64 lg:mb-16 lg:w-1/4 xl:w-1/2"
                 viewBox="0 0 479 20"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -381,7 +381,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-              <div className="w-5/6 max-w-md xl:max-w-lg mb-8 p-4 lg:px-6 lg:mb-0 lg:py-12 rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center flex-wrap shadow-lg">
+              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -452,9 +452,9 @@ const IndexPage = ({ data }) => {
                 </motion.a>
               </div>
             </div>
-            <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative shadow-lg">
+            <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg lg:w-1/2">
               <svg
-                className="w-32 absolute -bottom-10 -left-10 lg:-left-20 lg:w-64"
+                className="absolute -bottom-10 -left-10 w-32 lg:-left-20 lg:w-64"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -478,14 +478,14 @@ const IndexPage = ({ data }) => {
                 height="600"
                 className="w-full"
               ></iframe>
-              <div className="flex justify-center items-center flex-wrap">
-                <div className="flex justify-center items-center text-lg my-2 mx-2">
+              <div className="flex flex-wrap items-center justify-center">
+                <div className="flex items-center justify-center mx-2 my-2 text-lg">
                   <p className="mx-2"> Join our zoom meetings: </p>
                   <a
                     href="https://pitt.zoom.us/my/zhw78"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-center items-center"
+                    className="flex items-center justify-center"
                     aria-label="Pitt Computer Science Club Zoom Meetings"
                   >
                     <FontAwesomeIcon
@@ -494,13 +494,13 @@ const IndexPage = ({ data }) => {
                     />
                   </a>
                 </div>
-                <div className="flex justify-center items-center text-lg my-2 mx-2">
+                <div className="flex items-center justify-center mx-2 my-2 text-lg">
                   <p className="mx-2"> Sign up for a coffee chat: </p>
                   <a
                     href="https://www.signupgenius.com/go/10c0c4daca628a5fcc34-alumni"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-center items-center"
+                    className="flex items-center justify-center"
                     aria-label="Pitt Computer Science Club Coffee Chats"
                   >
                     <FontAwesomeIcon
@@ -514,10 +514,10 @@ const IndexPage = ({ data }) => {
           </motion.section>
           {/* <section className="w-screen bg-gradient-to-r from-primary to-blue-800">
           <div className="w-full h-64 mx-auto whitespace-nowwrap overflow-hidden flex flex-col justify-center items-center">
-            <h3 className="font-bold font-body text-white text-4xl my-4">
+            <h3 className="font-bold  text-white text-4xl my-4">
               Members
             </h3>
-            <div className="track font-body text-2xl text-white my-4">
+            <div className="track  text-2xl text-white my-4">
               Zhengming Wang - Olivia Wininsky - Gordon Lu - Janet Majekodunmi -
               Richie Goulazian - Ryan Yang - Justin Kramer - Ashley Sokol - Alex
               Zharichenko - Mat Varughese

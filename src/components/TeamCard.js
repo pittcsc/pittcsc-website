@@ -16,7 +16,7 @@ function TeamCard({ image, name, title, linkedIn, email }) {
             src={image}
             alt={`Portrait of ${name}`}
           />
-          <figcaption className="text-left font-body max-w-lg">
+          <figcaption className="text-left  max-w-lg">
             <div className="font-medium text-xl lg:text-2xl md:text-xl pt-4">
               {name}
             </div>
@@ -61,7 +61,7 @@ function TeamCard({ image, name, title, linkedIn, email }) {
           src={image}
           alt={`Portrait of ${name}`}
         />
-        <figcaption className="text-center font-body">
+        <figcaption className="text-center ">
           <div className="font-medium text-lg md:text-xl pt-4">{name}</div>
           <div className="text-xs px-2">{title}</div>
         </figcaption>

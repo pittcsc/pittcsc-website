@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: false, // or 'media' or 'class'
@@ -11,7 +13,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        body: ["Poppins"],
+        sans: ["Poppins", ...defaultTheme.fontFamily.sans],
       },
       textColor: {
         primary: "#243E8B",

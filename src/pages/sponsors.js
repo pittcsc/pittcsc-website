@@ -51,7 +51,7 @@ const SponsorPage = ({ data }) => {
         <div className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
           <section className="container mx-auto flex w-full flex-col justify-center items-center">
             <div>
-              <h1 className="text-3xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative">
+              <h1 className="text-3xl lg:text-6xl font-bold  mb-8 mt-4 w-full z-10 relative">
                 We Love Our Sponsors
                 <svg
                   className="relative z-10 w-full svg-underline"
@@ -133,7 +133,7 @@ const SponsorPage = ({ data }) => {
             <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
               <div className="w-9/12 lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
                 <div className="mb-4 lg:mb-0">
-                  <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white text-center mb-8">
+                  <h2 className="text-2xl lg:text-5xl max-w-lg font-bold  text-white text-center mb-8">
                     Why Sponsor?
                     <svg
                       className="w-full my-2 svg-underline"
@@ -144,24 +144,24 @@ const SponsorPage = ({ data }) => {
                       <path d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995" />
                     </svg>
                   </h2>
-                  <h3 className="text-2xl font-semibold font-body text-white my-2">
+                  <h3 className="text-2xl font-semibold  text-white my-2">
                     Collaborative
                   </h3>
-                  <p className="font-body text-white text-base max-w-lg leading-loose mb-8">
+                  <p className=" text-white text-base max-w-lg leading-loose mb-8">
                     We work with you in order to help reach amazing students an
                     create a stronger community.
                   </p>
-                  <h3 className="text-2xl font-semibold font-body text-white my-2">
+                  <h3 className="text-2xl font-semibold  text-white my-2">
                     Connected
                   </h3>
-                  <p className="font-body text-white text-base max-w-lg leading-loose">
+                  <p className=" text-white text-base max-w-lg leading-loose">
                     With our Alumni program, we actively give back and form
                     connections between underclassmen, upperclassmen, and
                     alumni.
                   </p>
                 </div>
 
-                <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">
+                <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center  relative">
                   <svg
                     className="w-32 absolute -bottom-10 -left-10 lg:left-0 md:w-48"
                     viewBox="0 0 306 200"
@@ -184,7 +184,7 @@ const SponsorPage = ({ data }) => {
                     whileTap={{ scale: 0.9 }}
                     href={FallReport}
                     target="_blank"
-                    className="bg-white border-secondary-100 border-4 font-body absolute -bottom-6 lg:right-10 transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
+                    className="bg-white border-secondary-100 border-4  absolute -bottom-6 lg:right-10 transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
                   >
                     See Fall Report
                   </motion.a>

@@ -27,7 +27,7 @@ const AboutPage = () => {
         <div className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
           <section className="container mx-auto flex w-full flex-col justify-center items-center">
             <div>
-              <h1 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center">
+              <h1 className="text-4xl lg:text-6xl font-bold  mb-8 mt-4 w-full z-10 relative text-center">
                 About the Club
                 <svg
                   className="relative z-10 w-64 lg:w-full svg-underline"
@@ -70,20 +70,18 @@ const AboutPage = () => {
                   className="polka-background-subPage absolute -top-10 -left-10"
                 ></motion.div>
                 <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
-                  <span className="text-white font-body text-6xl lg:text-8xl font-bold">
+                  <span className="text-white  text-6xl lg:text-8xl font-bold">
                     200+
                   </span>
-                  <span className="text-white font-body text-lg lg:text-xl">
+                  <span className="text-white  text-lg lg:text-xl">
                     Members
                   </span>
                 </div>
                 <div className="w-5/6 lg:w-96 h-32 lg:h-48 p-8 relative rounded-2xl my-4 bg-primary flex flex-col justify-center items-center shadow-md lg:my-2">
-                  <span className="text-white text-6xl lg:text-8xl font-body font-bold">
+                  <span className="text-white text-6xl lg:text-8xl  font-bold">
                     30+
                   </span>
-                  <span className="text-white font-body text-lg lg:text-xl">
-                    Events
-                  </span>
+                  <span className="text-white  text-lg lg:text-xl">Events</span>
                 </div>
               </div>
             </div>
@@ -92,7 +90,7 @@ const AboutPage = () => {
             <section className="container relative mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
               <div className="w-9/12  lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
                 <div className="mb-4 lg:mb-0">
-                  <h2 className="text-2xl lg:text-4xl xl:text-5xl max-w-xl font-bold font-body text-white my-4">
+                  <h2 className="text-2xl lg:text-4xl xl:text-5xl max-w-xl font-bold  text-white my-4">
                     Supporting Tech at Pitt
                     <svg
                       className="w-full my-2"
@@ -108,13 +106,13 @@ const AboutPage = () => {
                       />
                     </svg>
                   </h2>
-                  <p className="font-body text-white text-base max-w-lg leading-loose">
+                  <p className=" text-white text-base max-w-lg leading-loose">
                     The University of Pittsburgh Computer Science Club,
                     shortened as Pitt CSC, is the University of Pittsburgh's
                     largest and premier technology-related student organization.
                   </p>
                   <br />
-                  <p className="font-body text-white text-base max-w-lg leading-loose">
+                  <p className=" text-white text-base max-w-lg leading-loose">
                     Open to all majors, we host a variety of events that help us
                     build a welcoming and inclusive community of motivated
                     students interested in fields such as computer science,
@@ -125,12 +123,12 @@ const AboutPage = () => {
                     whileTap={{ scale: 0.9 }}
                     href={FallReport}
                     target="_blank"
-                    className="text-center inline-block bg-white border-secondary-100 border-4 font-body transition text-black font-bold min-w-min my-4 py-2 px-4 rounded-full shadow-md hover:shadow-lg focus:outline-none"
+                    className="text-center inline-block bg-white border-secondary-100 border-4  transition text-black font-bold min-w-min my-4 py-2 px-4 rounded-full shadow-md hover:shadow-lg focus:outline-none"
                   >
                     See Fall Report
                   </motion.a>
                 </div>
-                <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">
+                <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center  relative">
                   <svg
                     className="w-32 absolute -bottom-10 -left-10 lg:left-0 md:w-48"
                     viewBox="0 0 306 200"
@@ -158,7 +156,7 @@ const AboutPage = () => {
             </section>
           </div>
           <section className="container mx-auto flex w-full flex-col justify-center items-center">
-            <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body mt-4 mb-8">
+            <h2 className="text-2xl lg:text-5xl max-w-lg font-bold  mt-4 mb-8">
               The Officers
             </h2>
             <div className="grid gap-24 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 my-8">
