@@ -25,7 +25,7 @@ function Modal({ open, children, onClose }) {
   };
 
   return ReactDom.createPortal(
-    <AnimatePresence exitBeforeEnter>
+    <>
       {open && (
         <motion.div
           variants={backdrop}
@@ -62,7 +62,7 @@ function Modal({ open, children, onClose }) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>,
+    </>,
     portalRoot
   );
 }

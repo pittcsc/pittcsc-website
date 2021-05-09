@@ -82,7 +82,7 @@ function Header() {
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 Sponsors
                 <svg
-                  className="svg-underline transform-gpu-gpu absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 -translate-x-1/2 transition"
+                  className="svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition"
                   viewBox="0 0 479 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
