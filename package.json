@@ -23,7 +23,7 @@
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "autoprefixer": "^9.8.6",
     "framer-motion": "^3.2.2-rc.1",
-    "gatsby": "^2.31.1",
+    "gatsby": "^3.4.2",
     "gatsby-image": "^2.11.0",
     "gatsby-plugin-google-analytics": "^2.9.0",
     "gatsby-plugin-manifest": "^2.12.0",
@@ -44,7 +44,7 @@
     "react-hotjar": "^2.2.1",
     "react-intersection-observer": "^8.31.0",
     "react-lottie": "^1.2.3",
-    "swiper": "^6.4.11"
+    "swiper": "^6.5.9"
   },
   "devDependencies": {
     "gh-pages": "^3.1.0",
