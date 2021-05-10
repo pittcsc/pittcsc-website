@@ -29,6 +29,7 @@ module.exports = {
     `gatsby-plugin-sharp`,
     "gatsby-transformer-json",
     `gatsby-plugin-portal`,
+    `gatsby-plugin-netlify`,
     {
       resolve: "gatsby-source-filesystem",
       options: {
