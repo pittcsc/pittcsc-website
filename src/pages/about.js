@@ -18,7 +18,7 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <Layout title="About Us | Pitt Computer Science Club">
+    <Layout title="About Us | Pitt Computer Science Club" header="about">
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}

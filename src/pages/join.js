@@ -53,7 +53,7 @@ const JoinPage = () => {
     ReactGA.pageview("/join");
   }, []);
   return (
-    <Layout title="Join the Club | Pitt Computer Science Club">
+    <Layout title="Join the Club | Pitt Computer Science Club" header="join">
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}

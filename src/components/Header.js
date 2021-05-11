@@ -9,7 +9,7 @@ import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import { motion } from "framer-motion";
 
-function Header() {
+function Header({ title }) {
   const [nav, setNav] = useState(false);
 
   return (
@@ -48,7 +48,9 @@ function Header() {
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 About Us
                 <svg
-                  className="svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition"
+                  className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
+                    title === "about" && "opacity-100"
+                  }`}
                   viewBox="0 0 479 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +69,9 @@ function Header() {
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 Blog
                 <svg
-                  className="svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition"
+                  className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
+                    title === "blog" && "opacity-100"
+                  }`}
                   viewBox="0 0 479 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +86,9 @@ function Header() {
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 Sponsors
                 <svg
-                  className="svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition"
+                  className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
+                    title === "sponsors" && "opacity-100"
+                  }`}
                   viewBox="0 0 479 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"

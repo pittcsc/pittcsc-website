@@ -5,9 +5,9 @@ import { AnimatePresence } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-const Layout = ({ title, children }) => (
+const Layout = ({ title, header, children }) => (
   <div>
-    <Header />
+    <Header title={header} />
     <SEO title={title} />
     <AnimatePresence exitBeforeEnter>
       <main key="main">{children}</main>
