@@ -49,6 +49,8 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/alexander-grattan/",
     email: "ajg162@pitt.edu",
     image: "../images/officers/Alexander_Grattan_Picture.jpg",
+    bio:
+      "Alexander is a Junior Digital Narrative and Interactive Design major with a CS minor. He loves web-dev and making content! You'll find Alexander in his free time playing/reffing soccer, finding new tunes to code to, or eating yet another granola bar.",
   },
   {
     name: "Crystal Li",

@@ -12,9 +12,9 @@ function TeamCard({ image, name, title, linkedIn, email }) {
       <AnimatePresence exitBeforeEnter>
         {modalOpen && (
           <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-            <div className="flex flex-col items-center justify-center p-4 max-w-5xl bg-gray-100 rounded-2xl space-x-8 md:flex-row md:p-8">
+            <div className="flex flex-col items-center justify-center px-4 py-8 max-w-5xl bg-gray-100 rounded-2xl space-x-8 md:flex-row md:p-8">
               <img
-                className="mx-auto w-48 h-48 rounded-full shadow object-cover object-center"
+                className="mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center"
                 src={image}
                 alt={`Portrait of ${name}`}
               />
@@ -23,11 +23,12 @@ function TeamCard({ image, name, title, linkedIn, email }) {
                   {name}
                 </div>
                 <div className="text-sm">{title}</div>
-                <div className="my-4 text-sm">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Reiciendis cum sapiente quasi obcaecati. Officia id quo sunt,
-                  odio tempore similique quibusdam, incidunt, autem praesentium
-                  earum quasi suscipit optio quam nobis?
+                <div className="my-4 whitespace-pre-line text-sm">
+                  Alexander is a Junior Digital Narrative and Interactive Design
+                  major with a CS minor. He loves web-dev and making content!
+                  You'll find Alexander in his free time playing/reffing soccer,
+                  finding new tunes to code to, exploring Pittsburgh, or eating
+                  yet another granola bar.
                 </div>
                 <div className="flex items-center justify-start space-x-8">
                   <motion.a
@@ -61,7 +62,7 @@ function TeamCard({ image, name, title, linkedIn, email }) {
         onKeyDown={() => setModalOpen(true)}
       >
         <img
-          className="-mt-16 mx-auto w-48 h-48 rounded-full shadow object-cover object-center"
+          className="-mt-16 mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center"
           src={image}
           alt={`Portrait of ${name}`}
         />
