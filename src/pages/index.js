@@ -324,7 +324,7 @@ const IndexPage = ({ data }) => {
                     src="../images/Pitt_CSC_Mask.jpg"
                     alt="Masked CSC Members"
                     placeholder="blurred"
-                    imgStyle="mx-auto w-full rounded-3xl shadow-lg"
+                    imgClassName="mx-auto w-full rounded-3xl shadow-lg"
                     width={1388}
                     height={734}
                   />

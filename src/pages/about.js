@@ -149,7 +149,7 @@ const AboutPage = () => {
                     <StaticImage
                       src="../images/uber_csc_image.jpg"
                       alt="Club at Uber"
-                      imgStyle="mx-auto w-full rounded-3xl shadow-lg"
+                      imgClassName="mx-auto w-full rounded-3xl shadow-lg"
                       placeholder="blurred"
                     />
                   </div>
