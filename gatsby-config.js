@@ -29,7 +29,16 @@ module.exports = {
     `gatsby-plugin-sharp`,
     "gatsby-transformer-json",
     `gatsby-plugin-portal`,
-    `gatsby-plugin-netlify`,
+    {
+      resolve: `gatsby-plugin-netlify`,
+      options: {
+        headers: {
+          "/*": [
+            "Content-Security-Policy: default-src 'self' 'unsafe-inline' data: https://www.google-analytics.com;",
+          ],
+        },
+      },
+    },
     {
       resolve: "gatsby-source-filesystem",
       options: {
