@@ -145,11 +145,11 @@ const AboutPage = () => {
                       stroke-width="5"
                     />
                   </svg>
-                  <div className="w-full rounded-3xl lg:w-9/12">
+                  <div className="w-full lg:w-9/12">
                     <StaticImage
                       src="../images/uber_csc_image.jpg"
                       alt="Club at Uber"
-                      className="mx-auto w-full rounded-3xl shadow-lg"
+                      imgStyle="mx-auto w-full rounded-3xl shadow-lg"
                       placeholder="blurred"
                     />
                   </div>

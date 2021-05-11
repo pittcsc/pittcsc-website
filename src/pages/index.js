@@ -318,13 +318,13 @@ const IndexPage = ({ data }) => {
                   variants={maskAnimate}
                   initial="hidden"
                   animate={controls}
-                  className="mx-auto w-3/4 rounded-3xl xl:w-9/12"
+                  className="mx-auto w-3/4 xl:w-9/12"
                 >
                   <StaticImage
                     src="../images/Pitt_CSC_Mask.jpg"
                     alt="Masked CSC Members"
                     placeholder="blurred"
-                    className="mx-auto w-full rounded-3xl shadow-lg"
+                    imgStyle="mx-auto w-full rounded-3xl shadow-lg"
                     width={1388}
                     height={734}
                   />
