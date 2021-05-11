@@ -129,7 +129,7 @@ const AboutPage = () => {
                 </div>
                 <div className="relative flex flex-col items-center justify-center mt-4 w-full lg:mt-0 lg:w-1/2">
                   <svg
-                    className="absolute -bottom-10 -left-10 w-32 md:w-48 lg:left-0"
+                    className="absolute z-10 -bottom-10 -left-10 w-32 md:w-48 lg:left-0"
                     viewBox="0 0 306 200"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -145,12 +145,14 @@ const AboutPage = () => {
                       stroke-width="5"
                     />
                   </svg>
-                  <StaticImage
-                    src="../images/uber_csc_image.jpg"
-                    alt="Club at Uber"
-                    className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
-                    placeholder="blurred"
-                  />
+                  <div className="w-full rounded-3xl lg:w-9/12">
+                    <StaticImage
+                      src="../images/uber_csc_image.jpg"
+                      alt="Club at Uber"
+                      className="mx-auto w-full rounded-3xl shadow-lg"
+                      placeholder="blurred"
+                    />
+                  </div>
                 </div>
               </div>
             </section>
