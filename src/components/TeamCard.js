@@ -4,9 +4,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { StaticImage } from "gatsby-plugin-image";
 
 function TeamCard({ bio, image, name, title, linkedIn, email }) {
   const [modalOpen, setModalOpen] = useState(false);
+
+  const imageSource = image;
+  console.log(imageSource);
+
   return (
     <>
       <AnimatePresence exitBeforeEnter>

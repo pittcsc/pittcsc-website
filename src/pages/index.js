@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "gatsby";
 import Lottie from "react-lottie";
+import { StaticImage } from "gatsby-plugin-image";
 
 import animationData from "../animations/pittcscLogoAnimation.json";
 
@@ -312,7 +313,23 @@ const IndexPage = ({ data }) => {
                     d="M1 48C43.5 48.5 124.3 55.3 155.5 118.5C186.7 181.7 253.5 200.167 277 196.5"
                   />
                 </motion.svg>
-                <motion.img
+                <motion.div
+                  ref={missionRef}
+                  variants={maskAnimate}
+                  initial="hidden"
+                  animate={controls}
+                  className="mx-auto w-3/4 xl:w-9/12"
+                >
+                  <StaticImage
+                    src="../images/Pitt_CSC_Mask.jpg"
+                    alt="Masked CSC Members"
+                    placeholder="blurred"
+                    className="mx-auto w-full rounded-3xl shadow-lg"
+                    width={1388}
+                    height={734}
+                  />
+                </motion.div>
+                {/* <motion.img
                   ref={missionRef}
                   src={MaskImage}
                   alt="Masked CSC Members"
@@ -320,7 +337,7 @@ const IndexPage = ({ data }) => {
                   initial="hidden"
                   animate={controls}
                   className="mx-auto w-3/4 rounded-3xl shadow-lg xl:w-9/12"
-                />
+                /> */}
                 <motion.a
                   variants={maskAnimate}
                   initial="hidden"
@@ -329,7 +346,7 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href={FallReport}
                   target="_blank"
-                  className="relative z-20 bottom-4 inline-block"
+                  className="relative z-20 bottom-8 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
                     See Fall Report
