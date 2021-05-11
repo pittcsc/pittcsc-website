@@ -61,7 +61,7 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
         onKeyDown={bio ? () => setModalOpen(true) : undefined}
       >
         <img
-          className="-mt-16 mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center"
+          className="-mt-16 mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center overflow-visible"
           src={image}
           alt={`Portrait of ${name}`}
         />
