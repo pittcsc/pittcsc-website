@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { officerList } from "../components/data";
-import groupImage from "../images/uber_csc_image.jpg";
+// import groupImage from "../images/uber_csc_image.jpg";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 
 import Layout from "../layouts/layout";
 import TeamCard from "../components/TeamCard";
+import { StaticImage } from "gatsby-plugin-image";
 
 const AboutPage = () => {
   useEffect(() => {
@@ -144,10 +145,11 @@ const AboutPage = () => {
                       stroke-width="5"
                     />
                   </svg>
-                  <img
-                    className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
-                    src={groupImage}
+                  <StaticImage
+                    src="../images/uber_csc_image.jpg"
                     alt="Club at Uber"
+                    className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
+                    placeholder="blurred"
                   />
                 </div>
               </div>

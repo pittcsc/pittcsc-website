@@ -53,12 +53,14 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
           </Modal>
         )}
       </AnimatePresence>
-      <button
+      <div
         className={`relative p-8 w-64 bg-gray-100 rounded-2xl focus:outline-none hover:shadow-lg shadow-md ${
           bio !== undefined ? "cursor-pointer" : "cursor-default"
-        } transform-gpu hover:scale-105 active:scale-95 transition md:w-72 overflow-visible`}
+        } transform-gpu hover:scale-105 active:scale-95 transition md:w-72`}
         onClick={bio ? () => setModalOpen(true) : undefined}
         onKeyDown={bio ? () => setModalOpen(true) : undefined}
+        role="button"
+        tabIndex="0"
       >
         <img
           className="-mt-16 mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center overflow-visible"
@@ -88,7 +90,7 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
         >
           <FontAwesomeIcon icon={faPaperPlane} />
         </motion.a>
-      </button>
+      </div>
     </>
   );
 }
