@@ -158,15 +158,18 @@ const AboutPage = () => {
               The Officers
             </h2>
             <div className="grid gap-24 grid-cols-1 2xl:grid-cols-4 my-8 md:grid-cols-2 lg:grid-cols-3">
-              {officerList.map(({ name, title, linkedIn, email, image }) => (
-                <TeamCard
-                  image={image}
-                  name={name}
-                  title={title}
-                  linkedIn={linkedIn}
-                  email={email}
-                />
-              ))}
+              {officerList.map(
+                ({ name, title, linkedIn, email, image, bio }) => (
+                  <TeamCard
+                    image={image}
+                    name={name}
+                    title={title}
+                    linkedIn={linkedIn}
+                    email={email}
+                    bio={bio}
+                  />
+                )
+              )}
             </div>
           </section>
         </div>

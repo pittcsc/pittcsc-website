@@ -5,7 +5,7 @@ import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 
-function TeamCard({ image, name, title, linkedIn, email }) {
+function TeamCard({ bio, image, name, title, linkedIn, email }) {
   const [modalOpen, setModalOpen] = useState(false);
   return (
     <>
@@ -23,12 +23,8 @@ function TeamCard({ image, name, title, linkedIn, email }) {
                   {name}
                 </div>
                 <div className="text-sm">{title}</div>
-                <div className="my-4 whitespace-pre-line text-sm">
-                  Alexander is a Junior Digital Narrative and Interactive Design
-                  major with a CS minor. He loves web-dev and making content!
-                  You'll find Alexander in his free time playing/reffing soccer,
-                  finding new tunes to code to, exploring Pittsburgh, or eating
-                  yet another granola bar.
+                <div className="my-4 whitespace-pre-line text-sm leading-relaxed">
+                  {bio}
                 </div>
                 <div className="flex items-center justify-start space-x-8">
                   <motion.a
@@ -57,9 +53,11 @@ function TeamCard({ image, name, title, linkedIn, email }) {
         )}
       </AnimatePresence>
       <button
-        className="relative p-8 w-64 bg-gray-100 rounded-2xl focus:outline-none hover:shadow-lg shadow-md cursor-pointer transform-gpu hover:scale-105 active:scale-95 transition md:w-72"
-        onClick={() => setModalOpen(true)}
-        onKeyDown={() => setModalOpen(true)}
+        className={`relative p-8 w-64 bg-gray-100 rounded-2xl focus:outline-none hover:shadow-lg shadow-md ${
+          bio !== undefined ? "cursor-pointer" : "cursor-default"
+        } transform-gpu hover:scale-105 active:scale-95 transition md:w-72`}
+        onClick={bio ? () => setModalOpen(true) : undefined}
+        onKeyDown={bio ? () => setModalOpen(true) : undefined}
       >
         <img
           className="-mt-16 mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center"
