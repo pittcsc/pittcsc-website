@@ -4,13 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
-import { StaticImage } from "gatsby-plugin-image";
 
 function TeamCard({ bio, image, name, title, linkedIn, email }) {
   const [modalOpen, setModalOpen] = useState(false);
-
-  const imageSource = image;
-  console.log(imageSource);
 
   return (
     <>
@@ -60,7 +56,7 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
       <button
         className={`relative p-8 w-64 bg-gray-100 rounded-2xl focus:outline-none hover:shadow-lg shadow-md ${
           bio !== undefined ? "cursor-pointer" : "cursor-default"
-        } transform-gpu hover:scale-105 active:scale-95 transition md:w-72`}
+        } transform-gpu hover:scale-105 active:scale-95 transition md:w-72 overflow-visible`}
         onClick={bio ? () => setModalOpen(true) : undefined}
         onKeyDown={bio ? () => setModalOpen(true) : undefined}
       >
