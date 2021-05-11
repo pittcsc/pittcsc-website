@@ -29,16 +29,7 @@ module.exports = {
     `gatsby-plugin-sharp`,
     "gatsby-transformer-json",
     `gatsby-plugin-portal`,
-    {
-      resolve: `gatsby-plugin-netlify`,
-      options: {
-        headers: {
-          "/*": [
-            "Content-Security-Policy: default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self';",
-          ],
-        },
-      },
-    },
+    `gatsby-plugin-netlify`,
     {
       resolve: "gatsby-source-filesystem",
       options: {
