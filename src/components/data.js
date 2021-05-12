@@ -12,6 +12,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/courtneyrsheridan/",
     email: "crs173@pitt.edu",
     image: "../images/officers/courtney_image.jpg",
+    bio: "Courtney is a sophomore CS major who loves working on exciting problems! As CSC's VP, she helps manage alumni and corporate sponsor relations to bring engaging programs and events to members. Outside of academics, she's involved in Pitt's marching band and enjoys volunteering, which tends to center around mentoring younger students in CS and public service (such as VaccinatePA.org).",
   },
   {
     name: "Sean Steinle",
@@ -49,6 +50,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/alexander-grattan/",
     email: "ajg162@pitt.edu",
     image: "../images/officers/Alexander_Grattan_Picture.jpg",
+    bio: "Alexander is a Junior Digital Narrative and Interactive Design major with a CS minor. He loves web-dev and making content! You'll find Alexander in his free time playing/reffing soccer, finding new tunes to code to, or eating yet another granola bar.",
   },
   {
     name: "Crystal Li",

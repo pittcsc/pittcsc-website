@@ -1,42 +1,97 @@
-import React from "react";
-
+import React, { useState } from "react";
+import Modal from "./Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-function TeamCard({ image, name, title, linkedIn, email }) {
+function TeamCard({ bio, image, name, title, linkedIn, email }) {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
-    <figure className="relative bg-gray-100 rounded-2xl p-8 shadow-md w-64 md:w-72 transform transition hover:shadow-lg hover:scale-105">
-      <img
-        className="w-48 h-48 object-cover object-center rounded-full shadow -mt-16 mx-auto"
-        src={image}
-        alt={`Portrait of ${name}`}
-      />
-      <figcaption className="text-center font-body">
-        <div className="font-medium text-lg md:text-xl pt-4">{name}</div>
-        <div className="text-xs px-2">{title}</div>
-      </figcaption>
-      <motion.a
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        href={linkedIn}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute flex justify-center items-center left-4 bottom-4 text-2xl"
+    <>
+      <AnimatePresence exitBeforeEnter>
+        {modalOpen && (
+          <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+            <div className="flex flex-col items-center justify-center px-4 py-8 max-w-5xl bg-gray-100 rounded-2xl space-x-8 md:flex-row md:p-8">
+              <img
+                className="mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center"
+                src={image}
+                alt={`Portrait of ${name}`}
+              />
+              <figcaption className="max-w-lg text-left">
+                <div className="pt-4 text-xl font-medium md:text-xl lg:text-2xl">
+                  {name}
+                </div>
+                <div className="text-sm">{title}</div>
+                <div className="my-4 whitespace-pre-line text-sm leading-relaxed">
+                  {bio}
+                </div>
+                <div className="flex items-center justify-start space-x-8">
+                  <motion.a
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    href={linkedIn}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-3xl"
+                  >
+                    <FontAwesomeIcon icon={faLinkedin} />
+                  </motion.a>
+                  <motion.a
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    href={`mailto:${email}`}
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-3xl"
+                  >
+                    <FontAwesomeIcon icon={faPaperPlane} />
+                  </motion.a>
+                </div>
+              </figcaption>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
+      <div
+        className={`relative p-8 w-64 bg-gray-100 rounded-2xl focus:outline-none hover:shadow-lg shadow-md ${
+          bio !== undefined ? "cursor-pointer" : "cursor-default"
+        } transform-gpu hover:scale-105 active:scale-95 transition md:w-72`}
+        onClick={bio ? () => setModalOpen(true) : undefined}
+        onKeyDown={bio ? () => setModalOpen(true) : undefined}
+        role="button"
+        tabIndex="0"
       >
-        <FontAwesomeIcon icon={faLinkedin} />
-      </motion.a>
-      <motion.a
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        href={`mailto:${email}`}
-        rel="noopener noreferrer"
-        className="absolute right-4 bottom-4 text-2xl"
-      >
-        <FontAwesomeIcon icon={faPaperPlane} />
-      </motion.a>
-    </figure>
+        <img
+          className="-mt-16 mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center overflow-visible"
+          src={image}
+          alt={`Portrait of ${name}`}
+        />
+        <figcaption className="text-center">
+          <div className="pt-4 text-lg font-medium md:text-xl">{name}</div>
+          <div className="px-2 text-xs">{title}</div>
+        </figcaption>
+        <motion.a
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          href={linkedIn}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute bottom-4 left-4 flex items-center justify-center text-2xl"
+        >
+          <FontAwesomeIcon icon={faLinkedin} />
+        </motion.a>
+        <motion.a
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          href={`mailto:${email}`}
+          rel="noopener noreferrer"
+          className="absolute bottom-4 right-4 text-2xl"
+        >
+          <FontAwesomeIcon icon={faPaperPlane} />
+        </motion.a>
+      </div>
+    </>
   );
 }
 

@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer className="container mx-auto flex justify-center items-center h-32 w-full text-center">
       <nav className="w-full space-y-2">
-        <ul className="flex justify-center items-center space-x-4 lg:space-x-8 mx-auto font-bold font-body">
+        <ul className="flex justify-center items-center space-x-4 lg:space-x-8 mx-auto font-bold ">
           <Link to="/about">
             <li>About Us</li>
           </Link>
@@ -23,16 +23,16 @@ function Footer() {
             <li>Join</li>
           </Link>
         </ul>
-        <p className="font-body">
+        <p className="">
           Email us at{" "}
           <a
             href="mailto:pittcsc@gmail.com"
-            className="font-body text-blue-500 underline"
+            className=" text-blue-500 underline"
           >
             pittcsc@gmail.com
           </a>
         </p>
-        <p className="font-body">
+        <p className="">
           Built with <span className="text-red-500">❤</span> by{" "}
           <span className="font-bold">Pitt CSC</span>
         </p>

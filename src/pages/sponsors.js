@@ -41,20 +41,20 @@ const SponsorPage = ({ data }) => {
   }, []);
 
   return (
-    <Layout title="Sponsors | Pitt Computer Science Club">
+    <Layout title="Sponsors | Pitt Computer Science Club" header="sponsors">
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
-          <section className="container mx-auto flex w-full flex-col justify-center items-center">
+        <div className="mt-24 my-8 min-h-screen space-y-24 xl:my-24">
+          <section className="container flex flex-col items-center justify-center mx-auto w-full">
             <div>
-              <h1 className="text-3xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative">
+              <h1 className="relative z-10 mb-8 mt-4 w-full text-3xl font-bold lg:text-6xl">
                 We Love Our Sponsors
                 <svg
-                  className="relative z-10 w-full svg-underline"
+                  className="svg-underline relative z-10 w-full"
                   viewBox="0 0 422 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -81,7 +81,7 @@ const SponsorPage = ({ data }) => {
               variants={imageContainer}
               initial="hidden"
               animate="show"
-              className="w-full grid grid-cols-2 lg:grid-cols-4 place-items-center gap-4 lg:gap-8"
+              className="grid gap-4 grid-cols-2 place-items-center w-full lg:gap-8 lg:grid-cols-4"
             >
               <motion.a
                 variants={item}
@@ -89,7 +89,7 @@ const SponsorPage = ({ data }) => {
                 target="_blank"
               >
                 <img
-                  className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
                   src={ArgoAI}
                   alt="Argo AI Logo"
                 />
@@ -100,7 +100,7 @@ const SponsorPage = ({ data }) => {
                 target="_blank"
               >
                 <img
-                  className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
                   src={PNC}
                   alt="PNC Logo"
                 />
@@ -111,7 +111,7 @@ const SponsorPage = ({ data }) => {
                 target="_blank"
               >
                 <img
-                  className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
                   src={SAP}
                   alt="SAP Logo"
                 />
@@ -122,7 +122,7 @@ const SponsorPage = ({ data }) => {
                 target="_blank"
               >
                 <img
-                  className="w-32 md:w-48 lg:w-64 xl:w-80 m-4 lg:m-8"
+                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
                   src={NS}
                   alt="Norfolk Southern Logo"
                 />
@@ -130,13 +130,13 @@ const SponsorPage = ({ data }) => {
             </motion.div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
-              <div className="w-9/12 lg:w-full flex flex-col lg:flex-row justify-center lg:justify-around items-center">
+            <section className="container flex flex-col items-center justify-center mx-auto py-24 w-full lg:py-32">
+              <div className="flex flex-col items-center justify-center w-9/12 lg:flex-row lg:justify-around lg:w-full">
                 <div className="mb-4 lg:mb-0">
-                  <h2 className="text-2xl lg:text-5xl max-w-lg font-bold font-body text-white text-center mb-8">
+                  <h2 className="mb-8 max-w-lg text-center text-white text-2xl font-bold lg:text-5xl">
                     Why Sponsor?
                     <svg
-                      className="w-full my-2 svg-underline"
+                      className="svg-underline my-2 w-full"
                       viewBox="0 0 470 12"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -144,26 +144,26 @@ const SponsorPage = ({ data }) => {
                       <path d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995" />
                     </svg>
                   </h2>
-                  <h3 className="text-2xl font-semibold font-body text-white my-2">
+                  <h3 className="my-2 text-white text-2xl font-semibold">
                     Collaborative
                   </h3>
-                  <p className="font-body text-white text-base max-w-lg leading-loose mb-8">
+                  <p className="mb-8 max-w-lg text-white text-base leading-loose">
                     We work with you in order to help reach amazing students an
                     create a stronger community.
                   </p>
-                  <h3 className="text-2xl font-semibold font-body text-white my-2">
+                  <h3 className="my-2 text-white text-2xl font-semibold">
                     Connected
                   </h3>
-                  <p className="font-body text-white text-base max-w-lg leading-loose">
+                  <p className="max-w-lg text-white text-base leading-loose">
                     With our Alumni program, we actively give back and form
                     connections between underclassmen, upperclassmen, and
                     alumni.
                   </p>
                 </div>
 
-                <div className="w-full lg:w-1/2 mt-4 lg:mt-0 flex flex-col justify-center items-center font-body relative">
+                <div className="relative flex flex-col items-center justify-center mt-4 w-full lg:mt-0 lg:w-1/2">
                   <svg
-                    className="w-32 absolute -bottom-10 -left-10 lg:left-0 md:w-48"
+                    className="absolute -bottom-10 -left-10 w-32 md:w-48 lg:left-0"
                     viewBox="0 0 306 200"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -184,12 +184,12 @@ const SponsorPage = ({ data }) => {
                     whileTap={{ scale: 0.9 }}
                     href={FallReport}
                     target="_blank"
-                    className="bg-white border-secondary-100 border-4 font-body absolute -bottom-6 lg:right-10 transition text-black font-bold py-2 px-4 rounded-full min-w-300 shadow-md hover:shadow-lg focus:outline-none"
+                    className="min-w-300 absolute -bottom-6 px-4 py-2 text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:right-10"
                   >
                     See Fall Report
                   </motion.a>
                   <img
-                    className="w-full lg:w-9/12 rounded-3xl mx-auto shadow-lg"
+                    className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
                     src={FallReportImage}
                     alt="Fall Report 2020"
                   />

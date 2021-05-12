@@ -23,11 +23,22 @@ module.exports = {
         ],
       },
     },
-    "gatsby-plugin-sharp",
     "gatsby-plugin-react-helmet",
+    `gatsby-plugin-image`,
     "gatsby-transformer-sharp",
     `gatsby-plugin-sharp`,
     "gatsby-transformer-json",
+    `gatsby-plugin-portal`,
+    {
+      resolve: `gatsby-plugin-netlify`,
+      options: {
+        headers: {
+          "/*": [
+            "Content-Security-Policy: default-src 'self' 'unsafe-inline' data: https://www.google-analytics.com *.google.com *.hotjar.com *.gstatic.com; img-src 'self' 'unsafe-inline' data: *.cloudfront.net https://www.google-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com;",
+          ],
+        },
+      },
+    },
     {
       resolve: "gatsby-source-filesystem",
       options: {

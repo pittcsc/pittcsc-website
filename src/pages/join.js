@@ -53,20 +53,20 @@ const JoinPage = () => {
     ReactGA.pageview("/join");
   }, []);
   return (
-    <Layout title="Join the Club | Pitt Computer Science Club">
+    <Layout title="Join the Club | Pitt Computer Science Club" header="join">
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="space-y-24 min-h-screen my-8 mt-24 xl:my-24">
-          <section className="container mx-auto flex w-full flex-col justify-center items-center">
+        <div className="mt-24 my-8 min-h-screen space-y-24 xl:my-24">
+          <section className="container flex flex-col items-center justify-center mx-auto w-full">
             <div>
-              <h1 className="text-4xl lg:text-6xl font-bold font-body mb-8 mt-4 w-full z-10 relative text-center">
+              <h1 className="relative z-10 mb-8 mt-4 w-full text-center text-4xl font-bold lg:text-6xl">
                 Join Pitt CSC
                 <svg
-                  className="relative z-10 w-64 lg:w-full svg-underline"
+                  className="svg-underline relative z-10 w-64 lg:w-full"
                   viewBox="0 0 422 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -89,12 +89,12 @@ const JoinPage = () => {
                 </svg>
               </h1>
             </div>
-            <div className="w-full flex flex-col justify-center items-center xl:w-5/6 lg:flex-row py-8 relative">
-              <ul className="relative z-10 grid grid-cols-3 place-items-center w-11/12 md:w-auto gap-4 lg:gap-8 mx-auto box-border">
-                <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
+            <div className="relative flex flex-col items-center justify-center py-8 w-full lg:flex-row xl:w-5/6">
+              <ul className="relative z-10 grid gap-4 grid-cols-3 place-items-center mx-auto w-11/12 box-border md:w-auto lg:gap-8">
+                <span className="col-span-1 text-3xl font-bold lg:text-4xl">
                   1.
                 </span>
-                <li className="flex justify-center items-center col-span-2">
+                <li className="flex col-span-2 items-center justify-center">
                   <a
                     href="http://eepurl.com/bgY5c9"
                     target="_blank"
@@ -103,16 +103,14 @@ const JoinPage = () => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
+                      className="min-width-btn px-4 py-2 text-white font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transform-gpu transition"
                     >
                       Join the email list
                     </motion.button>
                   </a>
                 </li>
-                <span className="text-3xl font-bold font-body col-span-1">
-                  2.
-                </span>
-                <li className="flex justify-center items-center col-span-2">
+                <span className="col-span-1 text-3xl font-bold">2.</span>
+                <li className="flex col-span-2 items-center justify-center">
                   <a
                     href="https://calendar.google.com/calendar/u/0/render?cid=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com"
                     target="_blank"
@@ -121,22 +119,22 @@ const JoinPage = () => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="bg-primary font-body transition text-white font-bold py-2 px-4 rounded-full min-width-btn shadow-md hover:shadow-lg focus:outline-none"
+                      className="min-width-btn px-4 py-2 text-white font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transform-gpu transition"
                     >
                       Add Google Calendar
                     </motion.button>
                   </a>
                 </li>
-                <span className="text-3xl lg:text-4xl font-bold font-body col-span-1">
+                <span className="col-span-1 text-3xl font-bold lg:text-4xl">
                   3.
                 </span>
-                <li className="flex justify-center items-center col-span-2">
-                  <span className="text-2xl lg:text-4xl font-bold font-body relative">
+                <li className="flex col-span-2 items-center justify-center">
+                  <span className="relative text-2xl font-bold lg:text-4xl">
                     Keep in contact!
                     <svg
                       width="196"
                       height="60"
-                      className="absolute hidden lg:block top-12 -right-12"
+                      className="absolute -right-12 top-12 hidden lg:block"
                       viewBox="0 0 196 60"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -161,9 +159,9 @@ const JoinPage = () => {
                 transition={{
                   delay: 0.4,
                 }}
-                className="polka-background-subPage absolute top-0 -right-48 lg:-right-24"
+                className="polka-background-subPage absolute -right-48 top-0 lg:-right-24"
               ></motion.div>
-              <div className="relative w-5/6 max-w-md lg:w-3/4 xl:max-w-lg p-4 lg:px-6 lg:py-12 my-8 mx-auto rounded-2xl bg-secondary-200 mx-auto flex justify-around items-center shadow-md flex-wrap">
+              <div className="relative flex flex-wrap items-center justify-around mx-auto mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -236,11 +234,11 @@ const JoinPage = () => {
             </div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container mx-auto w-full flex flex-col justify-center items-center py-24 lg:py-32">
-              <div className="w-full flex flex-row justify-around items-center flex-wrap">
-                <div className="w-full mb-8 lg:w-1/2 p-4 bg-secondary-200 rounded-2xl flex flex-col justify-center items-center font-body relative shadow-lg">
+            <section className="container flex flex-col items-center justify-center mx-auto py-24 w-full lg:py-32">
+              <div className="flex flex-row flex-wrap items-center justify-around w-full">
+                <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg lg:w-1/2">
                   <svg
-                    className="w-32 absolute -bottom-10 -left-10 lg:-left-20 lg:w-64"
+                    className="absolute -bottom-10 -left-10 w-32 lg:-left-20 lg:w-64"
                     viewBox="0 0 306 200"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -264,14 +262,14 @@ const JoinPage = () => {
                     height="600"
                     className="w-full"
                   ></iframe>
-                  <div className="flex justify-center items-center flex-wrap">
-                    <div className="flex justify-center items-center text-lg my-2 mx-2">
+                  <div className="flex flex-wrap items-center justify-center">
+                    <div className="flex items-center justify-center mx-2 my-2 text-lg">
                       <p className="mx-2"> Join our zoom meetings: </p>
                       <a
                         href="https://pitt.zoom.us/my/zhw78"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex justify-center items-center"
+                        className="flex items-center justify-center"
                         aria-label="Pitt Computer Science Club Zoom Meetings"
                       >
                         <FontAwesomeIcon
@@ -280,13 +278,13 @@ const JoinPage = () => {
                         />
                       </a>
                     </div>
-                    <div className="flex justify-center items-center text-lg my-2 mx-2">
+                    <div className="flex items-center justify-center mx-2 my-2 text-lg">
                       <p className="mx-2"> Sign up for a coffee chat: </p>
                       <a
                         href="https://www.signupgenius.com/go/10c0c4daca628a5fcc34-alumni"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex justify-center items-center"
+                        className="flex items-center justify-center"
                         aria-label="Pitt Computer Science Club Coffee Chats"
                       >
                         <FontAwesomeIcon
@@ -297,8 +295,8 @@ const JoinPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="w-9/12 lg:w-auto p-4">
-                  <h2 className="text-2xl lg:text-5xl font-bold font-body text-white my-4">
+                <div className="p-4 w-9/12 lg:w-auto">
+                  <h2 className="my-4 text-white text-2xl font-bold lg:text-5xl">
                     Pop in to an event
                     <svg
                       width="156"
@@ -315,7 +313,7 @@ const JoinPage = () => {
                       />
                     </svg>
                   </h2>
-                  <p className="font-body text-white text-base max-w-lg leading-loose">
+                  <p className="max-w-lg text-white text-base leading-loose">
                     There are always a variety of different things to attend
                     including hackathons, talks, and coffee chats! We typically
                     host meetings on Mondays and Wednesdays at 8pm.
