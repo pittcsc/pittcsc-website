@@ -34,7 +34,7 @@ module.exports = {
       options: {
         headers: {
           "/*": [
-            "Content-Security-Policy: default-src 'self' 'unsafe-inline' data: https://www.google-analytics.com *.google.com *.hotjar.com; img-src 'self' 'unsafe-inline' *.cloudfront.net; style-src 'self' 'unsafe-inline' *.googleapis.com;",
+            "Content-Security-Policy: default-src 'self' 'unsafe-inline' data: https://www.google-analytics.com *.google.com *.hotjar.com *.gstatic.com; img-src 'self' 'unsafe-inline' data: *.cloudfront.net https://www.google-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com;",
           ],
         },
       },
