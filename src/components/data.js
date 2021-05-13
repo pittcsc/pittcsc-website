@@ -50,7 +50,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/alexander-grattan/",
     email: "ajg162@pitt.edu",
     image: "../images/officers/Alexander_Grattan_Picture.jpg",
-    bio: "Alexander is a Junior Digital Narrative and Interactive Design major with a CS minor. He loves web-dev and making content! You'll find Alexander in his free time playing/reffing soccer, finding new tunes to code to, or eating yet another granola bar.",
+    bio: "Alexander is a Junior Digital Narrative and Interactive Design major with a CS minor. He loves web-dev and making content! He made the website you're reading this bio off of right now. You'll find Alexander in his free time playing/reffing soccer, finding new tunes to code to, exploring Pittsburgh or eating yet another granola bar.",
   },
   {
     name: "Crystal Li",
@@ -58,5 +58,6 @@ export const officerList = [
     linkedIn: "http://linkedin.com/in/itscrystalli",
     email: "crl84@pitt.edu",
     image: "../images/officers/crystal_profile_pic.jpg",
+    bio: "Crystal is a junior double majoring in Computer Science and Digital Narrative and Interactive Design with a certificate in Digital Media. Her passion lies in the intersection between technology, user experience, design, and business strategy, which led her to become interested in PM, HCI, and Growth Marketing-related things! Outside of tech stuff, she is a big fan of all forms of storytelling - books, anime, music, and podcasts! She also loves to drink boba and grub on delicious food. 😄",
   },
 ];
