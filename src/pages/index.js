@@ -364,7 +364,7 @@ const IndexPage = ({ data }) => {
                   <h2 className="mb-4 text-3xl font-bold lg:my-4 xl:text-4xl">
                     Our Mission
                   </h2>
-                  <p className="xl:text-md">
+                  <p className="xl:text-md block leading-loose">
                     To help create an engaging atmosphere for students to learn
                     more about the field of computer science and develop
                     professionally.
@@ -498,7 +498,6 @@ const IndexPage = ({ data }) => {
               ></iframe>
               <div className="flex flex-wrap items-center justify-center">
                 <div className="flex items-center justify-center mx-2 my-2 text-lg">
-                  <p className="mx-2"> Join our zoom meetings: </p>
                   <a
                     href="https://pitt.zoom.us/my/zhw78"
                     target="_blank"
@@ -506,14 +505,20 @@ const IndexPage = ({ data }) => {
                     className="flex items-center justify-center"
                     aria-label="Pitt Computer Science Club Zoom Meetings"
                   >
-                    <FontAwesomeIcon
-                      icon={faVideo}
-                      className="text-primary text-lg lg:text-xl xl:text-2xl"
-                    />
+                    <p className="mx-2"> Join our zoom meetings: </p>
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="flex items-center justify-center"
+                    >
+                      <FontAwesomeIcon
+                        icon={faVideo}
+                        className="text-primary text-lg lg:text-xl xl:text-2xl"
+                      />
+                    </motion.div>
                   </a>
                 </div>
                 <div className="flex items-center justify-center mx-2 my-2 text-lg">
-                  <p className="mx-2"> Sign up for a coffee chat: </p>
                   <a
                     href="https://www.signupgenius.com/go/10c0c4daca628a5fcc34-alumni"
                     target="_blank"
@@ -521,10 +526,18 @@ const IndexPage = ({ data }) => {
                     className="flex items-center justify-center"
                     aria-label="Pitt Computer Science Club Coffee Chats"
                   >
-                    <FontAwesomeIcon
-                      icon={faCoffee}
-                      className="text-primary text-lg lg:text-xl xl:text-2xl"
-                    />
+                    <p className="mx-2"> Sign up for a coffee chat: </p>
+
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="flex items-center justify-center"
+                    >
+                      <FontAwesomeIcon
+                        icon={faCoffee}
+                        className="text-primary text-lg lg:text-xl xl:text-2xl"
+                      />
+                    </motion.div>
                   </a>
                 </div>
               </div>
