@@ -27,6 +27,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/rgoulazian/",
     email: "rhg13@pitt.edu",
     image: "../images/officers/richie.jpg",
+    bio: "Richie is a junior Computer Science major who outside of his regular classwork, enjoys working on personal programming projects. As an officer for CSC, Richie is responsible for experiential learning programs like the student-run hackathon CSC Hacks and the organization of special interest groups with CSC Branches. Richie also enjoys building computers and playing VR games!",
   },
 
   {
@@ -35,6 +36,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/dylan-feehan/",
     email: "djf92@pitt.edu",
     image: "../images/officers/dylan.jpg",
+    bio: "Dylan is a rising junior majoring in computer science. He loves giving back to the university and helping build the Pitt CS community. Aside from his academic endeavors, he likes to exercise, play piano, and meet new people. Right now, he’s learning C++ to explore lower level programming languages. His favorite piece of advice is to view his CS education as a tool for solving problems that are important to him (shoutout to Ritwik and Mat V for the advice).",
   },
   {
     name: "Jamir Grier",
@@ -42,6 +44,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/jamir-grier-594518182/",
     email: "jlg21@pitt.edu",
     image: "../images/officers/jamir.jpg",
+    bio: "Jamir is a sophmore  majoring in Computer Science. His passion is in human-technology interaction, which has led him to look into all sorts of design stratefies and the theory behind systems and design! Outside of academia he is a big fan of video games, anime, music, and comic books. Jamir also plays basketball, lacrosse, and football with friends on nice days, because it's always nice to get out.",
   },
 
   {
@@ -60,4 +63,12 @@ export const officerList = [
     image: "../images/officers/crystal_profile_pic.jpg",
     bio: "Crystal is a junior double majoring in Computer Science and Digital Narrative and Interactive Design with a certificate in Digital Media. Her passion lies in the intersection between technology, user experience, design, and business strategy, which led her to become interested in PM, HCI, and Growth Marketing-related things! Outside of tech stuff, she is a big fan of all forms of storytelling - books, anime, music, and podcasts! She also loves to drink boba and grub on delicious food. 😄",
   },
+  // {
+  //   name: "Eshan Parmar",
+  //   title: "Outreach Coordinator",
+  //   linkedIn: "https://www.linkedin.com/in/eshan-parmar-878275172/",
+  //   email: "esp27@pitt.edu",
+  //   image: "../images/officers/crystal_profile_pic.jpg",
+  //   bio: "Eshan is a Senior Computer Science Major with an Econ Minor who loves problem-solving! He enjoys finding ways to connect CS with finance which has led to an interest in FinTech. Outside of school, you'll find Eshan hiking, listening to music, or tossing a frisbee with some friends.",
+  // },
 ];
