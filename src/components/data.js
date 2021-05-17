@@ -63,12 +63,12 @@ export const officerList = [
     image: "../images/officers/crystal_profile_pic.jpg",
     bio: "Crystal is a junior double majoring in Computer Science and Digital Narrative and Interactive Design with a certificate in Digital Media. Her passion lies in the intersection between technology, user experience, design, and business strategy, which led her to become interested in PM, HCI, and Growth Marketing-related things! Outside of tech stuff, she is a big fan of all forms of storytelling - books, anime, music, and podcasts! She also loves to drink boba and grub on delicious food. 😄",
   },
-  // {
-  //   name: "Eshan Parmar",
-  //   title: "Outreach Coordinator",
-  //   linkedIn: "https://www.linkedin.com/in/eshan-parmar-878275172/",
-  //   email: "esp27@pitt.edu",
-  //   image: "../images/officers/crystal_profile_pic.jpg",
-  //   bio: "Eshan is a Senior Computer Science Major with an Econ Minor who loves problem-solving! He enjoys finding ways to connect CS with finance which has led to an interest in FinTech. Outside of school, you'll find Eshan hiking, listening to music, or tossing a frisbee with some friends.",
-  // },
+  {
+    name: "Eshan Parmar",
+    title: "Officer",
+    linkedIn: "https://www.linkedin.com/in/eshan-parmar-878275172/",
+    email: "esp27@pitt.edu",
+    image: "../images/officers/eshan.jpeg",
+    bio: "Eshan is a Senior Computer Science Major with an Econ Minor who loves problem-solving! He enjoys finding ways to connect CS with finance which has led to an interest in FinTech. Outside of school, you'll find Eshan hiking, listening to music, or tossing a frisbee with some friends.",
+  },
 ];

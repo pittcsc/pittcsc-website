@@ -161,7 +161,7 @@ const AboutPage = () => {
             <h2 className="mb-8 mt-4 max-w-lg text-2xl font-bold lg:text-5xl">
               The Officers
             </h2>
-            <div className="grid gap-24 grid-cols-1 2xl:grid-cols-4 my-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-24 2xl:gap-32 grid-cols-1 my-8 md:grid-cols-2 lg:grid-cols-3">
               {officerList.map(
                 ({ name, title, linkedIn, email, image, bio }) => (
                   <TeamCard
