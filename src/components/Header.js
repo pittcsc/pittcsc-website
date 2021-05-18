@@ -20,8 +20,14 @@ function Header({ title }) {
     >
       <div className="flex items-center justify-between mx-auto md:block md:mx-0">
         <Link to="/">
-          <img src={logo} alt="pitt-csc-logo" className="relative w-32" />
+          <img
+            src={logo}
+            alt="Pitt CSC Logo"
+            className="relative w-32"
+            width={128}
+          />
         </Link>
+
         <button
           className={`cursor-pointer md:hidden z-40 focus:outline-none 
           `}
