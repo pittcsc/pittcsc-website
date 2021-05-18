@@ -47,7 +47,7 @@ function Header({ title }) {
         } md:max-h-96 md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
         <ul
-          className={`flex flex-col justify-center items-center space-y-4  md:flex md:flex-row md:block md:items-center md:space-x-8 md:space-y-0`}
+          className={`flex flex-col justify-center items-center space-y-4 md:flex-row md:items-center md:space-x-8 md:space-y-0`}
         >
           <li>
             <Link to="/about">
