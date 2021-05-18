@@ -65,7 +65,7 @@ export const officerList = [
   },
   {
     name: "Eshan Parmar",
-    title: "Officer",
+    title: "Chief Technical Officer",
     linkedIn: "https://www.linkedin.com/in/eshan-parmar-878275172/",
     email: "esp27@pitt.edu",
     image: "../images/officers/eshan.jpeg",
