@@ -315,82 +315,89 @@ const JoinPage = ({ data }) => {
                     </div>
                   </div>
                 </div>
-                <div className="p-4 w-9/12 lg:w-auto">
-                  <h2 className="my-4 text-white text-2xl font-bold lg:text-5xl">
-                    Pop in to an event
-                    <svg
-                      width="156"
-                      height="12"
-                      viewBox="0 0 156 12"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M153 9.00001C106.723 9.00006 14.1702 -4.49999 3 8.99995"
-                        stroke="#FFB81C"
-                        stroke-width="5"
-                        stroke-linecap="round"
-                      />
-                    </svg>
-                  </h2>
-                  <p className="max-w-lg text-white text-base leading-loose">
-                    There are always a variety of different things to attend
-                    including hackathons, talks, and coffee chats! We typically
-                    host meetings on Mondays and Wednesdays at 8pm.
-                  </p>
-                </div>
-                <div className="mt-4 p-8 bg-secondary-200 rounded-2xl shadow-lg">
-                  <h3 className="mb-2 font-bold lg:text-lg">Upcoming Events</h3>
-                  <ul className="flex flex-col text-sm space-y-2 lg:text-base">
-                    {futureEvents
-                      .sort(
-                        (a, b) =>
-                          new Date(
-                            a.node.content.properties?.Date?.date?.start
-                          ) -
-                          new Date(b.node.content.properties?.Date?.date?.start)
-                      )
-                      .slice(0, 2)
-                      .map((event, i) => (
-                        <EventItem
-                          key={i}
-                          name={
-                            event.node.content.properties?.Name?.title[0]
-                              ?.plain_text
-                          }
-                          startDate={
-                            event.node.content.properties?.Date?.date?.start &&
-                            format(
-                              new Date(
-                                event.node.content.properties?.Date?.date?.start
-                              ),
-                              "MM/dd"
-                            )
-                          }
-                          endDate={
-                            event.node.content.properties?.Date?.date?.end &&
-                            format(
-                              new Date(
-                                event.node.content.properties?.Date.date?.end
-                              ),
-                              "MM/dd"
-                            )
-                          }
-                          description={
-                            event.node.content.properties?.Description
-                              ?.rich_text[0]?.plain_text
-                          }
-                          url={event.node.content.properties?.Link?.url}
-                          tags={
-                            event.node.content.properties?.Tags?.multi_select
-                          }
-                          time={
-                            event.node.content.properties?.Time?.rich_text[0]
-                              ?.plain_text
-                          }
+                <div>
+                  <div className="p-4 w-9/12 lg:w-auto">
+                    <h2 className="my-4 text-white text-2xl font-bold lg:text-5xl">
+                      Pop in to an event
+                      <svg
+                        width="156"
+                        height="12"
+                        viewBox="0 0 156 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M153 9.00001C106.723 9.00006 14.1702 -4.49999 3 8.99995"
+                          stroke="#FFB81C"
+                          stroke-width="5"
+                          stroke-linecap="round"
                         />
-                      ))}
-                  </ul>
+                      </svg>
+                    </h2>
+                    <p className="max-w-lg text-white text-base leading-loose">
+                      There are always a variety of different things to attend
+                      including hackathons, talks, and coffee chats! We
+                      typically host meetings on Mondays and Wednesdays at 8pm.
+                    </p>
+                  </div>
+                  <div className="mt-4 p-8 bg-secondary-200 rounded-2xl shadow-lg">
+                    <h3 className="mb-2 font-bold lg:text-lg">
+                      Upcoming Events
+                    </h3>
+                    <ul className="flex flex-col text-sm space-y-2 lg:text-base">
+                      {futureEvents
+                        .sort(
+                          (a, b) =>
+                            new Date(
+                              a.node.content.properties?.Date?.date?.start
+                            ) -
+                            new Date(
+                              b.node.content.properties?.Date?.date?.start
+                            )
+                        )
+                        .slice(0, 2)
+                        .map((event, i) => (
+                          <EventItem
+                            key={i}
+                            name={
+                              event.node.content.properties?.Name?.title[0]
+                                ?.plain_text
+                            }
+                            startDate={
+                              event.node.content.properties?.Date?.date
+                                ?.start &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date?.date?.start
+                                ),
+                                "MM/dd"
+                              )
+                            }
+                            endDate={
+                              event.node.content.properties?.Date?.date?.end &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date.date?.end
+                                ),
+                                "MM/dd"
+                              )
+                            }
+                            description={
+                              event.node.content.properties?.Description
+                                ?.rich_text[0]?.plain_text
+                            }
+                            url={event.node.content.properties?.Link?.url}
+                            tags={
+                              event.node.content.properties?.Tags?.multi_select
+                            }
+                            time={
+                              event.node.content.properties?.Time?.rich_text[0]
+                                ?.plain_text
+                            }
+                          />
+                        ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </section>
