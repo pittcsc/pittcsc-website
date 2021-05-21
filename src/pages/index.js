@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { graphql } from "gatsby";
+import { format } from "date-fns";
 import { Link } from "gatsby";
 import Lottie from "react-lottie";
 import { StaticImage } from "gatsby-plugin-image";
@@ -138,6 +140,8 @@ const hitUnderlineAnimate = {
 };
 
 const IndexPage = ({ data }) => {
+  const site = (data || {})?.site;
+  console.log(site);
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: missionRef, inView: missionInView } = useInView({
@@ -199,7 +203,7 @@ const IndexPage = ({ data }) => {
                 <br />
                 Science Club
                 <svg
-                  className="svg-underline relative z-10 w-64 lg:w-1/2 xl:w-3/4"
+                  className="svg-underline relative z-10 w-64 md:w-1/2 lg:w-3/4"
                   viewBox="0 0 422 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -221,7 +225,7 @@ const IndexPage = ({ data }) => {
               </motion.p>
               <motion.div
                 variants={text}
-                className="relative z-20 pb-12 pt-4 space-x-4 lg:py-4 xl:space-x-8"
+                className="relative z-20 py-4 space-x-4 xl:space-x-8"
               >
                 <Link to="/join">
                   <motion.button
@@ -243,6 +247,27 @@ const IndexPage = ({ data }) => {
                 </Link>
               </motion.div>
               <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
+              <motion.div
+                variants={text}
+                className="relative z-10 my-2 pb-12 pt-4 w-full whitespace-pre lg:py-4"
+              >
+                <h3 className="font-bold">Upcoming Events</h3>
+                {
+                  site.edges[0].node.content.properties.Name.title[0].plain_text
+                }{" "}
+                -{" "}
+                {format(
+                  new Date(
+                    site.edges[0].node.content.properties.Date.date.start
+                  ),
+                  "MMMM do, yyyy"
+                )}{" "}
+                to {}
+                {format(
+                  new Date(site.edges[0].node.content.properties.Date.date.end),
+                  "MMMM do, yyyy"
+                )}
+              </motion.div>
             </motion.div>
             <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
               {/* <motion.img
@@ -480,18 +505,18 @@ const IndexPage = ({ data }) => {
                 <path
                   d="M29 3C71.5 3.5 152.3 10.3 183.5 73.5C214.7 136.7 281.5 155.167 305 151.5"
                   stroke="#FFB81C"
-                  stroke-width="5"
+                  strokeWidth="5"
                 />
                 <path
                   d="M1 48C43.5 48.5 124.3 55.3 155.5 118.5C186.7 181.7 253.5 200.167 277 196.5"
                   stroke="#FFB81C"
-                  stroke-width="5"
+                  strokeWidth="5"
                 />
               </svg>
               <iframe
                 src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
                 title="Pitt CSC Google Calendar"
-                frameborder="0"
+                frameBorder="0"
                 scrolling="no"
                 height="600"
                 className="w-full"
@@ -560,5 +585,51 @@ const IndexPage = ({ data }) => {
     </Layout>
   );
 };
+
+export const query = graphql`
+  {
+    site: allTestNode {
+      edges {
+        node {
+          content {
+            id
+            object
+            parent {
+              database_id
+              type
+            }
+            properties {
+              Date {
+                date {
+                  start
+                  end
+                }
+              }
+              Description {
+                rich_text {
+                  plain_text
+                  text {
+                    content
+                  }
+                }
+              }
+              Name {
+                title {
+                  plain_text
+                }
+              }
+              Tags {
+                rich_text {
+                  plain_text
+                }
+              }
+            }
+          }
+          id
+        }
+      }
+    }
+  }
+`;
 
 export default IndexPage;

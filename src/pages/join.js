@@ -161,7 +161,7 @@ const JoinPage = () => {
                 }}
                 className="polka-background-subPage absolute -right-48 top-0 lg:-right-24"
               ></motion.div>
-              <div className="relative flex flex-wrap items-center justify-around mx-auto mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
+              <div className="relative flex flex-wrap items-center justify-around mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
