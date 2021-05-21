@@ -28,7 +28,7 @@ exports.sourceNodes = async ({
       content: { ...event },
       id: createNodeId(`NotionEvent-${event.id}`),
       internal: {
-        type: "TestNode",
+        type: "NotionEvent",
         contentDigest: createContentDigest(event),
       },
     };

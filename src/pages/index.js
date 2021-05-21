@@ -31,6 +31,8 @@ import { useInView } from "react-intersection-observer";
 
 import Layout from "../layouts/layout";
 
+import EventItem from "../components/eventItem";
+
 const logoAnimationOptions = {
   loop: false,
   autoplay: true,
@@ -141,6 +143,11 @@ const hitUnderlineAnimate = {
 
 const IndexPage = ({ data }) => {
   const site = (data || {})?.site;
+  const futureEvents = site.edges.filter(
+    (event) =>
+      Date.parse(event.node.content.properties.Date.date.start) > new Date()
+  );
+  console.log(futureEvents);
   console.log(site);
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
@@ -247,27 +254,74 @@ const IndexPage = ({ data }) => {
                 </Link>
               </motion.div>
               <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
-              <motion.div
+              {/* <motion.div
                 variants={text}
-                className="relative z-10 my-2 pb-12 pt-4 w-full whitespace-pre lg:py-4"
+                className="relative z-10 my-2 pb-8 w-full whitespace-pre lg:pb-0"
               >
-                <h3 className="font-bold">Upcoming Events</h3>
-                {
-                  site.edges[0].node.content.properties.Name.title[0].plain_text
-                }{" "}
-                -{" "}
-                {format(
-                  new Date(
-                    site.edges[0].node.content.properties.Date.date.start
-                  ),
-                  "MMMM do, yyyy"
-                )}{" "}
-                to {}
-                {format(
-                  new Date(site.edges[0].node.content.properties.Date.date.end),
-                  "MMMM do, yyyy"
-                )}
-              </motion.div>
+                <h3 className="mb-2 font-bold lg:text-lg">Upcoming Events</h3>
+                <ul className="flex flex-col text-sm space-y-2 lg:text-base">
+                  {futureEvents
+                    .slice(0, 2)
+                    .sort(
+                      (a, b) =>
+                        new Date(a.node.content.properties?.Date?.date?.start) -
+                        new Date(b.node.content.properties?.Date?.date?.start)
+                    )
+                    .map((event, i) => (
+                      // <li
+                      //   key={i}
+                      //   onClick={() =>
+                      //     navigate(
+                      //       `events?=${event.node.event.node.content.properties.Name.title[0].plain_text}`,
+                      //       { state: event }
+                      //     )
+                      //   }
+                      // >
+                      //   {event.node.content.properties.Name.title[0].plain_text} -{" "}
+                      //   {format(
+                      //     new Date(event.node.content.properties.Date.date.start),
+                      //     "MMMM do, yyyy"
+                      //   )}{" "}
+                      //   {event.node.content.properties.Date.date.end &&
+                      //     `to ${format(
+                      //       new Date(event.node.content.properties.Date.date.end),
+                      //       "MMMM do, yyyy"
+                      //     )}`}
+                      // </li>
+                      <EventItem
+                        key={i}
+                        name={
+                          event.node.content.properties?.Name?.title[0]
+                            ?.plain_text
+                        }
+                        startDate={
+                          event.node.content.properties?.Date?.date?.start &&
+                          format(
+                            new Date(
+                              event.node.content.properties?.Date?.date?.start
+                            ),
+                            "MMMM do, yyyy"
+                          )
+                        }
+                        endDate={
+                          event.node.content.properties?.Date?.date?.end &&
+                          format(
+                            new Date(
+                              event.node.content.properties?.Date.date?.end
+                            ),
+                            "MMMM do, yyyy"
+                          )
+                        }
+                        description={
+                          event.node.content.properties?.Description
+                            ?.rich_text[0]?.plain_text
+                        }
+                        url={event.node.content.properties?.Link?.url}
+                        tags={event.node.content.properties?.Tags?.multi_select}
+                      />
+                    ))}
+                </ul>
+              </motion.div> */}
             </motion.div>
             <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
               {/* <motion.img
@@ -319,7 +373,7 @@ const IndexPage = ({ data }) => {
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
             <section className="container relative z-10 flex flex-col items-center justify-center mx-auto py-24 w-full lg:flex-row lg:py-32">
-              <div className="relative my-4 w-full text-center lg:w-1/2 xl:my-0">
+              <div className="relative flex flex-col items-center justify-center my-4 w-full h-full text-center lg:w-1/2 xl:my-0">
                 <motion.svg
                   className="svg-underline absolute z-10 -top-10 right-0 w-32 md:-top-20 md:w-64 lg:w-48 xl:w-64"
                   viewBox="0 0 306 200"
@@ -344,7 +398,7 @@ const IndexPage = ({ data }) => {
                   variants={maskAnimate}
                   initial="hidden"
                   animate={controls}
-                  className="mx-auto w-3/4 xl:w-9/12"
+                  className="mx-auto w-10/12 xl:w-9/12"
                 >
                   <StaticImage
                     src="../images/Pitt_CSC_Mask.jpg"
@@ -372,7 +426,7 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href={FallReport}
                   target="_blank"
-                  className="relative z-20 bottom-8 inline-block"
+                  className="absolute z-20 -bottom-4 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
                     See Fall Report
@@ -385,7 +439,7 @@ const IndexPage = ({ data }) => {
                 initial="hidden"
                 animate={controls}
               >
-                <div className="mx-auto my-4 p-8 w-3/4 max-w-lg bg-secondary-200 rounded-3xl shadow-lg xl:my-0 xl:px-8 xl:py-12 xl:w-full">
+                <div className="mx-auto my-4 p-8 w-10/12 max-w-lg bg-secondary-200 rounded-3xl shadow-lg xl:my-0 xl:px-8 xl:py-12 xl:w-full">
                   <h2 className="mb-4 text-3xl font-bold lg:my-4 xl:text-4xl">
                     Our Mission
                   </h2>
@@ -394,6 +448,55 @@ const IndexPage = ({ data }) => {
                     more about the field of computer science and develop
                     professionally.
                   </p>
+                  <h3 className="mb-2 mt-4 font-bold lg:text-lg">
+                    Upcoming Events
+                  </h3>
+                  <ul className="flex flex-col text-sm space-y-2 lg:text-base">
+                    {futureEvents
+                      .sort(
+                        (a, b) =>
+                          new Date(
+                            a.node.content.properties?.Date?.date?.start
+                          ) -
+                          new Date(b.node.content.properties?.Date?.date?.start)
+                      )
+                      .slice(0, 2)
+                      .map((event, i) => (
+                        <EventItem
+                          key={i}
+                          name={
+                            event.node.content.properties?.Name?.title[0]
+                              ?.plain_text
+                          }
+                          startDate={
+                            event.node.content.properties?.Date?.date?.start &&
+                            format(
+                              new Date(
+                                event.node.content.properties?.Date?.date?.start
+                              ),
+                              "MMMM do, yyyy"
+                            )
+                          }
+                          endDate={
+                            event.node.content.properties?.Date?.date?.end &&
+                            format(
+                              new Date(
+                                event.node.content.properties?.Date.date?.end
+                              ),
+                              "MMMM do, yyyy"
+                            )
+                          }
+                          description={
+                            event.node.content.properties?.Description
+                              ?.rich_text[0]?.plain_text
+                          }
+                          url={event.node.content.properties?.Link?.url}
+                          tags={
+                            event.node.content.properties?.Tags?.multi_select
+                          }
+                        />
+                      ))}
+                  </ul>
                 </div>
               </motion.div>
             </section>
@@ -424,7 +527,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
+              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-4 w-10/12 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -588,29 +691,15 @@ const IndexPage = ({ data }) => {
 
 export const query = graphql`
   {
-    site: allTestNode {
+    site: allNotionEvent {
       edges {
         node {
           content {
-            id
-            object
-            parent {
-              database_id
-              type
-            }
             properties {
-              Date {
-                date {
-                  start
-                  end
-                }
-              }
-              Description {
-                rich_text {
-                  plain_text
-                  text {
-                    content
-                  }
+              Tags {
+                multi_select {
+                  color
+                  name
                 }
               }
               Name {
@@ -618,14 +707,22 @@ export const query = graphql`
                   plain_text
                 }
               }
-              Tags {
+              Link {
+                url
+              }
+              Description {
                 rich_text {
                   plain_text
                 }
               }
+              Date {
+                date {
+                  start
+                  end
+                }
+              }
             }
           }
-          id
         }
       }
     }

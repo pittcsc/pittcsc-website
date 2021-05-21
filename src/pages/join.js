@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-
+import { graphql } from "gatsby";
+import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -20,6 +21,8 @@ import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 
 import Layout from "../layouts/layout";
+
+import EventItem from "../components/eventItem";
 
 // import heroImage from "../images/hero-img2-cropped.png";
 // import MaskImage from "../images/Pitt_CSC_Mask.jpg";
@@ -46,7 +49,12 @@ import Layout from "../layouts/layout";
 //   },
 // };
 
-const JoinPage = () => {
+const JoinPage = ({ data }) => {
+  const site = (data || {})?.site;
+  const futureEvents = site.edges.filter(
+    (event) =>
+      Date.parse(event.node.content.properties.Date.date.start) > new Date()
+  );
   useEffect(() => {
     hotjar.initialize(2276434, 6);
     ReactGA.initialize("UA-58446605-1");
@@ -330,6 +338,60 @@ const JoinPage = () => {
                     including hackathons, talks, and coffee chats! We typically
                     host meetings on Mondays and Wednesdays at 8pm.
                   </p>
+                  <div className="mt-4 p-8 bg-secondary-200 rounded-2xl shadow-lg">
+                    <h3 className="mb-2 font-bold lg:text-lg">
+                      Upcoming Events
+                    </h3>
+                    <ul className="flex flex-col text-sm space-y-2 lg:text-base">
+                      {futureEvents
+                        .slice(0, 2)
+                        .sort(
+                          (a, b) =>
+                            new Date(
+                              a.node.content.properties?.Date?.date?.start
+                            ) -
+                            new Date(
+                              b.node.content.properties?.Date?.date?.start
+                            )
+                        )
+                        .map((event, i) => (
+                          <EventItem
+                            key={i}
+                            name={
+                              event.node.content.properties?.Name?.title[0]
+                                ?.plain_text
+                            }
+                            startDate={
+                              event.node.content.properties?.Date?.date
+                                ?.start &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date?.date?.start
+                                ),
+                                "MMMM do, yyyy"
+                              )
+                            }
+                            endDate={
+                              event.node.content.properties?.Date?.date?.end &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date.date?.end
+                                ),
+                                "MMMM do, yyyy"
+                              )
+                            }
+                            description={
+                              event.node.content.properties?.Description
+                                ?.rich_text[0]?.plain_text
+                            }
+                            url={event.node.content.properties?.Link?.url}
+                            tags={
+                              event.node.content.properties?.Tags?.multi_select
+                            }
+                          />
+                        ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </section>
@@ -339,5 +401,45 @@ const JoinPage = () => {
     </Layout>
   );
 };
+
+export const query = graphql`
+  {
+    site: allNotionEvent {
+      edges {
+        node {
+          content {
+            properties {
+              Tags {
+                multi_select {
+                  color
+                  name
+                }
+              }
+              Name {
+                title {
+                  plain_text
+                }
+              }
+              Link {
+                url
+              }
+              Description {
+                rich_text {
+                  plain_text
+                }
+              }
+              Date {
+                date {
+                  start
+                  end
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 export default JoinPage;
