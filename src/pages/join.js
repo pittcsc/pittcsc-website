@@ -315,8 +315,8 @@ const JoinPage = ({ data }) => {
                     </div>
                   </div>
                 </div>
-                <div>
-                  <div className="p-4 w-9/12 lg:w-auto">
+                <div className="mx-auto w-10/12">
+                  <div className="mx-auto p-4">
                     <h2 className="my-4 text-white text-2xl font-bold lg:text-5xl">
                       Pop in to an event
                       <svg
@@ -340,7 +340,7 @@ const JoinPage = ({ data }) => {
                       typically host meetings on Mondays and Wednesdays at 8pm.
                     </p>
                   </div>
-                  <div className="mt-4 p-8 bg-secondary-200 rounded-2xl shadow-lg">
+                  <div className="mt-4 mx-auto p-8 bg-secondary-200 rounded-2xl shadow-lg">
                     <h3 className="mb-2 font-bold lg:text-lg">
                       Upcoming Events
                     </h3>
