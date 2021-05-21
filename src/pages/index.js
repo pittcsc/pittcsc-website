@@ -494,6 +494,10 @@ const IndexPage = ({ data }) => {
                           tags={
                             event.node.content.properties?.Tags?.multi_select
                           }
+                          time={
+                            event.node.content.properties?.Time?.rich_text[0]
+                              ?.plain_text
+                          }
                         />
                       ))}
                   </ul>
@@ -711,6 +715,11 @@ export const query = graphql`
                 url
               }
               Description {
+                rich_text {
+                  plain_text
+                }
+              }
+              Time {
                 rich_text {
                   plain_text
                 }

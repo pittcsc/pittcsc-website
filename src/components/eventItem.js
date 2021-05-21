@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 
-function EventItem({ name, startDate, endDate, url, description, tags }) {
+function EventItem({ name, startDate, endDate, url, description, tags, time }) {
   const [modalOpen, setModalOpen] = useState(false);
   console.log(endDate);
   return (
@@ -18,6 +18,7 @@ function EventItem({ name, startDate, endDate, url, description, tags }) {
         >
           <p className="font-medium">
             {name} - {startDate} {endDate && `to ${endDate}`}
+            {time && time}
           </p>
         </motion.button>
       </li>
@@ -29,6 +30,7 @@ function EventItem({ name, startDate, endDate, url, description, tags }) {
                 <h2 className="text-2xl font-bold lg:text-4xl">{name}</h2>
                 <p>
                   {startDate} {endDate && `to ${endDate}`}
+                  {time && time}
                 </p>
                 <div className="flex space-x-2">
                   {tags.map((tag, i) => (
