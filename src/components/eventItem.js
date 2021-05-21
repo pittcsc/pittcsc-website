@@ -34,8 +34,10 @@ function EventItem({ name, startDate, endDate, url, description, tags }) {
                   {tags.map((tag, i) => (
                     <div
                       className={`text-sm lg:text-base px-4 py-2 ${
-                        tag.color ? `bg-${tag.color}-300` : "bg-gray-300"
-                      } rounded-full`}
+                        tag.color
+                          ? `bg-${tag.color}-300 !important`
+                          : "bg-gray-300"
+                      } rounded-full hover:bg-${tag.color}-300`}
                       key={i}
                     >
                       {tag.name}

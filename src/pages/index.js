@@ -474,7 +474,7 @@ const IndexPage = ({ data }) => {
                               new Date(
                                 event.node.content.properties?.Date?.date?.start
                               ),
-                              "MMMM do, yyyy"
+                              "MM/dd"
                             )
                           }
                           endDate={
@@ -483,7 +483,7 @@ const IndexPage = ({ data }) => {
                               new Date(
                                 event.node.content.properties?.Date.date?.end
                               ),
-                              "MMMM do, yyyy"
+                              "MM/dd"
                             )
                           }
                           description={
