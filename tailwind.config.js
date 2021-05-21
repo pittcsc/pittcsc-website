@@ -2,7 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   purge: {
-    content: "./src/**/*.{js,jsx,ts,tsx}",
+    content: ["./src/**/*.{js,jsx,ts,tsx}"],
     options: {
       safelist: [
         "bg-red-300",
