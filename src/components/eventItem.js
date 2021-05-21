@@ -33,7 +33,9 @@ function EventItem({ name, startDate, endDate, url, description, tags }) {
                 <div className="flex space-x-2">
                   {tags.map((tag, i) => (
                     <div
-                      className={`text-sm lg:text-base px-4 py-2 bg-${tag.color}-300 rounded-full`}
+                      className={`text-sm lg:text-base px-4 py-2 ${
+                        tag.color ? `bg-${tag.color}-300` : "bg-gray-300"
+                      } rounded-full`}
                       key={i}
                     >
                       {tag.name}
