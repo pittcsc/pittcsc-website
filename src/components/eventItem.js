@@ -18,7 +18,6 @@ function EventItem({ name, startDate, endDate, url, description, tags, time }) {
         >
           <p className="font-medium">
             {name} - {startDate} {endDate && `to ${endDate}`}
-            {time && time}
           </p>
         </motion.button>
       </li>
