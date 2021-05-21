@@ -344,7 +344,6 @@ const JoinPage = ({ data }) => {
                     </h3>
                     <ul className="flex flex-col text-sm space-y-2 lg:text-base">
                       {futureEvents
-                        .slice(0, 2)
                         .sort(
                           (a, b) =>
                             new Date(
@@ -354,6 +353,7 @@ const JoinPage = ({ data }) => {
                               b.node.content.properties?.Date?.date?.start
                             )
                         )
+                        .slice(0, 2)
                         .map((event, i) => (
                           <EventItem
                             key={i}
@@ -368,7 +368,7 @@ const JoinPage = ({ data }) => {
                                 new Date(
                                   event.node.content.properties?.Date?.date?.start
                                 ),
-                                "MMMM do, yyyy"
+                                "MM/dd"
                               )
                             }
                             endDate={
@@ -377,7 +377,7 @@ const JoinPage = ({ data }) => {
                                 new Date(
                                   event.node.content.properties?.Date.date?.end
                                 ),
-                                "MMMM do, yyyy"
+                                "MM/dd"
                               )
                             }
                             description={
