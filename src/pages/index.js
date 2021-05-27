@@ -516,7 +516,7 @@ const IndexPage = ({ data }) => {
           </div>
 
           <motion.section
-            className="container flex flex-col items-center justify-center mx-auto py-8 w-full lg:flex-row"
+            className="container flex flex-col items-center justify-center mx-auto px-4 py-8 w-full md:px-0 lg:flex-row"
             variants={socialAnimate}
             ref={socialRef}
             initial="hidden"
@@ -528,7 +528,7 @@ const IndexPage = ({ data }) => {
                 Hit us up
               </h2>
               <svg
-                className="svg-underline mb-8 mx-auto w-64 lg:mb-16 lg:w-1/4 xl:w-1/2"
+                className="svg-underline mb-8 mx-auto w-48 md:w-64 lg:mb-16 lg:w-1/2"
                 viewBox="0 0 479 20"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -540,7 +540,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-4 w-10/12 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
+              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-6 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}

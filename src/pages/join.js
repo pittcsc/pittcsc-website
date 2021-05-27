@@ -242,7 +242,7 @@ const JoinPage = ({ data }) => {
             </div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container flex items-center justify-center mx-auto py-24 w-full lg:py-32">
+            <section className="container flex items-center justify-center mx-auto px-4 py-24 w-full md:px-0 lg:py-32">
               <div className="flex flex-wrap gap-4 items-center justify-around w-full">
                 <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg xl:w-1/2">
                   <svg
