@@ -451,55 +451,64 @@ const IndexPage = ({ data }) => {
                   <h3 className="mb-2 mt-4 font-bold lg:text-lg">
                     Upcoming Events
                   </h3>
-                  <ul className="flex flex-col text-sm space-y-2 lg:text-base">
-                    {futureEvents
-                      .sort(
-                        (a, b) =>
-                          new Date(
-                            a.node.content.properties?.Date?.date?.start
-                          ) -
-                          new Date(b.node.content.properties?.Date?.date?.start)
-                      )
-                      .slice(0, 2)
-                      .map((event, i) => (
-                        <EventItem
-                          key={i}
-                          name={
-                            event.node.content.properties?.Name?.title[0]
-                              ?.plain_text
-                          }
-                          startDate={
-                            event.node.content.properties?.Date?.date?.start &&
-                            format(
-                              new Date(
-                                event.node.content.properties?.Date?.date?.start
-                              ),
-                              "MM/dd"
+                  <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
+                    {futureEvents.length !== 0 &&
+                      futureEvents
+                        .sort(
+                          (a, b) =>
+                            new Date(
+                              a.node.content.properties?.Date?.date?.start
+                            ) -
+                            new Date(
+                              b.node.content.properties?.Date?.date?.start
                             )
-                          }
-                          endDate={
-                            event.node.content.properties?.Date?.date?.end &&
-                            format(
-                              new Date(
-                                event.node.content.properties?.Date.date?.end
-                              ),
-                              "MM/dd"
-                            )
-                          }
-                          description={
-                            event.node.content.properties?.Description
-                              ?.rich_text[0]?.plain_text
-                          }
-                          url={event.node.content.properties?.Link?.url}
-                          tags={
-                            event.node.content.properties?.Tags?.multi_select
-                          }
-                          time={
-                            event.node.content.properties?.Time?.rich_text[0]
-                              ?.plain_text
-                          }
-                        />
-                      ))}
+                        )
+                        .slice(0, 2)
+                        .map((event, i) => (
+                          <EventItem
+                            key={i}
+                            name={
+                              event.node.content.properties?.Name?.title[0]
+                                ?.plain_text
+                            }
+                            startDate={
+                              event.node.content.properties?.Date?.date
+                                ?.start &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date?.date?.start
+                                ),
+                                "MM/dd"
+                              )
+                            }
+                            endDate={
+                              event.node.content.properties?.Date?.date?.end &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date.date?.end
+                                ),
+                                "MM/dd"
+                              )
+                            }
+                            description={
+                              event.node.content.properties?.Description
+                                ?.rich_text[0]?.plain_text
+                            }
+                            url={event.node.content.properties?.Link?.url}
+                            tags={
+                              event.node.content.properties?.Tags?.multi_select
+                            }
+                            time={
+                              event.node.content.properties?.Time?.rich_text[0]
+                                ?.plain_text
+                            }
+                          />
+                        ))}
+                    {futureEvents.length === 0 && (
+                      <p className="px-4 py-2 text-left text-white bg-primary rounded-full">
+                        None right now but stay tuned!
+                      </p>
+                    )}
                   </ul>
                 </div>
               </motion.div>
