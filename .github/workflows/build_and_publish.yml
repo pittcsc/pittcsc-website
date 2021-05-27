@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NOTION_TOKEN: secret_pYfqoNgRHJtgRzhXo8Wo4JwRNYEgaQTlzcARLDIL5wh
+      NOTION_DATABASE_ID: f669dd3a-4816-4010-b4aa-422e86472f0f
     steps:
       - uses: actions/checkout@v1
       - uses: enriikke/gatsby-gh-pages-action@v2
