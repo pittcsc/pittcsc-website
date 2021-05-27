@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { graphql } from "gatsby";
+import { format } from "date-fns";
 import { Link } from "gatsby";
 import Lottie from "react-lottie";
 import { StaticImage } from "gatsby-plugin-image";
@@ -28,6 +30,8 @@ import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
 import { useInView } from "react-intersection-observer";
 
 import Layout from "../layouts/layout";
+
+import EventItem from "../components/eventItem";
 
 const logoAnimationOptions = {
   loop: false,
@@ -138,6 +142,13 @@ const hitUnderlineAnimate = {
 };
 
 const IndexPage = ({ data }) => {
+  const site = (data || {})?.site;
+  const futureEvents = site.edges.filter(
+    (event) =>
+      Date.parse(event.node.content.properties.Date.date.start) > new Date()
+  );
+  console.log(futureEvents);
+  console.log(site);
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: missionRef, inView: missionInView } = useInView({
@@ -199,7 +210,7 @@ const IndexPage = ({ data }) => {
                 <br />
                 Science Club
                 <svg
-                  className="svg-underline relative z-10 w-64 lg:w-1/2 xl:w-3/4"
+                  className="svg-underline relative z-10 w-64 md:w-1/2 lg:w-3/4"
                   viewBox="0 0 422 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -221,7 +232,7 @@ const IndexPage = ({ data }) => {
               </motion.p>
               <motion.div
                 variants={text}
-                className="relative z-20 pb-12 pt-4 space-x-4 lg:py-4 xl:space-x-8"
+                className="relative z-20 py-4 space-x-4 xl:space-x-8"
               >
                 <Link to="/join">
                   <motion.button
@@ -243,6 +254,74 @@ const IndexPage = ({ data }) => {
                 </Link>
               </motion.div>
               <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
+              {/* <motion.div
+                variants={text}
+                className="relative z-10 my-2 pb-8 w-full whitespace-pre lg:pb-0"
+              >
+                <h3 className="mb-2 font-bold lg:text-lg">Upcoming Events</h3>
+                <ul className="flex flex-col text-sm space-y-2 lg:text-base">
+                  {futureEvents
+                    .slice(0, 2)
+                    .sort(
+                      (a, b) =>
+                        new Date(a.node.content.properties?.Date?.date?.start) -
+                        new Date(b.node.content.properties?.Date?.date?.start)
+                    )
+                    .map((event, i) => (
+                      // <li
+                      //   key={i}
+                      //   onClick={() =>
+                      //     navigate(
+                      //       `events?=${event.node.event.node.content.properties.Name.title[0].plain_text}`,
+                      //       { state: event }
+                      //     )
+                      //   }
+                      // >
+                      //   {event.node.content.properties.Name.title[0].plain_text} -{" "}
+                      //   {format(
+                      //     new Date(event.node.content.properties.Date.date.start),
+                      //     "MMMM do, yyyy"
+                      //   )}{" "}
+                      //   {event.node.content.properties.Date.date.end &&
+                      //     `to ${format(
+                      //       new Date(event.node.content.properties.Date.date.end),
+                      //       "MMMM do, yyyy"
+                      //     )}`}
+                      // </li>
+                      <EventItem
+                        key={i}
+                        name={
+                          event.node.content.properties?.Name?.title[0]
+                            ?.plain_text
+                        }
+                        startDate={
+                          event.node.content.properties?.Date?.date?.start &&
+                          format(
+                            new Date(
+                              event.node.content.properties?.Date?.date?.start
+                            ),
+                            "MMMM do, yyyy"
+                          )
+                        }
+                        endDate={
+                          event.node.content.properties?.Date?.date?.end &&
+                          format(
+                            new Date(
+                              event.node.content.properties?.Date.date?.end
+                            ),
+                            "MMMM do, yyyy"
+                          )
+                        }
+                        description={
+                          event.node.content.properties?.Description
+                            ?.rich_text[0]?.plain_text
+                        }
+                        url={event.node.content.properties?.Link?.url}
+                        tags={event.node.content.properties?.Tags?.multi_select}
+                      />
+                    ))}
+                </ul>
+              </motion.div> */}
             </motion.div>
             <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
               {/* <motion.img
@@ -294,7 +373,7 @@ const IndexPage = ({ data }) => {
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
             <section className="container relative z-10 flex flex-col items-center justify-center mx-auto py-24 w-full lg:flex-row lg:py-32">
-              <div className="relative my-4 w-full text-center lg:w-1/2 xl:my-0">
+              <div className="relative flex flex-col items-center justify-center my-4 w-full h-full text-center lg:w-1/2 xl:my-0">
                 <motion.svg
                   className="svg-underline absolute z-10 -top-10 right-0 w-32 md:-top-20 md:w-64 lg:w-48 xl:w-64"
                   viewBox="0 0 306 200"
@@ -319,7 +398,7 @@ const IndexPage = ({ data }) => {
                   variants={maskAnimate}
                   initial="hidden"
                   animate={controls}
-                  className="mx-auto w-3/4 xl:w-9/12"
+                  className="mx-auto w-10/12 xl:w-9/12"
                 >
                   <StaticImage
                     src="../images/Pitt_CSC_Mask.jpg"
@@ -347,7 +426,7 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href={FallReport}
                   target="_blank"
-                  className="relative z-20 bottom-8 inline-block"
+                  className="absolute z-20 -bottom-4 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
                     See Fall Report
@@ -360,7 +439,7 @@ const IndexPage = ({ data }) => {
                 initial="hidden"
                 animate={controls}
               >
-                <div className="mx-auto my-4 p-8 w-3/4 max-w-lg bg-secondary-200 rounded-3xl shadow-lg xl:my-0 xl:px-8 xl:py-12 xl:w-full">
+                <div className="mx-auto my-4 p-8 w-10/12 max-w-lg bg-secondary-200 rounded-3xl shadow-lg xl:my-0 xl:px-8 xl:py-12 xl:w-full">
                   <h2 className="mb-4 text-3xl font-bold lg:my-4 xl:text-4xl">
                     Our Mission
                   </h2>
@@ -369,13 +448,75 @@ const IndexPage = ({ data }) => {
                     more about the field of computer science and develop
                     professionally.
                   </p>
+                  <h3 className="mb-2 mt-4 font-bold lg:text-lg">
+                    Upcoming Events
+                  </h3>
+                  <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
+                    {futureEvents.length !== 0 &&
+                      futureEvents
+                        .sort(
+                          (a, b) =>
+                            new Date(
+                              a.node.content.properties?.Date?.date?.start
+                            ) -
+                            new Date(
+                              b.node.content.properties?.Date?.date?.start
+                            )
+                        )
+                        .slice(0, 2)
+                        .map((event, i) => (
+                          <EventItem
+                            key={i}
+                            name={
+                              event.node.content.properties?.Name?.title[0]
+                                ?.plain_text
+                            }
+                            startDate={
+                              event.node.content.properties?.Date?.date
+                                ?.start &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date?.date?.start
+                                ),
+                                "MM/dd"
+                              )
+                            }
+                            endDate={
+                              event.node.content.properties?.Date?.date?.end &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date.date?.end
+                                ),
+                                "MM/dd"
+                              )
+                            }
+                            description={
+                              event.node.content.properties?.Description
+                                ?.rich_text[0]?.plain_text
+                            }
+                            url={event.node.content.properties?.Link?.url}
+                            tags={
+                              event.node.content.properties?.Tags?.multi_select
+                            }
+                            time={
+                              event.node.content.properties?.Time?.rich_text[0]
+                                ?.plain_text
+                            }
+                          />
+                        ))}
+                    {futureEvents.length === 0 && (
+                      <p className="px-4 py-2 text-left text-white bg-primary rounded-full">
+                        None right now but stay tuned!
+                      </p>
+                    )}
+                  </ul>
                 </div>
               </motion.div>
             </section>
           </div>
 
           <motion.section
-            className="container flex flex-col items-center justify-center mx-auto py-8 w-full lg:flex-row"
+            className="container flex flex-col items-center justify-center mx-auto px-4 py-8 w-full md:px-0 lg:flex-row"
             variants={socialAnimate}
             ref={socialRef}
             initial="hidden"
@@ -387,7 +528,7 @@ const IndexPage = ({ data }) => {
                 Hit us up
               </h2>
               <svg
-                className="svg-underline mb-8 mx-auto w-64 lg:mb-16 lg:w-1/4 xl:w-1/2"
+                className="svg-underline mb-8 mx-auto w-48 md:w-64 lg:mb-16 lg:w-1/2"
                 viewBox="0 0 479 20"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -399,7 +540,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
+              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-6 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -480,18 +621,18 @@ const IndexPage = ({ data }) => {
                 <path
                   d="M29 3C71.5 3.5 152.3 10.3 183.5 73.5C214.7 136.7 281.5 155.167 305 151.5"
                   stroke="#FFB81C"
-                  stroke-width="5"
+                  strokeWidth="5"
                 />
                 <path
                   d="M1 48C43.5 48.5 124.3 55.3 155.5 118.5C186.7 181.7 253.5 200.167 277 196.5"
                   stroke="#FFB81C"
-                  stroke-width="5"
+                  strokeWidth="5"
                 />
               </svg>
               <iframe
                 src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
                 title="Pitt CSC Google Calendar"
-                frameborder="0"
+                frameBorder="0"
                 scrolling="no"
                 height="600"
                 className="w-full"
@@ -560,5 +701,50 @@ const IndexPage = ({ data }) => {
     </Layout>
   );
 };
+
+export const query = graphql`
+  {
+    site: allNotionEvent {
+      edges {
+        node {
+          content {
+            properties {
+              Tags {
+                multi_select {
+                  color
+                  name
+                }
+              }
+              Name {
+                title {
+                  plain_text
+                }
+              }
+              Link {
+                url
+              }
+              Description {
+                rich_text {
+                  plain_text
+                }
+              }
+              Time {
+                rich_text {
+                  plain_text
+                }
+              }
+              Date {
+                date {
+                  start
+                  end
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 export default IndexPage;

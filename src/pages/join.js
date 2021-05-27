@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-
+import { graphql } from "gatsby";
+import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -20,6 +21,8 @@ import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 
 import Layout from "../layouts/layout";
+
+import EventItem from "../components/eventItem";
 
 // import heroImage from "../images/hero-img2-cropped.png";
 // import MaskImage from "../images/Pitt_CSC_Mask.jpg";
@@ -46,7 +49,12 @@ import Layout from "../layouts/layout";
 //   },
 // };
 
-const JoinPage = () => {
+const JoinPage = ({ data }) => {
+  const site = (data || {})?.site;
+  const futureEvents = site.edges.filter(
+    (event) =>
+      Date.parse(event.node.content.properties.Date.date.start) > new Date()
+  );
   useEffect(() => {
     hotjar.initialize(2276434, 6);
     ReactGA.initialize("UA-58446605-1");
@@ -161,7 +169,7 @@ const JoinPage = () => {
                 }}
                 className="polka-background-subPage absolute -right-48 top-0 lg:-right-24"
               ></motion.div>
-              <div className="relative flex flex-wrap items-center justify-around mx-auto mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
+              <div className="relative flex flex-wrap items-center justify-around mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -234,9 +242,9 @@ const JoinPage = () => {
             </div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container flex flex-col items-center justify-center mx-auto py-24 w-full lg:py-32">
-              <div className="flex flex-row flex-wrap items-center justify-around w-full">
-                <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg lg:w-1/2">
+            <section className="container flex items-center justify-center mx-auto px-4 py-24 w-full md:px-0 lg:py-32">
+              <div className="flex flex-wrap gap-4 items-center justify-around w-full">
+                <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg xl:w-1/2">
                   <svg
                     className="absolute -bottom-10 -left-10 w-32 lg:-left-20 lg:w-64"
                     viewBox="0 0 306 200"
@@ -307,29 +315,97 @@ const JoinPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="p-4 w-9/12 lg:w-auto">
-                  <h2 className="my-4 text-white text-2xl font-bold lg:text-5xl">
-                    Pop in to an event
-                    <svg
-                      width="156"
-                      height="12"
-                      viewBox="0 0 156 12"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M153 9.00001C106.723 9.00006 14.1702 -4.49999 3 8.99995"
-                        stroke="#FFB81C"
-                        stroke-width="5"
-                        stroke-linecap="round"
-                      />
-                    </svg>
-                  </h2>
-                  <p className="max-w-lg text-white text-base leading-loose">
-                    There are always a variety of different things to attend
-                    including hackathons, talks, and coffee chats! We typically
-                    host meetings on Mondays and Wednesdays at 8pm.
-                  </p>
+                <div className="mx-auto">
+                  <div className="mx-auto p-4">
+                    <h2 className="my-4 text-white text-2xl font-bold lg:text-5xl">
+                      Pop in to an event
+                      <svg
+                        width="156"
+                        height="12"
+                        viewBox="0 0 156 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M153 9.00001C106.723 9.00006 14.1702 -4.49999 3 8.99995"
+                          stroke="#FFB81C"
+                          stroke-width="5"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                    </h2>
+                    <p className="max-w-lg text-white text-base leading-loose">
+                      There are always a variety of different things to attend
+                      including hackathons, talks, and coffee chats! We
+                      typically host meetings on Mondays and Wednesdays at 8pm.
+                    </p>
+                  </div>
+                  <div className="mt-4 mx-auto p-8 bg-secondary-200 rounded-2xl shadow-lg">
+                    <h3 className="mb-2 font-bold lg:text-lg">
+                      Upcoming Events
+                    </h3>
+                    <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
+                      {futureEvents.length !== 0 &&
+                        futureEvents
+                          .sort(
+                            (a, b) =>
+                              new Date(
+                                a.node.content.properties?.Date?.date?.start
+                              ) -
+                              new Date(
+                                b.node.content.properties?.Date?.date?.start
+                              )
+                          )
+                          .slice(0, 2)
+                          .map((event, i) => (
+                            <EventItem
+                              key={i}
+                              name={
+                                event.node.content.properties?.Name?.title[0]
+                                  ?.plain_text
+                              }
+                              startDate={
+                                event.node.content.properties?.Date?.date
+                                  ?.start &&
+                                format(
+                                  new Date(
+                                    event.node.content.properties?.Date?.date?.start
+                                  ),
+                                  "MM/dd"
+                                )
+                              }
+                              endDate={
+                                event.node.content.properties?.Date?.date
+                                  ?.end &&
+                                format(
+                                  new Date(
+                                    event.node.content.properties?.Date.date?.end
+                                  ),
+                                  "MM/dd"
+                                )
+                              }
+                              description={
+                                event.node.content.properties?.Description
+                                  ?.rich_text[0]?.plain_text
+                              }
+                              url={event.node.content.properties?.Link?.url}
+                              tags={
+                                event.node.content.properties?.Tags
+                                  ?.multi_select
+                              }
+                              time={
+                                event.node.content.properties?.Time
+                                  ?.rich_text[0]?.plain_text
+                              }
+                            />
+                          ))}
+                      {futureEvents.length === 0 && (
+                        <p className="px-4 py-2 text-left text-white bg-primary rounded-full">
+                          None right now but stay tuned!
+                        </p>
+                      )}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </section>
@@ -339,5 +415,50 @@ const JoinPage = () => {
     </Layout>
   );
 };
+
+export const query = graphql`
+  {
+    site: allNotionEvent {
+      edges {
+        node {
+          content {
+            properties {
+              Tags {
+                multi_select {
+                  color
+                  name
+                }
+              }
+              Name {
+                title {
+                  plain_text
+                }
+              }
+              Link {
+                url
+              }
+              Description {
+                rich_text {
+                  plain_text
+                }
+              }
+              Time {
+                rich_text {
+                  plain_text
+                }
+              }
+              Date {
+                date {
+                  start
+                  end
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 export default JoinPage;
