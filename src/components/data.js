@@ -5,6 +5,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/oliviawininsky/",
     email: "onw5@pitt.edu",
     image: "../images/officers/olivia.png",
+    bio: "Olivia is a rising junior studying Computer Science and Finance with a concentration in markets, trading, and data. As President of CSC, she loves working on cool projects with cool people, leading a team that inspires her everyday, and growing the connections within the Pitt CS community and beyond! When she’s not hosting events or studying at Sennott, she’s probably hanging with friends, running at Schenley, working in the student investment fund, or shopping at Trader Joe’s!",
   },
   {
     name: "Courtney Sheridan",
