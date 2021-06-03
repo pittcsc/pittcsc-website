@@ -143,12 +143,14 @@ const hitUnderlineAnimate = {
 
 const IndexPage = ({ data }) => {
   const site = (data || {})?.site;
-  const futureEvents = site.edges.filter(
-    (event) =>
-      Date.parse(event.node.content.properties.Date.date.start) > new Date()
-  );
-  console.log(futureEvents);
-  console.log(site);
+  const futureEvents = site.edges
+    .slice()
+    .filter(
+      (event) =>
+        new Date(event.node.content.properties.Date.date.start).getTime() >=
+        new Date().getTime()
+    );
+
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: missionRef, inView: missionInView } = useInView({
@@ -702,6 +704,8 @@ const IndexPage = ({ data }) => {
   );
 };
 
+export default IndexPage;
+
 export const query = graphql`
   {
     site: allNotionEvent {
@@ -709,34 +713,34 @@ export const query = graphql`
         node {
           content {
             properties {
-              Tags {
-                multi_select {
-                  color
-                  name
+              Date {
+                date {
+                  start
+                  end
                 }
-              }
-              Name {
-                title {
-                  plain_text
-                }
-              }
-              Link {
-                url
               }
               Description {
                 rich_text {
                   plain_text
                 }
               }
-              Time {
-                rich_text {
+              Link {
+                url
+              }
+              Name {
+                title {
                   plain_text
                 }
               }
-              Date {
-                date {
-                  start
-                  end
+              Tags {
+                multi_select {
+                  color
+                  name
+                }
+              }
+              Time {
+                rich_text {
+                  plain_text
                 }
               }
             }
@@ -746,5 +750,3 @@ export const query = graphql`
     }
   }
 `;
-
-export default IndexPage;
