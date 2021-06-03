@@ -473,7 +473,7 @@ const IndexPage = ({ data }) => {
                               event.node.content.properties?.Name?.title[0]
                                 ?.plain_text
                             }
-                            startDate={
+                            startDateShort={
                               event.node.content.properties?.Date?.date
                                 ?.start &&
                               format(
@@ -483,13 +483,32 @@ const IndexPage = ({ data }) => {
                                 "MM/dd"
                               )
                             }
-                            endDate={
+                            startDateLong={
+                              event.node.content.properties?.Date?.date
+                                ?.start &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date?.date?.start
+                                ),
+                                "MMMM do"
+                              )
+                            }
+                            endDateShort={
                               event.node.content.properties?.Date?.date?.end &&
                               format(
                                 new Date(
                                   event.node.content.properties?.Date.date?.end
                                 ),
                                 "MM/dd"
+                              )
+                            }
+                            endDateLong={
+                              event.node.content.properties?.Date?.date?.end &&
+                              format(
+                                new Date(
+                                  event.node.content.properties?.Date.date?.end
+                                ),
+                                "MMMM do"
                               )
                             }
                             description={
