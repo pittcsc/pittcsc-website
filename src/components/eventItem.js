@@ -33,9 +33,9 @@ function EventItem({
       <AnimatePresence exitBeforeEnter>
         {modalOpen && (
           <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-            <div className="items-left flex flex-col justify-center px-4 py-8 max-w-5xl bg-gray-100 rounded-2xl space-y-4 md:p-8 lg:p-16">
+            <div className="items-left flex flex-col justify-center p-8 w-full max-w-5xl bg-gray-100 rounded-2xl space-y-4 lg:p-16">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold lg:text-4xl">{name}</h2>
+                <h2 className="text-3xl font-bold lg:text-4xl">{name}</h2>
                 <p>
                   {startDateLong}
                   {endDateLong && ` to ${endDateLong}`}
@@ -54,7 +54,6 @@ function EventItem({
                   ))}
                 </div>
               </div>
-
               <div className="max-w-lg text-left whitespace-pre-line text-sm leading-relaxed">
                 {description}
               </div>
