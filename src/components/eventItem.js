@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function EventItem({ name, startDate, endDate, url, description, tags, time }) {
   const [modalOpen, setModalOpen] = useState(false);
-  console.log(endDate);
   return (
     <>
       <li>
