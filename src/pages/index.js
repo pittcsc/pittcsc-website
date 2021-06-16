@@ -565,7 +565,7 @@ const IndexPage = ({ data }) => {
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://discord.gg/bfMAYrsMFf"
+                  href="https://discord.gg/wzPeq2GCRT"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club Discord"
