@@ -256,92 +256,8 @@ const IndexPage = ({ data }) => {
                 </Link>
               </motion.div>
               <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
-              {/* <motion.div
-                variants={text}
-                className="relative z-10 my-2 pb-8 w-full whitespace-pre lg:pb-0"
-              >
-                <h3 className="mb-2 font-bold lg:text-lg">Upcoming Events</h3>
-                <ul className="flex flex-col text-sm space-y-2 lg:text-base">
-                  {futureEvents
-                    .slice(0, 2)
-                    .sort(
-                      (a, b) =>
-                        new Date(a.node.content.properties?.Date?.date?.start) -
-                        new Date(b.node.content.properties?.Date?.date?.start)
-                    )
-                    .map((event, i) => (
-                      // <li
-                      //   key={i}
-                      //   onClick={() =>
-                      //     navigate(
-                      //       `events?=${event.node.event.node.content.properties.Name.title[0].plain_text}`,
-                      //       { state: event }
-                      //     )
-                      //   }
-                      // >
-                      //   {event.node.content.properties.Name.title[0].plain_text} -{" "}
-                      //   {format(
-                      //     new Date(event.node.content.properties.Date.date.start),
-                      //     "MMMM do, yyyy"
-                      //   )}{" "}
-                      //   {event.node.content.properties.Date.date.end &&
-                      //     `to ${format(
-                      //       new Date(event.node.content.properties.Date.date.end),
-                      //       "MMMM do, yyyy"
-                      //     )}`}
-                      // </li>
-                      <EventItem
-                        key={i}
-                        name={
-                          event.node.content.properties?.Name?.title[0]
-                            ?.plain_text
-                        }
-                        startDate={
-                          event.node.content.properties?.Date?.date?.start &&
-                          format(
-                            new Date(
-                              event.node.content.properties?.Date?.date?.start
-                            ),
-                            "MMMM do, yyyy"
-                          )
-                        }
-                        endDate={
-                          event.node.content.properties?.Date?.date?.end &&
-                          format(
-                            new Date(
-                              event.node.content.properties?.Date.date?.end
-                            ),
-                            "MMMM do, yyyy"
-                          )
-                        }
-                        description={
-                          event.node.content.properties?.Description
-                            ?.rich_text[0]?.plain_text
-                        }
-                        url={event.node.content.properties?.Link?.url}
-                        tags={event.node.content.properties?.Tags?.multi_select}
-                      />
-                    ))}
-                </ul>
-              </motion.div> */}
             </motion.div>
             <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
-              {/* <motion.img
-                initial={{
-                  opacity: 0,
-                  x: 50,
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                transition={{
-                  delay: 0.2,
-                }}
-                className="w-3/4 md:w-1/2 lg:w-full z-20 mx-auto relative"
-                src={heroImage}
-                alt="pitt_csc_logo"
-              /> */}
               <motion.div
                 initial={{
                   opacity: 0,
@@ -411,15 +327,6 @@ const IndexPage = ({ data }) => {
                     height={734}
                   />
                 </motion.div>
-                {/* <motion.img
-                  ref={missionRef}
-                  src={MaskImage}
-                  alt="Masked CSC Members"
-                  variants={maskAnimate}
-                  initial="hidden"
-                  animate={controls}
-                  className="mx-auto w-3/4 rounded-3xl shadow-lg xl:w-9/12"
-                /> */}
                 <motion.a
                   variants={maskAnimate}
                   initial="hidden"
@@ -705,18 +612,6 @@ const IndexPage = ({ data }) => {
               </div>
             </div>
           </motion.section>
-          {/* <section className="w-screen bg-gradient-to-r from-primary to-blue-800">
-          <div className="w-full h-64 mx-auto whitespace-nowwrap overflow-hidden flex flex-col justify-center items-center">
-            <h3 className="font-bold  text-white text-4xl my-4">
-              Members
-            </h3>
-            <div className="track  text-2xl text-white my-4">
-              Zhengming Wang - Olivia Wininsky - Gordon Lu - Janet Majekodunmi -
-              Richie Goulazian - Ryan Yang - Justin Kramer - Ashley Sokol - Alex
-              Zharichenko - Mat Varughese
-            </div>
-          </div>
-        </section> */}
         </div>
       </motion.div>
     </Layout>

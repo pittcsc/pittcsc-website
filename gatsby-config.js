@@ -30,6 +30,7 @@ module.exports = {
     "gatsby-transformer-json",
     `gatsby-plugin-portal`,
     `gatsby-plugin-netlify`,
+    "gatsby-plugin-svgr",
     {
       resolve: "gatsby-source-filesystem",
       options: {

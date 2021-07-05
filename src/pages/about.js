@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { officerList } from "../components/data";
-// import groupImage from "../images/uber_csc_image.jpg";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
