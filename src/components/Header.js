@@ -88,6 +88,27 @@ function Header({ title }) {
             </a>
           </li>
           <li>
+            <a
+              href="https://branches.pittcsc.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="group relative w-full text-center text-lg font-bold md:text-base">
+                Branches
+                <svg
+                  className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
+                    title === "branches" && "opacity-100"
+                  }`}
+                  viewBox="0 0 479 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
+                </svg>
+              </div>
+            </a>
+          </li>
+          <li>
             <Link to="/sponsors">
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 Sponsors
