@@ -104,9 +104,9 @@ function Header({ title }) {
             </div>
 
             <div
-              className={`max-h-0 opacity-0 pointer-events-none text-white transition-all rounded-2xl ${
+              className={`max-h-0 opacity-0 pointer-events-none text-white px-8 transition-all rounded-2xl ${
                 resourcesNav
-                  ? "max-h-96 opacity-100 px-8 pb-8 -mt-10 pt-12 pointer-events-auto bg-primary"
+                  ? "max-h-96 opacity-100  pb-8 -mt-10 pt-12 pointer-events-auto bg-primary"
                   : ""
               } md:absolute md:pointer-events-auto md:max-h-96 md:w-40 md:px-8 md:pb-8 md:pt-12 md:bg-primary  md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
             >
