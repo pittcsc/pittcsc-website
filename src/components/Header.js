@@ -5,12 +5,18 @@ import logo from "../images/horizontal-logo.svg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faTimes,
+  faChevronDown,
+  faChevronUp,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { motion } from "framer-motion";
 
 function Header({ title }) {
   const [nav, setNav] = useState(false);
+  const [resourcesNav, setResourcesNav] = useState(false);
 
   return (
     <header
@@ -44,12 +50,12 @@ function Header({ title }) {
       <nav
         className={`transition-all relative bg-white pointer-events-none max-h-0 opacity-0 ${
           nav ? "max-h-96 opacity-100 p-4 pointer-events-auto" : ""
-        } md:max-h-96 md:bg-none md:opacity-100 md:pointer-events-auto`}
+        } md:max-h-full md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
         <ul
-          className={`flex flex-col justify-center items-center space-y-4 md:flex-row md:items-center md:space-x-8 md:space-y-0`}
+          className={`flex flex-col justify-center items-center space-y-2 md:flex-row md:items-center md:space-x-8 md:space-y-0`}
         >
-          <li>
+          <li className="py-2 md:py-0">
             <Link to="/about">
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 About Us
@@ -66,17 +72,17 @@ function Header({ title }) {
               </div>
             </Link>
           </li>
-          <li>
-            <a
-              href="https://pittcsc.medium.com/"
-              target="_blank"
-              rel="noopener noreferrer"
+          <li className="group relative">
+            <div
+              className={`flex items-center justify-center px-4 py-2 text-black  ${
+                resourcesNav ? "bg-primary text-white" : "bg-none text-black"
+              } group-hover:bg-primary group-hover:text-white rounded-lg md:py-0 md:block`}
             >
-              <div className="group relative w-full text-center text-lg font-bold md:text-base">
-                Blog
+              <div className="group relative z-50 w-full text-center text-lg font-bold md:text-base">
+                Resources
                 <svg
                   className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
-                    title === "blog" && "opacity-100"
+                    title === "resources" && "opacity-100"
                   }`}
                   viewBox="0 0 479 20"
                   fill="none"
@@ -85,30 +91,51 @@ function Header({ title }) {
                   <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
                 </svg>
               </div>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://branches.pittcsc.org/"
-              target="_blank"
-              rel="noopener noreferrer"
+              <button
+                className={`cursor-pointer md:hidden z-40 focus:outline-none ml-2 -mb-1`}
+                onClick={() => setResourcesNav(!resourcesNav)}
+              >
+                {resourcesNav ? (
+                  <FontAwesomeIcon icon={faChevronUp} className="text-xl" />
+                ) : (
+                  <FontAwesomeIcon icon={faChevronDown} className="text-xl" />
+                )}
+              </button>
+            </div>
+
+            <div
+              className={`max-h-0 opacity-0 pointer-events-none text-white transition-all rounded-2xl ${
+                resourcesNav
+                  ? "max-h-96 opacity-100 px-8 pb-8 -mt-10 pt-12 pointer-events-auto bg-primary"
+                  : ""
+              } md:absolute md:pointer-events-auto md:max-h-96 md:w-40 md:px-8 md:pb-8 md:pt-12 md:bg-primary  md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
             >
-              <div className="group relative w-full text-center text-lg font-bold md:text-base">
-                Branches
-                <svg
-                  className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
-                    title === "branches" && "opacity-100"
-                  }`}
-                  viewBox="0 0 479 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+              <ul className="flex flex-col text-left font-bold space-y-4 md:text-white">
+                <a
+                  href="https://pittcsc.medium.com/"
+                  target="_blank"
+                  rel="noreferrer noopener"
                 >
-                  <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
-                </svg>
-              </div>
-            </a>
+                  <li className="hover:text-secondary-200">Blog</li>
+                </a>
+                <a
+                  href="https://branches.pittcsc.org/"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <li className="hover:text-secondary-200">Branches</li>
+                </a>
+                <a
+                  href="https://pittcs.wiki/"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <li className="hover:text-secondary-200">Pitt CS Wiki</li>
+                </a>
+              </ul>
+            </div>
           </li>
-          <li>
+          <li className="py-2 md:py-0">
             <Link to="/sponsors">
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
                 Sponsors
