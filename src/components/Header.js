@@ -49,7 +49,7 @@ function Header({ title }) {
       </div>
       <nav
         className={`transition-all relative bg-white pointer-events-none max-h-0 opacity-0 ${
-          nav ? "max-h-96 opacity-100 p-4 pointer-events-auto" : ""
+          nav ? "nav-max-height opacity-100 p-4 pointer-events-auto" : ""
         } md:max-h-full md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
         <ul
@@ -75,7 +75,9 @@ function Header({ title }) {
           <li className="group relative">
             <div
               className={`flex items-center justify-center px-4 py-2 text-black  ${
-                resourcesNav ? "bg-primary text-white" : "bg-none text-black"
+                resourcesNav
+                  ? "bg-primary text-white md:bg-none md:text-black"
+                  : "bg-none text-black"
               } group-hover:bg-primary group-hover:text-white rounded-lg md:py-0 md:block`}
             >
               <div className="group relative z-50 w-full text-center text-lg font-bold md:text-base">
@@ -104,11 +106,11 @@ function Header({ title }) {
             </div>
 
             <div
-              className={`max-h-0 opacity-0 pointer-events-none text-white px-8 transition-all rounded-2xl ${
+              className={`max-h-0 opacity-0 pointer-events-none text-white w-40 px-8 transition-all rounded-2xl ${
                 resourcesNav
-                  ? "max-h-96 opacity-100  pb-8 -mt-10 pt-12 pointer-events-auto bg-primary"
+                  ? "nav-max-height opacity-100  pb-8 -mt-10 pt-12 pointer-events-auto bg-primary"
                   : ""
-              } md:absolute md:pointer-events-auto md:max-h-96 md:w-40 md:px-8 md:pb-8 md:pt-12 md:bg-primary  md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
+              } md:absolute md:pointer-events-auto md:max-h-full md:px-8 md:pb-8 md:pt-12 md:bg-primary  md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
             >
               <ul className="flex flex-col text-left font-bold space-y-4 md:text-white">
                 <a
@@ -124,6 +126,15 @@ function Header({ title }) {
                   rel="noreferrer noopener"
                 >
                   <li className="hover:text-secondary-200">Branches</li>
+                </a>
+                <a
+                  href="https://github.com/pittcsc/Summer2022-Internships"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <li className="hover:text-secondary-200">
+                    Internship Repository
+                  </li>
                 </a>
                 <a
                   href="https://pittcs.wiki/"
