@@ -110,7 +110,7 @@ function Header({ title }) {
                 resourcesNav
                   ? "nav-max-height opacity-100  pb-8 -mt-10 pt-12 pointer-events-auto bg-primary"
                   : ""
-              } md:absolute md:pointer-events-auto md:max-h-full md:px-8 md:pb-8 md:pt-12 md:bg-primary  md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
+              } md:absolute md:pointer-events-auto md:max-h-96 md:px-8 md:pb-8 md:pt-12 md:bg-primary md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
             >
               <ul className="flex flex-col text-left font-bold space-y-4 md:text-white">
                 <a
