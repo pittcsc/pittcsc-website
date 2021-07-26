@@ -21,6 +21,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/sean-steinle",
     email: "sts137@pitt.edu",
     image: "../images/officers/sgb_headshot.jfif",
+    bio: "Sean is a senior CS and Linguistics major who serves as the business manager for CSC. In this role, he helps to support the day-to-day operations of the club, as well as to fund bigger events. Additionally Sean works on CSC's mental health initiative. Outside of the classroom, Sean enjoys socializing with friends, playing any and all sports, and planning sporadic trips!",
   },
   {
     name: "Richie Goulazian",
