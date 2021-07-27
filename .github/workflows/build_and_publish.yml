@@ -2,8 +2,9 @@ name: Gatsby Publish
 
 on:
   push:
-    branches: master
-
+    branches: [master]
+  schedule:
+    - cron: "0 * * * *"
 jobs:
   build:
     runs-on: ubuntu-latest
