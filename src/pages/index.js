@@ -151,6 +151,7 @@ const IndexPage = ({ data }) => {
         new Date().getTime()
     );
 
+  const windowGlobal = typeof window !== `undefined` && window;
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: missionRef, inView: missionInView } = useInView({
@@ -362,6 +363,7 @@ const IndexPage = ({ data }) => {
                   </h3>
                   <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
                     {futureEvents.length !== 0 &&
+                      windowGlobal &&
                       futureEvents
                         .sort(
                           (a, b) =>
@@ -380,6 +382,9 @@ const IndexPage = ({ data }) => {
                             name={
                               event.node.content.properties?.Name?.title[0]
                                 ?.plain_text
+                            }
+                            startDate={
+                              event.node.content.properties?.Date?.date?.start
                             }
                             startDateShort={
                               event.node.content.properties?.Date?.date
@@ -434,6 +439,13 @@ const IndexPage = ({ data }) => {
                             id={event.node.content.id}
                             attendance={
                               event.node.content.properties?.Attendance?.number
+                            }
+                            shouldOpen={
+                              decodeURIComponent(
+                                windowGlobal.location.hash.split("#")[1]
+                              ) ===
+                              event.node.content.properties?.Name?.title[0]
+                                ?.plain_text
                             }
                           />
                         ))}

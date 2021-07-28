@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCookies } from "react-cookie";
 import axios from "axios";
 
 function EventItem({
   name,
+  startDate,
   startDateShort,
   startDateLong,
   endDateShort,
@@ -17,10 +19,13 @@ function EventItem({
   time,
   id,
   attendance,
+  shouldOpen,
 }) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(shouldOpen);
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies();
+  console.log(cookies);
 
   const handleAttendance = () => {
     setLoading(true);
@@ -34,6 +39,14 @@ function EventItem({
           console.log(res);
           setLoading(false);
           setChecked(true);
+          const windowGlobal = typeof window !== `undefined` && window;
+          if (windowGlobal) {
+            setCookie(id, true, {
+              path: `/`,
+              expires: new Date(startDate),
+              sameSite: `lax`,
+            });
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -49,6 +62,10 @@ function EventItem({
           console.log(res);
           setLoading(false);
           setChecked(false);
+          const windowGlobal = typeof window !== `undefined` && window;
+          if (windowGlobal) {
+            removeCookie(id);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -56,6 +73,13 @@ function EventItem({
         });
     }
   };
+
+  useEffect(() => {
+    const windowGlobal = typeof window !== `undefined` && window;
+    if (windowGlobal) {
+      setChecked(cookies[id]);
+    }
+  }, []);
 
   return (
     <>
