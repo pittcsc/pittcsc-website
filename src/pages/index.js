@@ -151,6 +151,7 @@ const IndexPage = ({ data }) => {
         new Date().getTime()
     );
 
+  const windowGlobal = typeof window !== `undefined` && window;
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: missionRef, inView: missionInView } = useInView({
@@ -362,7 +363,7 @@ const IndexPage = ({ data }) => {
                   </h3>
                   <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
                     {futureEvents.length !== 0 &&
-                      typeof window !== undefined &&
+                      windowGlobal &&
                       futureEvents
                         .sort(
                           (a, b) =>
@@ -441,7 +442,7 @@ const IndexPage = ({ data }) => {
                             }
                             shouldOpen={
                               decodeURIComponent(
-                                window.location.hash.split("#")[1]
+                                windowGlobal.location.hash.split("#")[1]
                               ) ===
                               event.node.content.properties?.Name?.title[0]
                                 ?.plain_text
