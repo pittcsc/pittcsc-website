@@ -22,8 +22,6 @@ function EventItem({
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  console.log(attendance);
-
   const handleAttendance = () => {
     setLoading(true);
     if (!checked) {

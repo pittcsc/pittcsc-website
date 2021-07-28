@@ -151,8 +151,6 @@ const IndexPage = ({ data }) => {
         new Date().getTime()
     );
 
-  console.log(site);
-
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: missionRef, inView: missionInView } = useInView({
