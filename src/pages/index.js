@@ -362,6 +362,7 @@ const IndexPage = ({ data }) => {
                   </h3>
                   <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
                     {futureEvents.length !== 0 &&
+                      typeof window !== undefined &&
                       futureEvents
                         .sort(
                           (a, b) =>
@@ -437,6 +438,13 @@ const IndexPage = ({ data }) => {
                             id={event.node.content.id}
                             attendance={
                               event.node.content.properties?.Attendance?.number
+                            }
+                            shouldOpen={
+                              decodeURIComponent(
+                                window.location.hash.split("#")[1]
+                              ) ===
+                              event.node.content.properties?.Name?.title[0]
+                                ?.plain_text
                             }
                           />
                         ))}

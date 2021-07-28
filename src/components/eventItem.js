@@ -19,8 +19,9 @@ function EventItem({
   time,
   id,
   attendance,
+  shouldOpen,
 }) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(shouldOpen);
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies();
