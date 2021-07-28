@@ -40,7 +40,9 @@ module.exports = {
     extend: {
       display: ["group-hover"],
       padding: ["group-hover"],
+      transform: ["group-hover"],
+      scale: ["group-hover"],
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

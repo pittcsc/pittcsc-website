@@ -43,6 +43,7 @@
   max-width: 80vw;
   max-height: 80vh;
   z-index: 1000;
+  cursor: default;
 }
 
 .modal-overlay {
@@ -57,4 +58,5 @@
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 990;
   overflow-y: auto;
+  cursor: default;
 }

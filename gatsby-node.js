@@ -2,10 +2,10 @@ const dotenv = require("dotenv").config();
 const { Client } = require("@notionhq/client");
 
 const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
+  auth: process.env.GATSBY_NOTION_TOKEN,
 });
 
-const database_id = process.env.NOTION_DATABASE_ID;
+const database_id = process.env.GATSBY_NOTION_DATABASE_ID;
 
 const getEvents = async () => {
   const payload = {

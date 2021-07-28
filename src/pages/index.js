@@ -151,6 +151,8 @@ const IndexPage = ({ data }) => {
         new Date().getTime()
     );
 
+  console.log(site);
+
   const controls = useAnimation();
   const { ref: homeRef, inView: homeInView } = useInView({ triggerOnce: true });
   const { ref: missionRef, inView: missionInView } = useInView({
@@ -376,6 +378,7 @@ const IndexPage = ({ data }) => {
                         .map((event, i) => (
                           <EventItem
                             key={i}
+                            index={i}
                             name={
                               event.node.content.properties?.Name?.title[0]
                                 ?.plain_text
@@ -429,6 +432,10 @@ const IndexPage = ({ data }) => {
                             time={
                               event.node.content.properties?.Time?.rich_text[0]
                                 ?.plain_text
+                            }
+                            id={event.node.content.id}
+                            attendance={
+                              event.node.content.properties?.Attendance?.number
                             }
                           />
                         ))}
@@ -626,7 +633,11 @@ export const query = graphql`
       edges {
         node {
           content {
+            id
             properties {
+              Attendance {
+                number
+              }
               Date {
                 date {
                   start
