@@ -22,6 +22,8 @@ function EventItem({
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  console.log(attendance);
+
   const handleAttendance = () => {
     setLoading(true);
     if (!checked) {
@@ -137,9 +139,6 @@ function EventItem({
                   </div>
                 )}
               </div>
-              {/* <button onClick={handleHelloWorld} className="bg-blue-500">
-                Hello World
-              </button> */}
             </div>
           </Modal>
         )}
