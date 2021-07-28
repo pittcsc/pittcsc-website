@@ -381,6 +381,9 @@ const IndexPage = ({ data }) => {
                               event.node.content.properties?.Name?.title[0]
                                 ?.plain_text
                             }
+                            startDate={
+                              event.node.content.properties?.Date?.date?.start
+                            }
                             startDateShort={
                               event.node.content.properties?.Date?.date
                                 ?.start &&
