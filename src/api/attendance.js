@@ -1,14 +1,13 @@
 const { Client } = require("@notionhq/client");
 
 export default async function handler(req, res) {
-  const notion = new Client({
-    auth: process.env.GATSBY_NOTION_TOKEN,
-  });
-
   try {
+    const notion = new Client({
+      auth: process.env.GATSBY_NOTION_TOKEN,
+    });
+    console.log(req.body);
     const pageId = req.body.pageId;
     const getPage = await notion.pages.retrieve({ page_id: pageId });
-    console.log(getPage);
     const attendance = getPage.properties.Attendance.number
       ? getPage.properties.Attendance.number + parseInt(req.body.add)
       : 1;
