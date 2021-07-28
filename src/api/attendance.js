@@ -7,7 +7,12 @@ export default async function handler(req, res) {
 
   try {
     const pageId = req.body.pageId;
-    const attendance = req.body.attendance;
+    const getPage = await notion.pages.retrieve({ page_id: pageId });
+    console.log(getPage);
+    const attendance = getPage.properties.Attendance.number
+      ? getPage.properties.Attendance.number + parseInt(req.body.add)
+      : 1;
+    console.log(attendance);
     const response = await notion.pages.update({
       page_id: pageId,
       properties: {

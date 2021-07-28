@@ -27,7 +27,7 @@ function EventItem({
     if (!checked) {
       axios
         .post("/api/attendance", {
-          attendance: attendance + 1,
+          add: 1,
           pageId: id,
         })
         .then((res) => {
@@ -42,7 +42,7 @@ function EventItem({
     } else {
       axios
         .post("/api/attendance", {
-          attendance: parseInt(attendance),
+          add: -1,
           pageId: id,
         })
         .then((res) => {
