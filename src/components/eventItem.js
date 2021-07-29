@@ -24,6 +24,7 @@ function EventItem({
   const [modalOpen, setModalOpen] = useState(shouldOpen);
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkLabel, setCheckLabel] = useState("Check the box to RSVP");
   const [cookies, setCookie, removeCookie] = useCookies();
   console.log(cookies);
 
@@ -39,6 +40,7 @@ function EventItem({
           console.log(res);
           setLoading(false);
           setChecked(true);
+          setCheckLabel("You're RSVP'd!");
           const windowGlobal = typeof window !== `undefined` && window;
           if (windowGlobal) {
             setCookie(id, true, {
@@ -62,6 +64,7 @@ function EventItem({
           console.log(res);
           setLoading(false);
           setChecked(false);
+          setCheckLabel("Hope you change you're mind 😢");
           const windowGlobal = typeof window !== `undefined` && window;
           if (windowGlobal) {
             removeCookie(id);
@@ -78,6 +81,7 @@ function EventItem({
     const windowGlobal = typeof window !== `undefined` && window;
     if (windowGlobal) {
       setChecked(cookies[id]);
+      setCheckLabel(cookies[id] ? "You're RSVP'd!" : "Check the box to RSVP");
     }
   }, []);
 
@@ -124,7 +128,8 @@ function EventItem({
               <div className="mb-8 max-w-lg text-left whitespace-pre-line text-sm leading-relaxed">
                 {description}
               </div>
-              <div className="flex flex-col justify-between space-y-2 lg:flex-row lg:items-center lg:space-y-0">
+
+              <div className="flex flex-col justify-between space-y-2">
                 {url && (
                   <div className="flex items-center">
                     <a
@@ -146,7 +151,7 @@ function EventItem({
                       htmlFor="attedance"
                       className="font-bold cursor-pointer"
                     >
-                      Check the box to RSVP
+                      {checkLabel}
                     </label>
                     <input
                       name="attendance"
