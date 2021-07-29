@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { check } from "prettier";
 
 function EventItem({
   name,
@@ -28,6 +29,8 @@ function EventItem({
   const [cookies, setCookie, removeCookie] = useCookies();
   console.log(cookies);
 
+  const controls = useAnimation();
+
   const handleAttendance = () => {
     setLoading(true);
     if (!checked) {
@@ -40,7 +43,12 @@ function EventItem({
           console.log(res);
           setLoading(false);
           setChecked(true);
-          setCheckLabel("You're RSVP'd!");
+          setCheckLabel(
+            checkLabel === "Hope you change your mind 😢"
+              ? "That's more like it! 😊"
+              : "You're RSVP'd!"
+          );
+
           const windowGlobal = typeof window !== `undefined` && window;
           if (windowGlobal) {
             setCookie(id, true, {
@@ -64,7 +72,7 @@ function EventItem({
           console.log(res);
           setLoading(false);
           setChecked(false);
-          setCheckLabel("Hope you change you're mind 😢");
+          setCheckLabel("Hope you change your mind 😢");
           const windowGlobal = typeof window !== `undefined` && window;
           if (windowGlobal) {
             removeCookie(id);
@@ -84,6 +92,10 @@ function EventItem({
       setCheckLabel(cookies[id] ? "You're RSVP'd!" : "Check the box to RSVP");
     }
   }, []);
+
+  useEffect(() => {
+    controls.start({ y: 0 });
+  }, [checkLabel]);
 
   return (
     <>
@@ -148,11 +160,12 @@ function EventItem({
                 {attendance && (
                   <div className="flex items-center space-x-2">
                     <label
-                      htmlFor="attedance"
-                      className="font-bold cursor-pointer"
+                      htmlFor="attendance"
+                      className="block font-bold cursor-pointer"
                     >
-                      {checkLabel}
+                      <span>{checkLabel}</span>
                     </label>
+
                     <input
                       name="attendance"
                       type="checkbox"
