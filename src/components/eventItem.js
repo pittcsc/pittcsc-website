@@ -30,16 +30,11 @@ function EventItem({
   const handleAttendance = () => {
     setLoading(true);
     if (!checked) {
-      fetch("/api/attendance", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
+      axios
+        .post("/api/attendance", {
           add: 1,
           pageId: id,
-        }),
-      })
+        })
         .then((res) => {
           console.log(res);
           setLoading(false);
@@ -58,16 +53,11 @@ function EventItem({
           throw new Error();
         });
     } else {
-      fetch("/api/attendance", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          add: 1,
+      axios
+        .post("/api/attendance", {
+          add: -1,
           pageId: id,
-        }),
-      })
+        })
         .then((res) => {
           console.log(res);
           setLoading(false);
