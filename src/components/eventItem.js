@@ -161,7 +161,7 @@ function EventItem({
                   <div className="flex items-center space-x-2">
                     <label
                       htmlFor="attendance"
-                      className="block font-bold cursor-pointer"
+                      className="block font-bold outline-none focus:outline-none cursor-pointer"
                     >
                       <span>{checkLabel}</span>
                     </label>
