@@ -3,9 +3,9 @@ import { Link } from "gatsby";
 
 function Footer() {
   return (
-    <footer className="container mx-auto flex justify-center items-center h-32 w-full text-center">
+    <footer className="container flex items-center justify-center mx-auto w-full h-32 text-center">
       <nav className="w-full space-y-2">
-        <ul className="flex justify-center items-center space-x-4 lg:space-x-8 mx-auto font-bold ">
+        <ul className="flex items-center justify-center mx-auto font-bold space-x-4 lg:space-x-8">
           <Link to="/about">
             <li>About Us</li>
           </Link>
@@ -27,13 +27,13 @@ function Footer() {
           Email us at{" "}
           <a
             href="mailto:pittcsc@gmail.com"
-            className=" text-blue-500 underline"
+            className="text-blue-500 underline"
           >
             pittcsc@gmail.com
           </a>
         </p>
         <p className="">
-          Built with <span className="text-red-500">❤</span> by{" "}
+          Built with <span className="text-red-500">❤ </span> by{" "}
           <span className="font-bold">Pitt CSC</span>
         </p>
       </nav>
