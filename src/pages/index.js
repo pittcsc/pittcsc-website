@@ -12,7 +12,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGithub,
   faLinkedin,
-  faSlack,
   faDiscord,
 } from "@fortawesome/free-brands-svg-icons";
 
@@ -497,20 +496,6 @@ const IndexPage = ({ data }) => {
                 >
                   <FontAwesomeIcon
                     icon={faDiscord}
-                    className="text-primary text-5xl xl:text-7xl"
-                  />
-                </motion.a>
-                <motion.a
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  href="http://pittcsc.slack.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club Slack"
-                  className="p-4 lg:p-2"
-                >
-                  <FontAwesomeIcon
-                    icon={faSlack}
                     className="text-primary text-5xl xl:text-7xl"
                   />
                 </motion.a>
