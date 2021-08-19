@@ -7,7 +7,7 @@ module.exports = {
     title: "Pitt Computer Science Club",
     description:
       "Website for the largest computer science student organization at the University of Pittsburgh.",
-    image: "/Dark_Pitt_CSC_Social_Card.png",
+    image: "/Pitt_CSC_Social_Card.png",
     lang: "en",
     url: "https://pittcsc-crashtestdummy.netlify.app",
     twitterUsername: "@PittCSC",
