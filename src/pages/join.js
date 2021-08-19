@@ -168,7 +168,7 @@ const JoinPage = ({ data }) => {
                 }}
                 className="polka-background-subPage absolute -right-48 top-0 lg:-right-24"
               ></motion.div>
-              <div className="relative flex flex-wrap items-center justify-around mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
+              <div className="relative grid gap-2 grid-cols-2 items-center place-items-center mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md md:flex md:flex-wrap md:gap-0 md:justify-around lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -176,11 +176,11 @@ const JoinPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club Discord"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faDiscord}
-                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -190,11 +190,11 @@ const JoinPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club LinkedIn"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faLinkedin}
-                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -204,11 +204,11 @@ const JoinPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club GitHub"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faGithub}
-                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -216,11 +216,11 @@ const JoinPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href="mailto:pittcsc@gmail.com"
                   aria-label="Pitt Computer Science Club Email"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faEnvelope}
-                    className="text-primary text-5xl lg:text-6xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
               </div>

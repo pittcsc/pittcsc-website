@@ -484,7 +484,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-              <div className="flex flex-wrap items-center justify-around mb-8 mx-auto p-6 max-w-md bg-secondary-200 rounded-2xl shadow-lg lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
+              <div className="grid gap-2 grid-cols-2 items-center place-items-center mb-8 mx-auto p-6 max-w-md bg-secondary-200 rounded-2xl shadow-lg md:flex md:flex-wrap md:gap-0 md:justify-around lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -492,11 +492,11 @@ const IndexPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club Discord"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faDiscord}
-                    className="text-primary text-5xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -506,11 +506,11 @@ const IndexPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club LinkedIn"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faLinkedin}
-                    className="text-primary text-5xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -520,11 +520,11 @@ const IndexPage = ({ data }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Pitt Computer Science Club GitHub"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faGithub}
-                    className="text-primary text-5xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -532,11 +532,11 @@ const IndexPage = ({ data }) => {
                   whileTap={{ scale: 0.9 }}
                   href="mailto:pittcsc@gmail.com"
                   aria-label="Pitt Computer Science Club Email"
-                  className="p-4 lg:p-2"
+                  className="p-2"
                 >
                   <FontAwesomeIcon
                     icon={faEnvelope}
-                    className="text-primary text-5xl xl:text-7xl"
+                    className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
               </div>
