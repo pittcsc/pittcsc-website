@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
 
 import logo from "../images/horizontal-logo.svg";
@@ -17,11 +17,32 @@ import { motion } from "framer-motion";
 function Header({ title }) {
   const [nav, setNav] = useState(false);
   const [resourcesNav, setResourcesNav] = useState(false);
+  const [shadow, setShadow] = useState(false);
+
+  const handleScroll = () => {
+    if (window) {
+      const currentScrollPos = window.pageYOffset;
+      if (currentScrollPos > 0) {
+        setShadow(true);
+      } else {
+        setShadow(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (window) {
+      window.addEventListener(`scroll`, handleScroll);
+    }
+    return () => {
+      window.removeEventListener(`scroll`, handleScroll);
+    };
+  }, []);
 
   return (
     <header
-      className={`mx-auto w-full p-4 header-max-width ${
-        nav ? "shadow-md" : ""
+      className={`mx-auto w-full p-4 header-max-width transition-shadow ${
+        nav || shadow ? "shadow-md" : "shadow-none"
       } md:shadow-none md:w-10/12 md:p-0 md:py-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center`}
     >
       <div className="flex items-center justify-between mx-auto md:block md:mx-0">
