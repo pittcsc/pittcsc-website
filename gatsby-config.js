@@ -9,7 +9,7 @@ module.exports = {
       "Website for the largest computer science student organization at the University of Pittsburgh.",
     image: "/Pitt_CSC_Social_Card.png",
     lang: "en",
-    url: "https://pittcsc-crashtestdummy.netlify.app",
+    url: "https://pittcsc.org",
     twitterUsername: "@PittCSC",
   },
   plugins: [
