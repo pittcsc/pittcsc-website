@@ -202,7 +202,7 @@ const IndexPage = ({ data }) => {
                 variants={text}
                 className="relative z-10 text-lg font-light xl:text-xl"
               >
-                2020-2021 SCHOOL YEAR
+                2021-2022 SCHOOL YEAR
               </motion.p>
               <motion.h1
                 variants={text}
