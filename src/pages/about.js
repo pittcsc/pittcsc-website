@@ -71,7 +71,7 @@ const AboutPage = () => {
                 ></motion.div>
                 <div className="relative flex flex-col items-center justify-center my-4 p-8 w-5/6 h-32 bg-primary rounded-2xl shadow-md lg:my-2 lg:w-96 lg:h-48">
                   <span className="text-white text-6xl font-bold lg:text-8xl">
-                    200+
+                    250+
                   </span>
                   <span className="text-white text-lg lg:text-xl">Members</span>
                 </div>
