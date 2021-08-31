@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-import { check } from "prettier";
 
 function EventItem({
   name,
@@ -27,8 +26,6 @@ function EventItem({
   const [loading, setLoading] = useState(false);
   const [checkLabel, setCheckLabel] = useState("Check the box to RSVP");
   const [cookies, setCookie, removeCookie] = useCookies();
-
-  console.log(attendance);
 
   const handleAttendance = () => {
     setLoading(true);
@@ -90,6 +87,7 @@ function EventItem({
       setChecked(cookies[id]);
       setCheckLabel(cookies[id] ? "You're RSVP'd!" : "Check the box to RSVP");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
