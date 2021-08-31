@@ -30,7 +30,7 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-const SponsorPage = ({ data }) => {
+const Spotlights = () => {
   useEffect(() => {
     hotjar.initialize(2276434, 6);
     ReactGA.initialize("UA-58446605-1");
@@ -49,7 +49,7 @@ const SponsorPage = ({ data }) => {
           <section className="container flex flex-col items-center justify-center mx-auto w-full">
             <div>
               <h1 className="relative z-10 mb-8 mt-4 w-full text-3xl font-bold lg:text-6xl">
-                We Love Our Sponsors
+                Get Noticed
                 <svg
                   className="svg-underline relative z-10 w-full"
                   viewBox="0 0 422 12"
@@ -200,4 +200,4 @@ const SponsorPage = ({ data }) => {
   );
 };
 
-export default SponsorPage;
+export default Spotlights;

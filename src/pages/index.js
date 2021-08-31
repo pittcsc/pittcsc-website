@@ -24,7 +24,7 @@ import {
 import { motion, useAnimation } from "framer-motion";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
-import FallReport from "../downloads/Pitt_CSC_Fall_Report_2020.pdf";
+import SpringReport from "../downloads/Pitt_CSC_Spring_Report.pdf";
 
 import { useInView } from "react-intersection-observer";
 
@@ -333,12 +333,12 @@ const IndexPage = ({ data }) => {
                   animate={controls}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href={FallReport}
+                  href={SpringReport}
                   target="_blank"
                   className="absolute z-20 -bottom-4 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
-                    See Fall Report
+                    See Spring Report
                   </button>
                 </motion.a>
               </div>
