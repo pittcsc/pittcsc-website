@@ -27,9 +27,8 @@ function EventItem({
   const [loading, setLoading] = useState(false);
   const [checkLabel, setCheckLabel] = useState("Check the box to RSVP");
   const [cookies, setCookie, removeCookie] = useCookies();
-  console.log(cookies);
 
-  const controls = useAnimation();
+  console.log(attendance);
 
   const handleAttendance = () => {
     setLoading(true);
@@ -93,10 +92,6 @@ function EventItem({
     }
   }, []);
 
-  useEffect(() => {
-    controls.start({ y: 0 });
-  }, [checkLabel]);
-
   return (
     <>
       <li>
@@ -157,7 +152,7 @@ function EventItem({
                     </a>
                   </div>
                 )}
-                {attendance && (
+                {(attendance || attendance === 0) && (
                   <div className="flex items-center space-x-2">
                     <label
                       htmlFor="attendance"
@@ -165,7 +160,6 @@ function EventItem({
                     >
                       <span>{checkLabel}</span>
                     </label>
-
                     <input
                       name="attendance"
                       type="checkbox"
