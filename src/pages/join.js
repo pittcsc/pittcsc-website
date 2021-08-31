@@ -258,7 +258,7 @@ const JoinPage = ({ data }) => {
                   <div className="flex flex-wrap items-center justify-center">
                     <div className="flex items-center justify-center mx-2 my-2 text-lg">
                       <a
-                        href="https://pitt.zoom.us/my/zhw78"
+                        href="https://pitt.zoom.us/my/pittcsc"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center"
