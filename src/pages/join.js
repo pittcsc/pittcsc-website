@@ -277,27 +277,6 @@ const JoinPage = ({ data }) => {
                         </motion.div>
                       </a>
                     </div>
-                    <div className="flex items-center justify-center mx-2 my-2 text-lg">
-                      <a
-                        href="https://www.signupgenius.com/go/10c0c4daca628a5fcc34-alumni"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center"
-                        aria-label="Pitt Computer Science Club Coffee Chats"
-                      >
-                        <p className="mx-2"> Sign up for a coffee chat: </p>
-                        <motion.div
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="flex items-center justify-center"
-                        >
-                          <FontAwesomeIcon
-                            icon={faCoffee}
-                            className="text-primary text-lg lg:text-xl xl:text-2xl"
-                          />
-                        </motion.div>
-                      </a>
-                    </div>
                   </div>
                 </div>
                 <div className="mx-auto">
