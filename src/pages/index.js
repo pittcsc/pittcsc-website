@@ -466,7 +466,6 @@ const IndexPage = ({ data }) => {
             initial="hidden"
             animate={controls}
           >
-            {/* <div className="w-full my-4 lg:my-0 lg:w-1/2 text-center relative"> */}
             <div className="my-4 w-full lg:my-0 lg:w-1/2">
               <h2 className="text-center text-4xl 2xl:text-7xl font-bold lg:text-5xl xl:text-6xl">
                 Hit us up

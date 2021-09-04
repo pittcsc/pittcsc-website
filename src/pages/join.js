@@ -23,37 +23,13 @@ import Layout from "../layouts/layout";
 
 import EventItem from "../components/eventItem";
 
-// import heroImage from "../images/hero-img2-cropped.png";
-// import MaskImage from "../images/Pitt_CSC_Mask.jpg";
-
-// const container = {
-//   hidden: { opacity: 0 },
-//   show: {
-//     opacity: 1,
-//     transition: {
-//       when: "beforeChildren",
-//       staggerChildren: 0.6,
-//     },
-//   },
-// };
-
-// const text = {
-//   hidden: {
-//     opacity: 0,
-//     y: 25,
-//   },
-//   show: {
-//     opacity: 1,
-//     y: 0,
-//   },
-// };
-
 const JoinPage = ({ data }) => {
   const site = (data || {})?.site;
   const futureEvents = site.edges.filter(
     (event) =>
       Date.parse(event.node.content.properties.Date.date.start) > new Date()
   );
+  const windowGlobal = typeof window !== `undefined` && window;
   useEffect(() => {
     hotjar.initialize(2276434, 6);
     ReactGA.initialize("UA-58446605-1");
@@ -310,6 +286,7 @@ const JoinPage = ({ data }) => {
                     </h3>
                     <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
                       {futureEvents.length !== 0 &&
+                        windowGlobal &&
                         futureEvents
                           .sort(
                             (a, b) =>
@@ -324,11 +301,15 @@ const JoinPage = ({ data }) => {
                           .map((event, i) => (
                             <EventItem
                               key={i}
+                              index={i}
                               name={
                                 event.node.content.properties?.Name?.title[0]
                                   ?.plain_text
                               }
                               startDate={
+                                event.node.content.properties?.Date?.date?.start
+                              }
+                              startDateShort={
                                 event.node.content.properties?.Date?.date
                                   ?.start &&
                                 format(
@@ -338,7 +319,17 @@ const JoinPage = ({ data }) => {
                                   "MM/dd"
                                 )
                               }
-                              endDate={
+                              startDateLong={
+                                event.node.content.properties?.Date?.date
+                                  ?.start &&
+                                format(
+                                  new Date(
+                                    event.node.content.properties?.Date?.date?.start
+                                  ),
+                                  "MMMM do"
+                                )
+                              }
+                              endDateShort={
                                 event.node.content.properties?.Date?.date
                                   ?.end &&
                                 format(
@@ -346,6 +337,16 @@ const JoinPage = ({ data }) => {
                                     event.node.content.properties?.Date.date?.end
                                   ),
                                   "MM/dd"
+                                )
+                              }
+                              endDateLong={
+                                event.node.content.properties?.Date?.date
+                                  ?.end &&
+                                format(
+                                  new Date(
+                                    event.node.content.properties?.Date.date?.end
+                                  ),
+                                  "MMMM do"
                                 )
                               }
                               description={
@@ -360,6 +361,18 @@ const JoinPage = ({ data }) => {
                               time={
                                 event.node.content.properties?.Time
                                   ?.rich_text[0]?.plain_text
+                              }
+                              id={event.node.content.id}
+                              attendance={
+                                event.node.content.properties?.Attendance
+                                  ?.number
+                              }
+                              shouldOpen={
+                                decodeURIComponent(
+                                  windowGlobal.location.hash.split("#")[1]
+                                ) ===
+                                event.node.content.properties?.Name?.title[0]
+                                  ?.plain_text
                               }
                             />
                           ))}
@@ -386,35 +399,39 @@ export const query = graphql`
       edges {
         node {
           content {
+            id
             properties {
-              Tags {
-                multi_select {
-                  color
-                  name
-                }
+              Attendance {
+                number
               }
-              Name {
-                title {
-                  plain_text
+              Date {
+                date {
+                  start
+                  end
                 }
-              }
-              Link {
-                url
               }
               Description {
                 rich_text {
                   plain_text
                 }
               }
-              Time {
-                rich_text {
+              Link {
+                url
+              }
+              Name {
+                title {
                   plain_text
                 }
               }
-              Date {
-                date {
-                  start
-                  end
+              Tags {
+                multi_select {
+                  color
+                  name
+                }
+              }
+              Time {
+                rich_text {
+                  plain_text
                 }
               }
             }
