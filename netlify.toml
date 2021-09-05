@@ -1,2 +1,8 @@
 [[plugins]]
 package = "@netlify/plugin-gatsby"
+
+[[redirects]]
+  from = "/zoom"
+  to = "https://pitt.zoom.us/my/pittcsc"
+  status = 200
+  force = true
