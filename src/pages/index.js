@@ -15,11 +15,7 @@ import {
   faDiscord,
 } from "@fortawesome/free-brands-svg-icons";
 
-import {
-  faVideo,
-  faEnvelope,
-  faCoffee,
-} from "@fortawesome/free-solid-svg-icons";
+import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 import { motion, useAnimation } from "framer-motion";
 import { hotjar } from "react-hotjar";
