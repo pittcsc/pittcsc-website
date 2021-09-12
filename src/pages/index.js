@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { graphql } from "gatsby";
-import { format } from "date-fns";
 import { Link } from "gatsby";
 import Lottie from "react-lottie";
 import { StaticImage } from "gatsby-plugin-image";
@@ -145,6 +144,7 @@ const IndexPage = ({ data }) => {
         new Date(event.node.content.properties.Date.date.start).getTime() >=
         new Date().getTime()
     );
+  console.log(futureEvents);
 
   const windowGlobal = typeof window !== `undefined` && window;
   const controls = useAnimation();
@@ -286,7 +286,7 @@ const IndexPage = ({ data }) => {
             </div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
-            <section className="container relative z-10 flex flex-col items-center justify-center mx-auto py-24 w-full lg:flex-row lg:py-32">
+            <section className="container relative z-10 flex flex-col items-center justify-center mx-auto px-4 py-24 w-full md:px-0 lg:flex-row lg:py-32">
               <div className="relative flex flex-col items-center justify-center my-4 w-full h-full text-center lg:w-1/2 xl:my-0">
                 <motion.svg
                   className="svg-underline absolute z-10 -top-10 right-0 w-32 md:-top-20 md:w-64 lg:w-48 xl:w-64"
@@ -312,7 +312,7 @@ const IndexPage = ({ data }) => {
                   variants={maskAnimate}
                   initial="hidden"
                   animate={controls}
-                  className="mx-auto w-10/12 xl:w-9/12"
+                  className="mx-auto xl:w-9/12"
                 >
                   <StaticImage
                     src="../images/Pitt_CSC_Mask.jpg"
@@ -344,7 +344,7 @@ const IndexPage = ({ data }) => {
                 initial="hidden"
                 animate={controls}
               >
-                <div className="mx-auto my-4 p-8 w-10/12 max-w-lg bg-secondary-200 rounded-3xl shadow-lg xl:my-0 xl:px-8 xl:py-12 xl:w-full">
+                <div className="mx-auto my-4 p-6 max-w-lg bg-secondary-200 rounded-3xl shadow-lg md:p-8 xl:my-0 xl:px-8 xl:py-12 xl:w-full">
                   <h2 className="mb-4 text-3xl font-bold lg:my-4 xl:text-4xl">
                     Our Mission
                   </h2>
@@ -381,43 +381,8 @@ const IndexPage = ({ data }) => {
                             startDate={
                               event.node.content.properties?.Date?.date?.start
                             }
-                            startDateShort={
-                              event.node.content.properties?.Date?.date
-                                ?.start &&
-                              format(
-                                new Date(
-                                  event.node.content.properties?.Date?.date?.start
-                                ),
-                                "MM/dd"
-                              )
-                            }
-                            startDateLong={
-                              event.node.content.properties?.Date?.date
-                                ?.start &&
-                              format(
-                                new Date(
-                                  event.node.content.properties?.Date?.date?.start
-                                ),
-                                "MMMM do"
-                              )
-                            }
-                            endDateShort={
-                              event.node.content.properties?.Date?.date?.end &&
-                              format(
-                                new Date(
-                                  event.node.content.properties?.Date.date?.end
-                                ),
-                                "MM/dd"
-                              )
-                            }
-                            endDateLong={
-                              event.node.content.properties?.Date?.date?.end &&
-                              format(
-                                new Date(
-                                  event.node.content.properties?.Date.date?.end
-                                ),
-                                "MMMM do"
-                              )
+                            endDate={
+                              event.node.content.properties?.Date?.date?.end
                             }
                             description={
                               event.node.content.properties?.Description

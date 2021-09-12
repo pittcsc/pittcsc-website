@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
+import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,10 +10,7 @@ import axios from "axios";
 function EventItem({
   name,
   startDate,
-  startDateShort,
-  startDateLong,
-  endDateShort,
-  endDateLong,
+  endDate,
   url,
   description,
   tags,
@@ -90,6 +88,39 @@ function EventItem({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log(new Date(startDate));
+
+  const newStartDate = new Date(startDate);
+
+  const newEndDate = new Date(endDate);
+
+  const tomorrowStart = new Date();
+
+  const tomorrowEnd = new Date();
+  let startDateLong;
+  let startDateShort;
+  let endDateLong;
+  let endDateShort;
+
+  tomorrowStart.setDate(newStartDate.getDate() + 1);
+  tomorrowEnd.setDate(newEndDate.getDate() + 1);
+
+  if (startDate) {
+    startDateLong = format(tomorrowStart, "MMMM do");
+    startDateShort = format(tomorrowStart, "MM/dd");
+  } else {
+    startDateLong = false;
+    startDateShort = false;
+  }
+
+  if (endDate) {
+    endDateLong = format(tomorrowEnd, "MMMM do");
+    endDateShort = format(tomorrowEnd, "MM/dd");
+  } else {
+    endDateLong = false;
+    endDateShort = false;
+  }
+
   return (
     <>
       <li>
@@ -97,10 +128,15 @@ function EventItem({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setModalOpen(true)}
-          className="px-4 py-2 text-left text-white bg-primary rounded-full focus:outline-none"
+          className="p-4 text-left text-white bg-primary rounded-full focus:outline-none md:px-6 md:py-4"
         >
           <p className="font-medium">
-            {name} - {startDateShort} {endDateShort && `to ${endDateShort}`}
+            <span className="text-base md:text-lg lg:text-xl">{name}</span>
+            <br />{" "}
+            <span className="text-sm font-normal">
+              {startDateLong} {endDateShort && `to ${endDateShort}`}{" "}
+              {time && `, ${time}`}
+            </span>
           </p>
         </motion.button>
       </li>

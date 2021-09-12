@@ -200,7 +200,7 @@ const JoinPage = ({ data }) => {
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
             <section className="container flex items-center justify-center mx-auto px-4 py-24 w-full md:px-0 lg:py-32">
-              <div className="flex flex-wrap gap-4 items-center justify-around w-full">
+              <div className="flex flex-wrap gap-4 items-center justify-center w-full lg:justify-around">
                 <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg xl:w-1/2">
                   <svg
                     className="absolute -bottom-10 -left-10 w-32 lg:-left-20 lg:w-64"
@@ -276,7 +276,7 @@ const JoinPage = ({ data }) => {
                       typically host meetings on Mondays and Wednesdays at 8pm.
                     </p>
                   </div>
-                  <div className="mt-4 mx-auto p-8 bg-secondary-200 rounded-2xl shadow-lg">
+                  <div className="mt-4 mx-auto p-6 bg-secondary-200 rounded-2xl shadow-lg md:p-8">
                     <h3 className="mb-2 font-bold lg:text-lg">
                       Upcoming Events
                     </h3>
@@ -305,45 +305,8 @@ const JoinPage = ({ data }) => {
                               startDate={
                                 event.node.content.properties?.Date?.date?.start
                               }
-                              startDateShort={
-                                event.node.content.properties?.Date?.date
-                                  ?.start &&
-                                format(
-                                  new Date(
-                                    event.node.content.properties?.Date?.date?.start
-                                  ),
-                                  "MM/dd"
-                                )
-                              }
-                              startDateLong={
-                                event.node.content.properties?.Date?.date
-                                  ?.start &&
-                                format(
-                                  new Date(
-                                    event.node.content.properties?.Date?.date?.start
-                                  ),
-                                  "MMMM do"
-                                )
-                              }
-                              endDateShort={
-                                event.node.content.properties?.Date?.date
-                                  ?.end &&
-                                format(
-                                  new Date(
-                                    event.node.content.properties?.Date.date?.end
-                                  ),
-                                  "MM/dd"
-                                )
-                              }
-                              endDateLong={
-                                event.node.content.properties?.Date?.date
-                                  ?.end &&
-                                format(
-                                  new Date(
-                                    event.node.content.properties?.Date.date?.end
-                                  ),
-                                  "MMMM do"
-                                )
+                              endDate={
+                                event.node.content.properties?.Date?.date?.end
                               }
                               description={
                                 event.node.content.properties?.Description
