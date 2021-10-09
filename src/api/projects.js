@@ -6,9 +6,11 @@ const projectCache = new NodeCache({
   deleteOnExpire: true,
 });
 
+const SHEET_CACHE_KEY = "project_sheet";
+
 // It takes time to connect to the sheet, so consumers of the sheet should
 // await the promise.
-const projectSheet = (async() => {
+const sheet = (async() => {
   const sheet = new GoogleSpreadsheet("1hxiXzFyLKy1vreEobJml3nthc__mb7ooaztyvGR-luI");
 
   await sheet.useServiceAccountAuth({
@@ -21,7 +23,26 @@ const projectSheet = (async() => {
   return sheet;
 })();
 
+async function getProjectsFromSheet() {
+  const projectSheet = (await sheet).sheetsByTitle["Projects"];
+
+  return (await projectSheet.getRows()).map((row) => projectSheet.headerValues.reduce((acc, headerValue) => {
+    acc[headerValue] = row[headerValue];
+    return acc;
+  }, {}));
+}
+
+async function getProjects() {
+  const cachedProjects = projectCache.get(SHEET_CACHE_KEY)
+  if (cachedProjects) {
+    return cachedProjects;
+  }
+
+  const projects = await getProjectsFromSheet();
+  projectCache.set(SHEET_CACHE_KEY, projects);
+  return projects;
+}
+
 export default async function handler(req, res) {
-  // Just need to read docs to see how to read entire sheet
-  res.json();
+  res.json(await getProjects());
 }
