@@ -15,7 +15,8 @@ const sheet = (async() => {
 
   await sheet.useServiceAccountAuth({
     client_email: process.env.GOOGLE_SHEETS_API_CLIENT_EMAIL,
-    private_key: process.env.GOOGLE_SHEETS_API_KEY,
+    // API key is formatted with '_' in place of '\n' in env vars for Netlify compatability.
+    private_key: process.env.GOOGLE_SHEETS_API_KEY.replace(new RegExp("_", 'g'), "\n"),
   });
 
   await sheet.loadInfo();
