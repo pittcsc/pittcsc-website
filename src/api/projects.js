@@ -2,7 +2,7 @@ const NodeCache = require("node-cache");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 
 const projectCache = new NodeCache({
-  stdTTL: 600, // cache entry should be removed after 24 hours
+  stdTTL: 600, // cache entry should be removed after 10 minutes 
   deleteOnExpire: true,
 });
 
