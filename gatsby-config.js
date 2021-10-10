@@ -64,5 +64,16 @@ module.exports = {
         icon: "src/images/icon.svg",
       },
     },
+    {
+      resolve: "gatsby-source-google-spreadsheet",
+      options: {
+        spreadsheetId: "1hxiXzFyLKy1vreEobJml3nthc__mb7ooaztyvGR-luI",
+        credentials: {
+          client_email: process.env.GOOGLE_SHEETS_API_CLIENT_EMAIL,
+          private_key: process.env.GOOGLE_SHEETS_API_KEY.replace(new RegExp("_", 'g'), "\n"),
+        },
+        filterNode: (node) => node.show === "yes",
+      }
+    },
   ],
 };
