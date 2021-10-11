@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import Layout from "../layouts/layout";
+import { motion } from "framer-motion";
 import ProjectCard from "../components/ProjectCard";
 
 const ProjectsPage = ({ data }) => {
@@ -33,21 +34,28 @@ const ProjectsPage = ({ data }) => {
 
   return (
     <Layout title="Projects | Pitt Computer Science Club" header="projects">
-      <div className="container my-16 mx-auto w-full">
-        {projectYearsAscending.map((year) => (
-          <div key={year}>
-            <h1 className="text-4xl">{year}</h1>
-            <hr />
-            <div className="flex flex-col items-center justify-center">
-              <div className="grid gap-12 2xl:gap-16 grid-cols-1 my-8 lg:grid-cols-2 2xl:grid-cols-3">
-                {projectsByYear[year].map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
+      <motion.div
+        className="overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <div className="container my-16 mx-auto w-full">
+          {projectYearsAscending.map((year) => (
+            <div key={year} className="mt-16">
+              <h1 className="text-4xl">{year}</h1>
+              <hr />
+              <div className="flex flex-col items-center justify-center">
+                <div className="grid gap-12 2xl:gap-16 grid-cols-1 my-8 lg:grid-cols-2 2xl:grid-cols-3">
+                  {projectsByYear[year].map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </motion.div>
     </Layout>
   );
 };

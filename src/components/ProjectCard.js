@@ -11,7 +11,7 @@ const ProjectCard = ({ project }) => {
 
   return (
     <div
-      className={`relative w-128 bg-gray-100 rounded-2xl focus:outline-none
+      className={`flex flex-col relative w-128 bg-gray-100 rounded-2xl focus:outline-none
       hover:shadow-lg shadow-md transform-gpu hover:scale-105 active:scale-95
       transition md:w-128`}
       role="button"
@@ -22,8 +22,8 @@ const ProjectCard = ({ project }) => {
           <iframe width="560" height="315" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
         </div>
       ) : null }
-      <figcaption className="text-center p-8">
-        <div className="pt-4 text-lg font-medium md:text-xl">{project.name}</div>
+      <figcaption className="mt-auto text-center p-8">
+        <div className="text-lg font-medium md:text-xl">{project.name}</div>
         <div className="px-2 text-xs">{project.description}</div>
         <div className="mt-2 px-2 text-xs">{project.teamMembers}</div>
       </figcaption>
