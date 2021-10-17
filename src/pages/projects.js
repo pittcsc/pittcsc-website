@@ -13,8 +13,9 @@ const ProjectsPage = ({ data }) => {
     ReactGA.pageview("/join");
   }, []);
 
-  const projects =
-      data.allGoogleSpreadsheetProjects.edges.map((edge) => edge.node);
+  const projects = data.allGoogleSpreadsheetProjects.edges.map(
+    (edge) => edge.node
+  );
   const projectsByYear = projects.reduce((acc, project) => {
     if (!acc[project.projectYear]) {
       acc[project.projectYear] = [project];
@@ -28,7 +29,7 @@ const ProjectsPage = ({ data }) => {
     // Natural sort of years
     return b.localeCompare(a, undefined, {
       numeric: true,
-      sensitivity: 'base'
+      sensitivity: "base",
     });
   });
 
@@ -40,13 +41,13 @@ const ProjectsPage = ({ data }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="container my-16 mx-auto w-full">
+        <div className="container mx-auto my-16 w-full">
           {projectYearsAscending.map((year) => (
             <div key={year} className="mt-16">
               <h1 className="text-4xl">{year}</h1>
               <hr />
               <div className="flex flex-col items-center justify-center">
-                <div className="grid gap-12 2xl:gap-16 grid-cols-1 my-8 lg:grid-cols-2 2xl:grid-cols-3">
+                <div className="grid gap-12 2xl:gap-16 grid-cols-1 2xl:grid-cols-3 my-8 lg:grid-cols-2">
                   {projectsByYear[year].map((project) => (
                     <ProjectCard key={project.id} project={project} />
                   ))}
