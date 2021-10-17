@@ -1,10 +1,10 @@
-import "../styles/components/projectcard.scss"
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
-const YOUTUBE_LINK_ID_REGEX = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+const YOUTUBE_LINK_ID_REGEX =
+  /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
 
 const ProjectCard = ({ project }) => {
   const videoId = project.videoLink?.match(YOUTUBE_LINK_ID_REGEX)[1];
@@ -19,10 +19,17 @@ const ProjectCard = ({ project }) => {
     >
       {videoId ? (
         <div className="video-container">
-          <iframe width="560" height="315" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+          <iframe
+            width="560"
+            height="315"
+            src={`https://www.youtube.com/embed/${videoId}`}
+            frameBorder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
         </div>
-      ) : null }
-      <figcaption className="mt-auto text-center p-8">
+      ) : null}
+      <figcaption className="mt-auto p-8 text-center">
         <div className="text-lg font-medium md:text-xl">{project.name}</div>
         <div className="px-2 text-xs">{project.description}</div>
         <div className="mt-2 px-2 text-xs">{project.teamMembers}</div>
@@ -38,7 +45,7 @@ const ProjectCard = ({ project }) => {
         >
           <FontAwesomeIcon icon={faGithub} />
         </motion.a>
-      ) : null }
+      ) : null}
     </div>
   );
 };
