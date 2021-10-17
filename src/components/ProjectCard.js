@@ -30,9 +30,13 @@ const ProjectCard = ({ project }) => {
         </div>
       ) : null}
       <figcaption className="mt-auto p-8 text-center">
-        <div className="text-lg font-medium md:text-xl">{project.name}</div>
-        <div className="px-2 text-xs">{project.description}</div>
-        <div className="mt-2 px-2 text-xs">{project.teamMembers}</div>
+        <div className="mb-4 text-lg font-medium md:text-xl">
+          {project.name}
+        </div>
+        <div className="px-2 text-xs italic">{project.description}</div>
+        <div className="mt-2 mx-auto px-2 w-80 text-xs">
+          {project.teamMembers}
+        </div>
       </figcaption>
       {project.repoLink ? (
         <motion.a
