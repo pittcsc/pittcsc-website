@@ -14,8 +14,6 @@ const ProjectCard = ({ project }) => {
       className={`flex flex-col relative w-128 bg-gray-100 rounded-2xl focus:outline-none
       hover:shadow-lg shadow-md transform-gpu hover:scale-105 active:scale-95
       transition md:w-128`}
-      role="button"
-      tabIndex="0"
     >
       {videoId ? (
         <div className="video-container">
