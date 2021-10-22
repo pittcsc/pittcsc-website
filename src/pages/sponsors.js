@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 
-import ArgoAI from "../images/sponsors/Argo-AI-logo.png";
-import NS from "../images/sponsors/norfolk_southern_logo.png";
+import Eaton from "../images/sponsors/Eaton-logo.jpeg";
 import PNC from "../images/sponsors/PNC_logo.png";
-import SAP from "../images/sponsors/SAP-Logo.svg";
 
 import SpringReportImage from "../images/Spring_Report_Image.png";
 
@@ -20,14 +18,14 @@ const imageContainer = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.4,
+      staggerChildren: 0.6,
     },
   },
 };
 
 const item = {
   hidden: { opacity: 0, y: 100 },
-  show: { opacity: 1, y: 0 },
+  show: { opacity: 1, y: 0, duration: 0.8 },
 };
 
 const SponsorPage = ({ data }) => {
@@ -45,7 +43,7 @@ const SponsorPage = ({ data }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="mt-24 my-8 min-h-screen space-y-24 xl:my-24">
+        <div className="mt-24 my-8 min-h-screen space-y-16 lg:space-y-24 xl:my-24">
           <section className="container flex flex-col items-center justify-center mx-auto w-full">
             <div>
               <h1 className="relative z-10 mb-8 mt-4 w-full text-3xl font-bold lg:text-6xl">
@@ -78,50 +76,30 @@ const SponsorPage = ({ data }) => {
               variants={imageContainer}
               initial="hidden"
               animate="show"
-              className="grid gap-4 grid-cols-2 place-items-center w-full lg:gap-8 lg:grid-cols-4"
+              className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8"
             >
-              <motion.a
-                variants={item}
-                href="https://www.argo.ai/"
-                target="_blank"
-              >
-                <img
-                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
-                  src={ArgoAI}
-                  alt="Argo AI Logo"
-                />
-              </motion.a>
               <motion.a
                 variants={item}
                 href="https://www.pnc.com/en/personal-banking.html"
                 target="_blank"
+                aria-label="PNC"
               >
                 <img
-                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
+                  className="w-40 max-w-md md:w-80 lg:w-full xl:max-w-lg"
                   src={PNC}
                   alt="PNC Logo"
                 />
               </motion.a>
               <motion.a
                 variants={item}
-                href="https://www.sap.com/index.html"
+                href="https://www.eaton.com/us/en-us.html"
                 target="_blank"
+                aria-label="Eaton"
               >
                 <img
-                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
-                  src={SAP}
-                  alt="SAP Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="http://www.nscorp.com/content/nscorp/en.html"
-                target="_blank"
-              >
-                <img
-                  className="m-4 w-32 md:w-48 lg:m-8 lg:w-64 xl:w-80"
-                  src={NS}
-                  alt="Norfolk Southern Logo"
+                  className="w-40 max-w-md md:w-80 lg:w-full xl:max-w-lg"
+                  src={Eaton}
+                  alt="Eaton Logo"
                 />
               </motion.a>
             </motion.div>
