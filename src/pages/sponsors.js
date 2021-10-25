@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 
 import Eaton from "../images/sponsors/Eaton-logo.jpeg";
 import PNC from "../images/sponsors/PNC_logo.png";
+import Naval from "../images/sponsors/naval_nuclear_lab.jpeg";
 
 import SpringReportImage from "../images/Spring_Report_Image.png";
 
@@ -76,7 +77,8 @@ const SponsorPage = ({ data }) => {
               variants={imageContainer}
               initial="hidden"
               animate="show"
-              className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8"
+              // className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8 xl:grid-cols-3"
+              className="flex flex-wrap gap-4 items-center justify-center px-4 md:gap-8 xl:gap-16"
             >
               <motion.a
                 variants={item}
@@ -85,7 +87,7 @@ const SponsorPage = ({ data }) => {
                 aria-label="PNC"
               >
                 <img
-                  className="w-40 max-w-md md:w-80 lg:w-full xl:max-w-lg"
+                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
                   src={PNC}
                   alt="PNC Logo"
                 />
@@ -97,9 +99,21 @@ const SponsorPage = ({ data }) => {
                 aria-label="Eaton"
               >
                 <img
-                  className="w-40 max-w-md md:w-80 lg:w-full xl:max-w-lg"
+                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
                   src={Eaton}
                   alt="Eaton Logo"
+                />
+              </motion.a>
+              <motion.a
+                variants={item}
+                href="https://navalnuclearlab.energy.gov/"
+                target="_blank"
+                aria-label="Naval Nuclear Lab"
+              >
+                <img
+                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  src={Naval}
+                  alt="Naval Nuclear Lab Logo"
                 />
               </motion.a>
             </motion.div>
