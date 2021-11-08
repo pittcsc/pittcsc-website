@@ -38,6 +38,7 @@
     "gatsby-plugin-sharp": "^2.12.1",
     "gatsby-plugin-svgr": "^3.0.0-beta.0",
     "gatsby-source-filesystem": "^2.9.0",
+    "gatsby-source-google-spreadsheet": "^2.0.0",
     "gatsby-transformer-json": "^2.9.0",
     "gatsby-transformer-sharp": "^2.10.1",
     "node-sass": "^4.14.0",
