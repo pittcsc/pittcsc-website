@@ -19,7 +19,7 @@ const AboutPage = () => {
   return (
     <Layout title="About Us | Pitt Computer Science Club" header="about">
       <motion.div
-        className="overflow-hidden"
+        className="dark:bg-darkPrimary dark:text-white overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

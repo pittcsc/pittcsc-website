@@ -9,7 +9,7 @@ import { CookiesProvider } from "react-cookie";
 const Layout = ({ title, header, children }) => {
   return (
     <CookiesProvider>
-      <div>
+      <div className="dark:bg-darkPrimary">
         <Header title={header} />
         <Seo title={title} />
         <AnimatePresence exitBeforeEnter>

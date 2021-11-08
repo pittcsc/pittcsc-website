@@ -41,7 +41,7 @@ function Header({ title }) {
 
   return (
     <header
-      className={`mx-auto w-full p-4 header-max-width transition-shadow ${
+      className={`mx-auto w-full p-4 header-max-width transition-shadow dark:bg-darkPrimary dark:text-white ${
         nav || shadow ? "shadow-md" : "shadow-none"
       } md:shadow-none md:w-10/12 md:p-0 md:py-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center`}
     >
@@ -50,7 +50,7 @@ function Header({ title }) {
           <img
             src={logo}
             alt="Pitt CSC Logo"
-            className="relative w-32"
+            className="relative px-4 py-2 w-32 dark:bg-white dark:rounded-md"
             width={128}
           />
         </Link>
@@ -69,7 +69,7 @@ function Header({ title }) {
         </button>
       </div>
       <nav
-        className={`transition-all relative bg-white pointer-events-none max-h-0 opacity-0 ${
+        className={`transition-all relative bg-white dark:bg-darkPrimary pointer-events-none max-h-0 opacity-0 ${
           nav ? "nav-max-height opacity-100 p-4 pointer-events-auto" : ""
         } md:max-h-full md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
@@ -98,7 +98,7 @@ function Header({ title }) {
               className={`flex items-center justify-center px-4 py-2 text-black  ${
                 resourcesNav
                   ? "bg-primary text-white md:bg-none md:text-black"
-                  : "bg-none text-black"
+                  : "bg-none text-black dark:text-white"
               } group-hover:bg-primary group-hover:text-white rounded-lg md:py-0 md:block`}
             >
               <div className="group relative z-50 w-full text-center text-lg font-bold md:text-base">

@@ -13,7 +13,7 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
       <AnimatePresence exitBeforeEnter>
         {modalOpen && (
           <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-            <div className="flex flex-col items-center justify-center px-4 py-8 max-w-5xl bg-gray-100 rounded-2xl space-x-8 md:flex-row md:p-8">
+            <div className="flex flex-col items-center justify-center px-4 py-8 max-w-5xl text-black dark:text-white bg-gray-100 dark:bg-gray-700 rounded-2xl space-x-8 md:flex-row md:p-8">
               <img
                 className="mx-auto w-48 h-48 rounded-full shadow-md object-cover object-center"
                 src={image}
@@ -54,7 +54,7 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
         )}
       </AnimatePresence>
       <div
-        className={`relative p-8 w-64 bg-gray-100 rounded-2xl focus:outline-none hover:shadow-lg shadow-md ${
+        className={`relative p-8 w-64 text-black dark:text-white bg-gray-100 dark:bg-gray-700 rounded-2xl focus:outline-none hover:shadow-lg shadow-md ${
           bio !== undefined ? "cursor-pointer" : "cursor-default"
         } transform-gpu hover:scale-105 active:scale-95 transition md:w-72`}
         onClick={bio ? () => setModalOpen(true) : undefined}

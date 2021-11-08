@@ -180,7 +180,7 @@ const IndexPage = ({ data }) => {
       header="home"
     >
       <motion.div
-        className="overflow-hidden"
+        className="dark:bg-darkPrimary dark:text-white overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -245,13 +245,13 @@ const IndexPage = ({ data }) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="min-w-300 px-4 py-2 font-bold bg-white border-4 border-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
+                    className="min-w-300 dark:bg-darkPrimary px-4 py-2 font-bold bg-white border-4 border-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
                   >
                     What We Do
                   </motion.button>
                 </Link>
               </motion.div>
-              <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
+              <div className="absolute z-0 -left-20 top-0 w-40 h-40 dark:bg-primary bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
             </motion.div>
             <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
               <motion.div
@@ -281,7 +281,7 @@ const IndexPage = ({ data }) => {
                 transition={{
                   delay: 0.4,
                 }}
-                className="polka-background absolute z-10 -right-10 -top-10 lg:-top-20"
+                className="polka-background absolute z-10 -right-10 -top-10 dark:hidden lg:-top-20"
               ></motion.div>
             </div>
           </section>
@@ -344,7 +344,7 @@ const IndexPage = ({ data }) => {
                 initial="hidden"
                 animate={controls}
               >
-                <div className="mx-auto my-4 p-6 max-w-lg bg-secondary-200 rounded-3xl shadow-lg md:p-8 xl:my-0 xl:px-8 xl:py-12 xl:w-full">
+                <div className="mx-auto my-4 p-6 max-w-lg text-black bg-secondary-200 rounded-3xl shadow-lg md:p-8 xl:my-0 xl:px-8 xl:py-12 xl:w-full">
                   <h2 className="mb-4 text-3xl font-bold lg:my-4 xl:text-4xl">
                     Our Mission
                   </h2>
@@ -536,7 +536,7 @@ const IndexPage = ({ data }) => {
                     className="flex items-center justify-center"
                     aria-label="Pitt Computer Science Club Zoom Meetings"
                   >
-                    <p className="mx-2"> Join our zoom meetings: </p>
+                    <p className="mx-2 text-black"> Join our zoom meetings: </p>
                     <motion.div
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
