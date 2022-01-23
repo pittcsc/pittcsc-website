@@ -78,7 +78,7 @@ function Header({ title }) {
         >
           <li className="py-2 md:py-0">
             <Link to="/about">
-              <div className="group relative w-full text-center text-lg font-bold md:text-base">
+              <div className="relative w-full text-lg font-bold text-center group md:text-base">
                 About Us
                 <svg
                   className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
@@ -93,7 +93,7 @@ function Header({ title }) {
               </div>
             </Link>
           </li>
-          <li className="group relative">
+          <li className="relative group">
             <div
               className={`flex items-center justify-center px-4 py-2 text-black  ${
                 resourcesNav
@@ -101,7 +101,7 @@ function Header({ title }) {
                   : "bg-none text-black"
               } group-hover:bg-primary group-hover:text-white rounded-lg md:py-0 md:block`}
             >
-              <div className="group relative z-50 w-full text-center text-lg font-bold md:text-base">
+              <div className="relative z-50 w-full text-lg font-bold text-center group md:text-base">
                 Resources
                 <svg
                   className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
@@ -133,9 +133,9 @@ function Header({ title }) {
                   : ""
               } md:absolute md:pointer-events-auto md:max-h-96 md:px-8 md:pb-8 md:pt-12 md:bg-primary md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
             >
-              <ul className="flex flex-col text-left font-bold space-y-4 md:text-white">
+              <ul className="flex flex-col space-y-4 font-bold text-left md:text-white">
                 <a
-                  href="https://pittcsc.medium.com/"
+                  href="https://pittcsc-blog.netlify.app/"
                   target="_blank"
                   rel="noreferrer noopener"
                 >
@@ -169,7 +169,7 @@ function Header({ title }) {
           </li>
           <li className="py-2 md:py-0">
             <Link to="/sponsors">
-              <div className="group relative w-full text-center text-lg font-bold md:text-base">
+              <div className="relative w-full text-lg font-bold text-center group md:text-base">
                 Sponsors
                 <svg
                   className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
@@ -189,7 +189,7 @@ function Header({ title }) {
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="px-4 py-2 w-32 text-white text-lg font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition md:w-24 md:text-base"
+                className="w-32 px-4 py-2 text-lg font-bold text-white transition rounded-full shadow-md bg-primary focus:outline-none hover:shadow-lg md:w-24 md:text-base"
               >
                 Join
               </motion.button>
