@@ -6,3 +6,9 @@ package = "@netlify/plugin-gatsby"
   to = "https://pitt.zoom.us/my/pittcsc"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/blog"
+  to = "https://pittcsc-blog.netlify.app"
+  status = 200
+  force = true
