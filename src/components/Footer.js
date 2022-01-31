@@ -10,7 +10,7 @@ function Footer() {
             <li>About Us</li>
           </Link>
           <a
-            href="https://pittcsc.medium.com/"
+            href="https://pittcsc-blog.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
           >
