@@ -170,6 +170,7 @@ const AboutPage = () => {
                     linkedIn={linkedIn}
                     email={email}
                     bio={bio}
+                    key={email}
                   />
                 )
               )}
