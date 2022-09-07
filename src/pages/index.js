@@ -520,9 +520,9 @@ const IndexPage = ({ data }) => {
                 />
               </svg>
               <iframe
-                src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
+                src="https://calendar.google.com/calendar/embed?src=pittcsc%40gmail.com&ctz=America%2FNew_York"
                 title="Pitt CSC Google Calendar"
-                frameBorder="0"
+                frameborder="0"
                 scrolling="no"
                 height="600"
                 className="w-full"
