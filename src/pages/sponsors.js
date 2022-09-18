@@ -4,9 +4,9 @@ import Eaton from "../images/sponsors/Eaton-logo.jpeg";
 import PNC from "../images/sponsors/PNC_logo.png";
 import Naval from "../images/sponsors/naval_nuclear_lab.jpeg";
 
-import SpringReportImage from "../images/Spring_Report_Image.png";
+import SpringReportImage from "../images/hero_image.png";
 
-import SpringReport from "../downloads/Pitt_CSC_Spring_Report.pdf";
+import FallReport from "../downloads/gbm-fall-2022.pdf";
 
 import { motion } from "framer-motion";
 import { hotjar } from "react-hotjar";
@@ -171,16 +171,16 @@ const SponsorPage = ({ data }) => {
                   <motion.a
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    href={SpringReport}
+                    href={FallReport}
                     target="_blank"
                     className="min-w-300 absolute -bottom-6 px-4 py-2 text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:right-10"
                   >
-                    See Spring Report
+                    Initiatives - Fall 2022
                   </motion.a>
                   <img
                     className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
                     src={SpringReportImage}
-                    alt="Spring Report 2021"
+                    alt="Fall Report 2022"
                   />
                 </div>
               </div>
