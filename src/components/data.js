@@ -41,15 +41,6 @@ export const officerList = [
     bio: "Hey guys, this year, I hope to help lead the partnerships the club has with other organizations. As an officer and member of the academic affairs committee in student government, I hope to act and eventually help grow the connection between CSC and the Student government.",
   },
   {
-    name: "Hina Sekine",
-    title: "Public Relations Manager",
-    linkedIn: "",
-    email: "his38@pitt.edu",
-    image: "../images/officers_2022/hina.jpg",
-    bio: "Hello all! I’m Hina Sekine, a CS major at Pitt! I have a confession to make, despite CS being a central part of my life since I entered university, I despise coding itself. I believe that it’s a crime we’re forced against our will to use computers and code in the year 2022.",
-  },
-
-  {
     name: "Minhal Khan",
     title: "Public Relations Manager",
     linkedIn: "https://www.linkedin.com/in/~minhal/",
