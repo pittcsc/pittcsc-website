@@ -3,6 +3,7 @@ import { graphql } from "gatsby";
 import { Link } from "gatsby";
 import Lottie from "react-lottie";
 import { StaticImage } from "gatsby-plugin-image";
+import { getAcademicYear } from "../utils/dates";
 
 import animationData from "../animations/pittcscLogoAnimation.json";
 
@@ -19,7 +20,7 @@ import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { motion, useAnimation } from "framer-motion";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
-import SpringReport from "../downloads/Pitt_CSC_Spring_Report.pdf";
+import FallReport from "../downloads/gbm-fall-2022.pdf";
 
 import { useInView } from "react-intersection-observer";
 
@@ -198,7 +199,7 @@ const IndexPage = ({ data }) => {
                 variants={text}
                 className="relative z-10 text-lg font-light xl:text-xl"
               >
-                2021-2022 SCHOOL YEAR
+                {getAcademicYear()} SCHOOL YEAR
               </motion.p>
               <motion.h1
                 variants={text}
@@ -329,12 +330,12 @@ const IndexPage = ({ data }) => {
                   animate={controls}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href={SpringReport}
+                  href={FallReport}
                   target="_blank"
                   className="absolute z-20 -bottom-4 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
-                    See Spring Report
+                    Initiatives - Fall 2022
                   </button>
                 </motion.a>
               </div>
@@ -522,7 +523,7 @@ const IndexPage = ({ data }) => {
               <iframe
                 src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
                 title="Pitt CSC Google Calendar"
-                frameBorder="0"
+                frameborder="0"
                 scrolling="no"
                 height="600"
                 className="w-full"
