@@ -48,14 +48,6 @@ export const officerList = [
     bio: "Hey everyone! Minhal Khan here. I’m an international student and a rising junior here at Pitt. Although I am a CS major, I’ve recently taken an interest in the dark arts of mathematics and theoretical computer science. I enjoy making things, so you can usually find me drawing, cooking, programming, or making awful music in FL studio.",
   },
   {
-    name: "Minhal Khan",
-    title: "Public Relations Manager",
-    linkedIn: "https://www.linkedin.com/in/~minhal/",
-    email: "mik172@pitt.edu",
-    image: "../images/officers_2022/minhal.jpg",
-    bio: "Hey everyone! Minhal Khan here. I’m an international student and a rising junior here at Pitt. Although I am a CS major, I’ve recently taken an interest in the dark arts of mathematics and theoretical computer science. I enjoy making things, so you can usually find me drawing, cooking, programming, or making awful music in FL studio.",
-  },
-  {
     name: "Michael Henry",
     title: "Chief Technology Officer",
     linkedIn: "https://www.linkedin.com/in/michael-lj-henry-1b0803207/",
