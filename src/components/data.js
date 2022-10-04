@@ -24,14 +24,13 @@ export const officerList = [
     bio: "Simon is a third year student pursuing a BS + MS in Computer Science. In his freetime, Simon likes to stay active by playing basketball, golf, and hiking up tall mountains 😎. Simon is passionate about teaching others and is involved with career development events through CSC. Feel free to connect with him on linkedin or shoot an email over.",
   },
   {
-    name: "Niccolo Nobili",
-    title: "Chief Technology Officer",
-    linkedIn: "https://www.linkedin.com/in/niccolonobili/",
-    email: "niccolonobili@protonmail.com",
-    image: "../images/officers_2022/niccolo.jpg",
-    bio: "Heya! My name's Niccolo and I'll be the CTO for Pitt CSC this year. I'm a sophomore CS student and I'm excited to be working with all these amazing officers. Outside of CS I really enjoy soccer and cooking. CSC was so much fun last year and I hope I'll be able to continue that on this year, we have a lot in store for you!",
+    name: "Pratham Patel",
+    title: "Project Manager",
+    linkedIn: "https://www.linkedin.com/in/patelpratham11/",
+    email: "prp48@pitt.edu",
+    image: "../images/officers_2022/pratham.jpg",
+    bio: "Hey all, my name is Pratham. I'm a recent CS major (originally neuroscience) with a minor in Chemistry. I'm originally from Downingtown, PA so I'm an Eagles fan (go birds!). Aside from CS-y nerd stuff, I love true crime, reading, and photography. Feel free to say hi to me on campus!",
   },
-
   {
     name: "Abhinav Srinivasan",
     title: "Partnerships Director",
@@ -48,4 +47,20 @@ export const officerList = [
     image: "../images/officers_2022/minhal.jpg",
     bio: "Hey everyone! Minhal Khan here. I’m an international student and a rising junior here at Pitt. Although I am a CS major, I’ve recently taken an interest in the dark arts of mathematics and theoretical computer science. I enjoy making things, so you can usually find me drawing, cooking, programming, or making awful music in FL studio.",
   },
+  {
+    name: "Minhal Khan",
+    title: "Public Relations Manager",
+    linkedIn: "https://www.linkedin.com/in/~minhal/",
+    email: "mik172@pitt.edu",
+    image: "../images/officers_2022/minhal.jpg",
+    bio: "Hey everyone! Minhal Khan here. I’m an international student and a rising junior here at Pitt. Although I am a CS major, I’ve recently taken an interest in the dark arts of mathematics and theoretical computer science. I enjoy making things, so you can usually find me drawing, cooking, programming, or making awful music in FL studio.",
+  },
+  {
+    name: "Michael Henry",
+    title: "Chief Technology Officer",
+    linkedIn: "https://www.linkedin.com/in/michael-lj-henry-1b0803207/",
+    email: "mlh184@pitt.edu",
+    image: "../images/officers_2022/justin.png",
+    bio: "I am computer science major at Pitt. I am a junior and a peer tutor. I enjoy watching sports, reading philosophy, and spending quality time with friends and family. Feel free to reach out to me on linkedIn, email, or in-person.",
+  }
 ];
