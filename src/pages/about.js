@@ -119,11 +119,11 @@ const AboutPage = () => {
                   <motion.a
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    href={FallReport}
+                    href={"#"} // FallReport
                     target="_blank"
                     className="inline-block my-4 px-4 py-2 min-w-min text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
                   >
-                    Initiatives - Fall 2022
+                    Initiatives - Fall 2023 (Coming Soon)
                   </motion.a>
                 </div>
                 <div className="relative flex flex-col items-center justify-center mt-4 w-full lg:mt-0 lg:w-1/2">

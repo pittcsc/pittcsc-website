@@ -171,11 +171,11 @@ const SponsorPage = ({ data }) => {
                   <motion.a
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    href={FallReport}
+                    href={"#"} // FallReport
                     target="_blank"
                     className="min-w-300 absolute -bottom-6 px-4 py-2 text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:right-10"
                   >
-                    Initiatives - Fall 2022
+                    Initiatives - Fall 2023 (Coming Soon)
                   </motion.a>
                   <img
                     className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"

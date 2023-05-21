@@ -330,12 +330,12 @@ const IndexPage = ({ data }) => {
                   animate={controls}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href={FallReport}
+                  href={"#"} // FallReport
                   target="_blank"
                   className="absolute z-20 -bottom-4 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
-                    Initiatives - Fall 2022
+                    Initiatives - Fall 2023 (Coming Soon)
                   </button>
                 </motion.a>
               </div>
