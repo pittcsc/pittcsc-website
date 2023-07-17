@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { officerList } from "../components/data";
+import { initiativeLeadList } from "../components/data";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
@@ -162,6 +163,26 @@ const AboutPage = () => {
             </h2>
             <div className="grid gap-24 2xl:gap-32 grid-cols-1 my-8 md:grid-cols-2 lg:grid-cols-3">
               {officerList.map(
+                ({ name, title, linkedIn, email, image, bio }) => (
+                  <TeamCard
+                    image={image}
+                    name={name}
+                    title={title}
+                    linkedIn={linkedIn}
+                    email={email}
+                    bio={bio}
+                    key={email}
+                  />
+                )
+              )}
+            </div>
+          </section>
+          <section className="container flex flex-col items-center justify-center mx-auto w-full">
+            <h2 className="mb-8 mt-4 max-w-lg text-2xl font-bold lg:text-5xl">
+              The Initiative Leads
+            </h2>
+            <div className="grid gap-24 2xl:gap-32 grid-cols-1 my-8 md:grid-cols-2 lg:grid-cols-3">
+              {initiativeLeadList.map(
                 ({ name, title, linkedIn, email, image, bio }) => (
                   <TeamCard
                     image={image}

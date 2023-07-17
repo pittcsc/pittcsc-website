@@ -41,7 +41,7 @@ export const officerList = [
   },
   {
     name: "Brayden Nguyen",
-    title: "Special Events Coordinator",
+    title: "Special Events Organizer",
     linkedIn: "https://www.linkedin.com/in/brayden-nguyen/",
     email: "btn16@pitt.edu",
     image: "../images/officers_2023/brayden.jpeg",
@@ -56,3 +56,14 @@ export const officerList = [
     bio: "Hi, I’m Kathryn and I am the PR and Communications Manager! I switched over from computer science to information science because I wanted to pursue a career in web development. I am from NJ and usually over the summer, I work as a camp counselor.",
   },
 ];
+
+export const initiativeLeadList = [
+  {
+    name: "Michael Henry",
+    title: "Technical Interview Initiative Lead",
+    linkedIn: "https://www.linkedin.com/in/michael-lj-henry-1b0803207/",
+    email: "mlh184@pitt.edu",
+    image: "../images/officers_2022/justin.png",
+    bio: "I am computer science major at Pitt. I am a senior and a peer tutor. I enjoy watching sports, reading philosophy, and spending quality time with friends and family. Feel free to reach out to me on linkedIn, email, or in-person.",
+  }
+]
