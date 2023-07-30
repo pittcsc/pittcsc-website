@@ -34,7 +34,7 @@ const JoinPage = ({ data }) => {
   return (
     <Layout title="Join the Club | Pitt Computer Science Club" header="join">
       <motion.div
-        className="overflow-hidden"
+        className="dark:bg-darkPrimary dark:text-white overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -236,7 +236,10 @@ const JoinPage = ({ data }) => {
                         className="flex items-center justify-center"
                         aria-label="Pitt Computer Science Club Zoom Meetings"
                       >
-                        <p className="mx-2"> Join our zoom meetings: </p>
+                        <p className="mx-2 text-black">
+                          {" "}
+                          Join our zoom meetings:{" "}
+                        </p>
                         <motion.div
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
@@ -277,7 +280,7 @@ const JoinPage = ({ data }) => {
                     </p>
                   </div>
                   <div className="mt-4 mx-auto p-6 bg-secondary-200 rounded-2xl shadow-lg md:p-8">
-                    <h3 className="mb-2 font-bold lg:text-lg">
+                    <h3 className="mb-2 text-black font-bold lg:text-lg">
                       Upcoming Events
                     </h3>
                     <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">

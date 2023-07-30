@@ -39,7 +39,7 @@ const SponsorPage = ({ data }) => {
   return (
     <Layout title="Sponsors | Pitt Computer Science Club" header="sponsors">
       <motion.div
-        className="overflow-hidden"
+        className="dark:bg-darkPrimary dark:text-white overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -87,7 +87,7 @@ const SponsorPage = ({ data }) => {
                 aria-label="PNC"
               >
                 <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  className="p-4 w-40 2xl:max-w-sm max-w-xs h-24 bg-white rounded-3xl object-contain md:w-80 md:h-64 lg:w-full"
                   src={PNC}
                   alt="PNC Logo"
                 />
@@ -99,7 +99,7 @@ const SponsorPage = ({ data }) => {
                 aria-label="Eaton"
               >
                 <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  className="p-4 w-40 2xl:max-w-sm max-w-xs h-24 bg-white rounded-3xl object-contain md:w-80 md:h-64 lg:w-full"
                   src={Eaton}
                   alt="Eaton Logo"
                 />
@@ -111,7 +111,7 @@ const SponsorPage = ({ data }) => {
                 aria-label="Naval Nuclear Lab"
               >
                 <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  className="p-4 w-40 2xl:max-w-sm max-w-xs h-24 bg-white rounded-3xl object-contain md:w-80 md:h-64 lg:w-full"
                   src={Naval}
                   alt="Naval Nuclear Lab Logo"
                 />

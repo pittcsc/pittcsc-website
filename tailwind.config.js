@@ -14,7 +14,7 @@ module.exports = {
       ],
     },
   },
-  darkMode: false, // or 'media' or 'class'
+  darkMode: "media",
   theme: {
     extend: {
       colors: {
@@ -23,6 +23,8 @@ module.exports = {
           100: "#FFB81C",
           200: "#F8E3B4",
         },
+        darkPrimary: "#0F2027",
+        darkSecondary: "#4D70D9",
       },
       fontFamily: {
         sans: ["Poppins", ...defaultTheme.fontFamily.sans],
@@ -38,10 +40,11 @@ module.exports = {
   },
   variants: {
     extend: {
-      display: ["group-hover"],
+      display: ["group-hover", "dark"],
       padding: ["group-hover"],
       transform: ["group-hover"],
       scale: ["group-hover"],
+      borderRadius: ["dark"],
     },
   },
   plugins: [require("@tailwindcss/forms")],

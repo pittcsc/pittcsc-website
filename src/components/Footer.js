@@ -3,7 +3,7 @@ import { Link } from "gatsby";
 
 function Footer() {
   return (
-    <footer className="container flex items-center justify-center mx-auto w-full h-32 text-center">
+    <footer className="dark:bg-darkPrimary container flex items-center justify-center mx-auto w-full h-32 text-center dark:text-white">
       <nav className="w-full space-y-2">
         <ul className="flex items-center justify-center mx-auto font-bold space-x-4 lg:space-x-8">
           <Link to="/about">

@@ -37,7 +37,7 @@ const ProjectsPage = ({ data }) => {
   return (
     <Layout title="Projects | Pitt Computer Science Club" header="projects">
       <motion.div
-        className="overflow-hidden"
+        className="dark:bg-darkPrimary dark:text-white overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
