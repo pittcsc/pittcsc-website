@@ -4,13 +4,13 @@ require("dotenv").config({
 
 module.exports = {
   siteMetadata: {
-    title: "Pitt Computer Science Club",
+    title: "Computer Science Club at Pitt",
     description:
       "Website for the largest computer science student organization at the University of Pittsburgh.",
     image: "/Pitt_CSC_Social_Card.png",
     lang: "en",
-    url: "https://pittcsc.org",
-    twitterUsername: "@PittCSC",
+    url: "https://csclubatpitt.org",
+    twitterUsername: "@CSC_at_Pitt",
   },
   plugins: [
     {
@@ -53,8 +53,8 @@ module.exports = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
-        name: "Pitt Computer Science Club",
-        short_name: "Pitt CSC",
+        name: "Computer Science Club at Pitt",
+        short_name: "CSC at Pitt",
         description:
           "Website for the largest computer science student organization at the University of Pittsburgh.",
         lang: `en`,
