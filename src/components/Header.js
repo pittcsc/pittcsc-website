@@ -50,8 +50,8 @@ function Header({ title }) {
           <img
             src={logo}
             alt="CSC at Pitt Logo"
-            className="relative w-32"
-            width={128}
+            className="relative w-12"
+            width={64}
           />
         </Link>
 
