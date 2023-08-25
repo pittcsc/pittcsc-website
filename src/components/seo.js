@@ -58,7 +58,7 @@ Seo.propTypes = {
   image: PropTypes.string,
 };
 Seo.defaultProps = {
-  title: "Pitt Computer Science Club",
+  title: "Computer Science Club at Pitt",
   description:
     "Website for the largest computer science student organization at the University of Pittsburgh.",
   image: null,

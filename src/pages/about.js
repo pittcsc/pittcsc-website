@@ -18,7 +18,7 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <Layout title="About Us | Pitt Computer Science Club" header="about">
+    <Layout title="About Us | Computer Science Club @ Pitt" header="about">
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}
@@ -106,9 +106,9 @@ const AboutPage = () => {
                     </svg>
                   </h2>
                   <p className="max-w-lg text-white text-base leading-loose">
-                    The University of Pittsburgh Computer Science Club,
-                    shortened as Pitt CSC, is the University of Pittsburgh's
-                    largest and premier technology-related student organization.
+                    The Computer Science Club at Pitt,
+                    shortened as CSC at Pitt, is the largest and 
+                    premier technology-related student organization at the University of Pittsburgh.
                   </p>
                   <br />
                   <p className="max-w-lg text-white text-base leading-loose">

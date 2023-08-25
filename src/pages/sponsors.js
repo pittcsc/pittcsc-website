@@ -80,42 +80,6 @@ const SponsorPage = ({ data }) => {
               // className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8 xl:grid-cols-3"
               className="flex flex-wrap gap-4 items-center justify-center px-4 md:gap-8 xl:gap-16"
             >
-              <motion.a
-                variants={item}
-                href="https://www.pnc.com/en/personal-banking.html"
-                target="_blank"
-                aria-label="PNC"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={PNC}
-                  alt="PNC Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="https://www.eaton.com/us/en-us.html"
-                target="_blank"
-                aria-label="Eaton"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={Eaton}
-                  alt="Eaton Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="https://navalnuclearlab.energy.gov/"
-                target="_blank"
-                aria-label="Naval Nuclear Lab"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={Naval}
-                  alt="Naval Nuclear Lab Logo"
-                />
-              </motion.a>
             </motion.div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
