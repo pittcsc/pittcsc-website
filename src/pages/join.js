@@ -32,7 +32,7 @@ const JoinPage = ({ data }) => {
     ReactGA.pageview("/join");
   }, []);
   return (
-    <Layout title="Join the Club | Pitt Computer Science Club" header="join">
+    <Layout title="Join the Club | Computer Science Club @ Pitt" header="join">
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}
@@ -43,7 +43,7 @@ const JoinPage = ({ data }) => {
           <section className="container flex flex-col items-center justify-center mx-auto w-full">
             <div>
               <h1 className="relative z-10 mb-8 mt-4 w-full text-center text-4xl font-bold lg:text-6xl">
-                Join Pitt CSC
+                Join CSC at Pitt
                 <svg
                   className="svg-underline relative z-10 w-64 lg:w-full"
                   viewBox="0 0 422 12"
@@ -147,7 +147,7 @@ const JoinPage = ({ data }) => {
                   href="https://discord.gg/wzPeq2GCRT"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club Discord"
+                  aria-label="Computer Science Club at Pitt Discord"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -158,10 +158,10 @@ const JoinPage = ({ data }) => {
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://www.linkedin.com/company/pittcsc/"
+                  href="https://www.linkedin.com/company/cscatpitt/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club LinkedIn"
+                  aria-label="Computer Science Club at Pitt LinkedIn"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -175,7 +175,7 @@ const JoinPage = ({ data }) => {
                   href="https://github.com/pittcsc"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club GitHub"
+                  aria-label="Computer Science Club at Pitt GitHub"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -187,7 +187,7 @@ const JoinPage = ({ data }) => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   href="mailto:pittcsc@gmail.com"
-                  aria-label="Pitt Computer Science Club Email"
+                  aria-label="Computer Science Club at Pitt Email"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -221,7 +221,7 @@ const JoinPage = ({ data }) => {
                   </svg>
                   <iframe
                     src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
-                    title="Pitt CSC Google Calendar"
+                    title="CSC Google Calendar"
                     frameborder="0"
                     scrolling="no"
                     height="600"
@@ -234,7 +234,7 @@ const JoinPage = ({ data }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center"
-                        aria-label="Pitt Computer Science Club Zoom Meetings"
+                        aria-label="Computer Science Club at Pitt Zoom Meetings"
                       >
                         <p className="mx-2"> Join our zoom meetings: </p>
                         <motion.div
@@ -273,7 +273,7 @@ const JoinPage = ({ data }) => {
                     <p className="max-w-lg text-white text-base leading-loose">
                       There are always a variety of different things to attend
                       including hackathons, talks, and coffee chats! We
-                      typically host meetings on Mondays and Wednesdays at 8pm.
+                      typically host meetings on Mondays and Thursdays at 8pm.
                     </p>
                   </div>
                   <div className="mt-4 mx-auto p-6 bg-secondary-200 rounded-2xl shadow-lg md:p-8">

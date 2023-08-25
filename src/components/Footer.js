@@ -34,7 +34,7 @@ function Footer() {
         </p>
         <p className="">
           Built with<span className="text-red-500">❤️ </span> by{" "}
-          <span className="font-bold">Pitt CSC</span>
+          <span className="font-bold">CSC @ Pitt</span>
         </p>
       </nav>
     </footer>
