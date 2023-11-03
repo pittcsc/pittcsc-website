@@ -65,5 +65,21 @@ export const initiativeLeadList = [
     email: "mlh184@pitt.edu",
     image: "../images/officers_2022/justin.png",
     bio: "I am computer science major at Pitt. I am a senior and a peer tutor. I enjoy watching sports, reading philosophy, and spending quality time with friends and family. Feel free to reach out to me on linkedIn, email, or in-person.",
-  }
+  },
+  {
+    name: "Rohaan Wasim",
+    title: "Wiki Initiative Co-Lead",
+    linkedIn: "https://www.linkedin.com/in/rohaan-wasim",
+    email: "rohaan.wasim@gmail.com",
+    image: "../images/officers_2023/rohan.png",
+    bio: "Hello! I’m Rohaan, a senior CS major and Applied Statistics Minor at Pitt, and I’ll be serving as a Wiki Initiative Co-lead working on updating the Pitt CS Wiki that we know and love. I’m a huge car nut and love talking about cars, and I like watching anime and coding in my free time. I enjoy web development, with my other interests including data science, AI, and cloud computing that I’m planning to explore later in my career. Outside of CSC, I help organize the Pitt Challenge hackathon and work for a startup founded at Pitt’s Big Ideas Center. If you have ideas for the wiki, want to chat, or anything else, please don’t hesitate to reach out via email or one of the socials. I’d love to connect!",
+  },
+  {
+    name: "Tanmai Kalisipudi",
+    title: "Wiki Initiative Co-Lead",
+    linkedIn: "https://www.linkedin.com/in/tanmaikalisipudi",
+    email: "tanmai.kalisipudi@gmail.com",
+    image: "../images/officers_2023/tanmai.png",
+    bio: "Hi, I’m Tanmai! I’m one of the Wiki Initiative Leads for this year and I’m super excited to be helping out CS majors all over! I’m currently a freshman and I love to run and get some Vitamin D and also eating pounds on pounds of cheesecake a year. Computer science is my baby (mainly full stack and ml, and most recently algorithm design). Connect with me on LinkedIn - I’m building a lot of cool stuff and looking for cool people to build with!",
+  },
 ]
