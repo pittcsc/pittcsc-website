@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 
-import Eaton from "../images/sponsors/Eaton-logo.jpeg";
-import PNC from "../images/sponsors/PNC_logo.png";
-import Naval from "../images/sponsors/naval_nuclear_lab.jpeg";
+import BNY from "../images/sponsors/BNY_logo.png";
 
 import SpringReportImage from "../images/hero_image.png";
 
@@ -37,7 +35,7 @@ const SponsorPage = ({ data }) => {
   }, []);
 
   return (
-    <Layout title="Sponsors | Pitt Computer Science Club" header="sponsors">
+    <Layout title="Sponsors | Computer Science Club at Pitt" header="sponsors">
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}
@@ -82,38 +80,14 @@ const SponsorPage = ({ data }) => {
             >
               <motion.a
                 variants={item}
-                href="https://www.pnc.com/en/personal-banking.html"
+                href="https://www.bnymellon.com/"
                 target="_blank"
-                aria-label="PNC"
+                aria-label="BNY"
               >
                 <img
                   className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={PNC}
-                  alt="PNC Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="https://www.eaton.com/us/en-us.html"
-                target="_blank"
-                aria-label="Eaton"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={Eaton}
-                  alt="Eaton Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="https://navalnuclearlab.energy.gov/"
-                target="_blank"
-                aria-label="Naval Nuclear Lab"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={Naval}
-                  alt="Naval Nuclear Lab Logo"
+                  src={BNY}
+                  alt="BNY Logo"
                 />
               </motion.a>
             </motion.div>
