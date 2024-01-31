@@ -177,7 +177,7 @@ const IndexPage = ({ data }) => {
 
   return (
     <Layout
-      title="Supporting the CS Community | Pitt Computer Science Club"
+      title="Supporting the CS Community | Computer Science Club @ Pitt"
       header="home"
     >
       <motion.div
@@ -205,9 +205,9 @@ const IndexPage = ({ data }) => {
                 variants={text}
                 className="relative z-10 my-2 w-full whitespace-pre text-4xl 2xl:text-8xl font-bold md:text-5xl lg:my-4 lg:text-7xl"
               >
-                Pitt Computer
+                Computer Science
                 <br />
-                Science Club
+                Club at Pitt
                 <svg
                   className="svg-underline relative z-10 w-64 md:w-1/2 lg:w-3/4"
                   viewBox="0 0 422 12"
@@ -452,7 +452,7 @@ const IndexPage = ({ data }) => {
                   href="https://discord.gg/wzPeq2GCRT"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club Discord"
+                  aria-label="Computer Science Club at Pitt Discord"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -463,10 +463,10 @@ const IndexPage = ({ data }) => {
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href="https://www.linkedin.com/company/pittcsc/"
+                  href="https://www.linkedin.com/company/cscatpitt/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club LinkedIn"
+                  aria-label="Computer Science Club at Pitt LinkedIn"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -480,7 +480,7 @@ const IndexPage = ({ data }) => {
                   href="https://github.com/pittcsc"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Pitt Computer Science Club GitHub"
+                  aria-label="Computer Science Club at Pitt GitHub"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -492,7 +492,7 @@ const IndexPage = ({ data }) => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   href="mailto:pittcsc@gmail.com"
-                  aria-label="Pitt Computer Science Club Email"
+                  aria-label="Computer Science Club at Pitt Email"
                   className="p-2"
                 >
                   <FontAwesomeIcon
@@ -522,7 +522,7 @@ const IndexPage = ({ data }) => {
               </svg>
               <iframe
                 src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
-                title="Pitt CSC Google Calendar"
+                title="CSC Google Calendar"
                 frameborder="0"
                 scrolling="no"
                 height="600"
@@ -535,7 +535,7 @@ const IndexPage = ({ data }) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center"
-                    aria-label="Pitt Computer Science Club Zoom Meetings"
+                    aria-label="Computer Science Club at Pitt Zoom Meetings"
                   >
                     <p className="mx-2"> Join our zoom meetings: </p>
                     <motion.div

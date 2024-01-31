@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
 
-import logo from "../images/horizontal-logo.svg";
+import logo from "../images/hero_image.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -49,9 +49,9 @@ function Header({ title }) {
         <Link to="/">
           <img
             src={logo}
-            alt="Pitt CSC Logo"
-            className="relative w-32"
-            width={128}
+            alt="CSC at Pitt Logo"
+            className="relative w-12"
+            width={64}
           />
         </Link>
 
@@ -147,15 +147,6 @@ function Header({ title }) {
                   rel="noreferrer noopener"
                 >
                   <li className="hover:text-secondary-200">Branches</li>
-                </a>
-                <a
-                  href="https://github.com/pittcsc/Summer2022-Internships"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <li className="hover:text-secondary-200">
-                    Internship Repository
-                  </li>
                 </a>
                 <a
                   href="https://pittcs.wiki/"
