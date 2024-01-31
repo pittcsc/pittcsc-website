@@ -63,7 +63,7 @@ export const initiativeLeadList = [
     title: "Coffee Chats Initiative Lead",
     linkedIn: "https://www.linkedin.com/in/shreyash-ranjan",
     email: "shreyashran@gmail.com",
-    image: "../images/officers_2023/shreyash.png",
+    image: "../images/officers_2023/shreyash.jpeg",
     bio: "Hey! I’m Shreyash Ranjan, serving as one of the Initiative Leads. My passions include hiking, traveling, baking, and playing in any racquet sport (Ping - Pong, Tennis, Badminton, Pickleball). I have a keen interest in AR/VR, Data Science, Mobile Apps, Web Development, and Databases. I’m also active in a couple of various orgs here at Pitt like the Pickleball Club, AKPsi, and CSC, I am always eager to connect. Reach out to me through email, Discord, or LinkedIn!",
   },
 ]
