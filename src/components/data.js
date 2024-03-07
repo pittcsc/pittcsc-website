@@ -66,4 +66,12 @@ export const initiativeLeadList = [
     image: "../images/officers_2023/shreyash.jpeg",
     bio: "Hey! I’m Shreyash Ranjan, serving as one of the Initiative Leads. My passions include hiking, traveling, baking, and playing in any racquet sport (Ping - Pong, Tennis, Badminton, Pickleball). I have a keen interest in AR/VR, Data Science, Mobile Apps, Web Development, and Databases. I’m also active in a couple of various orgs here at Pitt like the Pickleball Club, AKPsi, and CSC, I am always eager to connect. Reach out to me through email, Discord, or LinkedIn!",
   },
+  {
+    name: "Alex Lampe",
+    title: "Pitt Computer Science Wiki Initiative Lead",
+    linkedIn: "https://www.linkedin.com/in/alex-lampe-web-dev/",
+    email: "ajl146@pitt.edu",
+    image: "../images/officers_2023/alex.jpg",
+    bio: "Hi! I’m Alex Lampe and I'm the Pitt Computer Science Wiki Initiative Lead. I’m a senior CS major and I’m interested in web development, data science, and machine learning. I’m also a member of the Urban Gaming Club and volunteer with Bridge Beyond. In my free time, I enjoy playing video games, reading, and biking. Feel free to reach out to me on Discord, LinkedIn, or email!",
+  },
 ]
