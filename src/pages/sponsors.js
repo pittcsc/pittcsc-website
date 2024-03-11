@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
 import BNY from "../images/sponsors/BNY_logo.png";
+import FAST from "../image/sponsors/Fast_logo.png"
 
 import SpringReportImage from "../images/hero_image.png";
 
@@ -88,6 +89,18 @@ const SponsorPage = ({ data }) => {
                   className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
                   src={BNY}
                   alt="BNY Logo"
+                />
+              </motion.a>
+              <motion.a
+                variants={item}
+                href="https://www.fastenterprises.com/"
+                target="_blank"
+                aria-label="FAST Enterprises"
+              >
+                <img
+                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  src={FAST}
+                  alt="FAST Enterprises Logo"
                 />
               </motion.a>
             </motion.div>
