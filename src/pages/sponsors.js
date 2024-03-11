@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import BNY from "../images/sponsors/BNY_logo.png";
-import FAST from "../image/sponsors/Fast_logo.png"
+import FAST from "../image/sponsors/FAST_logo.png"
 
 import SpringReportImage from "../images/hero_image.png";
 
