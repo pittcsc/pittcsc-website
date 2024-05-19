@@ -1,11 +1,11 @@
 export const officerList = [
   {
-    name: "Robbie Fishel",
+    name: "Nij Patel",
     title: "President",
-    linkedIn: "https://www.linkedin.com/in/robert-fishel-58ba59193/",
-    email: "robbie.fishel6@gmail.com",
-    image: "../images/officers_2023/robbie.jpg",
-    bio: "Hey guys! My name’s Robbie, I’m a master’s CS student here at Pitt and this year’s CSC president. I’m also an SCI Peer Tutor for several programming classes. I’m originally from Farmington, CT, but my family is from the area and I’ve always considered myself a yinzer. Outside of CS, I’m a massive sports enthusiast (Go Steelers and Pitt sports!!) and play viola in Pitt’s Symphony Orchestra. Really excited to continue to help grow CSC and the CS program in general at Pitt this year!",
+    linkedIn: "https://www.linkedin.com/in/nij-patel/",
+    email: "nijpatel28@gmail.com",
+    image: "../images/officers_2023/nij.jpg",
+    bio: "Hey everyone! My name is Nij, and I am a senior CS student here (with a minor in business!) at Pitt and this year's CSC president. I'm also a TA for a couple classees! I am super interested in the intersection of tech + business through software engineering. My freshman year I interned at Fidelity Investments and my sophomore  summer I interned at Prudential Financial. This summer, I am working at Appian. Outside of compsci, I love playing video games (I know real unique for a CS major), collecting sneakers, and watching Philly sports (forever salty about the Eagles, Phillies, and Sixers). I also enjoy tutoring at my local Kumon back home! Feel free to reach out or shoot me a message at any of the socials!"
   },
   {
     name: "Nathan Barta",
