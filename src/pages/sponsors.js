@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import BNY from "../images/sponsors/SCM_Logo.svg";
+import SCM from "../images/sponsors/SCM_Logo.svg";
 import FAST from "../images/sponsors/FAST_logo.png";
 
 import SpringReportImage from "../images/hero_image.png";
@@ -81,14 +81,14 @@ const SponsorPage = ({ data }) => {
             >
               <motion.a
                 variants={item}
-                href="https://www.bnymellon.com/"
+                href="https://www.scm-lp.com/"
                 target="_blank"
-                aria-label="BNY"
+                aria-label="SCM"
               >
                 <img
                   className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={BNY}
-                  alt="BNY Logo"
+                  src={SCM}
+                  alt="SCMLogo"
                 />
               </motion.a>
               <motion.a
