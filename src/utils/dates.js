@@ -1,7 +1,7 @@
 const getAcademicYear = () => {
   const currYear = new Date().getFullYear();
   const currMonth = new Date().getMonth();
-  if (currMonth > 7) {
+  if (currMonth > 6) {
     return currYear + "-" + String(parseInt(currYear) + 1);
   } else {
     return currYear - 1 + "-" + currYear;

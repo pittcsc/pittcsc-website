@@ -316,7 +316,7 @@ const IndexPage = ({ data }) => {
                   className="mx-auto xl:w-9/12"
                 >
                   <StaticImage
-                    src="../images/Pitt_CSC_Mask.jpg"
+                    src="../images/csc-gbm.jpeg"
                     alt="Masked CSC Members"
                     placeholder="blurred"
                     imgClassName="mx-auto w-full rounded-3xl shadow-lg"
@@ -335,7 +335,7 @@ const IndexPage = ({ data }) => {
                   className="absolute z-20 -bottom-4 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
-                    Initiatives - Fall 2023 (Coming Soon)
+                    Initiatives - Fall 2024 (Coming Soon)
                   </button>
                 </motion.a>
               </div>
