@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import BNY from "../images/sponsors/BNY_logo.png";
+import SCM from "../images/sponsors/SCM_Logo.svg";
 import FAST from "../images/sponsors/FAST_logo.png";
 
 import SpringReportImage from "../images/hero_image.png";
@@ -81,14 +81,14 @@ const SponsorPage = ({ data }) => {
             >
               <motion.a
                 variants={item}
-                href="https://www.bnymellon.com/"
+                href="https://www.scm-lp.com/"
                 target="_blank"
-                aria-label="BNY"
+                aria-label="SCM"
               >
                 <img
                   className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={BNY}
-                  alt="BNY Logo"
+                  src={SCM}
+                  alt="SCM Logo"
                 />
               </motion.a>
               <motion.a
@@ -162,7 +162,7 @@ const SponsorPage = ({ data }) => {
                     target="_blank"
                     className="min-w-300 absolute -bottom-6 px-4 py-2 text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:right-10"
                   >
-                    Initiatives - Fall 2023 (Coming Soon)
+                    Initiatives - Fall 2024 (Coming Soon)
                   </motion.a>
                   <img
                     className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"

@@ -235,19 +235,7 @@ const JoinPage = ({ data }) => {
                         rel="noopener noreferrer"
                         className="flex items-center justify-center"
                         aria-label="Computer Science Club at Pitt Zoom Meetings"
-                      >
-                        <p className="mx-2"> Join our zoom meetings: </p>
-                        <motion.div
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="flex items-center justify-center"
-                        >
-                          <FontAwesomeIcon
-                            icon={faVideo}
-                            className="text-primary text-lg lg:text-xl xl:text-2xl"
-                          />
-                        </motion.div>
-                      </a>
+                      ></a>
                     </div>
                   </div>
                 </div>
