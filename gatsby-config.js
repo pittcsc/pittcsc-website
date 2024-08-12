@@ -1,6 +1,7 @@
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 });
+
 module.exports = {
   siteMetadata: {
     title: "Computer Science Club at Pitt",
@@ -69,13 +70,10 @@ module.exports = {
         spreadsheetId: "1hxiXzFyLKy1vreEobJml3nthc__mb7ooaztyvGR-luI",
         credentials: {
           client_email: process.env.GOOGLE_SHEETS_API_CLIENT_EMAIL,
-          private_key: process.env.GOOGLE_SHEETS_API_KEY.replace(
-            new RegExp("_", "g"),
-            "\n"
-          ),
+          private_key: process.env.GOOGLE_SHEETS_API_KEY.replace(new RegExp("_", 'g'), "\n"),
         },
         filterNode: (node) => node.show === "yes",
-      },
+      }
     },
   ],
 };
