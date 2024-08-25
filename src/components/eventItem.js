@@ -102,11 +102,11 @@ function EventItem({
   let endDateLong;
   let endDateShort;
 
-  tomorrowStart.setDate(newStartDate.getDate() + 1);
-  tomorrowEnd.setDate(newEndDate.getDate() + 1);
+  tomorrowStart.setDate(newStartDate.getDate());
+  tomorrowEnd.setDate(newEndDate.getDate());
 
   if (startDate) {
-    startDateLong = format(tomorrowStart, "MMMM do");
+    startDateLong = format(newStartDate, "MMMM do");
     startDateShort = format(tomorrowStart, "MM/dd");
   } else {
     startDateLong = false;

@@ -19,12 +19,18 @@ import Layout from "../layouts/layout";
 
 import EventItem from "../components/eventItem";
 
+import { eventList } from "../components/data";
+
 const JoinPage = ({ data }) => {
   const site = (data || {})?.site;
-  const futureEvents = site.edges.filter(
-    (event) =>
-      Date.parse(event.node.content.properties.Date.date.start) > new Date()
-  );
+  const futureEvents = eventList
+    .slice()
+    .filter(
+      (event) =>
+        new Date(event.date.start).getTime() >= new Date().getTime() &&
+        new Date(event.date.start).getTime() <=
+          new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
+    );
   const windowGlobal = typeof window !== `undefined` && window;
   useEffect(() => {
     hotjar.initialize(2276434, 6);
@@ -274,53 +280,17 @@ const JoinPage = ({ data }) => {
                         futureEvents
                           .sort(
                             (a, b) =>
-                              new Date(
-                                a.node.content.properties?.Date?.date?.start
-                              ) -
-                              new Date(
-                                b.node.content.properties?.Date?.date?.start
-                              )
+                              new Date(a.date?.start) - new Date(b.date?.start)
                           )
-                          .slice(0, 2)
                           .map((event, i) => (
                             <EventItem
                               key={i}
                               index={i}
-                              name={
-                                event.node.content.properties?.Name?.title[0]
-                                  ?.plain_text
-                              }
-                              startDate={
-                                event.node.content.properties?.Date?.date?.start
-                              }
-                              endDate={
-                                event.node.content.properties?.Date?.date?.end
-                              }
-                              description={
-                                event.node.content.properties?.Description
-                                  ?.rich_text[0]?.plain_text
-                              }
-                              url={event.node.content.properties?.Link?.url}
-                              tags={
-                                event.node.content.properties?.Tags
-                                  ?.multi_select
-                              }
-                              time={
-                                event.node.content.properties?.Time
-                                  ?.rich_text[0]?.plain_text
-                              }
-                              id={event.node.content.id}
-                              attendance={
-                                event.node.content.properties?.Attendance
-                                  ?.number
-                              }
-                              shouldOpen={
-                                decodeURIComponent(
-                                  windowGlobal.location.hash.split("#")[1]
-                                ) ===
-                                event.node.content.properties?.Name?.title[0]
-                                  ?.plain_text
-                              }
+                              name={event.title}
+                              startDate={event.date.start}
+                              endDate={event.date.end}
+                              description={event.description}
+                              time={event.time}
                             />
                           ))}
                       {futureEvents.length === 0 && (
