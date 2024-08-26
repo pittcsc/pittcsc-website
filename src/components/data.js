@@ -80,3 +80,46 @@ export const initiativeLeadList = [
     image: "../images/officers_2024/akash.JPEG",
   },
 ];
+
+export const eventList = [
+  {
+    title: "GBM",
+    date: {
+      start: "2024/8/28",
+      end: "",
+    },
+    time: "8 - 9PM",
+  },
+  {
+    title: "Jeopardy Night",
+    date: {
+      start: "2024/9/3",
+      end: "",
+    },
+    time: "8 - 9PM",
+  },
+  {
+    title: "Zero-to-Offer Kickoff",
+    date: {
+      start: "2024/9/5",
+      end: "",
+    },
+    time: "8 - 9PM",
+  },
+  {
+    title: "Zero to Offer Resume Workshop",
+    date: {
+      start: "2024/09/09",
+      end: "",
+    },
+    time: "8 - 9PM",
+  },
+  {
+    title: "Zero to Offer Career Fair Sneak Peak (ft Naval Nuclear Lab)",
+    date: {
+      start: "2024/9/12",
+      end: "",
+    },
+    time: "8 - 9PM",
+  },
+];
