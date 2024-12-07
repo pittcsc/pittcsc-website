@@ -2,6 +2,9 @@ import React, { useEffect } from "react";
 
 import SCM from "../images/sponsors/SCM_Logo.svg";
 import FAST from "../images/sponsors/FAST_logo.png";
+import NNL from "../images/sponsors/naval_nuclear_lab.jpeg";
+import BNY from "../images/sponsors/BNY_logo.png";
+import GOOGLE from "../images/sponsors/google.png";
 
 import SpringReportImage from "../images/hero_image.png";
 
@@ -104,6 +107,57 @@ const SponsorPage = ({ data }) => {
                 />
               </motion.a>
             </motion.div>
+            <motion.div
+              variants={imageContainer}
+              initial="hidden"
+              animate="show"
+              // className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8 xl:grid-cols-3"
+              className="flex flex-wrap gap-4 items-center justify-center px-4 md:gap-8 xl:gap-16"
+            >
+              <motion.a
+                variants={item}
+                href="https://navalnuclearlab.energy.gov/"
+                target="_blank"
+                aria-label="NNL"
+              >
+                <img
+                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  src={NNL}
+                  alt="NNL Logo"
+                />
+              </motion.a>
+              <motion.a
+                variants={item}
+                href="https://www.bny.com/corporate/global/en.html"
+                target="_blank"
+                aria-label="BNY Mellon"
+              >
+                <img
+                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  src={BNY}
+                  alt="BNY Mellon Logo"
+                />
+              </motion.a>
+              <motion.a
+                variants={item}
+                href="https://www.google.com"
+                target="_blank"
+                aria-label="Google"
+              >
+                <img
+                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
+                  src={GOOGLE}
+                  alt="Google Logo"
+                />
+              </motion.a>
+            </motion.div>
+            <motion.div
+              variants={imageContainer}
+              initial="hidden"
+              animate="show"
+              // className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8 xl:grid-cols-3"
+              className="flex flex-wrap gap-4 items-center justify-center px-4 md:gap-8 xl:gap-16"
+            ></motion.div>
           </section>
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
             <section className="container flex flex-col items-center justify-center mx-auto py-24 w-full lg:py-32">
