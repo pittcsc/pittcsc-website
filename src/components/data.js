@@ -79,6 +79,13 @@ export const initiativeLeadList = [
     email: "akk97@pitt.edu",
     image: "../images/officers_2024/akash.JPEG",
   },
+  {
+    name: "Delaney Scheidell",
+    title: "DEI Lead",
+    linkedIn: "https://www.linkedin.com/in/delaneyscheidell/",
+    email: "des244@pitt.edu",
+    image: "../images/officers_2024/delaney.jpg",
+  },
 ];
 
 export const eventList = [
