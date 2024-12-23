@@ -48,12 +48,12 @@ export const officerList = [
     bio: "Hey everyone! I'm Insiah, a sophomore majoring in Computer Science and minoring in Math. I'm very interested in backend development and AI (more specifically deep learning and robotics). Fun fact, I actually did robotics for all of high school which is what got me into CS. Outside of CS, I like trying out new spots to eat (i'm a big foodie!), exploring new places, and hanging out with family and friends. Don't hesitate to reach out to me on any of my socials!!",
   },
   {
-    name: "Danny Peelen",
-    title: "Public Relations and Communications Manager",
-    linkedIn: "http://linkedin.com/in/daniel-peelen/",
-    email: "dap276@pitt.edu",
-    image: "../images/officers_2024/danny.jpg",
-    bio: "Hello all! I'm Danny, a sophomore Computer Science major and Hungarian minor. Besides just a general interest in software development, I am also interested in Neural Networks and Natural Language Processing (NLP). I also am a TA for Discrete Structures (CS441) and a manager for the Pitt Women's Volleyball Team. My other hobbies include  volleyball, quiz bowl, and playing Minesweeper. Always willing to chat it up with anyone on my socials, never hesitate to contact me!",
+    name: "Delaney Scheidell",
+    title: "Public Relations Manager",
+    linkedIn: "https://www.linkedin.com/in/delaneyscheidell/",
+    email: "des244@pitt.edu",
+    image: "../images/officers_2024/delaney.jpg",
+    bio: "",
   },
 ];
 
@@ -80,11 +80,11 @@ export const initiativeLeadList = [
     image: "../images/officers_2024/akash.JPEG",
   },
   {
-    name: "Delaney Scheidell",
-    title: "DEI Lead",
-    linkedIn: "https://www.linkedin.com/in/delaneyscheidell/",
-    email: "des244@pitt.edu",
-    image: "../images/officers_2024/delaney.jpg",
+    name: "Danny Peelen",
+    title: "Community Engagement Lead",
+    linkedIn: "http://linkedin.com/in/daniel-peelen/",
+    email: "dap276@pitt.edu",
+    image: "../images/officers_2024/danny.jpg",
   },
 ];
 
