@@ -333,12 +333,12 @@ const IndexPage = ({ data }) => {
                   animate={controls}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  href={"#"} // FallReport
-                  target="_blank"
+                  href={"/initiatives"} // FallReport
+                  target="_self"
                   className="absolute z-20 -bottom-4 inline-block"
                 >
                   <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
-                    Initiatives - Fall 2024 (Coming Soon)
+                    View Our Initiatives!
                   </button>
                 </motion.a>
               </div>
@@ -357,29 +357,6 @@ const IndexPage = ({ data }) => {
                     more about the field of computer science and develop
                     professionally.
                   </p>
-                  <h3 className="mb-2 mt-4 font-bold lg:text-lg">
-                    Upcoming Events
-                  </h3>
-                  <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
-                    {futureEvents.length !== 0 &&
-                      windowGlobal &&
-                      futureEvents.map((event, i) => (
-                        <EventItem
-                          key={i}
-                          index={i}
-                          name={event.title}
-                          startDate={event.date.start}
-                          endDate={event.date.end}
-                          description={event.description}
-                          time={event.time}
-                        />
-                      ))}
-                    {futureEvents.length === 0 && (
-                      <p className="px-4 py-2 text-left text-white bg-primary rounded-full">
-                        None right now but stay tuned!
-                      </p>
-                    )}
-                  </ul>
                 </div>
               </motion.div>
             </section>
