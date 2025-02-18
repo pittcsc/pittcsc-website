@@ -6,7 +6,7 @@ import SE2 from "../../images/initiatives/social_events/soc_event-2.png";
 import SE3 from "../../images/initiatives/social_events/soc_event-3.png";
 import SE4 from "../../images/initiatives/social_events/soc_event-4.png";
 import SE5 from "../../images/initiatives/social_events/soc_event-5.png";
-import SE6 from "../../images/initiatives/social_events/soc_event-6.jpg";
+import SE6 from "../../images/initiatives/social_events/soc_event-6.JPG";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Layout from "../../layouts/layout";
