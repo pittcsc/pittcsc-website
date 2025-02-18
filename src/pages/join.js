@@ -270,36 +270,6 @@ const JoinPage = ({ data }) => {
                       typically host meetings on Mondays and Thursdays at 8pm.
                     </p>
                   </div>
-                  <div className="mt-4 mx-auto p-6 bg-secondary-200 rounded-2xl shadow-lg md:p-8">
-                    <h3 className="mb-2 font-bold lg:text-lg">
-                      Upcoming Events
-                    </h3>
-                    <ul className="flex flex-col items-start justify-center text-sm space-y-2 lg:text-base">
-                      {futureEvents.length !== 0 &&
-                        windowGlobal &&
-                        futureEvents
-                          .sort(
-                            (a, b) =>
-                              new Date(a.date?.start) - new Date(b.date?.start)
-                          )
-                          .map((event, i) => (
-                            <EventItem
-                              key={i}
-                              index={i}
-                              name={event.title}
-                              startDate={event.date.start}
-                              endDate={event.date.end}
-                              description={event.description}
-                              time={event.time}
-                            />
-                          ))}
-                      {futureEvents.length === 0 && (
-                        <p className="px-4 py-2 text-left text-white bg-primary rounded-full">
-                          None right now but stay tuned!
-                        </p>
-                      )}
-                    </ul>
-                  </div>
                 </div>
               </div>
             </section>
