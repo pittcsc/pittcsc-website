@@ -81,15 +81,17 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
         >
           <FontAwesomeIcon icon={faLinkedin} />
         </motion.a>
-        <motion.a
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          href={`mailto:${email}`}
-          rel="noopener noreferrer"
-          className="absolute bottom-4 right-4 text-2xl"
-        >
-          <FontAwesomeIcon icon={faPaperPlane} />
-        </motion.a>
+        {email && (
+          <motion.a
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            href={`mailto:${email}`}
+            rel="noopener noreferrer"
+            className="absolute bottom-4 right-4 text-2xl"
+          >
+            <FontAwesomeIcon icon={faPaperPlane} />
+          </motion.a>
+        )}
       </div>
     </>
   );
