@@ -65,7 +65,7 @@ export const officerList = [
   },
   {
     name: "Jeremy Luu",
-    title: "Video Media Lead",
+    title: "Creative Media Director",
     linkedIn: "https://www.linkedin.com/in/jeremy-luu1/",
     email: "jdl137@pitt.edu",
     image: "../images/officers_2025/jeremy.jpg",
@@ -83,7 +83,7 @@ export const initiativeLeadList = [
   },
   {
     name: "Krishna Katakota",
-    title: "Video Lead",
+    title: "Photographer",
     linkedIn: "https://www.linkedin.com/in/krishnakatakota/",
     image: "../images/officers_2025/krishna.jpeg",
   },
