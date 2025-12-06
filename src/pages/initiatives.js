@@ -114,7 +114,7 @@ const InitiativePage = () => {
                   initial="hidden"
                   animate="visible"
                   variants={cardVariants}
-                  className="group flex flex-col h-full bg-primary border-4 border-yellow-400 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.3333rem)]"
+                  className="group flex-none flex flex-col bg-primary border-4 border-yellow-400 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.3333rem)] h-[32rem]"
                 >
                   {/* Image Container */}
                   <div className="relative w-full h-48 lg:h-56 overflow-hidden">
