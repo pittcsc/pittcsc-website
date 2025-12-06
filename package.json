@@ -27,6 +27,8 @@
     "ajv-keywords": "^5.1.0",
     "axios": "^1.5.1",
     "dotenv": "^16.3.1",
+    "dotenv": "^16.3.1",
+    "encoding": "^0.1.13",
     "framer-motion": "^10.16.4",
     "gatsby": "^5.15.0",
     "gatsby-plugin-google-analytics": "^5.15.0",
