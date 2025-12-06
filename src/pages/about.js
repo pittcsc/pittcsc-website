@@ -147,8 +147,8 @@ const AboutPage = () => {
                   </svg>
                   <div className="w-full lg:w-9/12">
                     <StaticImage
-                      src="../images/uber_csc_image.jpg"
-                      alt="Club at Uber"
+                      src="../images/csc_auditorium_2024.jpg"
+                      alt="CSC General Body Meeting"
                       imgClassName="mx-auto w-full rounded-3xl shadow-lg"
                       placeholder="blurred"
                     />
