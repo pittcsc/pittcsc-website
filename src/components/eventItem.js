@@ -140,7 +140,7 @@ function EventItem({
           </p>
         </motion.button>
       </li>
-      <AnimatePresence exitBeforeEnter>
+      <AnimatePresence mode="wait">
         {modalOpen && (
           <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
             <div className="items-left flex flex-col justify-center p-8 w-full max-w-5xl bg-gray-100 rounded-2xl md:p-12 lg:p-16">
@@ -156,9 +156,8 @@ function EventItem({
                 <div className="flex space-x-2">
                   {tags.map((tag, i) => (
                     <div
-                      className={`text-sm px-4 py-2 ${
-                        tag.color ? `bg-${tag.color}-300` : "bg-gray-300"
-                      } rounded-full`}
+                      className={`text-sm px-4 py-2 ${tag.color ? `bg-${tag.color}-300` : "bg-gray-300"
+                        } rounded-full`}
                       key={i}
                     >
                       {tag.name}
@@ -197,9 +196,8 @@ function EventItem({
                     <input
                       name="attendance"
                       type="checkbox"
-                      className={`cursor-pointer rounded ${
-                        loading ? "animate-pulse" : ""
-                      }`}
+                      className={`cursor-pointer rounded ${loading ? "animate-pulse" : ""
+                        }`}
                       checked={checked}
                       disabled={loading}
                       onChange={handleAttendance}

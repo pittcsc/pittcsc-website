@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { graphql } from "gatsby";
 import { Link } from "gatsby";
-import Lottie from "react-lottie";
+// import Lottie from "react-lottie";
 import { StaticImage } from "gatsby-plugin-image";
+
+
 import { getAcademicYear } from "../utils/dates";
 
 import animationData from "../animations/pittcscLogoAnimation.json";
@@ -29,6 +31,8 @@ import Layout from "../layouts/layout";
 import EventItem from "../components/eventItem";
 
 import { eventList } from "../components/data";
+
+const Lottie = React.lazy(() => import("react-lottie"));
 
 const logoAnimationOptions = {
   loop: false,
@@ -146,7 +150,7 @@ const IndexPage = ({ data }) => {
       (event) =>
         new Date(event.date.start).getTime() >= new Date().getTime() &&
         new Date(event.date.start).getTime() <=
-          new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
+        new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
     );
   console.log(futureEvents);
 
@@ -270,7 +274,15 @@ const IndexPage = ({ data }) => {
                 }}
                 className="svg-lottie relative z-20"
               >
-                <Lottie options={logoAnimationOptions} className="" />
+                {typeof window !== "undefined" && (
+                  <Suspense fallback={null}>
+                    <Lottie
+                      options={logoAnimationOptions}
+                      className=""
+                      eventListeners={[]}
+                    />
+                  </Suspense>
+                )}
               </motion.div>
 
               <motion.div

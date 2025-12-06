@@ -12,7 +12,7 @@ const Layout = ({ title, header, children }) => {
       <div>
         <Header title={header} />
         <Seo title={title} />
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence mode="wait">
           <main key="main">{children}</main>
         </AnimatePresence>
         <Footer />
