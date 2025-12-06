@@ -32,7 +32,7 @@ module.exports = {
     "gatsby-transformer-sharp",
     `gatsby-plugin-sharp`,
     "gatsby-transformer-json",
-    `gatsby-plugin-netlify`,
+
     "gatsby-plugin-svgr",
     {
       resolve: "gatsby-plugin-portal",
