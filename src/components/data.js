@@ -13,7 +13,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/liambrem/",
     email: "LEB253@pitt.edu",
     image: "../images/officers_2025/liam.jpeg",
-    bio: "Hi everyone, I’m Liam and CSC’s Vice President! I’m a sophomore studying Computer Science & minoring in Econ, and this past summer, I interned at Meta. I also TA for a few classes here at Pitt. Outside of school/work, I like enjoy to and playing music (guitar & banjo), playing soccer, going to the gym, and traveling.\n\nSuper excited for this upcoming year and for what CSC has in store! Feel free to reach out to me anytime.",
+    bio: "Hi everyone, I’m Liam and CSC’s Vice President! I’m a sophomore studying Computer Science & minoring in Econ, and this past summer, I interned at Meta. I also TA for a few classes here at Pitt. Outside of school/work, I enjoy playing music (guitar & banjo), playing soccer, going to the gym, and traveling.\n\nSuper excited for this upcoming year and for what CSC has in store! Feel free to reach out to me anytime.",
   },
   {
     name: "Haiden Hunter",
@@ -37,7 +37,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/gabriella-flynn/",
     email: "",
     image: "../images/officers_2025/gabby.jpeg",
-    bio: "Bio coming soon...",
+    bio: "Hi! I’m Gabby, the Director of Design for CSC! I am a sophomore majoring in Computer Science and minoring in Business. I have experience working in IT and over the summer I worked at the nonprofit Koding with Klossy!\n\nFor fun I like to cook and bake, listen to new music, crochet, and hang out with my friends and family! I’m so excited for the upcoming semesters with csc and can’t wait to meet everyone! Feel free to reach out for anything ranging from advice to merch ideas!",
   },
   {
     name: "Morgan Engel",
@@ -53,7 +53,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/denystsinyk/",
     email: "det82@pitt.edu",
     image: "../images/officers_2025/denys.jpeg",
-    bio: "Bio coming soon...",
+    bio: "Hey everyone! I'm Denys, a sophomore majoring in Computer Science with a minor in Business, and I'm excited to be your CSC Events Coordinator this year!\n\nThis past summer, I interned at the NFL, where I worked on building security tools. I'm also a TA for Data Structures & Algorithms (CS 445). Outside of class, you can find me playing soccer, snowboarding, exploring, or just hanging out with friends.\n\nSuper excited CSC this year! Don't hesitate to reach out if you have any questions.",
   },
   {
     name: "Ava Luu",
