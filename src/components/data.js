@@ -53,7 +53,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/denystsinyk/",
     email: "det82@pitt.edu",
     image: "../images/officers_2025/denys.jpeg",
-    bio: "Hey everyone! I'm Denys, a sophomore majoring in Computer Science with a minor in Business, and I'm excited to be your CSC Events Coordinator this year!\n\nThis past summer, I interned at the NFL, where I worked on building security tools. I'm also a TA for Data Structures & Algorithms (CS 445). Outside of class, you can find me playing soccer, snowboarding, exploring, or just hanging out with friends.\n\nSuper excited CSC this year! Don't hesitate to reach out if you have any questions.",
+    bio: "Hey everyone! I'm Denys, a sophomore majoring in Computer Science with a minor in Business, and I'm excited to be your CSC Events Coordinator this year!\n\nThis past summer, I interned at the NFL, where I worked on building security tools. I'm also a TA for Data Structures & Algorithms (CS 0445). Outside of class, you can find me playing soccer, snowboarding, exploring, or just hanging out with friends.\n\nSuper excited for CSC this year. Don't hesitate to reach out if you have any questions.",
   },
   {
     name: "Ava Luu",
