@@ -8,6 +8,11 @@ import Z2O2 from "../../images/initiatives/Z2O/z2o-2.png";
 import Z2O3 from "../../images/initiatives/Z2O/z2o-3.png";
 import Z2O4 from "../../images/initiatives/Z2O/z2o-4.png";
 import Z2O5 from "../../images/initiatives/Z2O/z2o-5.png";
+import Placements from "../../images/initiatives/Z2O/placements.png";
+
+
+
+
 
 const Z2OPage = () => {
   useEffect(() => {
@@ -56,7 +61,7 @@ const Z2OPage = () => {
             </div>
 
             {/* Content Section */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 relative z-10">
               <p className="text-lg leading-relaxed text-gray-700 mb-8">
                 Our 100% student led flagship program to help underclassmen go
                 from "zero" to their first internship offer! This program has
@@ -82,15 +87,25 @@ const Z2OPage = () => {
                 ))}
               </ul>
 
+
+
+              <h3 className="text-2xl font-bold text-primary mb-6">Where Our Members Have Received Offers</h3>
+
+              <div className="mb-12 rounded-xl overflow-hidden shadow-sm border-4 border-yellow-400 group">
+                <img
+                  src={Placements}
+                  alt="Companies where CSC members have interned"
+                  className="w-full h-auto filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                />
+              </div>
+
               <p className="text-lg leading-relaxed text-gray-700">
-                Check out some pictures from our 2024 Zero to Offer program!
-                We also were able to host two corporate HQ visits as part of
-                this program: Google Pittsburgh and Dick's Sporting Goods.
+                Check out some pictures from our Zero to Offer program!
               </p>
             </div>
 
             {/* Gallery Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
               {images.map((src, index) => (
                 <motion.div
                   key={index}
@@ -126,8 +141,8 @@ const Z2OPage = () => {
             <div className="polka-background absolute bottom-0 -right-20 z-0 opacity-30 hidden lg:block" style={{ transform: 'rotate(180deg)' }}></div>
           </section>
         </div>
-      </motion.div>
-    </Layout>
+      </motion.div >
+    </Layout >
   );
 };
 

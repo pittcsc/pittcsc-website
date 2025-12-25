@@ -209,15 +209,6 @@ const SponsorPage = ({ data }) => {
                       stroke-width="5"
                     />
                   </svg>
-                  <motion.a
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    href={"/initiatives"} // FallReport
-                    target="_self"
-                    className="min-w-300 absolute -bottom-6 px-4 py-2 text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:right-10"
-                  >
-                    View Our Initiatives!
-                  </motion.a>
                   <img
                     className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
                     src={SpringReportImage}

@@ -3,7 +3,7 @@ import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
 import Layout from "../../layouts/layout";
-import FSC1 from "../../images/initiatives/fireside_chats/fschat.png";
+import FSC1 from "../../images/initiatives/fireside_chats/fschat.jpg";
 import FSC2 from "../../images/initiatives/fireside_chats/fs_chat-jeff.jpg";
 import FSC3 from "../../images/initiatives/fireside_chats/fs_chat-varun.jpg";
 import FSC4 from "../../images/initiatives/fireside_chats/fs_chat-audience.jpg";
@@ -55,7 +55,7 @@ const FiresideChatsPage = () => {
             </div>
 
             {/* Content Section */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 text-center">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 text-center relative z-10">
               <p className="text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
                 In the Fall Semester of 2024, we started our new "Fireside
                 Chats" Initiative, where we fly out prominent alumni and tech
@@ -83,7 +83,7 @@ const FiresideChatsPage = () => {
             </div>
 
             {/* Gallery Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
               {images.map((src, index) => (
                 <motion.div
                   key={index}

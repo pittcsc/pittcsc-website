@@ -7,6 +7,7 @@ import {
   faGithub,
   faLinkedin,
   faDiscord,
+  faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
 
 import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -146,7 +147,7 @@ const JoinPage = ({ data }) => {
                 }}
                 className="polka-background-subPage absolute -right-48 top-0 lg:-right-24"
               ></motion.div>
-              <div className="relative grid gap-2 grid-cols-2 items-center place-items-center mx-auto my-8 p-4 w-5/6 max-w-md bg-secondary-200 rounded-2xl shadow-md md:flex md:flex-wrap md:gap-0 md:justify-around lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-lg">
+              <div className="relative grid gap-2 grid-cols-3 items-center place-items-center mx-auto my-8 p-4 w-5/6 max-w-lg bg-secondary-200 rounded-2xl shadow-md md:flex md:flex-wrap md:gap-0 md:justify-around lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-xl">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -198,6 +199,20 @@ const JoinPage = ({ data }) => {
                 >
                   <FontAwesomeIcon
                     icon={faEnvelope}
+                    className="text-primary text-6xl xl:text-7xl"
+                  />
+                </motion.a>
+                <motion.a
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  href="https://www.instagram.com/csc.at.pitt/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Computer Science Club at Pitt Instagram"
+                  className="p-2"
+                >
+                  <FontAwesomeIcon
+                    icon={faInstagram}
                     className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>

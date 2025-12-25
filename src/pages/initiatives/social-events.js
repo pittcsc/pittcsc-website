@@ -56,7 +56,7 @@ const SocialEventsPage = () => {
             </div>
 
             {/* Content Section */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 text-center">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 text-center relative z-10">
               <p className="text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
                 As the largest student organization at Pitt, community is
                 important to us. We run several social/community focused
@@ -67,7 +67,7 @@ const SocialEventsPage = () => {
             </div>
 
             {/* Gallery Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
               {images.map((src, index) => (
                 <motion.div
                   key={index}

@@ -8,15 +8,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faTimes,
-  faChevronDown,
-  faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { motion } from "framer-motion";
 
 function Header({ title }) {
   const [nav, setNav] = useState(false);
-  const [resourcesNav, setResourcesNav] = useState(false);
   const [shadow, setShadow] = useState(false);
 
   const handleScroll = () => {
@@ -74,8 +71,25 @@ function Header({ title }) {
         } md:max-h-full md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
         <ul
-          className={`flex flex-col justify-center items-center space-y-2 md:flex-row md:items-center md:space-x-8 md:space-y-0`}
+          className={`flex flex-col justify-center items-center space-y-2 md:flex-row md:items-center md:gap-8 md:space-y-0`}
         >
+          <li className="py-2 md:py-0">
+            <Link to="/">
+              <div className="group relative w-full text-center text-lg font-bold md:text-base">
+                Home
+                <svg
+                  className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
+                    title === "home" && "opacity-100"
+                  }`}
+                  viewBox="0 0 479 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
+                </svg>
+              </div>
+            </Link>
+          </li>
           <li className="py-2 md:py-0">
             <Link to="/about">
               <div className="group relative w-full text-center text-lg font-bold md:text-base">
@@ -93,19 +107,13 @@ function Header({ title }) {
               </div>
             </Link>
           </li>
-          <li className="group relative">
-            <div
-              className={`flex items-center justify-center px-4 py-2 text-black  ${
-                resourcesNav
-                  ? "bg-primary text-white md:bg-none md:text-black"
-                  : "bg-none text-black"
-              } group-hover:bg-primary group-hover:text-white rounded-lg md:py-0 md:block`}
-            >
-              <div className="group relative z-50 w-full text-center text-lg font-bold md:text-base">
-                Resources
+          <li className="py-2 md:py-0">
+            <Link to="/initiatives">
+              <div className="group relative w-full text-center text-lg font-bold md:text-base">
+                Initiatives
                 <svg
                   className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
-                    title === "resources" && "opacity-100"
+                    title === "initiatives" && "opacity-100"
                   }`}
                   viewBox="0 0 479 20"
                   fill="none"
@@ -114,49 +122,28 @@ function Header({ title }) {
                   <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
                 </svg>
               </div>
-              <button
-                className={`cursor-pointer md:hidden z-40 focus:outline-none ml-2 -mb-1`}
-                onClick={() => setResourcesNav(!resourcesNav)}
-              >
-                {resourcesNav ? (
-                  <FontAwesomeIcon icon={faChevronUp} className="text-xl" />
-                ) : (
-                  <FontAwesomeIcon icon={faChevronDown} className="text-xl" />
-                )}
-              </button>
-            </div>
-
-            <div
-              className={`max-h-0 opacity-0 pointer-events-none text-white w-40 px-8 transition-all rounded-2xl ${
-                resourcesNav
-                  ? "nav-max-height opacity-100  pb-8 -mt-10 pt-12 pointer-events-auto bg-primary"
-                  : ""
-              } md:absolute md:pointer-events-auto md:max-h-96 md:px-8 md:pb-8 md:pt-12 md:bg-primary md:hidden md:opacity-100 md:-left-4 md:-mt-8 group-hover:block z-40`}
+            </Link>
+          </li>
+          <li className="py-2 md:py-0">
+            <a
+              href="https://pittcs.wiki/"
+              target="_blank"
+              rel="noreferrer noopener"
             >
-              <ul className="flex flex-col text-left font-bold space-y-4 md:text-white">
-                <a
-                  href="https://pittcs.wiki/"
-                  target="_blank"
-                  rel="noreferrer noopener"
+              <div className="group relative w-full text-center text-lg font-bold md:text-base">
+                Wiki
+                <svg
+                  className={`svg-underline absolute bottom-0 left-1/2 mx-auto w-full opacity-0 group-hover:opacity-100 transform-gpu -translate-x-1/2 transition ${
+                    title === "wiki" && "opacity-100"
+                  }`}
+                  viewBox="0 0 479 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <li className="hover:text-secondary-200">Pitt CS Wiki</li>
-                </a>
-                <a
-                  href="https://github.com/pittcsc/PittAPI"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <li className="hover:text-secondary-200">Pitt API</li>
-                </a>
-                <a
-                  href="https://pittcsc-blog.netlify.app/"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <li className="hover:text-secondary-200">Blog</li>
-                </a>
-              </ul>
-            </div>
+                  <path d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968" />
+                </svg>
+              </div>
+            </a>
           </li>
           <li className="py-2 md:py-0">
             <Link to="/sponsors">

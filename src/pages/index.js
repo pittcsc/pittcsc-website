@@ -15,6 +15,7 @@ import {
   faGithub,
   faLinkedin,
   faDiscord,
+  faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
 
 import { faVideo, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -32,7 +33,7 @@ import EventItem from "../components/eventItem";
 
 import { eventList } from "../components/data";
 
-const Lottie = React.lazy(() => import("react-lottie"));
+import SafeLottie from "../components/SafeLottie";
 
 const logoAnimationOptions = {
   loop: false,
@@ -62,6 +63,20 @@ const text = {
   homeShow: {
     opacity: 1,
     y: 0,
+  },
+};
+
+const subtextAnimate = {
+  hidden: {
+    opacity: 0,
+    y: 10,
+  },
+  homeShow: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.4,
+    },
   },
 };
 
@@ -232,9 +247,17 @@ const IndexPage = ({ data }) => {
                 variants={text}
                 className="relative z-10 w-3/4 2xl:text-lg text-sm leading-loose 2xl:leading-loose md:text-base md:leading-loose xl:w-3/4 xl:leading-loose"
               >
-                The University of Pittsburgh's largest tech-related student
-                organization. Proudly pushing the boundaries on what it means to
-                be a Pitt student.
+                Pitt's Largest Student Organization.
+              </motion.p>
+              <motion.p
+                variants={subtextAnimate}
+                initial="hidden"
+                animate={controls}
+                className="relative z-10 w-3/4 mt-8 text-base md:text-xl xl:text-2xl font-semibold leading-relaxed text-slate-800 xl:w-3/4"
+              >
+                <span className="inline-block bg-yellow-400/20 pl-2 pr-1 py-1 rounded">
+                  Proudly pushing the boundaries on what it means to be a Pitt student.
+                </span>
               </motion.p>
               <motion.div
                 variants={text}
@@ -275,13 +298,11 @@ const IndexPage = ({ data }) => {
                 className="svg-lottie relative z-20"
               >
                 {typeof window !== "undefined" && (
-                  <Suspense fallback={null}>
-                    <Lottie
-                      options={logoAnimationOptions}
-                      className=""
-                      eventListeners={[]}
-                    />
-                  </Suspense>
+                  <SafeLottie
+                    options={logoAnimationOptions}
+                    className=""
+                    eventListeners={[]}
+                  />
                 )}
               </motion.div>
 
@@ -339,20 +360,6 @@ const IndexPage = ({ data }) => {
                     height={734}
                   />
                 </motion.div>
-                <motion.a
-                  variants={maskAnimate}
-                  initial="hidden"
-                  animate={controls}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  href={"/initiatives"} // FallReport
-                  target="_self"
-                  className="absolute z-20 -bottom-4 inline-block"
-                >
-                  <button className="min-w-300 px-4 py-2 text-center text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition">
-                    View Our Initiatives!
-                  </button>
-                </motion.a>
               </div>
               <motion.div
                 className="relative w-full lg:w-1/2"
@@ -398,7 +405,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-              <div className="grid gap-2 grid-cols-2 items-center place-items-center mb-8 mx-auto p-6 max-w-md bg-secondary-200 rounded-2xl shadow-lg md:flex md:flex-wrap md:gap-0 md:justify-around lg:mb-0 lg:px-6 lg:py-12 xl:max-w-lg">
+              <div className="grid gap-2 grid-cols-3 items-center place-items-center mb-8 mx-auto p-6 max-w-lg bg-secondary-200 rounded-2xl shadow-lg md:flex md:flex-wrap md:gap-0 md:justify-around lg:mb-0 lg:px-6 lg:py-12 xl:max-w-xl">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -453,11 +460,33 @@ const IndexPage = ({ data }) => {
                     className="text-primary text-6xl xl:text-7xl"
                   />
                 </motion.a>
+                <motion.a
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  href="https://www.instagram.com/csc.at.pitt/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Computer Science Club at Pitt Instagram"
+                  className="p-2"
+                >
+                  <FontAwesomeIcon
+                    icon={faInstagram}
+                    className="text-primary text-6xl xl:text-7xl"
+                  />
+                </motion.a>
               </div>
             </div>
             <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg lg:w-1/2">
+              <iframe
+                src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
+                title="CSC Google Calendar"
+                frameborder="0"
+                scrolling="no"
+                height="600"
+                className="w-full relative z-10"
+              ></iframe>
               <svg
-                className="absolute -bottom-10 -left-10 w-32 lg:-left-20 lg:w-64"
+                className="absolute top-full -left-10 mt-4 w-32 lg:-left-20 lg:w-64"
                 viewBox="0 0 306 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -473,14 +502,6 @@ const IndexPage = ({ data }) => {
                   strokeWidth="5"
                 />
               </svg>
-              <iframe
-                src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
-                title="CSC Google Calendar"
-                frameborder="0"
-                scrolling="no"
-                height="600"
-                className="w-full"
-              ></iframe>
               <div className="flex flex-wrap items-center justify-center">
                 <div className="flex items-center justify-center mx-2 my-2 text-lg">
                   <a

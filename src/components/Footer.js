@@ -5,16 +5,22 @@ function Footer() {
   return (
     <footer className="container flex items-center justify-center mx-auto w-full h-32 text-center">
       <nav className="w-full space-y-2">
-        <ul className="flex items-center justify-center mx-auto font-bold space-x-4 lg:space-x-8">
+        <ul className="flex items-center justify-center mx-auto font-bold gap-8">
+          <Link to="/">
+            <li>Home</li>
+          </Link>
           <Link to="/about">
             <li>About Us</li>
           </Link>
+          <Link to="/initiatives">
+            <li>Initiatives</li>
+          </Link>
           <a
-            href="https://pittcsc-blog.netlify.app/"
+            href="https://pittcs.wiki/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <li>Blog</li>
+            <li>Wiki</li>
           </a>
           <Link to="/sponsors">
             <li>Sponsors</li>
@@ -33,8 +39,8 @@ function Footer() {
           </a>
         </p>
         <p className="">
-          Built with<span className="text-red-500">❤️ </span> by{" "}
-          <span className="font-bold">CSC @ Pitt</span>
+          Built with <span className="text-red-500">❤️ </span> by{" "}
+          <span className="font-bold">CSC at Pitt</span>
         </p>
       </nav>
     </footer>
