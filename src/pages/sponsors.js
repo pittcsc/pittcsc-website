@@ -3,12 +3,12 @@ import React, { useEffect } from "react";
 import SCM from "../images/sponsors/SCM_Logo.svg";
 import FAST from "../images/sponsors/FAST_logo.png";
 import NNL from "../images/sponsors/naval_nuclear_lab.jpeg";
-import BNY from "../images/sponsors/BNY_logo.png";
-import GOOGLE from "../images/sponsors/google.png";
+import BNY from "../images/sponsors/BNY_logo_2024.svg";
+import ROBLOX from "../images/sponsors/roblox_logo.png";
+import CGI from "../images/sponsors/CGI_logo.svg";
+import AEROTECH from "../images/sponsors/aerotech_logo.png";
 
 import SpringReportImage from "../images/hero_image.png";
-
-import FallReport from "../downloads/gbm-fall-2022.pdf";
 
 import { motion } from "framer-motion";
 import { hotjar } from "react-hotjar";
@@ -20,16 +20,26 @@ const imageContainer = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.4,
-    },
+    transition: { staggerChildren: 0.15 },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 100 },
+  hidden: { opacity: 0, y: 40 },
   show: { opacity: 1, y: 0 },
 };
+
+// imgClass sets a fixed height per logo so perceived visual weight is equal.
+// Wide flat logos (BNY, Roblox) need more height; square logos (CGI) need less.
+const sponsors = [
+  { src: BNY,      alt: "BNY Logo",                    href: "https://www.bny.com/",                   imgClass: "h-10" },
+  { src: CGI,      alt: "CGI Logo",                    href: "https://www.cgi.com/",                   imgClass: "h-9"  },
+  { src: ROBLOX,   alt: "Roblox Logo",                 href: "https://www.roblox.com/",                imgClass: "h-10" },
+  { src: NNL,      alt: "Naval Nuclear Lab Logo",       href: "https://navalnuclearlab.energy.gov/",    imgClass: "h-16" },
+  { src: SCM,      alt: "Stevens Capital Management",  href: "https://www.scm-lp.com/",                imgClass: "h-20" },
+  { src: AEROTECH, alt: "Aerotech Logo",               href: "https://www.aerotech.com/",              imgClass: "h-24" },
+  { src: FAST,     alt: "FAST Enterprises Logo",       href: "https://www.fastenterprises.com/",       imgClass: "h-12" },
+];
 
 const SponsorPage = ({ data }) => {
   useEffect(() => {
@@ -58,108 +68,52 @@ const SponsorPage = ({ data }) => {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <motion.path
-                    initial={{
-                      pathLength: 0,
-                      opacity: 0,
-                    }}
-                    animate={{
-                      pathLength: 1,
-                      opacity: 1,
-                    }}
-                    transition={{
-                      delay: 0.2,
-                      duration: 0.8,
-                    }}
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.8 }}
                     d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
                   />
                 </svg>
               </h1>
             </div>
-            <motion.div
-              variants={imageContainer}
-              initial="hidden"
-              animate="show"
-              // className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8 xl:grid-cols-3"
-              className="flex flex-wrap gap-4 items-center justify-center px-4 md:gap-8 xl:gap-16"
-            >
-              <motion.a
-                variants={item}
-                href="https://www.scm-lp.com/"
-                target="_blank"
-                aria-label="SCM"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={SCM}
-                  alt="SCM Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="https://www.fastenterprises.com/"
-                target="_blank"
-                aria-label="FAST Enterprises"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={FAST}
-                  alt="FAST Enterprises Logo"
-                />
-              </motion.a>
-            </motion.div>
-            <motion.div
-              variants={imageContainer}
-              initial="hidden"
-              animate="show"
-              // className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8 xl:grid-cols-3"
-              className="flex flex-wrap gap-4 items-center justify-center px-4 md:gap-8 xl:gap-16"
-            >
-              <motion.a
-                variants={item}
-                href="https://navalnuclearlab.energy.gov/"
-                target="_blank"
-                aria-label="NNL"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={NNL}
-                  alt="NNL Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="https://www.bny.com/corporate/global/en.html"
-                target="_blank"
-                aria-label="BNY Mellon"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={BNY}
-                  alt="BNY Mellon Logo"
-                />
-              </motion.a>
-              <motion.a
-                variants={item}
-                href="https://www.google.com"
-                target="_blank"
-                aria-label="Google"
-              >
-                <img
-                  className="w-40 2xl:max-w-sm max-w-xs md:w-80 lg:w-full"
-                  src={GOOGLE}
-                  alt="Google Logo"
-                />
-              </motion.a>
-            </motion.div>
-            <motion.div
-              variants={imageContainer}
-              initial="hidden"
-              animate="show"
-              // className="grid gap-4 grid-cols-2 place-items-center w-full md:gap-8 xl:grid-cols-3"
-              className="flex flex-wrap gap-4 items-center justify-center px-4 md:gap-8 xl:gap-16"
-            ></motion.div>
+
+            <div className="flex flex-col items-center gap-16 w-full px-4 mt-8">
+              {[sponsors.slice(0, 4), sponsors.slice(4)].map((row, rowIndex) => (
+                <motion.div
+                  key={rowIndex}
+                  variants={imageContainer}
+                  initial="hidden"
+                  animate="show"
+                  className="flex items-center justify-center flex-wrap gap-12 md:gap-16 xl:gap-24"
+                >
+                  {row.map((sponsor) => (
+                    <motion.a
+                      key={sponsor.alt}
+                      variants={item}
+                      href={sponsor.href}
+                      target="_blank"
+                      aria-label={sponsor.alt}
+                      className="flex items-center justify-center"
+                    >
+                      <img
+                        className={`w-auto object-contain ${sponsor.imgClass}`}
+                        src={sponsor.src}
+                        alt={sponsor.alt}
+                      />
+                    </motion.a>
+                  ))}
+                </motion.div>
+              ))}
+            </div>
           </section>
-          <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
+
+          <motion.div
+            className="w-screen bg-gradient-to-r from-primary to-blue-800 mt-16"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
             <section className="container flex flex-col items-center justify-center mx-auto py-24 w-full lg:py-32">
               <div className="flex flex-col items-center justify-center w-9/12 lg:flex-row lg:justify-around lg:w-full">
                 <div className="mb-4 lg:mb-0">
@@ -201,14 +155,23 @@ const SponsorPage = ({ data }) => {
                     <path
                       d="M29 3C71.5 3.5 152.3 10.3 183.5 73.5C214.7 136.7 281.5 155.167 305 151.5"
                       stroke="#FFB81C"
-                      stroke-width="5"
+                      strokeWidth="5"
                     />
                     <path
                       d="M1 48C43.5 48.5 124.3 55.3 155.5 118.5C186.7 181.7 253.5 200.167 277 196.5"
                       stroke="#FFB81C"
-                      stroke-width="5"
+                      strokeWidth="5"
                     />
                   </svg>
+                  <motion.a
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    href={"/initiatives"}
+                    target="_self"
+                    className="min-w-300 absolute -bottom-6 px-4 py-2 text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:right-10"
+                  >
+                    View Our Initiatives!
+                  </motion.a>
                   <img
                     className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
                     src={SpringReportImage}
@@ -217,7 +180,7 @@ const SponsorPage = ({ data }) => {
                 </div>
               </div>
             </section>
-          </div>
+          </motion.div>
         </div>
       </motion.div>
     </Layout>
