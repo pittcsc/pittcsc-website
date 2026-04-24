@@ -21,7 +21,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/caseykarwatske/",
     email: "CBK37@pitt.edu",
     image: "../images/officers_2025/Casey.jpeg",
-    bio: "Bio coming soon...",
+    bio: "Hey guys! I'm Casey, the CSC Business Manager. I'm a Sophomore dual-majoring in Math and CS. In my free time I like to lift weights, watch movies and do escape rooms. I'm super hyped for everything CSC has planned next year. Hit me up anytime to talk business.",
   },
   {
     name: "Preston Probst",
@@ -29,7 +29,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/prestonpro/",
     email: "PJP76@pitt.edu",
     image: "../images/officers_2025/preston.jpeg",
-    bio: "Bio coming soon...",
+    bio: "Hey everyone, I'm Preston, CSC's Events Coordinator! I'm a Sophomore studying Computer Science and minoring in Philosophy, and this summer I will be interning at Character.AI. I also interned for a Pitt alum-founded YC company (H2P) and was a member of PittCSC's Development Board! In my free time, I enjoy reading philosophy and fiction, playing sports (and chess), trying new food, and hanging out with friends. Super excited to meet everyone and to see what CSC has in store! Feel free to reach out anytime, I'm always happy to chat!",
   },
   {
     name: "Jayson Dang",
