@@ -60,7 +60,7 @@ export const officerList = [
     title: "Director of Design",
     linkedIn: "https://www.linkedin.com/in/raima-saha-/",
     email: "RAS709@pitt.edu",
-    image: "../images/officers_2025/raima.jpeg",
+    image: "../images/officers_2026/raima.png",
     bio: "Bio coming soon...",
   },
   {
