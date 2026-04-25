@@ -29,7 +29,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/prestonpro/",
     email: "PJP76@pitt.edu",
     image: "../images/officers_2025/preston.jpeg",
-    bio: "Hey everyone, I'm Preston, CSC's Events Coordinator! I'm a Sophomore studying Computer Science and minoring in Philosophy, and this summer I will be interning at Character.AI!\n\nIn my free time, I enjoy reading, playing sports and chess, trying new food, and hanging out with friends.\n\nSuper excited to meet everyone and to see what CSC has in store! Feel free to reach out anytime, I'm always happy to chat!",
+    bio: "Hey everyone, I'm Preston, CSC's Events Coordinator! I'm a Sophomore studying Computer Science and minoring in Philosophy, and this summer I will be interning at Character.AI. I also interned for a Pitt alum-founded YC company (H2P) and was a member of PittCSC's Development Board! In my free time, I enjoy reading philosophy and fiction, playing sports (and chess), trying new food, and hanging out with friends. Super excited to meet everyone and to see what CSC has in store! Feel free to reach out anytime, I'm always happy to chat!",
   },
   {
     name: "Jayson Dang",
@@ -45,7 +45,7 @@ export const officerList = [
     linkedIn: "https://www.linkedin.com/in/gabriella-flynn/",
     email: "GGF13@pitt.edu",
     image: "../images/officers_2025/gabby.jpeg",
-    bio: "Hi! I’m Gabby, the Director of Outreach for CSC! I am a sophomore majoring in Computer Science and minoring in Business. I have experience working in IT and over the summer I worked at the nonprofit Koding with Klossy!\n\nFor fun I like to cook and bake, listen to new music, crochet, and hang out with my friends and family! I’m so excited for the upcoming semesters with csc and can’t wait to meet everyone! Feel free to reach out for anything ranging from advice to merch ideas!",
+    bio: "Hi! I’m Gabby, the Director of Outreach for CSC! I am a junior majoring in Computer Science and minoring in Business. I have experience working in IT, teaching data science, working at a startup, and being a coach for MLH! For fun I like to cook and bake, listen to new music, crochet, and hang out with my friends and family! I’m so excited for the upcoming semesters with CSC and can’t wait for everyone to see what we have in store! Feel free to reach out for anything ranging from advice to outreach ideas!",
   },
   {
     name: "Aarash Zakeri",
