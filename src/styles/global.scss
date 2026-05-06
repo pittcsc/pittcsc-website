@@ -1,0 +1,63 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+
+@import "./helpers/variables";
+@import "./helpers/mixins";
+
+@import "./pages/index";
+@import "./components/header";
+@import "./components/footer";
+@import "./components/projectcard";
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.header-max-width {
+  @media screen and (min-width: 1536px) {
+    max-width: 1536px;
+  }
+}
+
+.nav-max-height {
+  max-height: 800px;
+}
+
+.svg-lottie {
+  width: 100%;
+  @media screen and (min-width: 1024px) {
+    width: 700px;
+  }
+  @media screen and (min-width: 1280px) {
+    width: 800px;
+  }
+  @media screen and (min-width: 1536px) {
+    width: 900px;
+  }
+}
+
+.modal {
+  position: relative;
+  max-width: 80vw;
+  max-height: 80vh;
+  z-index: 1000;
+  cursor: default;
+}
+
+.modal-overlay {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -10px;
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 990;
+  overflow-y: auto;
+  cursor: default;
+}

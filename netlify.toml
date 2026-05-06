@@ -1,0 +1,19 @@
+[[plugins]]
+package = "@netlify/plugin-gatsby"
+
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[[redirects]]
+  from = "/zoom"
+  to = "https://pitt.zoom.us/my/pittcsc"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/blog"
+  to = "https://pittcsc-blog.netlify.app"
+  status = 200
+  force = true

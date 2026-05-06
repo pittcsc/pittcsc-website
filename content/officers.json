@@ -1,0 +1,169 @@
+[
+   {
+      "title": "President",
+      "name": "Zhengming Wang",
+      "email": "zhw78@pitt.edu",
+      "portrait_name": "ming.jpg",
+      "position": "e-board",
+      "links": [
+         {
+            "name": "Website",
+            "href": "http://zmwang622.github.io/"
+         },
+         {
+            "name": "GitHub",
+            "href": "https://github.com/zmwang622"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/zhengmingwang/"
+         }
+      ]
+   },
+   {
+      "title": "Vice President",
+      "name": "Olivia Wininsky",
+      "email": "onw5@pitt.edu",
+      "portrait_name": "olivia.png",
+      "position": "e-board",
+      "links": [
+         {
+            "name": "GitHub",
+            "href": "https://github.com/owini"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/oliviawininsky/"
+         }
+      ]
+   },
+   {
+      "title": "Business Manager",
+      "name": "Gordon Lu",
+      "email": "gol6@pitt.edu",
+      "portrait_name": "gordon.jpg",
+      "position": "e-board",
+      "links": [
+         {
+            "name": "Website",
+            "href": "https://glu99331.github.io"
+         },
+         {
+            "name": "GitHub",
+            "href": "https://github.com/glu99331"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/gordon-lu-aa1008152/"
+         }
+      ]
+   },
+   {
+      "title": "PR Manager",
+      "name": "Janet Majekodunmi",
+      "email": "jam580@pitt.edu",
+      "portrait_name": "janet.jpeg",
+      "position": "e-board",
+      "links": [
+         {
+            "name": "GitHub",
+            "href": "https://github.com/joyousjay"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/janet-majekodunmi-5a8474190/"
+         }
+      ]
+   },
+   {
+      "title": "Director of Initiatives",
+      "name": "Richie Goulazian",
+      "email": "rhg13@pitt.edu",
+      "portrait_name": "richie.jpg",
+      "position": "e-board",
+      "links": [
+         {
+            "name": "Website",
+            "href": "https://rgoulazian.com"
+         },
+         {
+            "name": "GitHub",
+            "href": "https://github.com/Richie78321"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/rgoulazian/"
+         }
+      ]
+   },
+   {
+      "title": "Event Coordinator",
+      "name": "Ryan Yang",
+      "email": "rcy7@pitt.edu",
+      "portrait_name": "ryan.jpg",
+      "position": "e-board",
+      "links": [
+         {
+            "name": "GitHub",
+            "href": "https://github.com/Ruzakiff"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/ryan-yang-35559b143/"
+         }
+      ]
+   },
+   {
+      "title": "Internal Affairs Coordinator",
+      "name": "Justin Kramer",
+      "email": "jpk91@pitt.edu",
+      "portrait_name": "justin.jpg",
+      "position": "e-board",
+      "links": [
+         {
+            "name": "GitHub",
+            "href": "https://github.com/kjustin2"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/kjustin2/"
+         }
+      ]
+   },
+   {
+      "title": "Initiative Lead",
+      "name": "Alex Zharichenko",
+      "email": "alex.zharichenko@pitt.edu",
+      "portrait_name": "alex.jpg",
+      "links": [
+         {
+            "name": "GitHub",
+            "href": "https://github.com/azharichenko"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/azharichenko/"
+         }
+      ]
+   },
+   {
+      "title": "Initiative Lead",
+      "name": "Mat Varughese",
+      "email": "mav120@pitt.edu",
+      "portrait_name": "mat.jpg",
+      "links": [
+         {
+            "name": "Website",
+            "href": "https://matvarughese.me/"
+         },
+         {
+            "name": "GitHub",
+            "href": "https://github.com/varughese"
+         },
+         {
+            "name": "LinkedIn",
+            "href": "https://www.linkedin.com/in/matvarughese/"
+         }
+      ]
+   }
+]
