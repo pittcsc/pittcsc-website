@@ -368,7 +368,7 @@ const SponsorPage = ({ data }) => {
                 <motion.div
                   key={t.tier}
                   variants={item}
-                  className={`relative flex flex-col rounded-2xl border p-6 shadow-md transition-transform hover:-translate-y-1 hover:shadow-xl ${
+                  className={`relative flex flex-col rounded-2xl border p-6 shadow-md transition duration-200 hover:-translate-y-1 hover:shadow-xl ${
                     t.featured
                       ? "border-secondary-100 bg-primary text-white"
                       : "border-slate-200 bg-white text-slate-900 hover:border-yellow-400"
@@ -441,7 +441,7 @@ const SponsorPage = ({ data }) => {
                 {addOns.map((addOn) => (
                   <div
                     key={addOn.name}
-                    className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-md"
+                    className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-md transition duration-200 hover:-translate-y-1 hover:border-yellow-400 hover:shadow-xl"
                   >
                     <div className="flex items-baseline justify-between gap-2">
                       <h4 className="text-lg font-bold text-slate-900">
