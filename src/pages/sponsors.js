@@ -317,16 +317,11 @@ const SponsorPage = ({ data }) => {
                       strokeWidth="5"
                     />
                   </svg>
-                  {/* White card frames the illustration; its panther extends
-                      past the mockup onto transparent pixels, so a white
-                      backdrop keeps it from sitting blue-on-blue. */}
-                  <div className="mx-auto w-full rounded-3xl bg-white p-3 shadow-lg lg:w-9/12">
-                    <img
-                      className="w-full rounded-2xl"
-                      src={SpringReportImage}
-                      alt="CSC at Pitt panther illustration"
-                    />
-                  </div>
+                  <img
+                    className="mx-auto w-full rounded-3xl shadow-lg lg:w-9/12"
+                    src={SpringReportImage}
+                    alt="CSC at Pitt panther illustration"
+                  />
                   {/* Button flows below the image on mobile; overlaps it on desktop. */}
                   <motion.a
                     whileHover={{ scale: 1.1 }}
