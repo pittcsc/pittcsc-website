@@ -144,61 +144,10 @@ const SponsorPage = ({ data }) => {
         exit={{ opacity: 0 }}
       >
         <div className="mt-24 my-8 min-h-screen space-y-16 lg:space-y-24 xl:my-24">
-          {/* ---------- Hero + logo wall ---------- */}
-          <section className="container flex flex-col items-center justify-center mx-auto w-full">
-            <div>
-              <h1 className="relative z-10 mb-8 mt-4 w-full text-3xl font-bold lg:text-6xl">
-                We Love Our Sponsors
-                <svg
-                  className="svg-underline relative z-10 w-full"
-                  viewBox="0 0 422 12"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <motion.path
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.8 }}
-                    d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
-                  />
-                </svg>
-              </h1>
-            </div>
-
-            <div className="flex flex-col items-center gap-16 w-full px-4 mt-8">
-              {[sponsors.slice(0, 4), sponsors.slice(4)].map((row, rowIndex) => (
-                <motion.div
-                  key={rowIndex}
-                  variants={imageContainer}
-                  initial="hidden"
-                  animate="show"
-                  className="flex items-center justify-center flex-wrap gap-12 md:gap-16 xl:gap-24"
-                >
-                  {row.map((sponsor) => (
-                    <motion.a
-                      key={sponsor.alt}
-                      variants={item}
-                      href={sponsor.href}
-                      target="_blank"
-                      aria-label={sponsor.alt}
-                      className="flex items-center justify-center"
-                    >
-                      <img
-                        className={`w-auto object-contain ${sponsor.imgClass}`}
-                        src={sponsor.src}
-                        alt={sponsor.alt}
-                      />
-                    </motion.a>
-                  ))}
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
           {/* ---------- At a Glance ---------- */}
           <section className="max-w-6xl mx-auto px-4 w-full">
             <div className="flex flex-col items-center mb-12">
-              <h2 className="relative z-10 text-center text-2xl font-bold lg:text-5xl">
+              <h2 className="relative z-10 text-center text-3xl font-bold lg:text-6xl">
                 CSC at a Glance
                 <svg
                   className="svg-underline my-2 w-full"
@@ -254,6 +203,57 @@ const SponsorPage = ({ data }) => {
                 );
               })}
             </motion.div>
+          </section>
+
+          {/* ---------- Hero + logo wall ---------- */}
+          <section className="container flex flex-col items-center justify-center mx-auto w-full">
+            <div>
+              <h1 className="relative z-10 mb-8 mt-4 w-full text-3xl font-bold lg:text-6xl">
+                We Love Our Sponsors
+                <svg
+                  className="svg-underline relative z-10 w-full"
+                  viewBox="0 0 422 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <motion.path
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.8 }}
+                    d="M3 9C118.957 4.47226 364.497 -1.86658 419 9"
+                  />
+                </svg>
+              </h1>
+            </div>
+
+            <div className="flex flex-col items-center gap-16 w-full px-4 mt-8">
+              {[sponsors.slice(0, 4), sponsors.slice(4)].map((row, rowIndex) => (
+                <motion.div
+                  key={rowIndex}
+                  variants={imageContainer}
+                  initial="hidden"
+                  animate="show"
+                  className="flex items-center justify-center flex-wrap gap-12 md:gap-16 xl:gap-24"
+                >
+                  {row.map((sponsor) => (
+                    <motion.a
+                      key={sponsor.alt}
+                      variants={item}
+                      href={sponsor.href}
+                      target="_blank"
+                      aria-label={sponsor.alt}
+                      className="flex items-center justify-center"
+                    >
+                      <img
+                        className={`w-auto object-contain ${sponsor.imgClass}`}
+                        src={sponsor.src}
+                        alt={sponsor.alt}
+                      />
+                    </motion.a>
+                  ))}
+                </motion.div>
+              ))}
+            </div>
           </section>
 
           {/* ---------- Why Sponsor ---------- */}
