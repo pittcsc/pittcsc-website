@@ -368,10 +368,10 @@ const SponsorPage = ({ data }) => {
                 <motion.div
                   key={t.tier}
                   variants={item}
-                  className={`relative flex flex-col rounded-2xl border p-6 shadow-md transition duration-200 hover:-translate-y-1 hover:shadow-xl ${
+                  className={`relative flex flex-col rounded-2xl border p-6 shadow-md transition duration-200 hover:-translate-y-1 ${
                     t.featured
-                      ? "border-secondary-100 bg-primary text-white"
-                      : "border-slate-200 bg-white text-slate-900 hover:border-yellow-400"
+                      ? "border-secondary-100 bg-primary text-white hover:shadow-2xl hover:ring-4 hover:ring-secondary-100/60"
+                      : "border-slate-200 bg-white text-slate-900 hover:border-yellow-400 hover:shadow-xl"
                   }`}
                   style={t.featured ? { backgroundColor: "#243E8B" } : undefined}
                 >
