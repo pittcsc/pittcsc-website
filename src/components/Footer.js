@@ -3,9 +3,9 @@ import { Link } from "gatsby";
 
 function Footer() {
   return (
-    <footer className="container flex items-center justify-center mx-auto w-full h-32 text-center">
+    <footer className="container flex items-center justify-center mx-auto w-full py-8 text-center">
       <nav className="w-full space-y-2">
-        <ul className="flex items-center justify-center mx-auto font-bold gap-8">
+        <ul className="flex flex-wrap items-center justify-center mx-auto font-bold gap-x-8 gap-y-2 px-4 [&_li]:whitespace-nowrap">
           <Link to="/">
             <li>Home</li>
           </Link>
