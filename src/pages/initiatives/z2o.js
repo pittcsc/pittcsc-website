@@ -1,3 +1,4 @@
+import React from "react";
 import InitiativeTemplate from "../../components/InitiativeTemplate";
 import { z2oContent } from "../../data/z2oContent";
 
