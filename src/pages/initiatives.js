@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect } from "react";
 import Z2OImg from "../images/initiatives/Z2O/Z2O-speaker.jpg";
 import SocialEventsImg from "../images/initiatives/social_events/soc_event.jpg";
 import FiresideChatsImg from "../images/initiatives/fireside_chats/fschat.jpg";
@@ -17,7 +17,7 @@ import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import Layout from "../layouts/layout";
 
 // Constants
@@ -140,51 +140,12 @@ const initiatives = [
   },
 ];
 
-const categories = ["All", "Career", "Project Teams", "Hackathons", "Mentorship", "Guest Speakers", "Social"];
-
 const InitiativePage = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
-
   useEffect(() => {
     hotjar.initialize(HOTJAR_ID, HOTJAR_VERSION);
     ReactGA.initialize(GA_TRACKING_ID);
     ReactGA.pageview("/initiatives");
   }, []);
-
-  const displayedItems = useMemo(() => {
-    return initiatives.filter((item) => {
-      return activeCategory === "All" || item.category === activeCategory;
-    });
-  }, [activeCategory]);
-
-  // Memoize category counts to avoid recalculating on every render
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    categories.forEach((category) => {
-      if (category === "All") {
-        counts[category] = initiatives.length;
-      } else {
-        counts[category] = initiatives.filter((item) => item.category === category).length;
-      }
-    });
-    return counts;
-  }, []);
-
-  const getCategoryCount = (category) => {
-    return categoryCounts[category] || 0;
-  };
-
-  const clearFilters = () => {
-    setActiveCategory("All");
-  };
-
-  // Memoize results count to avoid creating new object on every render
-  const resultsCount = useMemo(() => {
-    return {
-      filteredCount: displayedItems.length,
-      totalCount: initiatives.length,
-    };
-  }, [displayedItems.length]);
 
   return (
     <Layout
@@ -219,62 +180,10 @@ const InitiativePage = () => {
               </h1>
             </div>
 
-            {/* Filter Bar */}
-            <div className="sticky top-0 z-50 bg-white py-6 shadow-sm" style={{ willChange: 'transform' }}>
-              <div className="max-w-7xl mx-auto mb-10 px-4">
-                {/* Filters & Counter Row */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  {/* Category Pills */}
-                  <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-                    {categories.map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => setActiveCategory(category)}
-                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                          activeCategory === category
-                            ? "bg-blue-600 text-white"
-                            : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-                        }`}
-                      >
-                        {category} ({getCategoryCount(category)})
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Results Count */}
-                  <div className="text-sm font-medium text-slate-500 whitespace-nowrap">
-                    Showing <span className="font-bold">{resultsCount.filteredCount}</span> of {resultsCount.totalCount} initiatives
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Empty State */}
-            {displayedItems.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16">
-                <FontAwesomeIcon
-                  icon={faSearch}
-                  className="w-12 h-12 text-slate-300 mb-6"
-                />
-                <p className="text-slate-900 font-bold text-lg mb-2 text-center">
-                  No initiatives found
-                  {activeCategory !== "All" && ` in ${activeCategory}`}
-                </p>
-                <p className="text-slate-600 text-sm mb-6 text-center max-w-md">
-                  Try selecting a different category to find what you're looking for
-                </p>
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                >
-                  Reset all filters
-                </button>
-              </div>
-            ) : (
-              /* Grid Layout */
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-24" style={{ contain: 'layout style paint' }}>
-                  {displayedItems.map((item, index) => {
-                    return (
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-24" style={{ contain: 'layout style paint' }}>
+                {initiatives.map((item, index) => {
+                  return (
                     <a
                       key={item.title}
                       {...(item.link && { href: item.link })}
@@ -334,8 +243,7 @@ const InitiativePage = () => {
                     </a>
                     );
                   })}
-              </div>
-            )}
+            </div>
           </section>
         </div>
       </div>
