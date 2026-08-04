@@ -1,4 +1,4 @@
-import useEffect from "react";
+import React, { useEffect } from "react";
 import Z2OImg from "../images/initiatives/Z2O/Z2O-speaker.jpg";
 import SocialEventsImg from "../images/initiatives/social_events/soc_event.jpg";
 import FiresideChatsImg from "../images/initiatives/fireside_chats/fschat.jpg";
