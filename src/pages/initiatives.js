@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import useEffect from "react";
 import Z2OImg from "../images/initiatives/Z2O/Z2O-speaker.jpg";
 import SocialEventsImg from "../images/initiatives/social_events/soc_event.jpg";
 import FiresideChatsImg from "../images/initiatives/fireside_chats/fschat.jpg";
@@ -182,67 +182,67 @@ const InitiativePage = () => {
 
             {/* Grid Layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-24" style={{ contain: 'layout style paint' }}>
-                {initiatives.map((item, index) => {
-                  return (
-                    <a
-                      key={item.title}
-                      {...(item.link && { href: item.link })}
-                      onClick={(e) => {
-                        if (!item.link) {
-                          e.preventDefault();
-                        }
-                      }}
-                      target={item.external ? "_blank" : "_self"}
-                      rel={item.external ? "noopener noreferrer" : ""}
-                      className={`group flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden 
+              {initiatives.map((item, index) => {
+                return (
+                  <a
+                    key={item.title}
+                    {...(item.link && { href: item.link })}
+                    onClick={(e) => {
+                      if (!item.link) {
+                        e.preventDefault();
+                      }
+                    }}
+                    target={item.external ? "_blank" : "_self"}
+                    rel={item.external ? "noopener noreferrer" : ""}
+                    className={`group flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden 
                         hover:-translate-y-1 hover:shadow-xl hover:border-yellow-400 transition-transform transition-shadow`}
-                      style={{ willChange: 'transform', contain: 'layout style paint' }}
-                    >
-                      {/* Image Container */}
-                      <div className="relative w-full aspect-video overflow-hidden" style={{ contain: 'layout' }}>
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          loading="lazy"
-                          decoding="async"
-                          style={{ willChange: 'transform', contentVisibility: 'auto' }}
-                        />
-                      </div>
+                    style={{ willChange: 'transform', contain: 'layout style paint' }}
+                  >
+                    {/* Image Container */}
+                    <div className="relative w-full aspect-video overflow-hidden" style={{ contain: 'layout' }}>
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                        style={{ willChange: 'transform', contentVisibility: 'auto' }}
+                      />
+                    </div>
 
-                      {/* Content Container */}
-                      <div className="flex flex-col flex-grow p-5">
-                        {/* Category Badge */}
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2 block">
-                          {item.category}
-                        </span>
+                    {/* Content Container */}
+                    <div className="flex flex-col flex-grow p-5">
+                      {/* Category Badge */}
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2 block">
+                        {item.category}
+                      </span>
 
-                        {/* Title */}
-                        <h2 className="text-lg font-bold text-slate-900 mb-1">
-                          {item.title}
-                        </h2>
+                      {/* Title */}
+                      <h2 className="text-lg font-bold text-slate-900 mb-1">
+                        {item.title}
+                      </h2>
 
-                        {/* Description */}
-                        <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed flex-grow mb-4">
-                          {item.description}
-                        </p>
+                      {/* Description */}
+                      <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed flex-grow mb-4">
+                        {item.description}
+                      </p>
 
-                        {/* CTA Link */}
-                        {item.link && (
-                          <div className="mt-auto">
-                            <span className="text-blue-600 hover:text-yellow-500 font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                              Learn More
-                              <FontAwesomeIcon
-                                icon={faArrowRight}
-                                className="w-3 h-3 group-hover:translate-x-1 transition-transform"
-                              />
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </a>
-                    );
-                  })}
+                      {/* CTA Link */}
+                      {item.link && (
+                        <div className="mt-auto">
+                          <span className="text-blue-600 hover:text-yellow-500 font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Learn More
+                            <FontAwesomeIcon
+                              icon={faArrowRight}
+                              className="w-3 h-3 group-hover:translate-x-1 transition-transform"
+                            />
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           </section>
         </div>

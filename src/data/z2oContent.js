@@ -24,5 +24,5 @@ export const z2oContent = {
   mainImageTitle: "Where Our Members Have Received Offers",
   mainImage: Placements,
   galleryTitle: "Check out some pictures from our Zero to Offer program!",
-  gallery: [Z2O2, Z2O5, Z2O3, Z2O1, Z2O4]
+  gallery: [Z2O1, Z2O2, Z2O3, Z2O4, Z2O5]
 };

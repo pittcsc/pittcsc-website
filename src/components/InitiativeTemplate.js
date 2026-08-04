@@ -8,13 +8,11 @@ const InitiativeTemplate = ({ data }) => {
   useEffect(() => {
     hotjar.initialize(2276434, 6);
     ReactGA.initialize("UA-58446605-1");
-    // Optionally we could track dynamically based on page title, but falling back to generic for now
     ReactGA.pageview(window.location.pathname);
   }, []);
 
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Destructure the global object schema
   const {
     title,
     subtitle,
@@ -38,7 +36,7 @@ const InitiativeTemplate = ({ data }) => {
       >
         <div className="mt-24 my-8 min-h-screen space-y-16 xl:my-24">
           <section className="container relative z-10 mx-auto px-4 w-full md:px-0 lg:w-8/12">
-            
+
             {/* Hero Section */}
             <div className="flex flex-col items-center justify-center mb-12">
               <h1 className="relative z-10 mb-4 text-center text-4xl font-bold lg:text-6xl">
@@ -67,7 +65,7 @@ const InitiativeTemplate = ({ data }) => {
 
             {/* Content Section */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 relative z-10">
-              
+
               {/* Paragraphs */}
               {description.length > 0 && (
                 <div className="mb-12 space-y-4">
@@ -82,29 +80,29 @@ const InitiativeTemplate = ({ data }) => {
               {/* Events Table Section (Optional) */}
               {eventsTable && eventsTable.rows && eventsTable.rows.length > 0 && (
                 <div className="mb-12 overflow-x-auto">
-                   <h3 className="text-2xl font-bold text-primary mb-6">Schedule & Events</h3>
-                   <table className="min-w-full divide-y divide-gray-200 border rounded-lg overflow-hidden shadow-sm">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          {eventsTable.headers?.map((header, idx) => (
-                             <th key={idx} scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {header}
-                             </th>
+                  <h3 className="text-2xl font-bold text-primary mb-6">Schedule & Events</h3>
+                  <table className="min-w-full divide-y divide-gray-200 border rounded-lg overflow-hidden shadow-sm">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {eventsTable.headers?.map((header, idx) => (
+                          <th key={idx} scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {eventsTable.rows.map((row, rowIdx) => (
+                        <tr key={rowIdx} className={rowIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                          {row.map((cell, cellIdx) => (
+                            <td key={cellIdx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                              {cell}
+                            </td>
                           ))}
                         </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {eventsTable.rows.map((row, rowIdx) => (
-                           <tr key={rowIdx} className={rowIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                              {row.map((cell, cellIdx) => (
-                                 <td key={cellIdx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                   {cell}
-                                 </td>
-                              ))}
-                           </tr>
-                        ))}
-                      </tbody>
-                   </table>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
 
