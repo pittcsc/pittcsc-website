@@ -9,6 +9,7 @@ import Z2O3 from "../../images/initiatives/Z2O/z2o-3.png";
 import Z2O4 from "../../images/initiatives/Z2O/z2o-4.png";
 import Z2O5 from "../../images/initiatives/Z2O/z2o-5.png";
 import Placements from "../../images/initiatives/Z2O/placements.png";
+import { z2oContent } from "../../data/z2oContent";
 
 
 
@@ -62,34 +63,23 @@ const Z2OPage = () => {
 
             {/* Content Section */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 relative z-10">
-              <p className="text-lg leading-relaxed text-gray-700 mb-8">
-                Our 100% student led flagship program to help underclassmen go
-                from "zero" to their first internship offer! This program has
-                helped hundreds of students get their first internship, with a
-                cumulative attendance of over 400. This takes place in the
-                first few weeks of the fall semester.
+              <p className="text-xl leading-relaxed text-gray-700 mb-8">
+                {z2oContent.description}
               </p>
 
-              <h3 className="text-2xl font-bold text-primary mb-6">Workshops & Events Include:</h3>
+              <h3 className="text-2xl font-bold text-primary mb-6">{z2oContent.workshopsTitle}</h3>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                {[
-                  "What is an Internship and Why Should You Want One?",
-                  "Resume Workshop and Reviews",
-                  "Behavioral Interview Workshop",
-                  "Technical Interview Workshop",
-                  "Mock Interview Series",
-                  "Exclusive Recruiting Events with Corporate Sponsors"
-                ].map((item, index) => (
+                {z2oContent.workshopsList.map((item, index) => (
                   <li key={index} className="flex items-start space-x-3">
-                    <span className="text-yellow-400 font-bold text-xl">•</span>
-                    <span className="text-gray-700">{item}</span>
+                    <span className="text-yellow-400 font-bold text-2xl">•</span>
+                    <span className="text-lg text-gray-700">{item}</span>
                   </li>
                 ))}
               </ul>
 
 
 
-              <h3 className="text-2xl font-bold text-primary mb-6">Where Our Members Have Received Offers</h3>
+              <h3 className="text-2xl font-bold text-primary mb-6">{z2oContent.placementsTitle}</h3>
 
               <div className="mb-12 rounded-xl overflow-hidden shadow-sm border-4 border-yellow-400 group">
                 <img
@@ -99,8 +89,8 @@ const Z2OPage = () => {
                 />
               </div>
 
-              <p className="text-lg leading-relaxed text-gray-700">
-                Check out some pictures from our Zero to Offer program!
+              <p className="text-xl leading-relaxed text-gray-700">
+                {z2oContent.galleryTitle}
               </p>
             </div>
 
