@@ -37,7 +37,7 @@ const initiatives = [
   {
     title: "Offer++",
     image: OfferPlusImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/offer-plus",
     external: false,
     category: "Career",
     description: "Advanced career preparation program for students seeking full-time positions and return offers.",
@@ -45,7 +45,7 @@ const initiatives = [
   {
     title: "Mock Interviews",
     image: MockInterviewsImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/mock-interviews",
     external: false,
     category: "Career",
     description: "Practice technical and behavioral interviews with experienced peers and industry professionals.",
@@ -53,7 +53,7 @@ const initiatives = [
   {
     title: "Industry Recruiting Events",
     image: IndustryRecruitingImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/industry-recruiting",
     external: false,
     category: "Career",
     description: "Exclusive recruiting sessions and networking opportunities with top tech companies and sponsors.",
@@ -61,7 +61,7 @@ const initiatives = [
   {
     title: "Site Visits",
     image: SiteVisitsImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/site-visits",
     external: false,
     category: "Career",
     description: "Visit local tech companies and offices to see real-world engineering environments and culture.",
@@ -69,7 +69,7 @@ const initiatives = [
   {
     title: "Launchpad",
     image: LaunchpadImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/launchpad",
     external: false,
     category: "Career",
     description: "An incubator program to help you launch your own startup or big idea from scratch.",
@@ -77,7 +77,7 @@ const initiatives = [
   {
     title: "Dev Lab",
     image: DevLabImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/dev-lab",
     external: false,
     category: "Project Teams",
     description: "A hands-on development lab for students to build and collaborate on projects.",
@@ -85,7 +85,7 @@ const initiatives = [
   {
     title: "Consulting",
     image: ConsultingImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/consulting",
     external: false,
     category: "Project Teams",
     description: "Gain real-world experience building software solutions for local non-profits and startups in our community.",
@@ -93,7 +93,7 @@ const initiatives = [
   {
     title: "CSC Hacks",
     image: CSCHacksImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/csc-hacks",
     external: false,
     category: "Hackathons",
     description: "Our internal hackathon event designed to help members learn and collaborate on innovative projects.",
@@ -109,7 +109,7 @@ const initiatives = [
   {
     title: "Bit/Byte",
     image: BitByteImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/bit-byte",
     external: false,
     category: "Mentorship",
     description: "Peer mentorship program connecting upperclassmen with underclassmen for academic and career guidance.",
@@ -133,7 +133,7 @@ const initiatives = [
   {
     title: "Social Media",
     image: SocialMediaImg,
-    link: "/initiatives/coming-soon",
+    link: "/initiatives/social-media",
     external: false,
     category: "Social",
     description: "Stay connected with the club through our active social media presence and community updates.",
