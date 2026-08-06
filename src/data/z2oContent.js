@@ -10,7 +10,8 @@ export const z2oContent = {
   description: [
     `Z2O is our 100% student led flagship program to help underclassmen go from "zero" to their first internship offer! This program has helped hundreds of students get their first internship, with a cumulative attendance of over 400. This takes place in the first few weeks of the fall semester.`,
     `Students can learn about what an internship is, how to max out your resume, ace the interview process, and meet recruiters!`,
-    `From community events, officer led presentations, and an inside scoop in the tech industry, Z2O helps you go from zero to offer! `
+    `From community events, officer led presentations, and an inside scoop in the tech industry, Z2O helps you go from zero to offer!`,
+    `Make sure to also check out the PittCSC wiki for more information on the Z2O cirriculum.`
   ],
   highlightsTitle: "Workshops & Events Include:",
   highlightsList: [
