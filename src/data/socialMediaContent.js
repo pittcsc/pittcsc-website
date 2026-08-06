@@ -14,6 +14,4 @@ export const socialMediaContent = {
     ],
   mainImageTitle: "Instagram Page",
   mainImage: SMC1,
-  galleryTitle: "Check out some of our posts on Instagram!",
-  gallery: []
 };

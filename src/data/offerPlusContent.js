@@ -13,6 +13,4 @@ export const offerPlusContent = {
     ],
   mainImageTitle: "Offer++ Kickoff",
   mainImage: OPP1,
-  galleryTitle: "Check out some pictures from Offer++!",
-  gallery: []
 };
