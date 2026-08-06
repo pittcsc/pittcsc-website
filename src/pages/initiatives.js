@@ -101,7 +101,7 @@ const initiatives = [
   {
     title: "SteelHacks",
     image: SteelHacksImg,
-    link: "https://steelhacks.com",
+    link: "https://steelhacks.org",
     external: true,
     category: "Hackathons",
     description: "Pitt's largest annual hackathon, bringing together hundreds of hackers for a weekend of building and learning.",
