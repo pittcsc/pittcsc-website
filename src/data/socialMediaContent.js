@@ -6,12 +6,12 @@ export const socialMediaContent = {
     "Our online presence is just as important as our events, and as the largest and most followed student organization at Pitt, we take it seriously. We post updates about our events, post funny memes (sometimes), and highlight our members' achievements."
   ],
   highlightsTitle: "Posts & Content Include:",
-      highlightsList: [
-        "Reels",
-        "Intern Takeovers",
-        "Event Announcements",
-        "Event Highlights",
-      ],
+    highlightsList: [
+      "Reels",
+      "Intern Takeovers",
+      "Event Announcements",
+      "Event Highlights",
+    ],
   mainImageTitle: "Instagram Page",
   mainImage: SMC1,
   galleryTitle: "Check out some of our posts on Instagram!",
