@@ -12,6 +12,7 @@ export const siteVisitsContent = {
     "Dick's Sporting Goods",
     "CGI",
     "Aurora",
+    "Duolingo"
   ],
   mainImageTitle: "Our Google Site Visit",
   mainImage: GOOGLE,
