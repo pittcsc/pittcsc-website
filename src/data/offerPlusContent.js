@@ -11,8 +11,8 @@ export const offerPlusContent = {
       "Offer++ Kickoff + Resumes",
       "Offer++ Interviews"
     ],
-    mainImageTitle: "Offer++ Kickoff",
-    mainImage: OPP1,
-    galleryTitle: "Check out some pictures from Offer++!",
-    gallery: []
+  mainImageTitle: "Offer++ Kickoff",
+  mainImage: OPP1,
+  galleryTitle: "Check out some pictures from Offer++!",
+  gallery: []
 };
