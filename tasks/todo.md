@@ -106,7 +106,7 @@ can't express: the grid, its cell states, the month picker and the range slider.
 ## Status
 
 - [x] `src/lib/meet/` — time, model, score, calendar, format (pure, shared client+server)
-- [x] `src/lib/meet/store.js` — pluggable persistence (file | Upstash)
+- [x] `src/lib/meet/store.js` — pluggable persistence (Upstash | Netlify Blobs | file)
 - [x] `src/api/meet/{create,get,respond}.js`
 - [x] `src/components/meet/*`
 - [x] `src/pages/meet/index.js` + `src/pages/meet/[code].js` (matchPath `/meet/:code`)
@@ -114,9 +114,10 @@ can't express: the grid, its cell states, the month picker and the range slider.
 - [x] Verified: create flow, paint (drag/day/row/keyboard/presets), drag-to-deselect,
       live drag readout, autosave, .ics import, cross-timezone projection, greyscale
       legibility of all three states, mobile at 390px, `gatsby build`
-- [x] Verified storage: Upstash adapter exercised end-to-end against a mock speaking the
-      real REST protocol — auth, GET/SET+EX, PING, 5 concurrent writers with no lost
-      updates, and clear errors for bad token / unreachable host
+- [x] Verified storage against mocks speaking the real protocols: Upstash (auth,
+      GET/SET+EX, PING, 5 concurrent writers, bad-token and dead-host errors) and
+      Netlify Blobs (site-scoped keys, roundtrip, missing key, 5 concurrent writers,
+      and the strong-consistency downgrade path)
 
 ## Edge cases → decisions
 
@@ -136,12 +137,16 @@ can't express: the grid, its cell states, the month picker and the range slider.
 
 ## Deployment note
 
-Storage defaults to a local file store, which is correct for `gatsby develop` and for
-self-hosting but **ephemeral on serverless** — it warns at boot when it detects that.
-Set `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` for durable storage; the
-adapter interface in `src/lib/meet/store.js` is about twenty lines if another backend is
-preferred. `GET /api/meet/health` reports which store is live, whether it is reachable,
+Storage picks itself, first match wins: **Upstash** if its two env vars are set,
+otherwise **Netlify Blobs** (automatic on Netlify — no account, no config), otherwise a
+**local file** store, which is right for `gatsby develop` and warns at boot if it finds
+itself on a serverless host. `GET /api/meet/health` reports which one actually engaged
 and whether it is durable — check it after deploying, before sharing any link.
+
+Blobs asks for strong consistency, because a read-modify-write on a meeting must not see
+a stale copy and drop someone's answer. Some runtimes don't inject the `uncachedEdgeURL`
+that requires, and the SDK throws on *every read* rather than degrading — so the adapter
+catches that once and falls back to eventual consistency instead of going dark.
 
 `.env.example` documents every variable. Google import is enabled by setting
 `GATSBY_GOOGLE_CLIENT_ID`; without it the button is hidden and .ics upload carries the

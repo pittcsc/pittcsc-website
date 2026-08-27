@@ -2,22 +2,27 @@
  * Persistence for /meet. Server-side only — never import this from a component.
  *
  * The whole surface is get / put / mutate on a JSON document keyed by meeting code,
- * which is small enough that swapping the backing store is a twenty-line adapter. Two
- * ship today:
+ * which is small enough that swapping the backing store is a twenty-line adapter.
+ * Three ship, and the first one that works wins:
  *
- *   file     zero config, the default. Great for `gatsby develop` and for anyone
- *            self-hosting on a box with a real disk.
- *   upstash  set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN and it takes over.
- *            Plain REST over fetch, so no dependency and it works on any serverless
- *            host.
+ *   upstash  explicit config beats inference, so if UPSTASH_REDIS_REST_URL and
+ *            UPSTASH_REDIS_REST_TOKEN are set they take precedence. Plain REST over
+ *            fetch; works on any host.
+ *   blobs    Netlify's built-in blob store. No account, no env vars, no signup — it
+ *            simply exists when running on Netlify. `getStore` throws off-platform,
+ *            which is exactly the signal to fall through.
+ *   file     the local default. Right for `gatsby develop` and for self-hosting on a
+ *            box with a real disk; on serverless it still *works* but won't outlive
+ *            the instance, so it says so loudly at boot.
  *
- * On an ephemeral serverless filesystem the file adapter still *works*, it just won't
- * outlive the instance — so it warns loudly at boot rather than silently losing data.
+ * `GET /api/meet/health` reports which one actually engaged, because guessing about
+ * storage is how deployments lose data quietly.
  */
 
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
+import { getStore } from "@netlify/blobs";
 
 const TTL_SECONDS = 60 * 60 * 24 * 180; // meetings are ephemeral by nature
 
@@ -53,6 +58,64 @@ function fileAdapter() {
     },
     describe() {
       return `local file store at ${dir}`;
+    },
+  };
+}
+
+/* --------------------------------- blobs --------------------------------- */
+
+/**
+ * Netlify Blobs. Deliberately tried *before* the file store and after Upstash: it needs
+ * no configuration at all on Netlify, but `getStore()` throws anywhere else, so the
+ * caller treats a throw as "not on Netlify" rather than as an error.
+ */
+function blobsAdapter() {
+  // Strong consistency is what we want — a read-modify-write on a meeting must not see
+  // a stale copy and drop somebody's answer. But it needs an `uncachedEdgeURL` that
+  // only some runtimes inject, and when it's missing the SDK throws on every single
+  // read rather than degrading. So: ask for strong, and downgrade once if the
+  // environment can't honour it. A slightly stale read beats a dead endpoint.
+  let store = getStore({ name: "pittcsc-meet", consistency: "strong" });
+  let strong = true;
+
+  const downgrade = () => {
+    if (!strong) return false;
+    strong = false;
+    store = getStore({ name: "pittcsc-meet" });
+    console.warn(
+      "[meet] Netlify Blobs strong consistency is unavailable here; falling back to " +
+        "eventual consistency."
+    );
+    return true;
+  };
+
+  const withFallback = async (run) => {
+    try {
+      return await run(store);
+    } catch (err) {
+      if (err && err.name === "BlobsConsistencyError" && downgrade()) {
+        return run(store);
+      }
+      throw err;
+    }
+  };
+
+  return {
+    name: "blobs",
+    durable: true,
+    async get(code) {
+      return withFallback((s) => s.get(`meet-${code}`, { type: "json" }));
+    },
+    async put(code, value) {
+      await withFallback((s) => s.setJSON(`meet-${code}`, value));
+    },
+    async ping() {
+      // Reading a key that will never exist still proves the store answers.
+      await withFallback((s) => s.get("__healthcheck__"));
+      return true;
+    },
+    describe() {
+      return `Netlify Blobs (${strong ? "strong" : "eventual"} consistency)`;
     },
   };
 }
@@ -135,18 +198,24 @@ function pickAdapter() {
 
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
   if (url && token) {
     adapter = upstashAdapter(url, token);
   } else {
-    adapter = fileAdapter();
-    const ephemeral =
-      process.env.NETLIFY || process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
-    if (ephemeral && !process.env.MEET_DATA_DIR) {
-      console.warn(
-        "[meet] Using the local file store on a serverless host — meetings will not " +
-          "survive between instances. Set UPSTASH_REDIS_REST_URL and " +
-          "UPSTASH_REDIS_REST_TOKEN for durable storage."
-      );
+    try {
+      adapter = blobsAdapter();
+    } catch (err) {
+      adapter = fileAdapter();
+      const ephemeral =
+        process.env.NETLIFY || process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+      if (ephemeral && !process.env.MEET_DATA_DIR) {
+        console.warn(
+          "[meet] Falling back to the local file store on a serverless host — meetings " +
+            "will not survive between instances. Netlify Blobs was unavailable " +
+            `(${err.message}). Set UPSTASH_REDIS_REST_URL and ` +
+            "UPSTASH_REDIS_REST_TOKEN for durable storage."
+        );
+      }
     }
   }
 

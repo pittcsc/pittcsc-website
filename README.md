@@ -18,19 +18,24 @@ optional for local development.
 Group scheduling at `/meet`. It is intentionally not in the navbar — the shareable link
 is the entry point.
 
-**Storage.** Meetings are written to a local file by default, which is fine for
-`npm run develop` but *not* for a serverless deploy: each request can run in a fresh
-container with an empty disk, so saved meetings would disappear. Set both of these in
-your host's dashboard (Netlify: Site configuration → Environment variables) to use
-Upstash Redis instead:
+**Storage.** The store is picked automatically, first match wins:
 
-```
-UPSTASH_REDIS_REST_URL
-UPSTASH_REDIS_REST_TOKEN
+1. **Upstash Redis** — only if `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
+   are set. Explicit config beats inference.
+2. **Netlify Blobs** — used automatically on Netlify. No account, no signup, no
+   environment variables.
+3. **Local file** — the default off-platform. Correct for `npm run develop` and for
+   self-hosting; on serverless it works but won't outlive the instance, and it says so
+   at boot.
+
+So a Netlify deploy needs no storage configuration. Confirm it after deploying with:
+
+```console
+curl https://pittcsc.org/api/meet/health
 ```
 
-Check `GET /api/meet/health` after deploying — it reports the live store and whether it
-is durable, and returns no credentials, so it is safe to hit in production.
+You want `"durable": true`. The response contains no credentials, so it is safe to hit
+in production.
 
 **Google Calendar import** is optional. Set `GATSBY_GOOGLE_CLIENT_ID` to an OAuth 2.0
 Web application client ID with the Google Calendar API enabled. Without it the button is
