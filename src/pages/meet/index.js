@@ -4,7 +4,12 @@ import { motion } from "framer-motion";
 
 import Layout from "../../layouts/layout";
 import CreateForm from "../../components/meet/CreateForm";
-import { fetchHealth, recentMeetings, rememberMeeting } from "../../lib/meet/client";
+import {
+  fetchHealth,
+  forgetMeeting,
+  recentMeetings,
+  rememberMeeting,
+} from "../../lib/meet/client";
 
 export default function MeetHome() {
   const [recent, setRecent] = useState([]);
@@ -79,21 +84,34 @@ export default function MeetHome() {
                   </h2>
                   <ul className="space-y-2">
                     {recent.map((entry) => (
-                      <li key={entry.code}>
+                      <li
+                        key={entry.code}
+                        className="flex items-stretch gap-2 bg-white border border-gray-200 rounded-2xl hover:border-gray-400 transition"
+                      >
                         <Link
                           to={`/meet/${entry.code}`}
-                          className="flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-2xl hover:border-gray-400 transition"
+                          className="flex flex-1 items-center justify-between min-w-0 px-4 py-3"
                         >
-                          <span className="font-bold truncate">
-                            {entry.name || "Untitled meeting"}
-                          </span>
+                          <span className="font-bold truncate">{entry.name}</span>
                           <span className="flex-none ml-3 text-gray-400 text-sm">
                             /meet/{entry.code}
                           </span>
                         </Link>
+                        <button
+                          type="button"
+                          onClick={() => setRecent(forgetMeeting(entry.code))}
+                          aria-label={`Remove ${entry.name} from this list`}
+                          title="Remove from this list. The meeting itself is unaffected."
+                          className="flex-none px-3 text-gray-300 text-xl leading-none hover:text-red-600 focus:text-red-600 transition"
+                        >
+                          &times;
+                        </button>
                       </li>
                     ))}
                   </ul>
+                  <p className="mt-2 text-gray-400 text-xs">
+                    Removing only clears it from this device. The link keeps working.
+                  </p>
                 </div>
               )}
             </div>

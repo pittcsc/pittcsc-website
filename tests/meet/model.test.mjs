@@ -8,7 +8,8 @@ import {
 } from "../../src/lib/meet/model.js";
 import { H, meeting } from "./helpers.mjs";
 
-const create = (o) => normalizeCreate({ dates: ["2026-09-02"], ...o });
+// A name is required, so the helper supplies one; tests that care override it.
+const create = (o) => normalizeCreate({ name: "Test", dates: ["2026-09-02"], ...o });
 
 test("the default state is unavailable, so silence is never a yes", () => {
   assert.equal(UNAVAILABLE, 0);
@@ -33,7 +34,16 @@ test("a window may not straddle a day boundary", () => {
 });
 
 test("creation rejects input the UI would never send", () => {
-  assert.throws(() => normalizeCreate({ dates: [] }), /at least one date/i);
+  assert.throws(() => create({ dates: [] }), /at least one date/i);
+  // A name is required: an untitled meeting is unidentifiable in a group chat, and
+  // silently substituting "Untitled meeting" hides the omission from whoever made it.
+  assert.throws(() => create({ name: "" }), /give the meeting a name/i);
+  assert.throws(() => create({ name: "   " }), /give the meeting a name/i);
+  assert.throws(
+    () => normalizeCreate({ dates: ["2026-09-02"] }),
+    /give the meeting a name/i,
+    "omitted entirely, not just blank"
+  );
   assert.throws(() => create({ startMin: H(20), endMin: H(10) }), /end time/i);
   assert.throws(() => create({ startMin: H(10), endMin: H(10) }), /end time/i);
   // Genuinely distinct consecutive days, or dedup would quietly bring it under.
@@ -41,14 +51,14 @@ test("creation rejects input the UI would never send", () => {
     new Date(Date.UTC(2026, 8, 1 + i)).toISOString().slice(0, 10)
   );
   assert.equal(new Set(tooMany).size, LIMITS.dates + 5, "fixture really is over the cap");
-  assert.throws(() => normalizeCreate({ dates: tooMany }), /days or fewer/i);
-  assert.throws(() => normalizeCreate({ dates: ["2026-01-01", "2028-01-01"] }), /within a year/i);
+  assert.throws(() => create({ dates: tooMany }), /days or fewer/i);
+  assert.throws(() => create({ dates: ["2026-01-01", "2028-01-01"] }), /within a year/i);
 });
 
 test("creation is forgiving about things it can safely normalise", () => {
   const m = create({ dates: ["2026-09-04", "2026-09-02", "2026-09-02", "not-a-date"] });
   assert.deepEqual(m.dates, ["2026-09-02", "2026-09-04"], "sorted, deduped, junk dropped");
-  assert.equal(create({ name: "" }).name, "Untitled meeting");
+  assert.equal(create({ name: "  Retro  " }).name, "Retro", "trimmed, not rejected");
   assert.equal(create({ tz: "Mars/Olympus" }).tz, "America/New_York", "unknown zone falls back");
   assert.equal(create({ startMin: 61, endMin: 1000 }).startMin, 60, "times snap to the slot grid");
 });

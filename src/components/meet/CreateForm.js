@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import MonthPicker from "./MonthPicker";
 import TimeRangeSlider from "./TimeRangeSlider";
@@ -73,9 +73,17 @@ export default function CreateForm({ onCreated }) {
   };
 
   const span = endMin - startMin;
+  const nameMissing = error === "Give the meeting a name.";
+
+  const nameRef = useRef(null);
 
   const submit = async (event) => {
     event.preventDefault();
+    if (!name.trim()) {
+      setError("Give the meeting a name.");
+      if (nameRef.current) nameRef.current.focus();
+      return;
+    }
     if (!dates.length) {
       setError("Pick at least one day.");
       return;
@@ -101,7 +109,7 @@ export default function CreateForm({ onCreated }) {
 
   return (
     <form onSubmit={submit} noValidate>
-      {error && (
+      {error && !nameMissing && (
         <p className="mb-6 px-4 py-3 text-red-800 text-sm bg-red-50 border border-red-200 rounded-xl">
           {error}
         </p>
@@ -109,15 +117,30 @@ export default function CreateForm({ onCreated }) {
 
       <Field label="What's the meeting?">
         <input
-          className="px-4 py-3 w-full text-lg font-bold border border-gray-300 rounded-xl focus:border-primary focus:ring-primary"
+          ref={nameRef}
+          id="meet-name"
+          className={`px-4 py-3 w-full text-lg font-bold border rounded-xl focus:border-primary focus:ring-primary ${
+            nameMissing ? "border-red-400" : "border-gray-300"
+          }`}
           placeholder="SteelHacks planning"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (error) setError(null);
+          }}
           maxLength={90}
           autoFocus
+          required
           autoComplete="off"
           aria-label="Meeting name"
+          aria-invalid={nameMissing || undefined}
+          aria-describedby={nameMissing ? "meet-name-error" : undefined}
         />
+        {nameMissing && (
+          <p id="meet-name-error" className="mt-2 text-red-700 text-sm">
+            {error}
+          </p>
+        )}
       </Field>
 
       <Field label="What days could work?" hint="Select all that work.">
@@ -128,7 +151,6 @@ export default function CreateForm({ onCreated }) {
               {label}
             </Chip>
           ))}
-          {dates.length > 0 && <Chip onClick={() => setDates([])}>Clear</Chip>}
         </div>
       </Field>
 

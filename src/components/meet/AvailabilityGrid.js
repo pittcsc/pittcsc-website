@@ -121,11 +121,14 @@ export default function AvailabilityGrid({ view, states, onChange }) {
   }, [allSlots, slotsWhere]);
 
   const applyPreset = (preset) => {
-    // Additive: presets stack, so "Weekdays" then "Weekends" is everything.
-    const next = Uint8Array.from(states);
+    // Replaces rather than stacks. Stacking meant tapping Weekdays then Weekends left
+    // you with everything and no way back except Clear, so the buttons couldn't be used
+    // to compare options — which is the obvious thing to try. Replacing also matches
+    // how the date presets on the create screen already behave.
+    const next = new Uint8Array(states.length);
     for (const i of preset.slots) next[i] = AVAILABLE;
-    commit(next, preset.slots);
-    setAnnouncement(`${preset.label} added — ${preset.slots.length} half-hours selected`);
+    commit(next, allSlots);
+    setAnnouncement(`${preset.label} — ${preset.slots.length} half-hours selected`);
   };
 
   const clearAll = () => {

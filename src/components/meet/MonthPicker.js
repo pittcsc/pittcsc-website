@@ -1,5 +1,4 @@
 import React, { useMemo, useRef, useState } from "react";
-import { summarizeDates } from "../../lib/meet/format";
 import { dayLabel, isoAddDays, isoOf, isoToday, isoWeekday, parseIso } from "../../lib/meet/time";
 
 const MONTHS = [
@@ -168,25 +167,32 @@ export default function MonthPicker({ value, onChange, tz }) {
         </button>
       </div>
 
-      {/* The written form of the selection, next to the thing that changes it. */}
-      <div className="flex flex-wrap items-baseline justify-center gap-x-2 mt-1 mb-2 text-sm">
-        {value.length ? (
-          <>
-            <span className="font-bold text-primary">{summarizeDates(value)}</span>
-            <span className="text-gray-400">
-              {value.length} {value.length === 1 ? "day" : "days"}
-            </span>
-          </>
-        ) : (
-          <span className="text-gray-400">No days selected</span>
+      {/* A count, not a list. The cells below already say *which* days, and they say it
+          better — adjacent selections visibly touch, scattered ones stand apart. A
+          compressed restatement like "Sep 15, Sep 16 +3" only asks the reader to decode
+          what they can already see. Grey, because this confirms rather than invites. */}
+      <div className="flex flex-wrap items-baseline justify-center gap-x-2 mt-1 mb-2 text-gray-500 text-sm">
+        <span>
+          {value.length
+            ? `${value.length} ${value.length === 1 ? "day" : "days"} selected`
+            : "No days selected"}
+        </span>
+        {value.length > 0 && (
+          <button
+            type="button"
+            className="px-2 py-1.5 -my-1 underline hover:text-gray-900"
+            onClick={() => onChange([])}
+          >
+            Clear
+          </button>
         )}
         {offscreen && (
           <button
             type="button"
-            className="px-2 py-1.5 -my-1 text-gray-500 underline hover:text-gray-900"
+            className="px-2 py-1.5 -my-1 underline hover:text-gray-900"
             onClick={() => setCursor(offscreen.jumpTo)}
           >
-            +{offscreen.count} in {offscreen.month}
+            {offscreen.count} not shown
           </button>
         )}
       </div>

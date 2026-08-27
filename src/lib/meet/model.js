@@ -160,8 +160,8 @@ function toSlotMinute(value, fallback) {
  * the API layer can stay a thin shell.
  */
 export function normalizeCreate(body) {
-  const name =
-    cleanString(body && body.name, LIMITS.meetingNameLen) || "Untitled meeting";
+  const name = cleanString(body && body.name, LIMITS.meetingNameLen);
+  if (!name) fail("Give the meeting a name.");
 
   const rawDates = Array.isArray(body && body.dates) ? body.dates : [];
   const dates = Array.from(new Set(rawDates.filter((d) => parseIso(d)))).sort();
