@@ -4,13 +4,17 @@ import { motion } from "framer-motion";
 
 import Layout from "../../layouts/layout";
 import CreateForm from "../../components/meet/CreateForm";
-import { recentMeetings, rememberMeeting } from "../../lib/meet/client";
+import { fetchHealth, recentMeetings, rememberMeeting } from "../../lib/meet/client";
 
 export default function MeetHome() {
   const [recent, setRecent] = useState([]);
+  const [storageWarning, setStorageWarning] = useState(null);
 
   useEffect(() => {
     setRecent(recentMeetings());
+    fetchHealth().then((h) => {
+      if (h && h.reachable && !h.durable) setStorageWarning(h);
+    });
   }, []);
 
   return (
@@ -45,6 +49,22 @@ export default function MeetHome() {
             </p>
 
             <div className="w-11/12 max-w-xl">
+              {storageWarning && (
+                <div
+                  role="alert"
+                  className="mb-6 px-4 py-3 text-sm bg-red-50 border border-red-300 rounded-2xl"
+                >
+                  <p className="font-bold text-red-800">
+                    This site isn&apos;t set up to save meetings yet
+                  </p>
+                  <p className="mt-1 text-red-700">
+                    Anything created here can disappear within minutes, and the link may
+                    stop working for the people you send it to. An admin needs to
+                    configure storage — see <code>/api/meet/health</code>.
+                  </p>
+                </div>
+              )}
+
               <CreateForm
                 onCreated={({ code, meeting }) => {
                   rememberMeeting({ code, name: meeting.name });

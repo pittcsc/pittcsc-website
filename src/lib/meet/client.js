@@ -35,6 +35,21 @@ async function request(url, options) {
   return payload;
 }
 
+/**
+ * Is this deployment actually keeping meetings? On a serverless host with no durable
+ * store configured, a meeting can vanish between the request that creates it and the
+ * next one — so an organizer would share a link that 404s for everybody. Better to say
+ * so before they do.
+ */
+export async function fetchHealth() {
+  try {
+    const res = await fetch("/api/meet/health", { headers: { Accept: "application/json" } });
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
 export function createMeeting(input) {
   return request("/api/meet/create", {
     method: "POST",
