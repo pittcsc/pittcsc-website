@@ -7,9 +7,9 @@
  */
 
 import {
-  BUSY,
-  FREE,
+  AVAILABLE,
   IF_NEEDED,
+  UNAVAILABLE,
   SLOT_MIN,
   decodeSlots,
   isContiguousWindow,
@@ -46,9 +46,9 @@ export function buildGroup(meeting, participants, muted) {
   for (const person of active) {
     for (let i = 0; i < n; i += 1) {
       const state = person.slots[i];
-      if (state === BUSY) busy[i] += 1;
+      if (state === AVAILABLE) free[i] += 1;
       else if (state === IF_NEEDED) maybe[i] += 1;
-      else free[i] += 1;
+      else busy[i] += 1;
     }
   }
 
@@ -69,11 +69,15 @@ export function buildGroup(meeting, participants, muted) {
   };
 }
 
-/** Worst state a person holds anywhere inside slots [start, start+k). */
+/**
+ * Worst state a person holds anywhere inside slots [start, start+k).
+ * A window only works for someone if *every* slot in it does, so one unavailable
+ * half-hour disqualifies the whole window.
+ */
 function worstState(slots, start, k) {
-  let worst = FREE;
+  let worst = AVAILABLE;
   for (let i = start; i < start + k; i += 1) {
-    if (slots[i] === BUSY) return BUSY;
+    if (slots[i] === UNAVAILABLE) return UNAVAILABLE;
     if (slots[i] === IF_NEEDED) worst = IF_NEEDED;
   }
   return worst;
@@ -98,7 +102,7 @@ export function rankWindows(group) {
     const no = [];
     for (const person of active) {
       const state = worstState(person.slots, start, k);
-      if (state === BUSY) no.push(person);
+      if (state === UNAVAILABLE) no.push(person);
       else if (state === IF_NEEDED) maybe.push(person);
       else yes.push(person);
     }

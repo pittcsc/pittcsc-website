@@ -1,38 +1,39 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import GridFrame from "./GridFrame";
-import { BUSY, FREE, IF_NEEDED } from "../../lib/meet/model";
-import { dayLabel, timeLabel } from "../../lib/meet/time";
+import { AVAILABLE, IF_NEEDED, UNAVAILABLE } from "../../lib/meet/model";
+import { dayLabel, isoWeekday, rangeLabel, timeLabel } from "../../lib/meet/time";
 
-const STATE_WORD = { 0: "free", 1: "if needed", 2: "busy" };
+const STATE_WORD = { 0: "unavailable", 1: "if needed", 2: "available" };
 
 /**
- * The input surface.
+ * The input surface: **drag to add the times you're free.**
  *
- * Three decisions do most of the work here:
+ * Selection means availability, the same way it does in the date picker on the create
+ * screen and the same way it does in every other scheduling tool. An earlier version of
+ * this inverted it — everything started selected and you painted your conflicts — which
+ * bought a few gestures and cost far too much:
  *
- * 1. **Free is the default.** When2meet starts you at "unavailable" and makes you
- *    paint your whole life green. Inside a window an organizer already narrowed, most
- *    people are mostly free, so you paint the exceptions instead. Far fewer strokes,
- *    and it means someone who opens the link and immediately hits done has said
- *    something true rather than something useless.
+ *   - it fails silently in the dangerous direction. Misread "paint free" and you look
+ *     unavailable, which is conspicuous and someone asks. Misread "paint busy" and you
+ *     look wide open, and the group books a time you can't make.
+ *   - a blank answer became a claim. Every hour you never considered read as a yes.
  *
- * 2. **No tool picker in the common path.** The first cell your pointer lands on sets
- *    the mode: touch a free cell and you're painting busy, touch a busy cell and
- *    you're erasing. There is nothing to select before you start.
+ * The gesture count is recovered where it should be — presets and calendar import —
+ * rather than by redefining what a filled cell means. "Weekdays" is one tap; importing
+ * a calendar selects everything your events leave open.
  *
- * 3. **Headers are bulk operations.** Handled by GridFrame, wired up below.
- *
- * Pointer events are delegated to the grid container and driven through
- * `elementFromPoint`, which is what makes one code path serve mouse, trackpad, touch
- * and stylus. Cells set `touch-action: none` so a finger drag paints instead of
- * scrolling; the time gutter keeps `pan-y` so the page can still be scrolled.
+ * Pointer events are delegated to the grid container and resolved with
+ * `elementFromPoint`, which is what lets one code path serve mouse, trackpad, touch and
+ * stylus. Cells set `touch-action: none` so a finger drag paints instead of scrolling;
+ * the time gutter keeps `pan-y` so the page can still be scrolled.
  */
 export default function AvailabilityGrid({ view, states, onChange, disabled }) {
   const [draft, setDraft] = useState(null);
-  const [tool, setTool] = useState(BUSY);
+  const [tool, setTool] = useState(AVAILABLE);
   const [anchor, setAnchor] = useState(null);
   const [active, setActive] = useState(null);
   const [announcement, setAnnouncement] = useState("");
+  const [liveRange, setLiveRange] = useState(null);
 
   const bodyRef = useRef(null);
   const drag = useRef(null);
@@ -55,6 +56,12 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     return { byIndex, byCell };
   }, [view]);
 
+  const selectedCount = useMemo(() => {
+    let n = 0;
+    for (let i = 0; i < shown.length; i += 1) if (shown[i] !== UNAVAILABLE) n += 1;
+    return n;
+  }, [shown]);
+
   const commit = useCallback(
     (next, indices) => {
       onChange(next, indices);
@@ -63,32 +70,80 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     [onChange]
   );
 
-  /* ------------------------------ bulk edits ------------------------------ */
-
   const paintMany = useCallback(
-    (indices, valueFor) => {
+    (indices, value) => {
       if (disabled || !indices.length) return;
       const next = Uint8Array.from(states);
-      for (const i of indices) next[i] = valueFor(next[i]);
+      for (const i of indices) next[i] = value;
       commit(next, indices);
     },
     [commit, disabled, states]
   );
 
+  /* ------------------------------- shortcuts ------------------------------- */
+
+  const allSlots = useMemo(() => Array.from(geometry.byIndex.keys()), [geometry]);
+
+  const slotsWhere = useCallback(
+    (predicate) => {
+      const out = [];
+      view.rows.forEach((minute) => {
+        view.cols.forEach((iso) => {
+          const slotIndex = view.at(iso, minute);
+          if (slotIndex >= 0 && predicate(iso, minute)) out.push(slotIndex);
+        });
+      });
+      return out;
+    },
+    [view]
+  );
+
+  /**
+   * Presets are how the low-effort case stays low-effort without inverting what
+   * selection means. Only the ones that would actually select something in this
+   * meeting's window are offered — a dead "Evenings" button on a 9-to-5 poll is worse
+   * than no button.
+   */
+  const presets = useMemo(() => {
+    const isWeekday = (iso) => {
+      const d = isoWeekday(iso);
+      return d >= 1 && d <= 5;
+    };
+    const candidates = [
+      { label: "Anytime", pick: () => allSlots },
+      { label: "Weekdays", pick: () => slotsWhere((iso) => isWeekday(iso)) },
+      { label: "Weekends", pick: () => slotsWhere((iso) => !isWeekday(iso)) },
+      { label: "Evenings", pick: () => slotsWhere((_, minute) => minute >= 17 * 60) },
+    ];
+    return candidates
+      .map((c) => ({ ...c, slots: c.pick() }))
+      .filter((c) => c.slots.length && c.slots.length < allSlots.length + 1);
+  }, [allSlots, slotsWhere]);
+
+  const applyPreset = (preset) => {
+    // Additive: presets stack, so "Weekdays" then "Weekends" is everything.
+    const next = Uint8Array.from(states);
+    for (const i of preset.slots) next[i] = AVAILABLE;
+    commit(next, preset.slots);
+    setAnnouncement(`${preset.label} added — ${preset.slots.length} half-hours selected`);
+  };
+
+  const clearAll = () => {
+    paintMany(allSlots, UNAVAILABLE);
+    setAnnouncement("Cleared");
+  };
+
+  /* ------------------------------ bulk edits ------------------------------ */
+
   const toggleDay = useCallback(
     (colIndex) => {
       const iso = view.cols[colIndex];
-      const indices = view.rows
-        .map((minute) => view.at(iso, minute))
-        .filter((i) => i >= 0);
-      // If any of the day is still open, clear the whole day; otherwise give it back.
-      const anyOpen = indices.some((i) => states[i] !== tool);
-      const target = anyOpen ? tool : FREE;
-      paintMany(indices, () => target);
+      const indices = view.rows.map((m) => view.at(iso, m)).filter((i) => i >= 0);
+      const allOn = indices.every((i) => states[i] === tool);
+      const target = allOn ? UNAVAILABLE : tool;
+      paintMany(indices, target);
       const label = dayLabel(iso);
-      setAnnouncement(
-        `${label.dowLong} ${label.md} marked ${target === FREE ? "free" : STATE_WORD[target]}`
-      );
+      setAnnouncement(`${label.dowLong} ${label.md} marked ${STATE_WORD[target]}`);
     },
     [paintMany, states, tool, view]
   );
@@ -96,17 +151,11 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
   const toggleTimeRow = useCallback(
     (rowIndex) => {
       const minute = view.rows[rowIndex];
-      const indices = view.cols
-        .map((iso) => view.at(iso, minute))
-        .filter((i) => i >= 0);
-      const anyOpen = indices.some((i) => states[i] !== tool);
-      const target = anyOpen ? tool : FREE;
-      paintMany(indices, () => target);
-      setAnnouncement(
-        `${timeLabel(minute)} on every day marked ${
-          target === FREE ? "free" : STATE_WORD[target]
-        }`
-      );
+      const indices = view.cols.map((iso) => view.at(iso, minute)).filter((i) => i >= 0);
+      const allOn = indices.every((i) => states[i] === tool);
+      const target = allOn ? UNAVAILABLE : tool;
+      paintMany(indices, target);
+      setAnnouncement(`${timeLabel(minute)} on every day marked ${STATE_WORD[target]}`);
     },
     [paintMany, states, tool, view]
   );
@@ -135,6 +184,22 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     return out;
   };
 
+  /** Live "Tue 5:00 – 8:30 PM" feedback while dragging, so the polarity is felt. */
+  const describeTouched = () => {
+    const indices = Array.from(touched.current);
+    if (!indices.length) return null;
+    const positions = indices.map((i) => geometry.byIndex.get(i)).filter(Boolean);
+    const cols = new Set(positions.map((p) => p.colIndex));
+    if (cols.size !== 1) {
+      return `${cols.size} days · ${indices.length} half-hours`;
+    }
+    const rows = positions.map((p) => p.rowIndex);
+    const lo = view.rows[Math.min(...rows)];
+    const hi = view.rows[Math.max(...rows)] + 30;
+    const label = dayLabel(view.cols[positions[0].colIndex]);
+    return `${label.dow} ${rangeLabel(lo, hi)}`;
+  };
+
   const onPointerDown = (event) => {
     if (disabled || event.button > 0) return;
     const target = event.target.closest ? event.target.closest("[data-slot]") : null;
@@ -147,19 +212,19 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     // the roving tabindex pointing at whatever was last touched.
     if (target.focus) target.focus({ preventScroll: true });
 
-    // Alt is a transient "if needed" modifier so the tool never has to be switched
-    // for a one-off maybe.
+    // Alt is a transient "if needed" modifier, so a one-off maybe never needs the tool
+    // switched and switched back.
     const activeTool = event.altKey ? IF_NEEDED : tool;
 
     if (event.shiftKey && anchor != null) {
       const indices = rectBetween(anchor, slotIndex);
-      const mode = states[slotIndex] === activeTool ? FREE : activeTool;
-      paintMany(indices, () => mode);
+      const mode = states[slotIndex] === activeTool ? UNAVAILABLE : activeTool;
+      paintMany(indices, mode);
       setAnchor(slotIndex);
       return;
     }
 
-    const mode = states[slotIndex] === activeTool ? FREE : activeTool;
+    const mode = states[slotIndex] === activeTool ? UNAVAILABLE : activeTool;
     const next = Uint8Array.from(states);
     next[slotIndex] = mode;
 
@@ -168,6 +233,7 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     setDraft(next);
     setAnchor(slotIndex);
     setActive(slotIndex);
+    setLiveRange(describeTouched());
 
     if (bodyRef.current && bodyRef.current.setPointerCapture) {
       try {
@@ -208,20 +274,20 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     next[slotIndex] = drag.current.mode;
     drag.current.next = next;
     setDraft(next);
+    setLiveRange(describeTouched());
   };
 
   const endDrag = () => {
     if (!drag.current) return;
-    const { next } = drag.current;
+    const { next, mode } = drag.current;
     const indices = Array.from(touched.current);
     drag.current = null;
+    setLiveRange(null);
     commit(next, indices);
     if (indices.length > 1) {
-      setAnnouncement(`${indices.length} half-hours marked ${STATE_WORD[nextStateOf(next, indices)]}`);
+      setAnnouncement(`${indices.length} half-hours marked ${STATE_WORD[mode]}`);
     }
   };
-
-  const nextStateOf = (arr, indices) => arr[indices[indices.length - 1]];
 
   useEffect(() => {
     const stop = () => endDrag();
@@ -253,9 +319,7 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
 
     const step = (dr, dc) => {
       for (let n = 1; n <= Math.max(view.rows.length, view.cols.length); n += 1) {
-        const hit = geometry.byCell.get(
-          `${pos.rowIndex + dr * n}:${pos.colIndex + dc * n}`
-        );
+        const hit = geometry.byCell.get(`${pos.rowIndex + dr * n}:${pos.colIndex + dc * n}`);
         if (hit !== undefined) return hit;
       }
       return null;
@@ -267,8 +331,7 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
       event.preventDefault();
       if (event.shiftKey) {
         // Shift + arrow paints as it travels, mirroring a drag.
-        const mode = states[slotIndex] === tool ? FREE : tool;
-        paintMany([dest], () => mode);
+        paintMany([dest], states[slotIndex] === tool ? UNAVAILABLE : tool);
       }
       focusSlot(dest);
     };
@@ -290,8 +353,8 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
       case "Enter": {
         event.preventDefault();
         const activeTool = event.altKey ? IF_NEEDED : tool;
-        const mode = states[slotIndex] === activeTool ? FREE : activeTool;
-        paintMany([slotIndex], () => mode);
+        const mode = states[slotIndex] === activeTool ? UNAVAILABLE : activeTool;
+        paintMany([slotIndex], mode);
         setAnchor(slotIndex);
         setAnnouncement(`Marked ${STATE_WORD[mode]}`);
         break;
@@ -299,7 +362,7 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
       case "m":
       case "M":
         event.preventDefault();
-        setTool((t) => (t === BUSY ? IF_NEEDED : BUSY));
+        setTool((t) => (t === AVAILABLE ? IF_NEEDED : AVAILABLE));
         break;
       default:
         break;
@@ -340,31 +403,34 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
         data-anchor={anchor === slotIndex}
         tabIndex={isActive ? 0 : -1}
         disabled={disabled}
-        aria-pressed={state !== FREE}
+        aria-pressed={state !== UNAVAILABLE}
         aria-label={`${label.dow} ${label.md} ${timeLabel(minute)} — ${STATE_WORD[state]}`}
         onFocus={() => setActive(slotIndex)}
       />
     );
   };
 
+  const hours = (selectedCount / 2).toLocaleString(undefined, {
+    maximumFractionDigits: 1,
+  });
+
   return (
     <div>
       <div className="flex flex-wrap items-end justify-between gap-3 mb-3">
         <div>
-          <h2 className="text-lg font-bold">Mark when you&apos;re busy</h2>
+          <h2 className="text-lg font-bold">When are you free?</h2>
           <p className="text-gray-500 text-sm">
-            Everything starts as available. Drag over the grid, or tap a day or time
-            label.
+            Drag to add the times that work. Drag again to remove.
           </p>
         </div>
 
         <div
           className="inline-flex p-1 bg-gray-100 rounded-full"
           role="group"
-          aria-label="What dragging marks"
+          aria-label="What dragging adds"
         >
           {[
-            [BUSY, "Busy"],
+            [AVAILABLE, "Free"],
             [IF_NEEDED, "If needed"],
           ].map(([value, label]) => (
             <button
@@ -373,7 +439,7 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
               aria-pressed={tool === value}
               onClick={() => setTool(value)}
               className={`px-4 py-1.5 text-sm font-bold rounded-full transition ${
-                tool === value ? "bg-gray-900 text-white" : "text-gray-500 hover:text-gray-900"
+                tool === value ? "bg-primary text-white" : "text-gray-500 hover:text-gray-900"
               }`}
             >
               {label}
@@ -382,13 +448,40 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
         </div>
       </div>
 
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        {presets.map((preset) => (
+          <button
+            key={preset.label}
+            type="button"
+            disabled={disabled}
+            onClick={() => applyPreset(preset)}
+            className="px-3 py-1.5 text-sm font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition"
+          >
+            {preset.label}
+          </button>
+        ))}
+        {selectedCount > 0 && (
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={clearAll}
+            className="px-3 py-1.5 text-gray-500 text-sm font-bold hover:text-gray-900 transition"
+          >
+            Clear
+          </button>
+        )}
+        <span className="ml-auto text-gray-500 text-sm" aria-live="polite">
+          {liveRange || (selectedCount ? `${hours} hours selected` : "Nothing selected yet")}
+        </span>
+      </div>
+
       <GridFrame
         view={view}
         renderCell={renderCell}
         onDayHeader={disabled ? undefined : toggleDay}
         onTimeHeader={disabled ? undefined : toggleTimeRow}
-        dayHeaderHint="Mark all of"
-        timeHeaderHint="Mark"
+        dayHeaderHint="Select all of"
+        timeHeaderHint="Select"
         bodyRef={bodyRef}
         bodyProps={{
           onPointerDown,
@@ -402,13 +495,13 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-gray-500 text-xs">
         <span className="inline-flex items-center gap-2">
-          <span className="meet-swatch" data-state="0" /> Available
+          <span className="meet-swatch" data-state="2" /> Free
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="meet-swatch" data-state="1" /> If needed
         </span>
         <span className="inline-flex items-center gap-2">
-          <span className="meet-swatch" data-state="2" /> Busy
+          <span className="meet-swatch" data-state="0" /> Can&apos;t make it
         </span>
         <span className="text-gray-400">
           Arrows move · Space toggles · Shift fills a block

@@ -7,9 +7,18 @@
    buttons. This file only covers what utilities can't express: the availability grid
    and its cell states.
 
-   The one rule behind the cell palette: a state is never encoded by hue alone. Busy is
-   dark *and* hatched, "if needed" is mid-tone *and* dotted, free is white *and* empty.
-   Greyscale printing and every form of colour-vision deficiency keep the three apart.
+   Two rules behind the cell palette:
+
+   1. Filled means selected, means available — the same polarity as the date picker on
+      the create screen and as every other scheduling tool. A filled cell is never a
+      prohibition.
+   2. A state is never encoded by hue alone. Free is a solid dark-blue fill, "if needed"
+      is a mid-tone dotted texture, and can't-make-it is empty white. The three stay
+      apart in greyscale and under every form of colour-vision deficiency.
+
+   The input grid uses a flat brand fill; the group heatmap uses a graded ramp with a
+   headcount printed in each cell. They deliberately don't look alike, because they mean
+   different things.
    ========================================================================== */
 
 .meet {
@@ -169,23 +178,26 @@
   }
 }
 
+/* 0 = can't make it (nothing selected) */
 .meet-cell[data-state="0"] {
   background: #fff;
 }
 
+/* 1 = if needed — selected, but provisional, so it reads as a lighter texture */
 .meet-cell[data-state="1"] {
-  background-color: #e8eaf1;
-  background-image: radial-gradient(#8b93a7 1.1px, transparent 1.1px);
+  background-color: #c3cbe4;
+  background-image: radial-gradient(rgba(36, 62, 139, 0.75) 1.3px, transparent 1.3px);
   background-size: 6px 6px;
 }
 
+/* 2 = free — the affirmative answer, so it gets the solid brand fill */
 .meet-cell[data-state="2"] {
-  background-color: var(--meet-ink);
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0) 0 3px,
-    rgba(255, 255, 255, 0.16) 3px 4px
-  );
+  background-color: var(--meet-primary);
+}
+
+/* A run of selected cells should read as one block, not a stripe of separate ones. */
+.meet-cell[data-state="2"] + .meet-cell[data-state="2"] {
+  border-top-color: rgba(255, 255, 255, 0.22);
 }
 
 .meet-cell[data-anchor="true"]::after {
@@ -274,19 +286,14 @@
 }
 
 .meet-swatch[data-state="1"] {
-  background-color: #e8eaf1;
-  background-image: radial-gradient(#8b93a7 1.1px, transparent 1.1px);
+  background-color: #c3cbe4;
+  background-image: radial-gradient(rgba(36, 62, 139, 0.75) 1.3px, transparent 1.3px);
   background-size: 6px 6px;
 }
 
 .meet-swatch[data-state="2"] {
-  background-color: var(--meet-ink);
-  border-color: var(--meet-ink);
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0) 0 3px,
-    rgba(255, 255, 255, 0.16) 3px 4px
-  );
+  background-color: var(--meet-primary);
+  border-color: var(--meet-primary);
 }
 
 .meet-swatch[data-state="ramp"] {

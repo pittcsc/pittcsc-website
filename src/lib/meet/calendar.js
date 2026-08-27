@@ -7,17 +7,18 @@
  * exist at all), used to compute overlaps, and dropped.
  */
 
-import { BUSY, FREE, SLOT_MIN } from "./model.js";
+import { AVAILABLE, SLOT_MIN, UNAVAILABLE } from "./model.js";
 import { utcToZoned, zonedToUtcMs } from "./time.js";
 
 const SLOT_MS = SLOT_MIN * 60000;
 
 /**
- * Paint busy intervals onto a slot array.
+ * Turn calendar busy-intervals into an availability selection: every slot your
+ * calendar leaves open is selected, every slot an event covers is not.
  *
- * A slot counts as busy when an event covers more than a token sliver of it —
+ * A slot only counts as taken when an event covers more than a token sliver of it —
  * a 9:00–9:05 standup shouldn't wipe out your 9:00–9:30. Manual edits win: anything
- * the person already marked by hand is left alone, so re-importing never silently
+ * the person already adjusted by hand is left alone, so re-importing never silently
  * undoes a correction.
  */
 export function applyBusyIntervals(slots, intervals, { previous, manual } = {}) {
@@ -34,7 +35,7 @@ export function applyBusyIntervals(slots, intervals, { previous, manual } = {}) 
       if (hi > lo) covered += hi - lo;
       if (covered >= threshold) break;
     }
-    next[i] = covered >= threshold ? BUSY : FREE;
+    next[i] = covered >= threshold ? UNAVAILABLE : AVAILABLE;
   }
 
   if (manual && previous) {
@@ -43,13 +44,6 @@ export function applyBusyIntervals(slots, intervals, { previous, manual } = {}) 
     }
   }
   return next;
-}
-
-/** How many slots an import actually changed — the number worth showing a human. */
-export function diffCount(before, after) {
-  let changed = 0;
-  for (let i = 0; i < after.length; i += 1) if (before[i] !== after[i]) changed += 1;
-  return changed;
 }
 
 /* ----------------------------------- ICS ----------------------------------- */

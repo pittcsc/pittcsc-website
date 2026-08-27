@@ -8,18 +8,19 @@
  *
  * A participant's answer is a digit string, one character per slot:
  *
- *     "0" free   "1" if needed   "2" busy
+ *     "0" can't make it   "1" if needed   "2" available
  *
- * Compact enough to keep whole meetings in a single value, cheap to diff, and it
- * carries no information about *why* anyone is busy.
+ * Higher is better, and the default is 0. That ordering is deliberate: an answer you
+ * never gave must never read as a yes. Nothing here records *why* a slot isn't
+ * available, only that it isn't.
  */
 
 import { isoAddDays, isoDiffDays, isValidTz, parseIso } from "./time.js";
 
 export const SLOT_MIN = 30;
-export const FREE = 0;
+export const UNAVAILABLE = 0;
 export const IF_NEEDED = 1;
-export const BUSY = 2;
+export const AVAILABLE = 2;
 
 export const LIMITS = {
   dates: 45,

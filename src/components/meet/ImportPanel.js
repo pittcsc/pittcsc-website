@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import {
   applyBusyIntervals,
-  diffCount,
   parseIcs,
   summarizeIntervals,
 } from "../../lib/meet/calendar";
@@ -11,8 +10,9 @@ const BUTTON =
   "px-4 py-2 text-sm font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition disabled:opacity-50";
 
 /**
- * Optional shortcut, shown where it's useful: right above the grid you'd otherwise fill
- * in by hand.
+ * Optional shortcut, shown right above the grid you'd otherwise fill in by hand: it
+ * selects every slot your calendar leaves open, so the common case is "import, fix one
+ * thing, done".
  *
  * Google is asked for the `calendar.freebusy` scope and nothing else — that grant
  * returns opaque start/end pairs, so event titles, guests and locations never reach the
@@ -27,15 +27,15 @@ export default function ImportPanel({ slots, states, manual, onImport, windowMs 
 
   const ingest = (intervals, source, tz) => {
     const next = applyBusyIntervals(slots, intervals, { previous: states, manual });
-    const changed = diffCount(states, next);
     onImport(next, source);
     setStatus({
       kind: "ok",
       text: intervals.length
-        ? `Found ${summarizeIntervals(intervals, tz)} — ${changed} half-hour${
-            changed === 1 ? "" : "s"
-          } marked busy. Adjust anything that's off.`
-        : "Nothing on your calendar clashes with this window.",
+        ? `Selected the times your calendar is open, around ${summarizeIntervals(
+            intervals,
+            tz
+          )}. Adjust anything that's off.`
+        : "Your calendar is clear for this whole window, so everything is selected.",
     });
   };
 
@@ -98,7 +98,8 @@ export default function ImportPanel({ slots, states, manual, onImport, windowMs 
             {dragOver ? "Drop the .ics file" : "Import your calendar"}
           </p>
           <p className="text-gray-500 text-sm">
-            We&apos;ll only import when you&apos;re busy.
+            We&apos;ll select when you&apos;re free. Only free/busy is read — never
+            event details.
           </p>
         </div>
 

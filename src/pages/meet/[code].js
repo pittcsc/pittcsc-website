@@ -139,6 +139,13 @@ export default function MeetRoom({ params, location }) {
   const blockers = useMemo(() => (ranked.length ? topBlockers(ranked) : []), [ranked]);
   const miss = useMemo(() => (group ? nearMiss(group, ranked) : null), [group, ranked]);
 
+  // An answer with nothing selected would silently read as "none of these work", so
+  // the submit path stays closed until there's something to say.
+  const hasSelection = useMemo(
+    () => Boolean(mySlots && mySlots.some((state) => state !== 0)),
+    [mySlots]
+  );
+
   const bestSlots = useMemo(() => spanOf(best[0]), [best]);
   const focusSlots = useMemo(() => spanOf(hoverWindow), [hoverWindow]);
 
@@ -409,15 +416,18 @@ export default function MeetRoom({ params, location }) {
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-gray-400 text-sm">
-                  {submitted
-                    ? "Saved. Change it any time."
-                    : "Nothing marked means free all week."}
+                  {hasSelection
+                    ? submitted
+                      ? "Saved. Change it any time."
+                      : "Looks good — send it through."
+                    : "Pick the times you can make. Nothing is selected yet."}
                 </p>
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   type="button"
-                  className={PRIMARY_BTN}
+                  className={`${PRIMARY_BTN} disabled:opacity-40`}
+                  disabled={!hasSelection}
                   onClick={() => {
                     if (!submitted) {
                       pendingSlots.current = mySlots;
