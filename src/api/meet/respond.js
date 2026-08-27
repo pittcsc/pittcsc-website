@@ -40,13 +40,6 @@ export default withHandler("POST", async (req, res) => {
       ? participants.find((p) => p.id === body.participantId)
       : null;
 
-    if (body.remove) {
-      if (!byId) throw notFound("There's nothing to remove.");
-      current.participants = participants.filter((p) => p.id !== byId.id);
-      outcome = { participantId: null, removed: true };
-      return current;
-    }
-
     if (byId) {
       byId.name = name;
       byId.slots = slots;

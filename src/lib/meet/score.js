@@ -10,6 +10,7 @@ import {
   AVAILABLE,
   IF_NEEDED,
   UNAVAILABLE,
+  hasAnswered,
   SLOT_MIN,
   decodeSlots,
   isContiguousWindow,
@@ -24,11 +25,12 @@ import { isoOf, utcToZoned } from "./time.js";
  * `muted` ids stay in the roster but are excluded from every count — the what-if
  * lever for "we can't find a time that works for all thirty of you".
  */
-export function buildGroup(meeting, participants, muted) {
+export function buildGroup(meeting, muted) {
   const n = slotCount(meeting);
+  const participants = (meeting && meeting.participants) || [];
   const mutedSet = muted instanceof Set ? muted : new Set(muted || []);
-  const answered = (participants || [])
-    .filter((p) => p && p.submittedAt)
+  const answered = participants
+    .filter(hasAnswered)
     .map((p) => ({
       id: p.id,
       name: p.name,
@@ -41,21 +43,19 @@ export function buildGroup(meeting, participants, muted) {
   const active = answered.filter((p) => !p.muted);
   const free = new Int16Array(n);
   const maybe = new Int16Array(n);
-  const busy = new Int16Array(n);
 
   for (const person of active) {
     for (let i = 0; i < n; i += 1) {
       const state = person.slots[i];
       if (state === AVAILABLE) free[i] += 1;
       else if (state === IF_NEEDED) maybe[i] += 1;
-      else busy[i] += 1;
     }
   }
 
   // People who gave a name but haven't answered yet. They are the honest version of
   // "not yet answered": observed, not inferred from a headcount the organizer guessed.
-  const waiting = (participants || [])
-    .filter((p) => p && !p.submittedAt)
+  const waiting = participants
+    .filter((p) => p && !hasAnswered(p))
     .map((p) => ({ id: p.id, name: p.name, pending: true }));
 
   return {
@@ -65,7 +65,7 @@ export function buildGroup(meeting, participants, muted) {
     waiting,
     total: active.length,
     pending: waiting.length,
-    perSlot: { free, maybe, busy },
+    perSlot: { free, maybe },
   };
 }
 
@@ -84,11 +84,31 @@ function worstState(slots, start, k) {
 }
 
 /**
+ * Split the group by whether they can make the span of slots [start, start+k).
+ *
+ * This is the domain's core question and it has exactly one answer, so it lives here
+ * rather than being re-derived per view. A component that hand-rolled this is how the
+ * cell-detail panel once ended up listing available people under "Busy".
+ */
+export function partitionAt(group, start, k = 1) {
+  const yes = [];
+  const maybe = [];
+  const no = [];
+  for (const person of group.active) {
+    const state = worstState(person.slots, start, k);
+    if (state === UNAVAILABLE) no.push(person);
+    else if (state === IF_NEEDED) maybe.push(person);
+    else yes.push(person);
+  }
+  return { yes, maybe, no };
+}
+
+/**
  * Every candidate window of the meeting's duration, sliding one slot at a time and
  * never straddling a day boundary.
  */
 export function rankWindows(group) {
-  const { meeting, active } = group;
+  const { meeting } = group;
   const k = windowLengthSlots(meeting);
   const per = slotsPerDay(meeting);
   const total = slotCount(meeting);
@@ -97,15 +117,7 @@ export function rankWindows(group) {
   for (let start = 0; start + k <= total; start += 1) {
     if (!isContiguousWindow(meeting, start, k)) continue;
 
-    const yes = [];
-    const maybe = [];
-    const no = [];
-    for (const person of active) {
-      const state = worstState(person.slots, start, k);
-      if (state === UNAVAILABLE) no.push(person);
-      else if (state === IF_NEEDED) maybe.push(person);
-      else yes.push(person);
-    }
+    const { yes, maybe, no } = partitionAt(group, start, k);
 
     const dateIndex = Math.floor(start / per);
     const slotOfDay = start % per;
@@ -187,9 +199,12 @@ export function pickBest(windows, limit = 3) {
  * question organizers actually ask ("is it just Priya?") and the one a heatmap can
  * never answer.
  */
-export function topBlockers(windows, { sample = 8, limit = 3 } = {}) {
+const BLOCKER_SAMPLE = 8;
+const BLOCKER_LIMIT = 3;
+
+export function topBlockers(windows) {
   const tally = new Map();
-  const pool = windows.slice(0, sample);
+  const pool = windows.slice(0, BLOCKER_SAMPLE);
   if (!pool.length) return [];
   for (const w of pool) {
     for (const person of w.no) {
@@ -201,7 +216,7 @@ export function topBlockers(windows, { sample = 8, limit = 3 } = {}) {
   return Array.from(tally.values())
     .filter((row) => row.blocks > pool.length / 2)
     .sort((a, b) => b.blocks - a.blocks)
-    .slice(0, limit)
+    .slice(0, BLOCKER_LIMIT)
     .map((row) => ({ ...row, of: pool.length }));
 }
 

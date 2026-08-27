@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { dayLabel, timeLabel } from "../../lib/meet/time";
 
 /**
@@ -18,15 +18,19 @@ export default function GridFrame({
   onTimeHeader,
   dayHeaderHint,
   timeHeaderHint,
-  scrollRef,
   bodyRef,
   bodyProps,
 }) {
   const { rows, cols } = view;
 
+  // Day labels vary per column, not per cell, and `dayLabel` re-parses the ISO string
+  // three times. Computing them once here instead of inside renderCell takes this off
+  // the drag hot path, where the grid re-renders on every newly-touched slot.
+  const dayLabels = useMemo(() => cols.map(dayLabel), [cols]);
+
   return (
     <div className="meet-grid-wrap">
-      <div className="meet-grid-scroll" ref={scrollRef}>
+      <div className="meet-grid-scroll">
         <div
           className="meet-grid"
           ref={bodyRef}
@@ -38,14 +42,12 @@ export default function GridFrame({
           <div className="meet-grid__corner" />
 
           {cols.map((iso, colIndex) => {
-            const label = dayLabel(iso);
-            const weekend = label.dow === "Sat" || label.dow === "Sun";
+            const label = dayLabels[colIndex];
             return (
               <button
                 type="button"
                 key={iso}
                 className="meet-daybtn"
-                data-weekend={weekend}
                 onClick={onDayHeader ? () => onDayHeader(colIndex) : undefined}
                 title={onDayHeader ? `${dayHeaderHint} ${label.dowLong}` : undefined}
                 aria-label={
@@ -80,18 +82,36 @@ export default function GridFrame({
                   {isHour ? timeLabel(minute, { compact: true }) : timeLabel(minute)}
                 </button>
 
-                {cols.map((iso, colIndex) =>
-                  renderCell({
-                    slotIndex: view.at(iso, minute),
-                    date: iso,
+                {cols.map((iso, colIndex) => {
+                  const slotIndex = view.at(iso, minute);
+                  const shape = {
+                    "data-hour": isHour,
+                    "data-firstrow": rowIndex === 0,
+                    "data-lastcol": colIndex === cols.length - 1,
+                  };
+
+                  // A hole is a product of this frame's own timezone projection, so
+                  // the frame renders it rather than making every caller notice -1.
+                  if (slotIndex < 0) {
+                    return (
+                      <div
+                        key={`${iso}-${minute}`}
+                        className="meet-cell"
+                        data-void="true"
+                        {...shape}
+                        aria-hidden="true"
+                      />
+                    );
+                  }
+
+                  return renderCell({
+                    key: `${iso}-${minute}`,
+                    slotIndex,
                     minute,
-                    rowIndex,
-                    colIndex,
-                    isHour,
-                    isFirstRow: rowIndex === 0,
-                    isLastCol: colIndex === cols.length - 1,
-                  })
-                )}
+                    label: dayLabels[colIndex],
+                    shape,
+                  });
+                })}
               </React.Fragment>
             );
           })}

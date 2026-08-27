@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
+import { summarizeDates } from "../../lib/meet/format";
 import { dayLabel, isoAddDays, isoOf, isoToday, isoWeekday, parseIso } from "../../lib/meet/time";
 
 const MONTHS = [
@@ -104,6 +105,38 @@ export default function MonthPicker({ value, onChange, tz }) {
     return selected.has(iso);
   };
 
+  const toggleOne = (iso) => {
+    if (iso < today) return;
+    applyRange(iso, iso, !selected.has(iso));
+  };
+
+  /**
+   * Keyboard travel across the grid. Without this the calendar is reachable but not
+   * operable: activation used to live on pointerdown alone, which Enter and Space
+   * never fire.
+   */
+  const onKeyDown = (event, iso) => {
+    const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[event.key];
+    if (step) {
+      event.preventDefault();
+      const target = isoAddDays(iso, step);
+      const node = document.querySelector(`[data-iso="${target}"]`);
+      if (node && !node.disabled) {
+        node.focus();
+      } else {
+        // Walked off the visible month — follow the cursor so travel doesn't dead-end.
+        const p = parseIso(target);
+        if (p && target >= today) {
+          setCursor({ y: p.y, m: p.m });
+          window.requestAnimationFrame(() => {
+            const moved = document.querySelector(`[data-iso="${target}"]`);
+            if (moved && !moved.disabled) moved.focus();
+          });
+        }
+      }
+    }
+  };
+
   const shift = (delta) =>
     setCursor((c) => {
       const next = c.m + delta;
@@ -150,7 +183,7 @@ export default function MonthPicker({ value, onChange, tz }) {
         {offscreen && (
           <button
             type="button"
-            className="text-gray-500 underline hover:text-gray-900"
+            className="px-2 py-1.5 -my-1 text-gray-500 underline hover:text-gray-900"
             onClick={() => setCursor(offscreen.jumpTo)}
           >
             +{offscreen.count} in {offscreen.month}
@@ -181,11 +214,18 @@ export default function MonthPicker({ value, onChange, tz }) {
               data-on={on}
               data-today={iso === today}
               disabled={iso < today}
+              data-iso={iso}
               onPointerDown={(e) => {
                 e.preventDefault();
                 startDrag(iso);
               }}
               onPointerEnter={() => extendDrag(iso)}
+              // Enter and Space arrive here as a click with detail 0; a real pointer
+              // click has already been handled by onPointerDown, so ignore that one.
+              onClick={(e) => {
+                if (e.detail === 0) toggleOne(iso);
+              }}
+              onKeyDown={(e) => onKeyDown(e, iso)}
               aria-pressed={on}
               aria-label={`${dayLabel(iso).dowLong} ${MONTHS[p.m - 1]} ${p.d}`}
             >
@@ -196,19 +236,4 @@ export default function MonthPicker({ value, onChange, tz }) {
       </div>
     </div>
   );
-}
-
-/** "Aug 29 → Sep 2" for a run, "Aug 29, Sep 1 +2" when the days are scattered. */
-export function summarizeDates(dates) {
-  const sorted = dates.slice().sort();
-  if (!sorted.length) return "";
-  const first = dayLabel(sorted[0]);
-  if (sorted.length === 1) return first.md;
-
-  const last = dayLabel(sorted[sorted.length - 1]);
-  const contiguous = sorted.every((iso, i) => i === 0 || iso === isoAddDays(sorted[i - 1], 1));
-  if (contiguous) return `${first.md} → ${last.md}`;
-
-  const shown = sorted.slice(0, 2).map((iso) => dayLabel(iso).md).join(", ");
-  return `${shown} +${sorted.length - 2}`;
 }

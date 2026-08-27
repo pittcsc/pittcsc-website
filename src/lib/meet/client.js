@@ -43,11 +43,51 @@ export function createMeeting(input) {
   });
 }
 
-export function fetchMeeting(code) {
-  return request(`/api/meet/get?code=${encodeURIComponent(code)}`, {
-    method: "GET",
-    headers: { Accept: "application/json" },
-  });
+/**
+ * The room polls this every 15s and the answer is usually identical. `Cache-Control:
+ * no-store` is correct here (a CDN must never answer for us) but it also means the
+ * browser won't revalidate on its own, so the ETag is carried by hand. A 304 comes
+ * back as `{ notModified: true }` with no body to parse.
+ */
+const etags = new Map();
+
+export async function fetchMeeting(code) {
+  const url = `/api/meet/get?code=${encodeURIComponent(code)}`;
+  const known = etags.get(code);
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "GET",
+      headers: known
+        ? { Accept: "application/json", "If-None-Match": known }
+        : { Accept: "application/json" },
+    });
+  } catch (e) {
+    const err = new Error("Can't reach the server. Check your connection.");
+    err.offline = true;
+    throw err;
+  }
+
+  if (res.status === 304) return { notModified: true };
+
+  const tag = res.headers.get("ETag");
+  if (tag) etags.set(code, tag);
+
+  let payload = null;
+  try {
+    payload = await res.json();
+  } catch (e) {
+    payload = null;
+  }
+
+  if (!res.ok) {
+    const err = new Error((payload && payload.error) || "Something went wrong.");
+    err.status = res.status;
+    err.payload = payload;
+    throw err;
+  }
+  return payload;
 }
 
 export function saveAvailability(input) {

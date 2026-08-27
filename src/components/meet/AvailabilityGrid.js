@@ -27,7 +27,7 @@ const STATE_WORD = { 0: "unavailable", 1: "if needed", 2: "available" };
  * stylus. Cells set `touch-action: none` so a finger drag paints instead of scrolling;
  * the time gutter keeps `pan-y` so the page can still be scrolled.
  */
-export default function AvailabilityGrid({ view, states, onChange, disabled }) {
+export default function AvailabilityGrid({ view, states, onChange }) {
   const [draft, setDraft] = useState(null);
   const [tool, setTool] = useState(AVAILABLE);
   const [anchor, setAnchor] = useState(null);
@@ -72,12 +72,12 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
 
   const paintMany = useCallback(
     (indices, value) => {
-      if (disabled || !indices.length) return;
+      if (!indices.length) return;
       const next = Uint8Array.from(states);
       for (const i of indices) next[i] = value;
       commit(next, indices);
     },
-    [commit, disabled, states]
+    [commit, states]
   );
 
   /* ------------------------------- shortcuts ------------------------------- */
@@ -117,7 +117,7 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     ];
     return candidates
       .map((c) => ({ ...c, slots: c.pick() }))
-      .filter((c) => c.slots.length && c.slots.length < allSlots.length + 1);
+      .filter((c) => c.slots.length);
   }, [allSlots, slotsWhere]);
 
   const applyPreset = (preset) => {
@@ -201,7 +201,7 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
   };
 
   const onPointerDown = (event) => {
-    if (disabled || event.button > 0) return;
+    if (event.button > 0) return;
     const target = event.target.closest ? event.target.closest("[data-slot]") : null;
     if (!target) return;
     const slotIndex = Number(target.getAttribute("data-slot"));
@@ -289,15 +289,20 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
     }
   };
 
+  // A pointer released outside the grid still has to end the drag. endDrag closes over
+  // fresh state each render, so it goes through a ref and the listeners bind once
+  // instead of churning on every frame of a drag.
+  const endDragRef = useRef(endDrag);
+  endDragRef.current = endDrag;
   useEffect(() => {
-    const stop = () => endDrag();
+    const stop = () => endDragRef.current();
     window.addEventListener("pointerup", stop);
     window.addEventListener("pointercancel", stop);
     return () => {
       window.removeEventListener("pointerup", stop);
       window.removeEventListener("pointercancel", stop);
     };
-  });
+  }, []);
 
   /* ------------------------------- keyboard ------------------------------- */
 
@@ -310,7 +315,6 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
   };
 
   const onKeyDown = (event) => {
-    if (disabled) return;
     const target = event.target.closest ? event.target.closest("[data-slot]") : null;
     if (!target) return;
     const slotIndex = Number(target.getAttribute("data-slot"));
@@ -371,38 +375,20 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
 
   /* -------------------------------- render -------------------------------- */
 
-  const renderCell = ({ slotIndex, date, minute, isHour, isFirstRow, isLastCol }) => {
-    if (slotIndex < 0) {
-      return (
-        <div
-          key={`${date}-${minute}`}
-          className="meet-cell"
-          data-void="true"
-          data-hour={isHour}
-          data-firstrow={isFirstRow}
-          data-lastcol={isLastCol}
-          aria-hidden="true"
-        />
-      );
-    }
-
+  const renderCell = ({ key, slotIndex, minute, label, shape }) => {
     const state = shown[slotIndex];
-    const label = dayLabel(date);
     const isActive = active === slotIndex || (active == null && slotIndex === 0);
 
     return (
       <button
         type="button"
-        key={`${date}-${minute}`}
+        key={key}
         className="meet-cell"
         data-slot={slotIndex}
         data-state={state}
-        data-hour={isHour}
-        data-firstrow={isFirstRow}
-        data-lastcol={isLastCol}
         data-anchor={anchor === slotIndex}
+        {...shape}
         tabIndex={isActive ? 0 : -1}
-        disabled={disabled}
         aria-pressed={state !== UNAVAILABLE}
         aria-label={`${label.dow} ${label.md} ${timeLabel(minute)} — ${STATE_WORD[state]}`}
         onFocus={() => setActive(slotIndex)}
@@ -458,7 +444,6 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
           <button
             key={preset.label}
             type="button"
-            disabled={disabled}
             onClick={() => applyPreset(preset)}
             className="px-3 py-1.5 text-sm font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition"
           >
@@ -468,7 +453,6 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
         {selectedCount > 0 && (
           <button
             type="button"
-            disabled={disabled}
             onClick={clearAll}
             className="px-3 py-1.5 text-gray-500 text-sm font-bold hover:text-gray-900 transition"
           >
@@ -483,8 +467,8 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
       <GridFrame
         view={view}
         renderCell={renderCell}
-        onDayHeader={disabled ? undefined : toggleDay}
-        onTimeHeader={disabled ? undefined : toggleTimeRow}
+        onDayHeader={toggleDay}
+        onTimeHeader={toggleTimeRow}
         dayHeaderHint="Select all of"
         timeHeaderHint="Select"
         bodyRef={bodyRef}

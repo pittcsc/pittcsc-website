@@ -7,7 +7,36 @@
  */
 
 import { SLOT_MIN } from "./model.js";
-import { dayLabel, isoOf, rangeLabel, utcToZoned } from "./time.js";
+import { dayLabel, isoAddDays, isoOf, rangeLabel, utcToZoned } from "./time.js";
+
+/**
+ * One name per slot state. Three panels used to say "Busy", "Can't make it" and
+ * "unavailable" for the same thing, on the same screen.
+ */
+export const STATE_LABEL = {
+  available: "Free",
+  ifNeeded: "If needed",
+  unavailable: "Can't make it",
+};
+
+/**
+ * "Aug 29 → Sep 2" for a run of days, "Aug 29, Sep 1 +2" when they are scattered.
+ * Never collapses a discontiguous set into a range, which would advertise days the
+ * organizer never offered.
+ */
+export function summarizeDates(dates) {
+  const sorted = dates.slice().sort();
+  if (!sorted.length) return "";
+  const first = dayLabel(sorted[0]);
+  if (sorted.length === 1) return first.md;
+
+  const last = dayLabel(sorted[sorted.length - 1]);
+  const contiguous = sorted.every((iso, i) => i === 0 || iso === isoAddDays(sorted[i - 1], 1));
+  if (contiguous) return `${first.md} → ${last.md}`;
+
+  const shown = sorted.slice(0, 2).map((iso) => dayLabel(iso).md).join(", ");
+  return `${shown} +${sorted.length - 2}`;
+}
 
 /** A ranked window, described in the viewer's own timezone. */
 export function describeWindow(window, slots, viewerTz) {

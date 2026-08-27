@@ -28,11 +28,50 @@ const TTL_SECONDS = 60 * 60 * 24 * 180; // meetings are ephemeral by nature
 
 /* --------------------------------- file --------------------------------- */
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 function fileAdapter() {
   const dir =
     process.env.MEET_DATA_DIR || path.join(os.tmpdir(), "pittcsc-meet");
 
   const fileFor = (code) => path.join(dir, `${code}.json`);
+  const lockFor = (code) => path.join(dir, `${code}.lock`);
+
+  /**
+   * An exclusive-create lock file. `wx` fails if the file exists, which is the only
+   * primitive the filesystem gives us that two processes can't both win — and without
+   * it, compare-then-write is a race that silently drops answers.
+   */
+  async function withLock(code, fn) {
+    await fs.mkdir(dir, { recursive: true });
+    const lock = lockFor(code);
+
+    for (let attempt = 0; attempt < 400; attempt += 1) {
+      let handle = null;
+      try {
+        handle = await fs.open(lock, "wx");
+      } catch (err) {
+        if (err.code !== "EEXIST") throw err;
+        // Reclaim a lock orphaned by a crashed process rather than hanging forever.
+        try {
+          const age = Date.now() - (await fs.stat(lock)).mtimeMs;
+          if (age > 10000) await fs.unlink(lock);
+        } catch (e) {
+          /* it vanished on its own, which is what we wanted */
+        }
+        await sleep(5 + Math.random() * 10);
+        continue;
+      }
+
+      try {
+        return await fn();
+      } finally {
+        await handle.close();
+        await fs.unlink(lock).catch(() => {});
+      }
+    }
+    throw new Error("Timed out waiting to write that meeting.");
+  }
 
   return {
     name: "file",
@@ -48,9 +87,29 @@ function fileAdapter() {
     async put(code, value) {
       await fs.mkdir(dir, { recursive: true });
       // Write-then-rename so a crash mid-write can't leave a truncated meeting.
-      const tmp = `${fileFor(code)}.${process.pid}.tmp`;
+      const tmp = `${fileFor(code)}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`;
       await fs.writeFile(tmp, JSON.stringify(value), "utf8");
       await fs.rename(tmp, fileFor(code));
+    },
+    async read(code) {
+      try {
+        const raw = await fs.readFile(fileFor(code), "utf8");
+        return { value: JSON.parse(raw), token: raw };
+      } catch (err) {
+        if (err.code === "ENOENT") return { value: null, token: null };
+        throw err;
+      }
+    },
+    async writeIfUnchanged(code, value, token) {
+      // Re-read *inside* the lock: another writer may have landed between our caller's
+      // read and this call, and that is exactly the case the token comparison exists
+      // to catch.
+      return withLock(code, async () => {
+        const current = await this.read(code);
+        if (current.token !== token) return false;
+        await this.put(code, value);
+        return true;
+      });
     },
     async ping() {
       await fs.mkdir(dir, { recursive: true });
@@ -108,6 +167,21 @@ function blobsAdapter() {
     },
     async put(code, value) {
       await withFallback((s) => s.setJSON(`meet-${code}`, value));
+    },
+    async read(code) {
+      const hit = await withFallback((s) =>
+        s.getWithMetadata(`meet-${code}`, { type: "json" })
+      );
+      return hit ? { value: hit.data, token: hit.etag } : { value: null, token: null };
+    },
+    async writeIfUnchanged(code, value, token) {
+      const res = await withFallback((s) =>
+        token
+          ? s.setJSON(`meet-${code}`, value, { onlyIfMatch: token })
+          : s.setJSON(`meet-${code}`, value, { onlyIfNew: true })
+      );
+      // The SDK reports whether our write is the one that landed.
+      return !res || res.modified !== false;
     },
     async ping() {
       // Reading a key that will never exist still proves the store answers.
@@ -172,6 +246,27 @@ function upstashAdapter(url, token) {
     async put(code, value) {
       await call(["SET", `meet:${code}`, JSON.stringify(value), "EX", TTL_SECONDS]);
     },
+    async read(code) {
+      const raw = await call(["GET", `meet:${code}`]);
+      return raw ? { value: JSON.parse(raw), token: raw } : { value: null, token: null };
+    },
+    async writeIfUnchanged(code, value, token) {
+      // Compare-and-set against the exact previous serialization. Redis runs the
+      // script atomically, so two writers can't both win.
+      const script = [
+        "local cur = redis.call('GET', KEYS[1])",
+        "if (cur == false and ARGV[2] == '') or cur == ARGV[2] then",
+        "  redis.call('SET', KEYS[1], ARGV[1], 'EX', ARGV[3])",
+        "  return 1",
+        "end",
+        "return 0",
+      ].join("\n");
+      const ok = await call([
+        "EVAL", script, "1", `meet:${code}`,
+        JSON.stringify(value), token == null ? "" : token, String(TTL_SECONDS),
+      ]);
+      return Number(ok) === 1;
+    },
     async ping() {
       const pong = await call(["PING"]);
       return String(pong).toUpperCase() === "PONG";
@@ -224,12 +319,19 @@ function pickAdapter() {
 }
 
 /**
- * Serialize read-modify-write per meeting so two people submitting at the same instant
- * can't clobber each other. In-process only, which is the right scope for the file
- * adapter; Upstash deployments that outgrow this want a WATCH/MULTI upgrade, and the
- * seam for it is right here.
+ * Load, apply `fn`, save — safely against other writers.
+ *
+ * The in-process queue below only orders writers that share a process. Two people
+ * answering at the same moment can easily land in different Netlify containers (or
+ * different dev-server function invocations), where a plain read-then-write silently
+ * drops one of the answers. So the actual guarantee comes from a compare-and-set
+ * against the value we read, retried on conflict; the queue just keeps a single
+ * process from wasting retries on itself.
+ *
+ * `fn` may return `null` to abort without writing.
  */
 const chains = new Map();
+const MAX_ATTEMPTS = 6;
 
 export async function getMeeting(code) {
   return pickAdapter().get(code);
@@ -239,35 +341,43 @@ export async function putMeeting(code, value) {
   return pickAdapter().put(code, value);
 }
 
-/**
- * Load, apply `fn`, save. `fn` may return `null` to abort without writing.
- */
 export async function mutateMeeting(code, fn) {
   const previous = chains.get(code) || Promise.resolve();
 
   const next = previous.then(async () => {
     const store = pickAdapter();
-    const meeting = await store.get(code);
-    if (!meeting) return null;
-    const updated = await fn(meeting);
-    if (!updated) return meeting;
-    await store.put(code, updated);
-    return updated;
+
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
+      const { value: meeting, token } = await store.read(code);
+      if (!meeting) return null;
+
+      const updated = await fn(meeting);
+      if (!updated) return meeting;
+
+      if (await store.writeIfUnchanged(code, updated, token)) return updated;
+
+      // Someone else wrote first. Re-read and re-apply rather than clobbering them;
+      // back off a little so a burst of writers doesn't livelock.
+      await new Promise((r) => setTimeout(r, 15 * (attempt + 1)));
+    }
+
+    const err = new Error("That meeting is being updated by too many people at once.");
+    err.statusCode = 409;
+    throw err;
   });
 
-  // Keep the chain alive on failure, but don't leak the rejection into the next call.
-  chains.set(
-    code,
-    next.then(
-      () => undefined,
-      () => undefined
-    )
+  const tail = next.then(
+    () => undefined,
+    () => undefined
   );
+  chains.set(code, tail);
 
   try {
     return await next;
   } finally {
-    if (chains.size > 500) chains.clear();
+    // Drop only this code's link once it is the tail, so the map can't grow without
+    // bound while other writers queued behind it keep their ordering.
+    if (chains.get(code) === tail) chains.delete(code);
   }
 }
 

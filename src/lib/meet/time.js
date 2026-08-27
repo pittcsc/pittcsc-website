@@ -70,15 +70,28 @@ export function tzOffsetMs(utcMs, tz) {
 }
 
 /**
- * Wall-clock in `tz` -> absolute UTC. Probed twice so DST transitions land on the
- * correct side; times inside a spring-forward gap resolve forward, which is the
- * behaviour every calendar app uses.
+ * Wall-clock in `tz` -> absolute UTC.
+ *
+ * Two DST cases have to come out right. On a fall-back day the same wall time happens
+ * twice and we take the first occurrence. On a spring-forward day the wall time may not
+ * exist at all — 2:30am simply never happens — and we resolve forward past the jump,
+ * which is what calendars conventionally do and what keeps a slot ordered after the one
+ * before it.
  */
 export function zonedToUtcMs({ y, m, d, minute }, tz) {
   const guess = Date.UTC(y, m - 1, d, 0, minute);
   const first = tzOffsetMs(guess, tz);
   const second = tzOffsetMs(guess - first, tz);
-  return guess - second;
+  const settled = guess - second;
+
+  // If reading it back doesn't give the wall time we asked for, that time is inside a
+  // gap. The other candidate is the far side of the jump.
+  const wanted = ((minute % 1440) + 1440) % 1440;
+  const back = utcToZoned(settled, tz);
+  if (back.minute !== wanted || back.d !== d || back.m !== m || back.y !== y) {
+    return guess - first;
+  }
+  return settled;
 }
 
 /* ------------------------------------------------------------------ */

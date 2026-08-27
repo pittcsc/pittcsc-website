@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Tag } from "./GroupGrid";
 import {
+  STATE_LABEL,
   buildIcs,
   describeWindow,
   downloadIcs,
@@ -105,9 +106,9 @@ export default function BestTimes({
             {expanded && (
               <div className="px-5 pt-1 pb-5 space-y-3 bg-white border border-t-0 border-primary rounded-b-2xl">
                 {[
-                  { label: "Can't make it", kind: "no", people: window.no },
-                  { label: "If needed", kind: "maybe", people: window.maybe },
-                  { label: "Free", kind: "yes", people: window.yes },
+                  { label: STATE_LABEL.unavailable, kind: "no", people: window.no },
+                  { label: STATE_LABEL.ifNeeded, kind: "maybe", people: window.maybe },
+                  { label: STATE_LABEL.available, kind: "yes", people: window.yes },
                 ]
                   .filter((row) => row.people.length)
                   .map((row) => (

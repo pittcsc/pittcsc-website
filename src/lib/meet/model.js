@@ -15,7 +15,8 @@
  * available, only that it isn't.
  */
 
-import { isoAddDays, isoDiffDays, isValidTz, parseIso } from "./time.js";
+import { badRequest } from "./http.js";
+import { isoDiffDays, isValidTz, parseIso, zonedToUtcMs } from "./time.js";
 
 export const SLOT_MIN = 30;
 export const UNAVAILABLE = 0;
@@ -89,7 +90,7 @@ export function hasAnswered(participant) {
  * Flat, ordered list of every slot: date-major, then time.
  * `utcMs` is the absolute instant the slot begins, resolved through the home tz.
  */
-export function enumerateSlots(meeting, zonedToUtcMs) {
+export function enumerateSlots(meeting) {
   const per = slotsPerDay(meeting);
   const slots = new Array(meeting.dates.length * per);
   for (let d = 0; d < meeting.dates.length; d += 1) {
@@ -126,9 +127,7 @@ export function windowLengthSlots(meeting) {
 /* ------------------------------- validation ------------------------------- */
 
 function fail(message) {
-  const err = new Error(message);
-  err.statusCode = 400;
-  throw err;
+  throw badRequest(message);
 }
 
 const CONTROL_CHARS = new RegExp("[\\u0000-\\u001F\\u007F]", "g");
@@ -205,16 +204,4 @@ export function normalizeRespond(meeting, body) {
     ? body.source
     : "manual";
   return { name, slots, source };
-}
-
-/** Contiguous ISO dates from `start` through `end`, inclusive. */
-export function dateRange(start, end) {
-  const out = [];
-  let cursor = start;
-  for (let guard = 0; guard < 400; guard += 1) {
-    out.push(cursor);
-    if (cursor === end) break;
-    cursor = isoAddDays(cursor, 1);
-  }
-  return out;
 }

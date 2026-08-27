@@ -19,7 +19,14 @@ import {
   saveAvailability,
   saveIdentity,
 } from "../../lib/meet/client";
-import { decodeSlots, encodeSlots, enumerateSlots, slotCount } from "../../lib/meet/model";
+import {
+  UNAVAILABLE,
+  decodeSlots,
+  emptySlots,
+  encodeSlots,
+  enumerateSlots,
+  slotCount,
+} from "../../lib/meet/model";
 import {
   buildGroup,
   buildViewGrid,
@@ -28,18 +35,14 @@ import {
   rankWindows,
   topBlockers,
 } from "../../lib/meet/score";
-import { describeWindow, nameList } from "../../lib/meet/format";
-import {
-  dayLabel,
-  durationLabel,
-  localTz,
-  rangeLabel,
-  tzCity,
-  zonedToUtcMs,
-} from "../../lib/meet/time";
+import { describeWindow, nameList, summarizeDates } from "../../lib/meet/format";
+import { durationLabel, localTz, rangeLabel, tzCity } from "../../lib/meet/time";
 
 const SAVE_DEBOUNCE_MS = 650;
 const POLL_MS = 15000;
+
+const CALLOUT =
+  "px-4 py-3 text-sm bg-secondary-200 border border-secondary-100 rounded-2xl";
 
 const PRIMARY_BTN =
   "px-5 py-2.5 text-white font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition";
@@ -65,6 +68,7 @@ export default function MeetRoom({ params, location }) {
   const saveTimer = useRef(null);
   const pendingSlots = useRef(null);
   const manualEdits = useRef(new Set());
+  const lastPayload = useRef(null);
 
   const browserTz = useMemo(() => localTz(), []);
   const viewerTz = useMeetingTz && meeting ? meeting.tz : browserTz;
@@ -73,6 +77,14 @@ export default function MeetRoom({ params, location }) {
 
   const hydrate = useCallback(
     (next, { keepMine } = {}) => {
+      // Every derived value keys off `meeting` identity, so handing React a fresh
+      // object re-runs slot enumeration, the timezone projection and the whole ranking
+      // pipeline — then re-renders every cell. The 15s poll usually returns exactly
+      // what we already have, so compare before adopting it.
+      const fingerprint = JSON.stringify(next);
+      if (fingerprint === lastPayload.current) return;
+      lastPayload.current = fingerprint;
+
       setMeeting(next);
       const stored = loadIdentity(code);
       const me = stored && (next.participants || []).find((p) => p.id === stored.id);
@@ -95,7 +107,7 @@ export default function MeetRoom({ params, location }) {
     let cancelled = false;
     fetchMeeting(code)
       .then(({ meeting: found }) => {
-        if (cancelled) return;
+        if (cancelled || !found) return;
         hydrate(found);
         rememberMeeting({ code, name: found.name });
       })
@@ -114,7 +126,7 @@ export default function MeetRoom({ params, location }) {
     const id = window.setInterval(() => {
       if (document.hidden || saveTimer.current) return;
       fetchMeeting(code)
-        .then(({ meeting: found }) => hydrate(found, { keepMine: true }))
+        .then(({ meeting: found }) => found && hydrate(found, { keepMine: true }))
         .catch(() => {});
     }, POLL_MS);
     return () => window.clearInterval(id);
@@ -123,7 +135,7 @@ export default function MeetRoom({ params, location }) {
   /* -------------------------------- derived -------------------------------- */
 
   const slots = useMemo(
-    () => (meeting ? enumerateSlots(meeting, zonedToUtcMs) : []),
+    () => (meeting ? enumerateSlots(meeting) : []),
     [meeting]
   );
   const view = useMemo(
@@ -131,7 +143,7 @@ export default function MeetRoom({ params, location }) {
     [slots, viewerTz]
   );
   const group = useMemo(
-    () => (meeting ? buildGroup(meeting, meeting.participants, muted) : null),
+    () => (meeting ? buildGroup(meeting, muted) : null),
     [meeting, muted]
   );
   const ranked = useMemo(() => (group ? rankWindows(group) : []), [group]);
@@ -142,7 +154,7 @@ export default function MeetRoom({ params, location }) {
   // An answer with nothing selected would silently read as "none of these work", so
   // the submit path stays closed until there's something to say.
   const hasSelection = useMemo(
-    () => Boolean(mySlots && mySlots.some((state) => state !== 0)),
+    () => Boolean(mySlots && mySlots.some((state) => state !== UNAVAILABLE)),
     [mySlots]
   );
 
@@ -269,7 +281,7 @@ export default function MeetRoom({ params, location }) {
       <header className="mb-5">
         <h1 className="text-3xl font-bold lg:text-4xl">{meeting.name}</h1>
         <p className="mt-1 text-gray-500 text-sm">
-          {describeSpan(meeting)} · {rangeLabel(meeting.startMin, meeting.endMin)} ·{" "}
+          {summarizeDates(meeting.dates)} · {rangeLabel(meeting.startMin, meeting.endMin)} ·{" "}
           {durationLabel(meeting.durationMin)}
         </p>
       </header>
@@ -297,7 +309,7 @@ export default function MeetRoom({ params, location }) {
             setMySlots(
               found
                 ? decodeSlots(found.slots, slotCount(meeting))
-                : new Uint8Array(slotCount(meeting))
+                : emptySlots(slotCount(meeting))
             );
           }}
           setMeeting={setMeeting}
@@ -443,13 +455,13 @@ export default function MeetRoom({ params, location }) {
           ) : (
             <div className="space-y-6">
               {miss && (
-                <p className="px-4 py-3 text-sm bg-secondary-200 border border-secondary-100 rounded-2xl">
+                <p className={CALLOUT}>
                   Everyone except <b>{miss.person.name}</b> can do{" "}
                   <b>{describeWindow(miss.window, slots, viewerTz).short}</b>.
                 </p>
               )}
               {!miss && blockers.length > 0 && (
-                <p className="px-4 py-3 text-sm bg-secondary-200 border border-secondary-100 rounded-2xl">
+                <p className={CALLOUT}>
                   <b>{nameList(blockers.map((b) => b.person))}</b>{" "}
                   {blockers.length === 1 ? "is" : "are"} busy for most of the strongest
                   times.
@@ -560,13 +572,6 @@ function spanOf(window) {
     for (let i = window.start; i < window.start + window.k; i += 1) set.add(i);
   }
   return set;
-}
-
-function describeSpan(meeting) {
-  const first = dayLabel(meeting.dates[0]);
-  if (meeting.dates.length === 1) return `${first.dow} ${first.md}`;
-  const last = dayLabel(meeting.dates[meeting.dates.length - 1]);
-  return `${first.md} – ${last.md}`;
 }
 
 /**

@@ -1,5 +1,7 @@
 import React from "react";
 import GridFrame from "./GridFrame";
+import { partitionAt } from "../../lib/meet/score";
+import { STATE_LABEL } from "../../lib/meet/format";
 import { dayLabel, timeLabel } from "../../lib/meet/time";
 
 const LEGEND_ITEM = "inline-flex items-center gap-2";
@@ -24,23 +26,7 @@ export default function GroupGrid({
   const total = group.total;
   const { free, maybe } = group.perSlot;
 
-  const renderCell = ({ slotIndex, date, minute, isHour, isFirstRow, isLastCol }) => {
-    const key = `${date}-${minute}`;
-
-    if (slotIndex < 0) {
-      return (
-        <div
-          key={key}
-          className="meet-cell"
-          data-void="true"
-          data-hour={isHour}
-          data-firstrow={isFirstRow}
-          data-lastcol={isLastCol}
-          aria-hidden="true"
-        />
-      );
-    }
-
+  const renderCell = ({ key, slotIndex, minute, label, shape }) => {
     const freeCount = total ? free[slotIndex] : 0;
     const maybeCount = total ? maybe[slotIndex] : 0;
     const ratio = total ? freeCount / total : 0;
@@ -48,7 +34,6 @@ export default function GroupGrid({
     // everyone" and "everyone", so spend the top of the ramp there and keep thin
     // turnouts pale. The 0.05 floor still separates "one person" from "none".
     const heat = freeCount === 0 ? 0 : 0.05 + Math.pow(ratio, 1.5) * 0.95;
-    const label = dayLabel(date);
 
     return (
       <button
@@ -56,12 +41,10 @@ export default function GroupGrid({
         key={key}
         className="meet-cell meet-cell--group"
         data-slot={slotIndex}
-        data-hour={isHour}
-        data-firstrow={isFirstRow}
-        data-lastcol={isLastCol}
         data-any={freeCount > 0}
         data-best={bestSlots && bestSlots.has(slotIndex)}
         data-focusband={focusSlots && focusSlots.has(slotIndex)}
+        {...shape}
         onClick={() => onSelect && onSelect(slotIndex === selected ? null : slotIndex)}
         aria-pressed={selected === slotIndex}
         aria-label={`${label.dow} ${label.md} ${timeLabel(minute)} — ${freeCount} of ${total} free${
@@ -140,15 +123,7 @@ export function Tag({ kind, children }) {
 }
 
 function describeSlot(group, view, slotIndex) {
-  const yes = [];
-  const maybe = [];
-  const no = [];
-  for (const person of group.active) {
-    const state = person.slots[slotIndex];
-    if (state === 2) no.push(person);
-    else if (state === 1) maybe.push(person);
-    else yes.push(person);
-  }
+  const { yes, maybe, no } = partitionAt(group, slotIndex, 1);
 
   // Read the coordinates back out of the projected grid rather than recomputing them
   // from the meeting, so the heading always names the time in the timezone the reader
@@ -166,9 +141,9 @@ function describeSlot(group, view, slotIndex) {
   return {
     heading,
     groups: [
-      { label: "Free", kind: "yes", people: yes },
-      { label: "If needed", kind: "maybe", people: maybe },
-      { label: "Busy", kind: "no", people: no },
+      { label: STATE_LABEL.available, kind: "yes", people: yes },
+      { label: STATE_LABEL.ifNeeded, kind: "maybe", people: maybe },
+      { label: STATE_LABEL.unavailable, kind: "no", people: no },
     ].filter((row) => row.people.length || row.kind === "no"),
   };
 }

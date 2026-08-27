@@ -12,7 +12,8 @@
     "start": "gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
-    "clean": "gatsby clean"
+    "clean": "gatsby clean",
+    "test": "node --test \"tests/**/*.test.mjs\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
