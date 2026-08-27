@@ -421,11 +421,21 @@ export async function storeStatus() {
   if (blobsUnavailable) status.blobsUnavailable = blobsUnavailable;
   // Which of the signals Blobs relies on actually reached this runtime. Presence only
   // — never the values, which carry a token.
+  const present = (name) => {
+    const v = process.env[name];
+    // Distinguish "absent" from "set but empty" — a variable created in a dashboard
+    // without a value looks identical to a missing one otherwise.
+    if (v === undefined) return "absent";
+    if (v.trim() === "") return "empty";
+    return `set (${v.trim().length} chars)`;
+  };
   status.env = {
     NETLIFY: Boolean(process.env.NETLIFY),
+    CONTEXT: process.env.CONTEXT || null,
     NETLIFY_BLOBS_CONTEXT: Boolean(process.env.NETLIFY_BLOBS_CONTEXT),
     SITE_ID: Boolean(process.env.SITE_ID),
-    DEPLOY_ID: Boolean(process.env.DEPLOY_ID),
+    UPSTASH_REDIS_REST_URL: present("UPSTASH_REDIS_REST_URL"),
+    UPSTASH_REDIS_REST_TOKEN: present("UPSTASH_REDIS_REST_TOKEN"),
   };
   try {
     status.reachable = await store.ping();
