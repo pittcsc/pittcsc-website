@@ -333,21 +333,15 @@ export async function storeStatus() {
     durable: Boolean(store.durable),
     reachable: false,
   };
-  // Whether the storage variables actually reached this runtime. Presence and length
-  // only — never a value.
-  const present = (name) => {
-    const v = process.env[name];
-    // Distinguish "absent" from "set but empty" — a variable created in a dashboard
-    // without a value looks identical to a missing one otherwise.
-    if (v === undefined) return "absent";
-    if (v.trim() === "") return "empty";
-    return `set (${v.trim().length} chars)`;
-  };
+  // Presence only, never a value, and sampled when the adapter was chosen rather than
+  // now: Netlify removes variables marked secret from process.env once the function has
+  // started, so a probe at request time reports them absent while the connection built
+  // from them is plainly working. "absent" vs "empty" is the distinction that matters —
+  // a key saved with no value looks identical to a missing one from a dashboard.
   status.env = {
     NETLIFY: Boolean(process.env.NETLIFY),
     CONTEXT: process.env.CONTEXT || null,
-    UPSTASH_REDIS_REST_URL: present("UPSTASH_REDIS_REST_URL"),
-    UPSTASH_REDIS_REST_TOKEN: present("UPSTASH_REDIS_REST_TOKEN"),
+    ...(envAtInit || {}),
   };
   try {
     status.reachable = await store.ping();
