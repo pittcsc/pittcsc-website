@@ -287,6 +287,9 @@ function upstashAdapter(url, token) {
 /* -------------------------------- selection -------------------------------- */
 
 let adapter = null;
+/** Why Blobs wasn't used, if it wasn't. Surfaced by the health endpoint — storage
+ *  failing over is invisible otherwise, and the logs aren't always reachable. */
+let blobsUnavailable = null;
 
 function pickAdapter() {
   if (adapter) return adapter;
@@ -300,6 +303,7 @@ function pickAdapter() {
     try {
       adapter = blobsAdapter();
     } catch (err) {
+      blobsUnavailable = `${err.name || "Error"}: ${err.message}`;
       adapter = fileAdapter();
       const ephemeral =
         process.env.NETLIFY || process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
@@ -396,6 +400,15 @@ export async function storeStatus() {
     detail: store.describe(),
     durable: Boolean(store.durable),
     reachable: false,
+  };
+  if (blobsUnavailable) status.blobsUnavailable = blobsUnavailable;
+  // Which of the signals Blobs relies on actually reached this runtime. Presence only
+  // — never the values, which carry a token.
+  status.env = {
+    NETLIFY: Boolean(process.env.NETLIFY),
+    NETLIFY_BLOBS_CONTEXT: Boolean(process.env.NETLIFY_BLOBS_CONTEXT),
+    SITE_ID: Boolean(process.env.SITE_ID),
+    DEPLOY_ID: Boolean(process.env.DEPLOY_ID),
   };
   try {
     status.reachable = await store.ping();
