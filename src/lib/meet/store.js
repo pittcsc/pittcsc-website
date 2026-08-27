@@ -31,6 +31,7 @@ function fileAdapter() {
 
   return {
     name: "file",
+    durable: false,
     async get(code) {
       try {
         return JSON.parse(await fs.readFile(fileFor(code), "utf8"));
@@ -46,32 +47,61 @@ function fileAdapter() {
       await fs.writeFile(tmp, JSON.stringify(value), "utf8");
       await fs.rename(tmp, fileFor(code));
     },
+    async ping() {
+      await fs.mkdir(dir, { recursive: true });
+      return true;
+    },
     describe() {
-      return `file store at ${dir}`;
+      return `local file store at ${dir}`;
     },
   };
 }
 
 /* -------------------------------- upstash -------------------------------- */
 
+/**
+ * Upstash's REST API takes a Redis command as a JSON array and answers with
+ * `{ result }` — or `{ error }` for a command that was understood but failed, which is
+ * why the body is inspected even on a 2xx.
+ */
 function upstashAdapter(url, token) {
+  const endpoint = String(url).replace(/\/+$/, "");
+
   const call = async (command) => {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(command),
-    });
-    if (!res.ok) {
-      throw new Error(`Upstash ${res.status}: ${await res.text()}`);
+    let res;
+    try {
+      res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(command),
+      });
+    } catch (err) {
+      throw new Error(`Can't reach Upstash at ${endpoint}: ${err.message}`);
     }
-    return (await res.json()).result;
+
+    if (res.status === 401 || res.status === 403) {
+      throw new Error("Upstash rejected the token (check UPSTASH_REDIS_REST_TOKEN).");
+    }
+
+    const body = await res.text();
+    let parsed;
+    try {
+      parsed = JSON.parse(body);
+    } catch (e) {
+      throw new Error(`Upstash returned a non-JSON response (${res.status}).`);
+    }
+    if (!res.ok || parsed.error) {
+      throw new Error(`Upstash error: ${parsed.error || body.slice(0, 200)}`);
+    }
+    return parsed.result;
   };
 
   return {
     name: "upstash",
+    durable: true,
     async get(code) {
       const raw = await call(["GET", `meet:${code}`]);
       return raw ? JSON.parse(raw) : null;
@@ -79,8 +109,19 @@ function upstashAdapter(url, token) {
     async put(code, value) {
       await call(["SET", `meet:${code}`, JSON.stringify(value), "EX", TTL_SECONDS]);
     },
+    async ping() {
+      const pong = await call(["PING"]);
+      return String(pong).toUpperCase() === "PONG";
+    },
     describe() {
-      return "Upstash Redis";
+      // Host only — the token must never reach a log or an HTTP response.
+      let host = endpoint;
+      try {
+        host = new URL(endpoint).host;
+      } catch (e) {
+        /* keep the raw string if it isn't a parseable URL */
+      }
+      return `Upstash Redis (${host})`;
     },
   };
 }
@@ -163,4 +204,24 @@ export async function mutateMeeting(code, fn) {
 
 export function storeName() {
   return pickAdapter().name;
+}
+
+/**
+ * What's actually backing this deployment, for the health endpoint. Deliberately
+ * returns a description rather than any credential.
+ */
+export async function storeStatus() {
+  const store = pickAdapter();
+  const status = {
+    store: store.name,
+    detail: store.describe(),
+    durable: Boolean(store.durable),
+    reachable: false,
+  };
+  try {
+    status.reachable = await store.ping();
+  } catch (err) {
+    status.error = err.message;
+  }
+  return status;
 }
