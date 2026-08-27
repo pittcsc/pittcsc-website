@@ -21,7 +21,6 @@
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@netlify/blobs": "^11.0.1",
     "@notionhq/client": "^2.2.13",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/forms": "^0.5.6",

@@ -1,28 +1,28 @@
 /**
  * Persistence for /meet. Server-side only — never import this from a component.
  *
- * The whole surface is get / put / mutate on a JSON document keyed by meeting code,
- * which is small enough that swapping the backing store is a twenty-line adapter.
- * Three ship, and the first one that works wins:
+ * The whole surface is get / read / put / writeIfUnchanged on a JSON document keyed by
+ * meeting code, which is small enough that another backend is a twenty-line adapter.
+ * Two ship:
  *
- *   upstash  explicit config beats inference, so if UPSTASH_REDIS_REST_URL and
- *            UPSTASH_REDIS_REST_TOKEN are set they take precedence. Plain REST over
- *            fetch; works on any host.
- *   blobs    Netlify's built-in blob store. No account, no env vars, no signup — it
- *            simply exists when running on Netlify. `getStore` throws off-platform,
- *            which is exactly the signal to fall through.
+ *   upstash  set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN and it takes over.
+ *            Plain REST over fetch, so no dependency, and it works on any host.
  *   file     the local default. Right for `gatsby develop` and for self-hosting on a
  *            box with a real disk; on serverless it still *works* but won't outlive
  *            the instance, so it says so loudly at boot.
  *
  * `GET /api/meet/health` reports which one actually engaged, because guessing about
  * storage is how deployments lose data quietly.
+ *
+ * Netlify Blobs was tried and removed: Netlify auto-wires it for its own function
+ * runtime, but @netlify/plugin-gatsby compiles Gatsby Functions into a format that
+ * never receives NETLIFY_BLOBS_CONTEXT, so it needed a hand-set account-wide token —
+ * more privilege than Upstash for the same amount of setup.
  */
 
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { getStore } from "@netlify/blobs";
 
 const TTL_SECONDS = 60 * 60 * 24 * 180; // meetings are ephemeral by nature
 
@@ -121,96 +121,6 @@ function fileAdapter() {
   };
 }
 
-/* --------------------------------- blobs --------------------------------- */
-
-/**
- * Netlify Blobs. Deliberately tried *before* the file store and after Upstash: it needs
- * no configuration at all on Netlify, but `getStore()` throws anywhere else, so the
- * caller treats a throw as "not on Netlify" rather than as an error.
- */
-function blobsAdapter() {
-  // Netlify auto-wires Blobs for its own function runtime, but Gatsby Functions are
-  // compiled through @netlify/plugin-gatsby into a format that doesn't receive
-  // NETLIFY_BLOBS_CONTEXT — verified on a deploy preview, where the SDK raised
-  // MissingBlobsEnvironmentError while SITE_ID and DEPLOY_ID were both present. So
-  // fall back to explicit credentials when the automatic context is absent. Netlify
-  // supplies the site id; the token has to be set by hand.
-  const siteID = process.env.SITE_ID || process.env.NETLIFY_SITE_ID;
-  const token =
-    process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_API_TOKEN;
-  const manual =
-    !process.env.NETLIFY_BLOBS_CONTEXT && siteID && token ? { siteID, token } : null;
-
-  // Strong consistency is what we want — a read-modify-write on a meeting must not see
-  // a stale copy and drop somebody's answer. But it needs an `uncachedEdgeURL` that
-  // only some runtimes inject, and when it's missing the SDK throws on every single
-  // read rather than degrading. So: ask for strong, and downgrade once if the
-  // environment can't honour it. A slightly stale read beats a dead endpoint.
-  const open = (extra) =>
-    getStore({ name: "pittcsc-meet", ...(manual || {}), ...extra });
-
-  let store = open({ consistency: "strong" });
-  let strong = true;
-
-  const downgrade = () => {
-    if (!strong) return false;
-    strong = false;
-    store = open({});
-    console.warn(
-      "[meet] Netlify Blobs strong consistency is unavailable here; falling back to " +
-        "eventual consistency."
-    );
-    return true;
-  };
-
-  const withFallback = async (run) => {
-    try {
-      return await run(store);
-    } catch (err) {
-      if (err && err.name === "BlobsConsistencyError" && downgrade()) {
-        return run(store);
-      }
-      throw err;
-    }
-  };
-
-  return {
-    name: "blobs",
-    durable: true,
-    async get(code) {
-      return withFallback((s) => s.get(`meet-${code}`, { type: "json" }));
-    },
-    async put(code, value) {
-      await withFallback((s) => s.setJSON(`meet-${code}`, value));
-    },
-    async read(code) {
-      const hit = await withFallback((s) =>
-        s.getWithMetadata(`meet-${code}`, { type: "json" })
-      );
-      return hit ? { value: hit.data, token: hit.etag } : { value: null, token: null };
-    },
-    async writeIfUnchanged(code, value, token) {
-      const res = await withFallback((s) =>
-        token
-          ? s.setJSON(`meet-${code}`, value, { onlyIfMatch: token })
-          : s.setJSON(`meet-${code}`, value, { onlyIfNew: true })
-      );
-      // The SDK reports whether our write is the one that landed.
-      return !res || res.modified !== false;
-    },
-    async ping() {
-      // Reading a key that will never exist still proves the store answers.
-      await withFallback((s) => s.get("__healthcheck__"));
-      return true;
-    },
-    describe() {
-      return `Netlify Blobs (${strong ? "strong" : "eventual"} consistency${
-        manual ? ", explicit credentials" : ""
-      })`;
-    },
-  };
-}
-
 /* -------------------------------- upstash -------------------------------- */
 
 /**
@@ -304,9 +214,6 @@ function upstashAdapter(url, token) {
 /* -------------------------------- selection -------------------------------- */
 
 let adapter = null;
-/** Why Blobs wasn't used, if it wasn't. Surfaced by the health endpoint — storage
- *  failing over is invisible otherwise, and the logs aren't always reachable. */
-let blobsUnavailable = null;
 
 function pickAdapter() {
   if (adapter) return adapter;
@@ -317,21 +224,15 @@ function pickAdapter() {
   if (url && token) {
     adapter = upstashAdapter(url, token);
   } else {
-    try {
-      adapter = blobsAdapter();
-    } catch (err) {
-      blobsUnavailable = `${err.name || "Error"}: ${err.message}`;
-      adapter = fileAdapter();
-      const ephemeral =
-        process.env.NETLIFY || process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
-      if (ephemeral && !process.env.MEET_DATA_DIR) {
-        console.warn(
-          "[meet] Falling back to the local file store on a serverless host — meetings " +
-            "will not survive between instances. Netlify Blobs was unavailable " +
-            `(${err.message}). Set UPSTASH_REDIS_REST_URL and ` +
-            "UPSTASH_REDIS_REST_TOKEN for durable storage."
-        );
-      }
+    adapter = fileAdapter();
+    const ephemeral =
+      process.env.NETLIFY || process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    if (ephemeral && !process.env.MEET_DATA_DIR) {
+      console.warn(
+        "[meet] Using the local file store on a serverless host — meetings will not " +
+          "survive between instances. Set UPSTASH_REDIS_REST_URL and " +
+          "UPSTASH_REDIS_REST_TOKEN for durable storage."
+      );
     }
   }
 
@@ -418,9 +319,8 @@ export async function storeStatus() {
     durable: Boolean(store.durable),
     reachable: false,
   };
-  if (blobsUnavailable) status.blobsUnavailable = blobsUnavailable;
-  // Which of the signals Blobs relies on actually reached this runtime. Presence only
-  // — never the values, which carry a token.
+  // Whether the storage variables actually reached this runtime. Presence and length
+  // only — never a value.
   const present = (name) => {
     const v = process.env[name];
     // Distinguish "absent" from "set but empty" — a variable created in a dashboard
@@ -432,8 +332,6 @@ export async function storeStatus() {
   status.env = {
     NETLIFY: Boolean(process.env.NETLIFY),
     CONTEXT: process.env.CONTEXT || null,
-    NETLIFY_BLOBS_CONTEXT: Boolean(process.env.NETLIFY_BLOBS_CONTEXT),
-    SITE_ID: Boolean(process.env.SITE_ID),
     UPSTASH_REDIS_REST_URL: present("UPSTASH_REDIS_REST_URL"),
     UPSTASH_REDIS_REST_TOKEN: present("UPSTASH_REDIS_REST_TOKEN"),
   };
