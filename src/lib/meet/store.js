@@ -129,18 +129,33 @@ function fileAdapter() {
  * caller treats a throw as "not on Netlify" rather than as an error.
  */
 function blobsAdapter() {
+  // Netlify auto-wires Blobs for its own function runtime, but Gatsby Functions are
+  // compiled through @netlify/plugin-gatsby into a format that doesn't receive
+  // NETLIFY_BLOBS_CONTEXT — verified on a deploy preview, where the SDK raised
+  // MissingBlobsEnvironmentError while SITE_ID and DEPLOY_ID were both present. So
+  // fall back to explicit credentials when the automatic context is absent. Netlify
+  // supplies the site id; the token has to be set by hand.
+  const siteID = process.env.SITE_ID || process.env.NETLIFY_SITE_ID;
+  const token =
+    process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_API_TOKEN;
+  const manual =
+    !process.env.NETLIFY_BLOBS_CONTEXT && siteID && token ? { siteID, token } : null;
+
   // Strong consistency is what we want — a read-modify-write on a meeting must not see
   // a stale copy and drop somebody's answer. But it needs an `uncachedEdgeURL` that
   // only some runtimes inject, and when it's missing the SDK throws on every single
   // read rather than degrading. So: ask for strong, and downgrade once if the
   // environment can't honour it. A slightly stale read beats a dead endpoint.
-  let store = getStore({ name: "pittcsc-meet", consistency: "strong" });
+  const open = (extra) =>
+    getStore({ name: "pittcsc-meet", ...(manual || {}), ...extra });
+
+  let store = open({ consistency: "strong" });
   let strong = true;
 
   const downgrade = () => {
     if (!strong) return false;
     strong = false;
-    store = getStore({ name: "pittcsc-meet" });
+    store = open({});
     console.warn(
       "[meet] Netlify Blobs strong consistency is unavailable here; falling back to " +
         "eventual consistency."
@@ -189,7 +204,9 @@ function blobsAdapter() {
       return true;
     },
     describe() {
-      return `Netlify Blobs (${strong ? "strong" : "eventual"} consistency)`;
+      return `Netlify Blobs (${strong ? "strong" : "eventual"} consistency${
+        manual ? ", explicit credentials" : ""
+      })`;
     },
   };
 }
