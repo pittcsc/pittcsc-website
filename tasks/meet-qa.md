@@ -85,7 +85,20 @@ blob over the network (up to ~2.7MB over ten minutes for a 30-person meeting on 
 phone). Fixed with a payload fingerprint that skips the update, and an `ETag` /
 `If-None-Match` round trip so an unchanged poll is a 304 with no body.
 
-### P3-8 · Assorted
+### P2-8 · Every canonical URL pointed at a dead domain
+**Repro:** `curl -I https://csclubatpitt.org` — no response. `curl -I https://pittcsc.org`
+— 200, served by Netlify.
+**Expected:** `siteUrl` names the domain the site is actually served from.
+**Actual:** `gatsby-config.js` and `CNAME` both said `csclubatpitt.org`, which resolves
+to nothing, and `seo.js` fell back to a stale Netlify preview URL. Since `seo.js` builds
+`og:url` and the absolute `og:image` from `siteUrl`, every social card and canonical
+link on the site pointed somewhere dead — not just on `/meet`.
+**Fix:** `CNAME`, `gatsby-config.js` `siteUrl` and the `seo.js` default all now say
+`https://pittcsc.org`.
+**Note:** I originally filed this as a judgement call for a human. That was wrong —
+I should have checked whether the domain resolved before assuming it was live.
+
+### P3-9 · Assorted
 - `chains.clear()` in the store dropped in-flight chains for *other* meetings,
   reopening the race the map exists to prevent. Now deletes only its own tail.
 - The "+2 in September" jump link was a 20px-tall touch target; padded.
@@ -172,7 +185,6 @@ bulk edits.
 
 | # | Sev | Issue | Recommendation |
 |---|-----|-------|----------------|
-| 1 | P2 | Site domain is `csclubatpitt.org` (`CNAME`, `gatsby-config.js` `siteUrl`); the brief says `pittcsc.org` | **Needs a human decision.** `/meet`'s own references are already `pittcsc.org`, but `CNAME` controls DNS and `siteUrl` every canonical URL site-wide. Changing them is outside this feature and could take the site down. |
 | 2 | P3 | ~2px horizontal overflow at ~485px viewport width | No element exceeds the viewport; consistent with scrollbar rounding. Not reproducible at 375px or 432px. |
 | 3 | P3 | Site navbar has sub-24px touch targets (logo, Join) | Pre-existing, outside `/meet`. |
 | 4 | P3 | Tailwind config still uses the v2 `purge` key and `darkMode: false` under v3 | Pre-existing build warnings, untouched by this branch. |
