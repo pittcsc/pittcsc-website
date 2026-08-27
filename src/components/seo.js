@@ -62,7 +62,7 @@ Seo.defaultProps = {
   description:
     "Website for the largest computer science student organization at the University of Pittsburgh.",
   image: null,
-  url: "https://pittcsc-crashtestdummy.netlify.app",
+  url: "https://pittcsc.org",
   lang: "en",
 };
 const query = graphql`

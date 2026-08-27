@@ -1,0 +1,515 @@
+/* =============================================================================
+   /meet
+   =============================================================================
+
+   Layout, type and colour all come from the site's Tailwind config — Poppins,
+   `primary` (#243e8b), `secondary-100` (#ffb81c), rounded-2xl cards, rounded-full
+   buttons. This file only covers what utilities can't express: the availability grid
+   and its cell states.
+
+   Two rules behind the cell palette:
+
+   1. Filled means selected, means available — the same polarity as the date picker on
+      the create screen and as every other scheduling tool. A filled cell is never a
+      prohibition.
+   2. A state is never encoded by hue alone. Free is a solid dark-blue fill, "if needed"
+      is a mid-tone dotted texture, and can't-make-it is empty white. The three stay
+      apart in greyscale and under every form of colour-vision deficiency.
+
+   The input grid uses a flat brand fill; the group heatmap uses a graded ramp with a
+   headcount printed in each cell. They deliberately don't look alike, because they mean
+   different things.
+   ========================================================================== */
+
+.meet {
+  --meet-line: #e5e7eb;
+  --meet-line-soft: #f1f2f6;
+  --meet-primary: #243e8b;
+  --meet-gold: #ffb81c;
+  --meet-ink: #111827;
+
+  --meet-cell-h: 26px;
+  --meet-col-min: 46px;
+  --meet-gutter: 58px;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------- grid ---------------------------------- */
+
+.meet-grid-wrap {
+  border: 1px solid var(--meet-line);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.meet-grid-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.meet-grid {
+  display: grid;
+  min-width: max-content;
+  width: 100%;
+}
+
+.meet-grid__corner {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #fff;
+  border-bottom: 1px solid var(--meet-line);
+  border-right: 1px solid var(--meet-line);
+}
+
+/* Day headers double as "mark this whole day" buttons. */
+.meet-daybtn {
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid var(--meet-line);
+  border-right: 1px solid var(--meet-line);
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+  padding: 8px 4px 7px;
+  text-align: center;
+  line-height: 1.15;
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: #f5f7fc;
+  }
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.meet-daybtn__dow {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.meet-daybtn__num {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 1px;
+}
+
+/* The time gutter keeps native vertical scrolling alive on phones, since the cells
+   themselves swallow touch in order to paint. */
+.meet-timebtn {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  appearance: none;
+  border: 0;
+  border-right: 1px solid var(--meet-line);
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  color: #9ca3af;
+  padding: 0 8px 0 4px;
+  cursor: pointer;
+  touch-action: pan-y;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  &:hover {
+    color: var(--meet-primary);
+    background: #f5f7fc;
+  }
+}
+
+.meet-timebtn[data-hour="false"] {
+  font-size: 0;
+}
+
+/* ---------------------------------- cells ---------------------------------- */
+
+.meet-cell {
+  position: relative;
+  height: var(--meet-cell-h);
+  border-right: 1px solid var(--meet-line);
+  border-top: 1px solid var(--meet-line-soft);
+  background: #fff;
+  touch-action: none;
+  cursor: pointer;
+  padding: 0;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  display: block;
+  width: 100%;
+
+  /* the rule sits at the top of the hour, where the clock label is */
+  &[data-hour="true"] {
+    border-top-color: #d7dbe4;
+  }
+
+  &[data-firstrow="true"] {
+    border-top: 0;
+  }
+
+  &[data-lastcol="true"] {
+    border-right: 0;
+  }
+
+  &[data-void="true"] {
+    background: repeating-linear-gradient(135deg, #f8f9fc 0 5px, #eef0f5 5px 6px);
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--meet-primary);
+    outline-offset: -2px;
+    z-index: 4;
+  }
+}
+
+/* 0 = can't make it (nothing selected) */
+.meet-cell[data-state="0"] {
+  background: #fff;
+}
+
+/* 1 = if needed — selected, but provisional, so it reads as a lighter texture */
+.meet-cell[data-state="1"] {
+  background-color: #c3cbe4;
+  background-image: radial-gradient(rgba(36, 62, 139, 0.75) 1.3px, transparent 1.3px);
+  background-size: 6px 6px;
+}
+
+/* 2 = free — the affirmative answer, so it gets the solid brand fill */
+.meet-cell[data-state="2"] {
+  background-color: var(--meet-primary);
+}
+
+/* A run of selected cells should read as one block, not a stripe of separate ones. */
+.meet-cell[data-state="2"] + .meet-cell[data-state="2"] {
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
+.meet-cell[data-anchor="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border: 2px dashed var(--meet-primary);
+  border-radius: 4px;
+}
+
+/* --------------------------------- heatmap --------------------------------- */
+
+.meet-cell--group {
+  cursor: default;
+
+  &[data-any="false"] {
+    background-image: repeating-linear-gradient(135deg, transparent 0 4px, #e2e5ed 4px 5px);
+  }
+}
+
+.meet-cell__heat {
+  position: absolute;
+  inset: 0;
+  background: var(--meet-primary);
+  opacity: var(--heat, 0);
+}
+
+/* "someone here said if-needed" — a corner notch, not a colour */
+.meet-cell__maybe {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 7px solid var(--meet-gold);
+  border-left: 7px solid transparent;
+}
+
+.meet-cell__n {
+  position: relative;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: var(--meet-cell-h);
+  text-align: center;
+  display: block;
+  color: #111827;
+
+  &[data-inverse="true"] {
+    color: #fff;
+  }
+}
+
+/* The recommended window. Drawn on a pseudo-element so it stacks above the heat fill,
+   which is a child node and would otherwise cover an inset shadow. */
+.meet-cell--group[data-best="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 2px var(--meet-gold);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.meet-cell[data-focusband="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 2px var(--meet-primary);
+  z-index: 2;
+}
+
+/* --------------------------------- swatches --------------------------------- */
+
+.meet-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid #d7dbe4;
+  flex: none;
+  display: inline-block;
+  position: relative;
+}
+
+.meet-swatch[data-state="0"] {
+  background: #fff;
+}
+
+.meet-swatch[data-state="1"] {
+  background-color: #c3cbe4;
+  background-image: radial-gradient(rgba(36, 62, 139, 0.75) 1.3px, transparent 1.3px);
+  background-size: 6px 6px;
+}
+
+.meet-swatch[data-state="2"] {
+  background-color: var(--meet-primary);
+  border-color: var(--meet-primary);
+}
+
+.meet-swatch[data-state="ramp"] {
+  width: 38px;
+  background: linear-gradient(90deg, #eef1f9, var(--meet-primary));
+}
+
+.meet-swatch[data-state="best"] {
+  background: #fff;
+  box-shadow: inset 0 0 0 2px var(--meet-gold);
+}
+
+.meet-swatch[data-state="none"] {
+  background-image: repeating-linear-gradient(135deg, transparent 0 4px, #e2e5ed 4px 5px);
+}
+
+/* ------------------------------ month picker ------------------------------ */
+
+/* Four states, each distinguishable without reading a legend:
+     past      pale text, no hover, not a target
+     available normal text on white — clickable
+     hover     light blue wash, previewing the fill it's about to get
+     selected  solid brand fill, the same affirmative blue as everywhere else */
+.meet-day {
+  appearance: none;
+  border: 1px solid transparent;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  color: #111827;
+  height: 38px;
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: none;
+  transition: background 0.1s ease, color 0.1s ease;
+
+  &:hover:not(:disabled):not([data-on="true"]) {
+    background: #eef1f9;
+    color: var(--meet-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--meet-primary);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    color: #cbd0da;
+    cursor: default;
+  }
+
+  &[data-on="true"] {
+    background: var(--meet-primary);
+    border-color: var(--meet-primary);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  &[data-today="true"]:not([data-on="true"]) {
+    box-shadow: inset 0 0 0 1px #c7cddb;
+    font-weight: 700;
+  }
+}
+
+/* ---------------------------- time range slider ---------------------------- */
+
+.meet-range {
+  position: relative;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.meet-range__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  border-radius: 999px;
+  background: #e9ebf1;
+}
+
+.meet-range__fill {
+  position: absolute;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--meet-primary);
+}
+
+/* Two native range inputs stacked on one track: real keyboard support and real
+   screen-reader semantics, with only the thumbs left hit-testable. */
+.meet-range input[type="range"] {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  height: 34px;
+  background: none;
+  pointer-events: none;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--meet-primary);
+    outline-offset: 2px;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--meet-primary);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.25);
+    cursor: grab;
+  }
+
+  &::-moz-range-thumb {
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--meet-primary);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.25);
+    cursor: grab;
+  }
+
+  &::-moz-range-track {
+    background: none;
+  }
+}
+
+/* --------------------------------- misc --------------------------------- */
+
+.meet-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.meet-skeleton {
+  background: linear-gradient(90deg, #eef0f6 25%, #f8f9fc 37%, #eef0f6 63%);
+  background-size: 400% 100%;
+  animation: meet-shimmer 1.3s ease infinite;
+  border-radius: 1rem;
+}
+
+@keyframes meet-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+.meet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  background: #9ca3af;
+  display: inline-block;
+}
+
+.meet-dot[data-state="saving"] {
+  background: var(--meet-gold);
+  animation: meet-pulse 1s ease-in-out infinite;
+}
+
+.meet-dot[data-state="saved"] {
+  background: #16a34a;
+}
+
+.meet-dot[data-state="error"] {
+  background: #dc2626;
+}
+
+@keyframes meet-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (max-width: 640px) {
+  .meet {
+    --meet-cell-h: 30px;
+    --meet-col-min: 44px;
+    --meet-gutter: 52px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meet *,
+  .meet *::before,
+  .meet *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

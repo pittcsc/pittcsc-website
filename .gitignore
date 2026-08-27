@@ -1,6 +1,9 @@
 node_modules/
 .cache/
 public
-.env
 .DS_Store
+
+# Secrets — never commit. The example file is the one exception.
+.env
 .env.*
+!.env.example
