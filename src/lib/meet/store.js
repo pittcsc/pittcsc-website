@@ -214,12 +214,26 @@ function upstashAdapter(url, token) {
 /* -------------------------------- selection -------------------------------- */
 
 let adapter = null;
+/**
+ * Whether the storage variables were visible when the adapter was chosen. Sampled at
+ * that moment rather than at request time because Netlify scrubs variables marked
+ * secret out of process.env once the function has started — probing later reports them
+ * absent even while the connection built from them is working, which is worse than not
+ * reporting at all.
+ */
+let envAtInit = null;
 
 function pickAdapter() {
   if (adapter) return adapter;
 
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  const seen = (v) => (v === undefined ? "absent" : v.trim() === "" ? "empty" : "set");
+  envAtInit = {
+    UPSTASH_REDIS_REST_URL: seen(url),
+    UPSTASH_REDIS_REST_TOKEN: seen(token),
+  };
 
   if (url && token) {
     adapter = upstashAdapter(url, token);
