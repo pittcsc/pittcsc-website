@@ -161,6 +161,18 @@ export function recentMeetings() {
   return (read(`${NS}.recent`) || []).slice(0, 6);
 }
 
+/**
+ * Forget a meeting locally. Deliberately local-only: the link still works and the other
+ * participants' answers are untouched — this is "take it off my list", not "delete it
+ * for everyone", which is not a call one participant should get to make.
+ */
+export function forgetMeeting(code) {
+  if (typeof window === "undefined") return [];
+  const next = recentMeetings().filter((m) => m.code !== code);
+  write(`${NS}.recent`, next);
+  return next;
+}
+
 export function rememberMeeting(entry) {
   if (typeof window === "undefined" || !entry || !entry.code) return;
   const existing = recentMeetings().filter((m) => m.code !== entry.code);

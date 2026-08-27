@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import { motion } from "framer-motion";
 
 import Layout from "../../layouts/layout";
+import Seo from "../../components/seo";
 import ShareBar from "../../components/meet/ShareBar";
 import AvailabilityGrid from "../../components/meet/AvailabilityGrid";
 import GroupGrid from "../../components/meet/GroupGrid";
@@ -43,6 +44,9 @@ const POLL_MS = 15000;
 
 const CALLOUT =
   "px-4 py-3 text-sm bg-secondary-200 border border-secondary-100 rounded-2xl";
+
+/** What a shared link says before React knows which meeting it is. */
+const SHARE_TITLE = "Add your availability | Computer Science Club @ Pitt";
 
 const PRIMARY_BTN =
   "px-5 py-2.5 text-white font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition";
@@ -248,7 +252,7 @@ export default function MeetRoom({ params, location }) {
 
   if (loadError) {
     return (
-      <Shell title="Meeting not found | Computer Science Club @ Pitt">
+      <Shell title={SHARE_TITLE}>
         <h1 className="mb-3 text-3xl font-bold">That link didn&apos;t work</h1>
         <p className="mb-6 text-gray-500">{loadError}</p>
         <Link className={PRIMARY_BTN} to="/meet">
@@ -260,7 +264,7 @@ export default function MeetRoom({ params, location }) {
 
   if (!meeting || !view || !group) {
     return (
-      <Shell title="Loading | Computer Science Club @ Pitt" wide>
+      <Shell title={SHARE_TITLE} wide>
         <div className="meet-skeleton h-10 w-64" />
         <div className="meet-skeleton h-14 mt-5" />
         <div className="meet-skeleton h-96 mt-5" />
@@ -513,9 +517,20 @@ export default function MeetRoom({ params, location }) {
 
 /* --------------------------------- pieces --------------------------------- */
 
+/**
+ * `title` is what a browser tab shows once React has the meeting. It is *not* what a
+ * link unfurler sees: this is a client-only route, so Slack, iMessage and friends only
+ * ever get the pre-hydration HTML. That HTML previously carried the loading state, so
+ * every shared meeting link unfurled as "Loading" — on the one screen whose entire job
+ * is to be shared. Hence the meet-specific defaults.
+ */
 function Shell({ title, wide, children }) {
   return (
     <Layout title={title}>
+      <Seo
+        title={title}
+        description="Someone shared a meeting with you. Add the times you're free and the best slot for everyone appears automatically."
+      />
       <motion.div
         className="meet overflow-hidden"
         initial={{ opacity: 0 }}

@@ -195,9 +195,24 @@
   background-color: var(--meet-primary);
 }
 
-/* A run of selected cells should read as one block, not a stripe of separate ones. */
-.meet-cell[data-state="2"] + .meet-cell[data-state="2"] {
-  border-top-color: rgba(255, 255, 255, 0.22);
+/* Inside a selected run the separators have to be *regular*, or they read as noise.
+   The grid's own rules are a light hairline on half-hours and a darker one on the hour;
+   over a dark fill both show through at different strengths and in different places
+   depending on where the selection happens to start, which looks arbitrary. Give
+   selected cells their own consistent rhythm instead: a faint line every half hour, a
+   clearer one on the hour. (The old rule here targeted the adjacent *sibling*, which in
+   a row-major grid is the cell to the right — so it never affected the vertical runs it
+   claimed to.) */
+.meet-cell[data-state="2"] {
+  border-top-color: rgba(255, 255, 255, 0.16);
+}
+
+.meet-cell[data-state="2"][data-hour="true"] {
+  border-top-color: rgba(255, 255, 255, 0.42);
+}
+
+.meet-cell[data-state="2"][data-firstrow="true"] {
+  border-top: 0;
 }
 
 .meet-cell[data-anchor="true"]::after {
