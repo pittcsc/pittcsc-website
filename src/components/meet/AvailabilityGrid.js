@@ -438,10 +438,15 @@ export default function AvailabilityGrid({ view, states, onChange, disabled }) {
               type="button"
               aria-pressed={tool === value}
               onClick={() => setTool(value)}
-              className={`px-4 py-1.5 text-sm font-bold rounded-full transition ${
-                tool === value ? "bg-primary text-white" : "text-gray-500 hover:text-gray-900"
+              className={`inline-flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-full transition ${
+                tool === value
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
               }`}
             >
+              {/* The swatch carries the meaning, so the active pill doesn't have to
+                  borrow a colour that means something else elsewhere. */}
+              <span className="meet-swatch" data-state={value} aria-hidden="true" />
               {label}
             </button>
           ))}

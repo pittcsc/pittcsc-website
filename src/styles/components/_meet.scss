@@ -312,10 +312,15 @@
 
 /* ------------------------------ month picker ------------------------------ */
 
+/* Four states, each distinguishable without reading a legend:
+     past      pale text, no hover, not a target
+     available normal text on white — clickable
+     hover     light blue wash, previewing the fill it's about to get
+     selected  solid brand fill, the same affirmative blue as everywhere else */
 .meet-day {
   appearance: none;
   border: 1px solid transparent;
-  background: transparent;
+  background: #fff;
   font: inherit;
   font-size: 14px;
   color: #111827;
@@ -323,15 +328,20 @@
   border-radius: 10px;
   cursor: pointer;
   touch-action: none;
-  transition: background 0.1s ease;
+  transition: background 0.1s ease, color 0.1s ease;
 
-  &:hover:not(:disabled) {
-    background: #f3f4f6;
+  &:hover:not(:disabled):not([data-on="true"]) {
+    background: #eef1f9;
+    color: var(--meet-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--meet-primary);
+    outline-offset: 1px;
   }
 
   &:disabled {
-    color: #9ca3af;
-    opacity: 0.45;
+    color: #cbd0da;
     cursor: default;
   }
 
@@ -343,7 +353,7 @@
   }
 
   &[data-today="true"]:not([data-on="true"]) {
-    box-shadow: inset 0 0 0 1px #d7dbe4;
+    box-shadow: inset 0 0 0 1px #c7cddb;
     font-weight: 700;
   }
 }

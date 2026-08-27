@@ -4,7 +4,6 @@ import MonthPicker from "./MonthPicker";
 import TimeRangeSlider from "./TimeRangeSlider";
 import { createMeeting } from "../../lib/meet/client";
 import {
-  dayLabel,
   durationLabel,
   isoAddDays,
   isoToday,
@@ -38,10 +37,11 @@ export function Chip({ on, children, ...rest }) {
   );
 }
 
-function Field({ label, children }) {
+function Field({ label, hint, children }) {
   return (
     <div className="mb-8">
-      <span className="block mb-3 font-bold">{label}</span>
+      <span className={`block font-bold ${hint ? "" : "mb-3"}`}>{label}</span>
+      {hint && <p className="mb-3 text-gray-500 text-sm">{hint}</p>}
       {children}
     </div>
   );
@@ -120,7 +120,7 @@ export default function CreateForm({ onCreated }) {
         />
       </Field>
 
-      <Field label="Which days could work?">
+      <Field label="What days could work?" hint="Select all that work.">
         <MonthPicker value={dates} onChange={setDates} tz={tz} />
         <div className="flex flex-wrap gap-2 mt-3">
           {Object.keys(quick).map((label) => (
@@ -128,15 +128,8 @@ export default function CreateForm({ onCreated }) {
               {label}
             </Chip>
           ))}
-          {dates.length > 0 && (
-            <Chip onClick={() => setDates([])}>Clear</Chip>
-          )}
+          {dates.length > 0 && <Chip onClick={() => setDates([])}>Clear</Chip>}
         </div>
-        <p className="mt-3 text-gray-400 text-sm">
-          {dates.length
-            ? `${dates.length} ${dates.length === 1 ? "day" : "days"} · ${summarizeDates(dates)}`
-            : "No days picked yet"}
-        </p>
       </Field>
 
       <Field label="Between what hours?">
@@ -199,18 +192,4 @@ export default function CreateForm({ onCreated }) {
 
 function range(start, count) {
   return Array.from({ length: count }, (_, i) => isoAddDays(start, i));
-}
-
-/** "Sep 2 – Sep 8" for a run of days, "Sep 2, Sep 5 +2 more" when they're scattered. */
-function summarizeDates(dates) {
-  const sorted = dates.slice().sort();
-  const first = dayLabel(sorted[0]);
-  if (sorted.length === 1) return first.md;
-
-  const last = dayLabel(sorted[sorted.length - 1]);
-  const contiguous = sorted.every((iso, i) => i === 0 || iso === isoAddDays(sorted[i - 1], 1));
-  if (contiguous) return `${first.md} – ${last.md}`;
-
-  const shown = sorted.slice(0, 2).map((iso) => dayLabel(iso).md).join(", ");
-  return `${shown} +${sorted.length - 2} more`;
 }
