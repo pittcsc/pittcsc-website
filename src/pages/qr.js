@@ -25,7 +25,10 @@ const baseOptions = {
   dotsOptions: squareNavy,
   cornersSquareOptions: squareNavy,
   cornersDotOptions: squareNavy,
-  backgroundOptions: { color: "#ffffff" },
+  // Fully transparent, so an exported code drops onto a slide or poster of any
+  // colour without a white card around it. rgba rather than the keyword because it
+  // is unambiguous in both the canvas preview and the SVG export.
+  backgroundOptions: { color: "rgba(0,0,0,0)" },
   imageOptions: {
     margin: 0,
     hideBackgroundDots: true,
@@ -136,15 +139,23 @@ const QrPage = () => {
             </div>
 
             <p className="mt-6 text-sm text-gray-500">
-              Tip: PNG is best for slides and social posts, SVG for print.
-              Always verify the final code with your phone.
+              Both export with a transparent background, so they sit on any colour.
+              The code is dark navy, so keep it on a light backdrop or it
+              won&rsquo;t scan. Always check the final code with your phone.
             </p>
           </div>
 
           {/* Live preview */}
           <div className="flex flex-col items-center">
             <div
-              className="w-full max-w-sm overflow-hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-md"
+              className="w-full max-w-sm overflow-hidden rounded-2xl border border-gray-200 p-4 shadow-md"
+              style={{
+                // Checkerboard, not white: the code is transparent now, and against
+                // a white card that would look identical to the old behaviour.
+                backgroundImage:
+                  "repeating-conic-gradient(#eef0f4 0% 25%, #ffffff 0% 50%)",
+                backgroundSize: "16px 16px",
+              }}
               aria-label="QR code preview"
             >
               <div ref={previewRef} className="[&>canvas]:h-auto [&>canvas]:w-full" />
