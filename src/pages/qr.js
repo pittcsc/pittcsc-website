@@ -30,9 +30,9 @@ const baseOptions = {
   // is unambiguous in both the canvas preview and the SVG export.
   backgroundOptions: { color: "rgba(0,0,0,0)" },
   imageOptions: {
-    margin: 0,
+    margin: 8,
     hideBackgroundDots: true,
-    imageSize: 0.35,
+    imageSize: 0.45,
   },
 };
 
