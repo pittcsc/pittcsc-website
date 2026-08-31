@@ -9,6 +9,7 @@ const FALLBACK_URL = "https://pittcsc.org/";
 const DOWNLOAD_NAME = "pittcsc-qr";
 const PREVIEW_SIZE = 400;
 const EXPORT_SIZE = 1000;
+const MARGIN_SIZE = 16;
 
 const squareNavy = { color: NAVY, type: "square" };
 
@@ -20,7 +21,7 @@ const baseOptions = {
   height: PREVIEW_SIZE,
   type: "canvas",
   image: logoUrl,
-  margin: 16,
+  margin: MARGIN_SIZE,
   qrOptions: { errorCorrectionLevel: "H" },
   dotsOptions: squareNavy,
   cornersSquareOptions: squareNavy,
@@ -30,7 +31,7 @@ const baseOptions = {
   // is unambiguous in both the canvas preview and the SVG export.
   backgroundOptions: { color: "rgba(0,0,0,0)" },
   imageOptions: {
-    margin: 8,
+    margin: 0,
     hideBackgroundDots: true,
     imageSize: 0.45,
   },
@@ -38,6 +39,45 @@ const baseOptions = {
 
 const buttonBase =
   "rounded-lg px-5 py-3 font-semibold transition disabled:cursor-not-allowed disabled:opacity-40";
+
+// Make a QRCode with the PittCSC logo in it and the correct data and size
+// @data the data string to use
+// @size the final image size, including the margins
+// @ref the reference to assign the QRCodeStyling to
+async function makeCode(data, size) {
+  const { default: QRCodeStyling} = await import("qr-code-styling");
+  // Make it twice, first approximating the image margin, and then calculating the exact size of one of the
+  // squares and making that the margin. This is the first pass
+  const code = new QRCodeStyling({
+    ...baseOptions,
+    width: size,
+    height: size,
+    data: data,
+  });
+  // Calculate the exact margin and apply it
+  const margin = (size - 2 * MARGIN_SIZE) / code._qr.getModuleCount();
+  code.update({
+    imageOptions: {
+      margin: margin,
+      hideBackgroundDots: true,
+      imageSize: 0.45,
+    }
+  });
+  return code;
+}
+
+// Do the double-update loop on an existing QRCode
+async function updateCode(code, data, size) {
+  code.update({data: data});
+  const margin = (size - 2 * MARGIN_SIZE) / code._qr.getModuleCount();
+  code.update({
+    imageOptions: {
+      margin: margin,
+      hideBackgroundDots: true,
+      imageSize: 0.45,
+    }
+  });
+}
 
 const QrPage = () => {
   const [link, setLink] = useState("");
@@ -52,8 +92,8 @@ const QrPage = () => {
   // needs the DOM/canvas, so it is dynamically imported inside useEffect to
   // keep Gatsby's server-side build from crashing.
   useEffect(() => {
-    import("qr-code-styling").then(({ default: QRCodeStyling }) => {
-      qrRef.current = new QRCodeStyling({ ...baseOptions, data: FALLBACK_URL });
+    makeCode(FALLBACK_URL, PREVIEW_SIZE).then((code) => {
+      qrRef.current = code;
       lastDataRef.current = FALLBACK_URL;
       if (previewRef.current) {
         previewRef.current.innerHTML = ""; // guard against double-mount appends
@@ -68,7 +108,7 @@ const QrPage = () => {
     const timer = setTimeout(() => {
       if (qrRef.current && lastDataRef.current !== qrData) {
         lastDataRef.current = qrData;
-        qrRef.current.update({ data: qrData });
+        updateCode(qrRef.current, qrData, PREVIEW_SIZE);
       }
     }, 250);
     return () => clearTimeout(timer);
@@ -77,13 +117,7 @@ const QrPage = () => {
   // Downloads render a throwaway full-resolution instance so the live preview
   // never pays export-size rasterization costs.
   const download = async (extension) => {
-    const { default: QRCodeStyling } = await import("qr-code-styling");
-    const exportQr = new QRCodeStyling({
-      ...baseOptions,
-      width: EXPORT_SIZE,
-      height: EXPORT_SIZE,
-      data: qrData,
-    });
+    const exportQr = await makeCode(qrData, EXPORT_SIZE);
     exportQr.download({ name: DOWNLOAD_NAME, extension });
   };
 
