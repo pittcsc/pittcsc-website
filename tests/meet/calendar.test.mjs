@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   applyBusyIntervals,
+  calendarName,
   mergeIntervals,
   parseIcs,
   trackManualEdits,
@@ -249,6 +250,39 @@ test("manual edits survive a re-import", () => {
   const next = applyBusyIntervals(w.slots, intervals, { previous, manual });
   assert.equal(next[0], UNAVAILABLE, "the hand edit is not overwritten by the import");
   assert.equal(next[1], AVAILABLE, "everything else is filled in from the calendar");
+});
+
+test("several calendars combine instead of replacing each other", () => {
+  // Nobody's week lives in one file — Google exports one .ics per calendar, so a
+  // student's classes and their club meetings arrive separately.
+  const m = meeting({ dates: ["2026-09-02"] });
+  const w = window(m);
+  const school = parseIcs(
+    ics(...vevent("DTSTART;TZID=America/New_York:20260902T160000", "DTEND;TZID=America/New_York:20260902T170000")),
+    w
+  );
+  const clubs = parseIcs(
+    ics(...vevent("DTSTART;TZID=America/New_York:20260902T200000", "DTEND;TZID=America/New_York:20260902T210000")),
+    w
+  );
+
+  assert.equal(row(m, applyBusyIntervals(w.slots, school), 0), "..##########", "one on its own");
+  assert.equal(row(m, applyBusyIntervals(w.slots, clubs), 0), "########..##", "the other on its own");
+
+  const both = mergeIntervals([...school, ...clubs]);
+  assert.equal(both.length, 2);
+  assert.equal(row(m, applyBusyIntervals(w.slots, both), 0), "..######..##", "both at once");
+});
+
+test("a calendar is labelled by its own name, folded or not", () => {
+  assert.equal(calendarName(ics("X-WR-CALNAME:School")), "School");
+  assert.equal(
+    calendarName(["BEGIN:VCALENDAR", "X-WR-CALNAME:jaysondang561@gmail", "\t.com", "END:VCALENDAR"].join("\r\n")),
+    "jaysondang561@gmail.com",
+    "unfolded like any other property"
+  );
+  assert.equal(calendarName(ics()), "", "absent header is not an error");
+  assert.equal(calendarName(""), "");
 });
 
 test("garbage input does not throw", () => {
