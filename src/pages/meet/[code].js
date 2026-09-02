@@ -36,6 +36,7 @@ import {
   rankWindows,
   topBlockers,
 } from "../../lib/meet/score";
+import { trackManualEdits } from "../../lib/meet/calendar";
 import { describeWindow, nameList, summarizeDates } from "../../lib/meet/format";
 import { durationLabel, localTz, rangeLabel, tzCity } from "../../lib/meet/time";
 
@@ -227,9 +228,9 @@ export default function MeetRoom({ params, location }) {
   }, [flush]);
 
   const onGridChange = useCallback(
-    (next, indices) => {
+    (next, indices, options) => {
       setMySlots(next);
-      if (indices) for (const i of indices) manualEdits.current.add(i);
+      trackManualEdits(manualEdits.current, indices, options);
       setSource("manual");
       scheduleSave(next);
     },
