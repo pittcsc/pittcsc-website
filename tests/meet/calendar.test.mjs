@@ -77,18 +77,56 @@ test("a weekly class expands onto the right days only", () => {
   assert.equal(row(m, s, 3), "############", "Sat is not");
 });
 
-test("cancelled and free-marked events are not conflicts", () => {
+test("a cancelled event is not a conflict", () => {
   const m = meeting({ dates: ["2026-09-02"] });
   const w = window(m);
   const intervals = parseIcs(
     ics(
-      ...vevent("DTSTART;TZID=America/New_York:20260902T170000", "DTEND;TZID=America/New_York:20260902T220000", "STATUS:CANCELLED"),
-      ...vevent("DTSTART;TZID=America/New_York:20260902T170000", "DTEND;TZID=America/New_York:20260902T220000", "TRANSP:TRANSPARENT")
+      ...vevent(
+        "DTSTART;TZID=America/New_York:20260902T170000",
+        "DTEND;TZID=America/New_York:20260902T220000",
+        "STATUS:CANCELLED"
+      )
     ),
     w
   );
   assert.equal(intervals.length, 0);
   assert.equal(row(m, applyBusyIntervals(w.slots, intervals), 0), "############");
+});
+
+test("an all-day event marked free is a label, not a conflict", () => {
+  // "Acadia", "midterms week" — blocking on one of these would wipe the whole day.
+  const m = meeting({ dates: ["2026-09-02"] });
+  const w = window(m);
+  const intervals = parseIcs(
+    ics(...vevent("DTSTART;VALUE=DATE:20260902", "DTEND;VALUE=DATE:20260903", "TRANSP:TRANSPARENT")),
+    w
+  );
+  assert.equal(intervals.length, 0);
+  assert.equal(row(m, applyBusyIntervals(w.slots, intervals), 0), "############");
+});
+
+test("a timed event marked free still counts as busy", () => {
+  // Jayson's report: Pitt's course feed ships every class as TRANSP:TRANSPARENT, so
+  // honouring the flag dropped his whole schedule and left him looking wide open on
+  // the exact hours he was in class. His CS 1501 recitation, verbatim from his export.
+  const m = meeting({ dates: ["2026-09-02", "2026-09-03"] });
+  const w = window(m);
+  const intervals = parseIcs(
+    ics(
+      ...vevent(
+        "DTSTART;TZID=America/New_York:20260824T170000",
+        "DTEND;TZID=America/New_York:20260824T175000",
+        "RRULE:FREQ=WEEKLY;UNTIL=20261205T075959Z;INTERVAL=1;BYDAY=TH",
+        "SUMMARY:CS 1501",
+        "TRANSP:TRANSPARENT"
+      )
+    ),
+    w
+  );
+  const s = applyBusyIntervals(w.slots, intervals);
+  assert.equal(row(m, s, 0), "############", "Wed has no recitation");
+  assert.equal(row(m, s, 1), "##..########", "Thu 5:00-5:50 is taken");
 });
 
 test("events outside the window are ignored; ones crossing it are clipped", () => {
