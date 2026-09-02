@@ -135,6 +135,21 @@ export function parseIcs(text, { windowStartMs, windowEndMs }) {
   return mergeIntervals(intervals);
 }
 
+/**
+ * The calendar's own name, from the export header.
+ *
+ * Worth surfacing because the commonest import failure isn't a parse error, it's the
+ * wrong file: Google hands you one .ics per calendar with near-identical names, and a
+ * schedule that lives on a calendar you didn't upload looks exactly like a schedule
+ * that's empty. Naming what was read lets you catch that at a glance.
+ */
+export function calendarName(text) {
+  for (const line of unfold(String(text || ""))) {
+    if (/^X-WR-CALNAME:/i.test(line)) return line.slice(line.indexOf(":") + 1).trim().slice(0, 60);
+  }
+  return "";
+}
+
 /** RFC 5545 folds long lines with a leading space or tab on the continuation. */
 function unfold(text) {
   const out = [];
