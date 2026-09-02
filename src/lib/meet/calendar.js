@@ -46,6 +46,25 @@ export function applyBusyIntervals(slots, intervals, { previous, manual } = {}) 
   return next;
 }
 
+/**
+ * Record which slots were edited by hand, for the "manual edits win" rule above.
+ *
+ * A preset or Clear rewrites the whole grid in one tap, so the edit covers every slot —
+ * but none of those is a considered per-slot decision, and banking them as such made a
+ * later import a silent no-op: it computed the calendar's answer and then restored the
+ * preset over all of it, so uploading a .ics appeared to do nothing. Whole-grid
+ * replacements reset the record instead of filling it; a preset is a starting point an
+ * import is allowed to refine, while a cell you actually painted still wins.
+ */
+export function trackManualEdits(manual, indices, { replacesAll = false } = {}) {
+  if (replacesAll) {
+    manual.clear();
+    return manual;
+  }
+  for (const i of indices || []) manual.add(i);
+  return manual;
+}
+
 /* ----------------------------------- ICS ----------------------------------- */
 
 /**

@@ -63,19 +63,19 @@ export default function AvailabilityGrid({ view, states, onChange }) {
   }, [shown]);
 
   const commit = useCallback(
-    (next, indices) => {
-      onChange(next, indices);
+    (next, indices, options) => {
+      onChange(next, indices, options);
       setDraft(null);
     },
     [onChange]
   );
 
   const paintMany = useCallback(
-    (indices, value) => {
+    (indices, value, options) => {
       if (!indices.length) return;
       const next = Uint8Array.from(states);
       for (const i of indices) next[i] = value;
-      commit(next, indices);
+      commit(next, indices, options);
     },
     [commit, states]
   );
@@ -127,12 +127,12 @@ export default function AvailabilityGrid({ view, states, onChange }) {
     // how the date presets on the create screen already behave.
     const next = new Uint8Array(states.length);
     for (const i of preset.slots) next[i] = AVAILABLE;
-    commit(next, allSlots);
+    commit(next, allSlots, { replacesAll: true });
     setAnnouncement(`${preset.label} — ${preset.slots.length} half-hours selected`);
   };
 
   const clearAll = () => {
-    paintMany(allSlots, UNAVAILABLE);
+    paintMany(allSlots, UNAVAILABLE, { replacesAll: true });
     setAnnouncement("Cleared");
   };
 

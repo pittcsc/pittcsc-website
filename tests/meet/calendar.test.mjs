@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { applyBusyIntervals, mergeIntervals, parseIcs } from "../../src/lib/meet/calendar.js";
+import {
+  applyBusyIntervals,
+  mergeIntervals,
+  parseIcs,
+  trackManualEdits,
+} from "../../src/lib/meet/calendar.js";
 import { AVAILABLE, UNAVAILABLE, enumerateSlots, slotsPerDay } from "../../src/lib/meet/model.js";
 import { H, meeting } from "./helpers.mjs";
 
@@ -153,6 +158,47 @@ test("folded lines, DURATION and UTC stamps all parse", () => {
   assert.equal(intervals.length, 2);
   // 6:00-7:30pm from DURATION, and 8-9pm from the UTC-form event.
   assert.equal(row(m, applyBusyIntervals(w.slots, intervals), 0), "####...#..##");
+});
+
+test("a preset does not turn a later import into a no-op", () => {
+  // Jayson's report: tap Anytime, upload a .ics, and the whole grid stays selected even
+  // though the banner says it found busy blocks. The preset had banked every slot as a
+  // hand edit, so the import computed the right answer and then threw all of it away.
+  const m = meeting({ dates: ["2026-09-02", "2026-09-03"] });
+  const w = window(m);
+  const all = w.slots.map((s) => s.index);
+
+  const previous = new Uint8Array(w.slots.length).fill(AVAILABLE); // what Anytime paints
+  const manual = trackManualEdits(new Set(), all, { replacesAll: true });
+  assert.equal(manual.size, 0, "a whole-grid replacement is not a per-slot decision");
+
+  const intervals = parseIcs(
+    ics(
+      ...vevent(
+        "DTSTART;TZID=America/New_York:20260902T180000",
+        "DTEND;TZID=America/New_York:20260902T200000",
+        "RRULE:FREQ=WEEKLY;BYDAY=WE,TH;UNTIL=20261211T235959Z"
+      )
+    ),
+    w
+  );
+  const states = applyBusyIntervals(w.slots, intervals, { previous, manual });
+  assert.equal(row(m, states, 0), "####....####", "Wed 6-8pm comes out of the selection");
+  assert.equal(row(m, states, 1), "####....####", "and so does Thu");
+});
+
+test("a hand-painted cell still wins over an import", () => {
+  const m = meeting({ dates: ["2026-09-02"] });
+  const w = window(m);
+  // Anytime, then one deliberate correction: 4:00 deselected by hand.
+  const manual = trackManualEdits(new Set(), w.slots.map((s) => s.index), { replacesAll: true });
+  trackManualEdits(manual, [0]);
+  assert.deepEqual([...manual], [0], "only the cell the person actually touched is kept");
+
+  const previous = new Uint8Array(w.slots.length).fill(AVAILABLE);
+  previous[0] = UNAVAILABLE;
+  const states = applyBusyIntervals(w.slots, [], { previous, manual });
+  assert.equal(row(m, states, 0), ".###########");
 });
 
 test("manual edits survive a re-import", () => {
