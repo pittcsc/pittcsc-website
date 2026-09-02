@@ -211,8 +211,17 @@ const BYDAY = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
 
 function expandEvent(event, out, windowStartMs, windowEndMs) {
   if (!event.start || !event.start.ms) return;
-  // Declined and free-marked events aren't conflicts.
-  if (event.status === "CANCELLED" || event.transparent) return;
+  if (event.status === "CANCELLED") return;
+  // A free-marked *all-day* event is a label rather than a commitment — a trip name,
+  // a "midterms week" banner — and treating one as busy would wipe the whole day.
+  //
+  // A timed event marked free is a different animal. University course feeds ship
+  // every class as TRANSP:TRANSPARENT, so honouring the flag there drops the entire
+  // schedule and leaves the person looking wide open on the exact hours they are in
+  // class — the one failure this tool cannot have. A timed event counts as busy
+  // whatever its transparency says; the import banner invites you to adjust anything
+  // that's off, and over-claiming a conflict is the recoverable direction.
+  if (event.transparent && event.start.allDay) return;
 
   const startMs = event.start.ms;
   let durationMs = event.durationMs;
