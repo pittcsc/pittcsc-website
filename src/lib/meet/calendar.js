@@ -47,6 +47,24 @@ export function applyBusyIntervals(slots, intervals, { previous, manual } = {}) 
 }
 
 /**
+ * Which slots the calendar itself rules out, independent of anything done by hand
+ * since.
+ *
+ * Presets need this. "Weekdays" means the weekday hours you can actually make, so it
+ * has to know what the calendar already took: without it, one tap reselected every
+ * class an import had just carved out, and the only way back was to remove the
+ * calendar and upload it again — while its name sat in the list claiming otherwise.
+ */
+export function busySlotIndices(slots, intervals) {
+  const verdict = applyBusyIntervals(slots, intervals);
+  const out = new Set();
+  for (let i = 0; i < verdict.length; i += 1) {
+    if (verdict[i] === UNAVAILABLE) out.add(i);
+  }
+  return out;
+}
+
+/**
  * Record which slots were edited by hand, for the "manual edits win" rule above.
  *
  * A preset or Clear rewrites the whole grid in one tap, so the edit covers every slot —

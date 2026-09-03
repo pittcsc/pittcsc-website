@@ -40,6 +40,9 @@ import { trackManualEdits } from "../../lib/meet/calendar";
 import { describeWindow, nameList, summarizeDates } from "../../lib/meet/format";
 import { durationLabel, localTz, rangeLabel, tzCity } from "../../lib/meet/time";
 
+// Stable identity so an unimported grid doesn't rebuild its presets every render.
+const EMPTY_BUSY = new Set();
+
 const SAVE_DEBOUNCE_MS = 650;
 const POLL_MS = 15000;
 
@@ -73,6 +76,8 @@ export default function MeetRoom({ params, location }) {
   const saveTimer = useRef(null);
   const pendingSlots = useRef(null);
   const manualEdits = useRef(new Set());
+  // Slots the loaded calendars rule out, so a preset can keep honouring them.
+  const [calendarBusy, setCalendarBusy] = useState(EMPTY_BUSY);
   const lastPayload = useRef(null);
 
   const browserTz = useMemo(() => localTz(), []);
@@ -238,8 +243,9 @@ export default function MeetRoom({ params, location }) {
   );
 
   const onImport = useCallback(
-    (next, importSource) => {
+    (next, importSource, busy) => {
       setMySlots(next);
+      setCalendarBusy(busy || EMPTY_BUSY);
       setSource(importSource);
       pendingSlots.current = next;
       if (saveTimer.current) window.clearTimeout(saveTimer.current);
@@ -429,7 +435,12 @@ export default function MeetRoom({ params, location }) {
                 windowMs={windowMs}
               />
 
-              <AvailabilityGrid view={view} states={mySlots} onChange={onGridChange} />
+              <AvailabilityGrid
+                view={view}
+                states={mySlots}
+                onChange={onGridChange}
+                calendarBusy={calendarBusy}
+              />
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-gray-400 text-sm">
