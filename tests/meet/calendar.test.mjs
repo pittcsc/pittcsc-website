@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   applyBusyIntervals,
+  busySlotIndices,
   calendarName,
   mergeIntervals,
   parseIcs,
@@ -283,6 +284,43 @@ test("a calendar is labelled by its own name, folded or not", () => {
   );
   assert.equal(calendarName(ics()), "", "absent header is not an error");
   assert.equal(calendarName(""), "");
+});
+
+test("a preset does not reselect what the calendar already ruled out", () => {
+  // Jayson's report: import, tap Weekdays, and every class came back selected — the
+  // calendar was still listed in the panel but no longer reflected in the grid, and
+  // removing and re-uploading it was the only way back.
+  const m = meeting({ dates: ["2026-09-02", "2026-09-05"] }); // a Wednesday and a Saturday
+  const w = window(m);
+  const intervals = parseIcs(
+    ics(
+      ...vevent(
+        "DTSTART;TZID=America/New_York:20260902T170000",
+        "DTEND;TZID=America/New_York:20260902T190000"
+      )
+    ),
+    w
+  );
+  const busy = busySlotIndices(w.slots, intervals);
+  assert.deepEqual([...busy], [2, 3, 4, 5], "5-7pm on the Wednesday, and nothing else");
+
+  // Exactly what applyPreset does with a preset's slot list.
+  const preset = w.slots.filter((s) => s.date === "2026-09-02").map((s) => s.index);
+  const next = new Uint8Array(w.slots.length);
+  for (const i of preset) if (!busy.has(i)) next[i] = AVAILABLE;
+
+  assert.equal(row(m, next, 0), "##....######", "the imported conflict stays out");
+  assert.equal(row(m, next, 1), "............", "and the untouched day is still empty");
+});
+
+test("with no calendar loaded a preset selects everything it covers", () => {
+  const m = meeting({ dates: ["2026-09-02"] });
+  const w = window(m);
+  const busy = busySlotIndices(w.slots, []);
+  assert.equal(busy.size, 0);
+  const next = new Uint8Array(w.slots.length);
+  for (const s of w.slots) if (!busy.has(s.index)) next[s.index] = AVAILABLE;
+  assert.equal(row(m, next, 0), "############");
 });
 
 test("garbage input does not throw", () => {

@@ -4,6 +4,7 @@ import { AVAILABLE, IF_NEEDED, UNAVAILABLE } from "../../lib/meet/model";
 import { dayLabel, isoWeekday, rangeLabel, timeLabel } from "../../lib/meet/time";
 
 const STATE_WORD = { 0: "unavailable", 1: "if needed", 2: "available" };
+const EMPTY_BUSY = new Set();
 
 /**
  * The input surface: **drag to add the times you're free.**
@@ -27,7 +28,7 @@ const STATE_WORD = { 0: "unavailable", 1: "if needed", 2: "available" };
  * stylus. Cells set `touch-action: none` so a finger drag paints instead of scrolling;
  * the time gutter keeps `pan-y` so the page can still be scrolled.
  */
-export default function AvailabilityGrid({ view, states, onChange }) {
+export default function AvailabilityGrid({ view, states, onChange, calendarBusy }) {
   const [draft, setDraft] = useState(null);
   const [tool, setTool] = useState(AVAILABLE);
   const [anchor, setAnchor] = useState(null);
@@ -38,6 +39,8 @@ export default function AvailabilityGrid({ view, states, onChange }) {
   const bodyRef = useRef(null);
   const drag = useRef(null);
   const touched = useRef(new Set());
+
+  const busy = calendarBusy || EMPTY_BUSY;
 
   const shown = draft || states;
 
@@ -125,10 +128,25 @@ export default function AvailabilityGrid({ view, states, onChange }) {
     // you with everything and no way back except Clear, so the buttons couldn't be used
     // to compare options — which is the obvious thing to try. Replacing also matches
     // how the date presets on the create screen already behave.
+    //
+    // What it replaces is your *answer*, though, never the calendar underneath it.
+    // "Weekdays" means the weekday hours you can actually make, so an imported
+    // conflict stays out: a preset that reselected your classes made the calendar in
+    // the list above a lie, and re-uploading it was the only way back.
     const next = new Uint8Array(states.length);
-    for (const i of preset.slots) next[i] = AVAILABLE;
+    let picked = 0;
+    for (const i of preset.slots) {
+      if (busy.has(i)) continue;
+      next[i] = AVAILABLE;
+      picked += 1;
+    }
     commit(next, allSlots, { replacesAll: true });
-    setAnnouncement(`${preset.label} — ${preset.slots.length} half-hours selected`);
+    const skipped = preset.slots.length - picked;
+    setAnnouncement(
+      `${preset.label} — ${picked} half-hours selected${
+        skipped ? `, ${skipped} left out as busy on your calendar` : ""
+      }`
+    );
   };
 
   const clearAll = () => {

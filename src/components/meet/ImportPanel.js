@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import {
   applyBusyIntervals,
+  busySlotIndices,
   calendarName,
   mergeIntervals,
   parseIcs,
@@ -49,7 +50,10 @@ export default function ImportPanel({ slots, states, manual, onImport, windowMs 
     const intervals = mergeIntervals(nextSources.flatMap((s) => s.intervals));
     onImport(
       applyBusyIntervals(slots, intervals, { previous: states, manual }),
-      nextSources.some((s) => s.kind === "ics") ? "ics" : "google"
+      nextSources.some((s) => s.kind === "ics") ? "ics" : "google",
+      // The presets need to keep honouring these calendars after this import, so the
+      // grid gets the calendar's own verdict and not just the merged result.
+      busySlotIndices(slots, intervals)
     );
     setSources(nextSources);
 
