@@ -190,6 +190,46 @@
   background-size: 6px 6px;
 }
 
+/* The calendar's own verdict, drawn *over* your answer rather than as one of its
+   states — it is information about the world, not something you said.
+
+   Hatched, never filled, for two reasons: a fill would read as a fourth answer, and
+   the mark has to stay legible on white, on the dotted "if needed" texture, and on the
+   solid navy of a selected cell. Drawn on ::after so it layers cleanly over whichever
+   background the state supplies instead of competing with it. The 45deg run is the
+   mirror of the void cells' 135deg, so "no such time" and "you're busy then" never
+   read as the same thing. */
+.meet-cell[data-busy="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(29, 39, 88, 0.3) 0 2px,
+    transparent 2px 5px
+  );
+}
+
+/* Over the navy fill the hatch has to invert to stay visible. Seeing it there is the
+   point: it means you have deliberately said yes to an hour your calendar has a
+   conflict in, which is allowed but worth showing. */
+.meet-cell[data-state="2"][data-busy="true"]::after {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.55) 0 2px,
+    transparent 2px 5px
+  );
+}
+
+.meet-swatch[data-busy="true"] {
+  background: #fff repeating-linear-gradient(
+      45deg,
+      rgba(29, 39, 88, 0.3) 0 2px,
+      transparent 2px 5px
+    );
+}
+
 /* 2 = free — the affirmative answer, so it gets the solid brand fill */
 .meet-cell[data-state="2"] {
   background-color: var(--meet-primary);
