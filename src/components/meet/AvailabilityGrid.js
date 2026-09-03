@@ -399,6 +399,7 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
   const renderCell = ({ key, slotIndex, minute, label, shape }) => {
     const state = shown[slotIndex];
     const isActive = active === slotIndex || (active == null && slotIndex === 0);
+    const isBusy = busy.has(slotIndex);
 
     return (
       <button
@@ -407,11 +408,14 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
         className="meet-cell"
         data-slot={slotIndex}
         data-state={state}
+        data-busy={isBusy}
         data-anchor={anchor === slotIndex}
         {...shape}
         tabIndex={isActive ? 0 : -1}
         aria-pressed={state !== UNAVAILABLE}
-        aria-label={`${label.dow} ${label.md} ${timeLabel(minute)} — ${STATE_WORD[state]}`}
+        aria-label={`${label.dow} ${label.md} ${timeLabel(minute)} — ${STATE_WORD[state]}${
+          isBusy ? ", busy on your calendar" : ""
+        }`}
         onFocus={() => setActive(slotIndex)}
       />
     );
@@ -513,6 +517,11 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
         <span className="inline-flex items-center gap-2">
           <span className="meet-swatch" data-state="0" /> Can&apos;t make it
         </span>
+        {busy.size > 0 && (
+          <span className="inline-flex items-center gap-2">
+            <span className="meet-swatch" data-busy="true" /> Busy on your calendar
+          </span>
+        )}
         <span className="text-gray-400">
           Arrows move · Space toggles · Shift fills a block
         </span>
