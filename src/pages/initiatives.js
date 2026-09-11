@@ -7,7 +7,7 @@ import SteelHacksImg from "../images/initiatives/steelhacks-team.jpg";
 import DevLabImg from "../images/initiatives/dev-lab/dev-lab-placeholder.jpg";
 import LaunchpadImg from "../images/initiatives/launchpad.jpg";
 import SiteVisitsImg from "../images/initiatives/site-visits/google.jpg";
-import OfferPlusImg from "../images/initiatives/offer-plus/offer-plus.jpg";
+import FoundryImg from "../images/initiatives/foundry/CSC_CGI_Code_Comp-032.jpg";
 import MockInterviewsImg from "../images/initiatives/mock-interviews/mock-interviews.jpg";
 import IndustryRecruitingImg from "../images/initiatives/industry-recruiting/industry-recruiting.jpg";
 import CSCHacksImg from "../images/initiatives/csc-hacks/csc-hacks.jpg";
@@ -35,12 +35,12 @@ const initiatives = [
     description: "Our premier internship training program helping students land top-tier tech offers through mentorship and practice.",
   },
   {
-    title: "Offer++",
-    image: OfferPlusImg,
-    link: "/initiatives/offer-plus",
+    title: "Foundry",
+    image: FoundryImg,
+    link: "/initiatives/foundry",
     external: false,
     category: "Career",
-    description: "Advanced career preparation program for students seeking full-time positions and return offers.",
+    description: "A committed community for growth through interview practice, presentations, project building, mentorship, and peer accountability.",
   },
   {
     title: "Mock Interviews",

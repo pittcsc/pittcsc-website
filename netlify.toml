@@ -7,6 +7,11 @@ package = "@netlify/plugin-gatsby"
   NPM_FLAGS = "--legacy-peer-deps"
 
 [[redirects]]
+  from = "/initiatives/offer-plus"
+  to = "/initiatives/foundry"
+  status = 301
+
+[[redirects]]
   from = "/zoom"
   to = "https://pitt.zoom.us/my/pittcsc"
   status = 200
