@@ -102,8 +102,8 @@ const tiers = [
     featured: true,
     benefits: [
       "Host up to three (3) custom company events",
-      "Exclusively sponsor a CSC initiative (Zero to Offer, Offer++, mentorship, etc.)",
-      "Present at an event during Zero to Offer or Offer++",
+      "Exclusively sponsor a CSC initiative (Zero to Offer, Foundry, mentorship, etc.)",
+      "Present at an event during Zero to Offer or Foundry",
     ],
   },
 ];
