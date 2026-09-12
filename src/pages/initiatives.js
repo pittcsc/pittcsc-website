@@ -77,8 +77,8 @@ const initiatives = [
   {
     title: "Dev Lab",
     image: DevLabImg,
-    link: "/initiatives/dev-lab",
-    external: false,
+    link: "https://pittcs.wiki/guides/skills/csc-dev-lab",
+    external: true,
     category: "Project Teams",
     description: "A hands-on development lab for students to build and collaborate on projects.",
   },
