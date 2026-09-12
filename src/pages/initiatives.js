@@ -1,18 +1,5 @@
 import React, { useEffect } from "react";
-import Z2OImg from "../images/initiatives/Z2O/Z2O-speaker.jpg";
-import SocialEventsImg from "../images/initiatives/social_events/soc_event.jpg";
-import FiresideChatsImg from "../images/initiatives/fireside_chats/fschat.jpg";
-import ConsultingImg from "../images/initiatives/csc-consulting.jpg";
-import SteelHacksImg from "../images/initiatives/steelhacks-team.jpg";
-import DevLabImg from "../images/initiatives/dev-lab/dev-lab-placeholder.jpg";
-import LaunchpadImg from "../images/initiatives/launchpad.jpg";
-import SiteVisitsImg from "../images/initiatives/site-visits/google.jpg";
-import FoundryImg from "../images/initiatives/foundry/CSC_CGI_Code_Comp-032.jpg";
-import MockInterviewsImg from "../images/initiatives/mock-interviews/mock-interviews.jpg";
-import IndustryRecruitingImg from "../images/initiatives/industry-recruiting/industry-recruiting.jpg";
-import CSCHacksImg from "../images/initiatives/csc-hacks/csc-hacks.jpg";
-import BitByteImg from "../images/initiatives/bit-byte/bit-byte.jpg";
-import SocialMediaImg from "../images/initiatives/social-media/social-media.jpg";
+import { StaticImage } from "gatsby-plugin-image";
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
@@ -28,7 +15,14 @@ const GA_TRACKING_ID = "UA-58446605-1";
 const initiatives = [
   {
     title: "Zero to Offer",
-    image: Z2OImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/Z2O/Z2O-speaker.jpg"
+        alt="Zero to Offer"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/z2o",
     external: false,
     category: "Career",
@@ -36,7 +30,14 @@ const initiatives = [
   },
   {
     title: "Foundry",
-    image: FoundryImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/foundry/CSC_CGI_Code_Comp-032.jpg"
+        alt="Foundry"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/foundry",
     external: false,
     category: "Career",
@@ -44,7 +45,14 @@ const initiatives = [
   },
   {
     title: "Mock Interviews",
-    image: MockInterviewsImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/mock-interviews/mock-interviews.jpg"
+        alt="Mock Interviews"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/mock-interviews",
     external: false,
     category: "Career",
@@ -52,7 +60,14 @@ const initiatives = [
   },
   {
     title: "Industry Recruiting Events",
-    image: IndustryRecruitingImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/industry-recruiting/industry-recruiting.jpg"
+        alt="Industry Recruiting Events"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/industry-recruiting",
     external: false,
     category: "Career",
@@ -60,7 +75,14 @@ const initiatives = [
   },
   {
     title: "Site Visits",
-    image: SiteVisitsImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/site-visits/google.jpg"
+        alt="Site Visits"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/site-visits",
     external: false,
     category: "Career",
@@ -68,7 +90,14 @@ const initiatives = [
   },
   {
     title: "Launchpad",
-    image: LaunchpadImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/launchpad.jpg"
+        alt="Launchpad"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/launchpad",
     external: false,
     category: "Career",
@@ -76,15 +105,29 @@ const initiatives = [
   },
   {
     title: "Dev Lab",
-    image: DevLabImg,
-    link: "/initiatives/dev-lab",
-    external: false,
+    image: (
+      <StaticImage
+        src="../images/initiatives/dev-lab/dev-lab-placeholder.jpg"
+        alt="Dev Lab"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
+    link: "https://pittcs.wiki/guides/skills/csc-dev-lab",
+    external: true,
     category: "Project Teams",
     description: "A hands-on development lab for students to build and collaborate on projects.",
   },
   {
     title: "Consulting",
-    image: ConsultingImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/csc-consulting.jpg"
+        alt="Consulting"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/consulting",
     external: false,
     category: "Project Teams",
@@ -92,7 +135,14 @@ const initiatives = [
   },
   {
     title: "CSC Hacks",
-    image: CSCHacksImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/csc-hacks/csc-hacks.jpg"
+        alt="CSC Hacks"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/csc-hacks",
     external: false,
     category: "Hackathons",
@@ -100,7 +150,14 @@ const initiatives = [
   },
   {
     title: "SteelHacks",
-    image: SteelHacksImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/steelhacks-team.jpg"
+        alt="SteelHacks"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "https://steelhacks.org",
     external: true,
     category: "Hackathons",
@@ -108,7 +165,14 @@ const initiatives = [
   },
   {
     title: "Bit/Byte",
-    image: BitByteImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/bit-byte/bit-byte.jpg"
+        alt="Bit/Byte"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/bit-byte",
     external: false,
     category: "Mentorship",
@@ -116,7 +180,14 @@ const initiatives = [
   },
   {
     title: "Fireside Chats",
-    image: FiresideChatsImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/fireside_chats/fschat.jpg"
+        alt="Fireside Chats"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/fireside-chats",
     external: false,
     category: "Guest Speakers",
@@ -124,7 +195,14 @@ const initiatives = [
   },
   {
     title: "Social Events",
-    image: SocialEventsImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/social_events/soc_event.jpg"
+        alt="Social Events"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/social-events",
     external: false,
     category: "Social",
@@ -132,7 +210,14 @@ const initiatives = [
   },
   {
     title: "Social Media",
-    image: SocialMediaImg,
+    image: (
+      <StaticImage
+        src="../images/initiatives/social-media/social-media.jpg"
+        alt="Social Media"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        style={{ willChange: "transform", contentVisibility: "auto" }}
+      />
+    ),
     link: "/initiatives/social-media",
     external: false,
     category: "Social",
@@ -200,14 +285,7 @@ const InitiativePage = () => {
                   >
                     {/* Image Container */}
                     <div className="relative w-full aspect-video overflow-hidden" style={{ contain: 'layout' }}>
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        decoding="async"
-                        style={{ willChange: 'transform', contentVisibility: 'auto' }}
-                      />
+                      {item.image}
                     </div>
 
                     {/* Content Container */}
