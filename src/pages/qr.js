@@ -13,6 +13,15 @@ const MARGIN_SIZE = 16;
 
 const squareNavy = { color: NAVY, type: "square" };
 
+// Transparent by default, so an exported code drops onto a slide or poster of any
+// colour without a white card around it. White is there for the times you *want*
+// the card: a dark backdrop the navy would vanish into, a printer, or a tool that
+// flattens alpha to black. rgba rather than the keyword because it is unambiguous
+// in both the canvas preview and the SVG export.
+const TRANSPARENT = "rgba(0,0,0,0)";
+const WHITE = "#ffffff";
+const backgroundFor = (white) => ({ color: white ? WHITE : TRANSPARENT });
+
 // Base options shared by the preview and the download export. Error correction
 // is forced to "H" (~30% recoverable) so the center logo never breaks
 // scannability.
@@ -26,10 +35,7 @@ const baseOptions = {
   dotsOptions: squareNavy,
   cornersSquareOptions: squareNavy,
   cornersDotOptions: squareNavy,
-  // Fully transparent, so an exported code drops onto a slide or poster of any
-  // colour without a white card around it. rgba rather than the keyword because it
-  // is unambiguous in both the canvas preview and the SVG export.
-  backgroundOptions: { color: "rgba(0,0,0,0)" },
+  backgroundOptions: backgroundFor(false),
   imageOptions: {
     margin: 0,
     hideBackgroundDots: true,
@@ -43,8 +49,8 @@ const buttonBase =
 // Make a QRCode with the PittCSC logo in it and the correct data and size
 // @data the data string to use
 // @size the final image size, including the margins
-// @ref the reference to assign the QRCodeStyling to
-async function makeCode(data, size) {
+// @white true for a plain white background, false for transparent
+async function makeCode(data, size, white) {
   const { default: QRCodeStyling} = await import("qr-code-styling");
   // Make it twice, first approximating the image margin, and then calculating the exact size of one of the
   // squares and making that the margin. This is the first pass
@@ -53,6 +59,7 @@ async function makeCode(data, size) {
     width: size,
     height: size,
     data: data,
+    backgroundOptions: backgroundFor(white),
   });
   // Calculate the exact margin and apply it
   const margin = (size - 2 * MARGIN_SIZE) / code._qr.getModuleCount();
@@ -81,6 +88,7 @@ async function updateCode(code, data, size) {
 
 const QrPage = () => {
   const [link, setLink] = useState("");
+  const [whiteBackground, setWhiteBackground] = useState(false);
   const previewRef = useRef(null);
   const qrRef = useRef(null);
   const lastDataRef = useRef(null);
@@ -92,7 +100,7 @@ const QrPage = () => {
   // needs the DOM/canvas, so it is dynamically imported inside useEffect to
   // keep Gatsby's server-side build from crashing.
   useEffect(() => {
-    makeCode(FALLBACK_URL, PREVIEW_SIZE).then((code) => {
+    makeCode(FALLBACK_URL, PREVIEW_SIZE, false).then((code) => {
       qrRef.current = code;
       lastDataRef.current = FALLBACK_URL;
       if (previewRef.current) {
@@ -114,10 +122,17 @@ const QrPage = () => {
     return () => clearTimeout(timer);
   }, [qrData]);
 
+  // The background is a one-key update, so it needs none of the margin dance above.
+  useEffect(() => {
+    if (qrRef.current) {
+      qrRef.current.update({ backgroundOptions: backgroundFor(whiteBackground) });
+    }
+  }, [whiteBackground]);
+
   // Downloads render a throwaway full-resolution instance so the live preview
   // never pays export-size rasterization costs.
   const download = async (extension) => {
-    const exportQr = await makeCode(qrData, EXPORT_SIZE);
+    const exportQr = await makeCode(qrData, EXPORT_SIZE, whiteBackground);
     exportQr.download({ name: DOWNLOAD_NAME, extension });
   };
 
@@ -172,10 +187,34 @@ const QrPage = () => {
               </button>
             </div>
 
-            <p className="mt-6 text-sm text-gray-500">
-              Both export with a transparent background, so they sit on any colour.
-              The code is dark navy, so keep it on a light backdrop or it
-              won&rsquo;t scan. Always check the final code with your phone.
+            <div className="mt-6 flex items-center gap-3">
+              <button
+                type="button"
+                id="qr-background"
+                role="switch"
+                aria-checked={whiteBackground}
+                onClick={() => setWhiteBackground((v) => !v)}
+                className={`relative h-6 w-11 flex-none rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+                  whiteBackground ? "bg-primary" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                    whiteBackground ? "translate-x-5" : ""
+                  }`}
+                />
+              </button>
+              <label htmlFor="qr-background" className="cursor-pointer text-sm text-gray-700">
+                White background
+              </label>
+            </div>
+
+            <p className="mt-4 text-sm text-gray-500">
+              {whiteBackground
+                ? "Exports on a plain white card, so it scans on any backdrop, including dark ones and tools that flatten transparency to black."
+                : "Exports with a transparent background, so it sits on any colour. The code is dark navy, so keep it on a light backdrop or it won\u2019t scan."}{" "}
+              Always check the final code with your phone.
             </p>
           </div>
 
