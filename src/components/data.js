@@ -82,11 +82,11 @@ export const initiativeLeadList = [
     image: "../images/officers_2025/shreyash.jpeg",
   },
   {
-    name: "Haiden Hunter",
+    name: "Denys Tsinyk",
     title: "SteelHacks Co-Executive Director",
-    linkedIn: "https://www.linkedin.com/in/haidenh/",
-    email: "HNH21@pitt.edu",
-    image: "../images/officers_2025/haiden.jpeg",
+    linkedIn: "https://www.linkedin.com/in/denystsinyk/",
+    email: "det82@pitt.edu",
+    image: "../images/officers_2025/denys.jpeg",
   },
   {
     name: "Jon Coulter",
