@@ -8,6 +8,9 @@ npm install
 npm run develop
 ```
 
+For local Supabase and the Go API, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+Run `npm run dev:api` in a separate terminal to start the backend.
+
 ## Accessing Data in Content Folder
 
 JSON files added to the Content folder are accessible via [GraphQL](https://www.gatsbyjs.com/docs/graphql/) using the [JSON gatsby transformer plugin](https://www.gatsbyjs.com/plugins/gatsby-transformer-json/).

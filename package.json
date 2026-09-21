@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "develop": "gatsby develop",
+    "dev:api": "cd backend && go run ./cmd/api",
+    "test:api": "cd backend && go test ./...",
     "start": "gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
