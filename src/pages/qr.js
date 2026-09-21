@@ -143,7 +143,7 @@ const QrPage = () => {
           <h1 className="text-4xl font-bold text-primary md:text-5xl">
             QR Code Generator
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-gray-600">
+          <p className="mx-auto mt-4 max-w-xl text-ink-muted">
             Paste a link and get a branded PittCSC QR code, ready to download.
           </p>
         </div>
@@ -165,7 +165,7 @@ const QrPage = () => {
               value={link}
               onChange={(e) => setLink(e.target.value)}
               placeholder="https://forms.gle/your-form"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 shadow-sm focus:border-primary focus:ring-primary"
+              className="w-full rounded-lg border border-line-strong px-4 py-3 text-ink shadow-sm focus:border-primary focus:ring-primary"
             />
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -195,7 +195,7 @@ const QrPage = () => {
                 aria-checked={whiteBackground}
                 onClick={() => setWhiteBackground((v) => !v)}
                 className={`relative h-6 w-11 flex-none rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
-                  whiteBackground ? "bg-primary" : "bg-gray-300"
+                  whiteBackground ? "bg-primary" : "bg-line-strong"
                 }`}
               >
                 <span
@@ -205,12 +205,12 @@ const QrPage = () => {
                   }`}
                 />
               </button>
-              <label htmlFor="qr-background" className="cursor-pointer text-sm text-gray-700">
+              <label htmlFor="qr-background" className="cursor-pointer text-sm text-ink">
                 White background
               </label>
             </div>
 
-            <p className="mt-4 text-sm text-gray-500">
+            <p className="mt-4 text-sm text-ink-muted">
               {whiteBackground
                 ? "Exports on a plain white card, so it scans on any backdrop, including dark ones and tools that flatten transparency to black."
                 : "Exports with a transparent background, so it sits on any colour. The code is dark navy, so keep it on a light backdrop or it won\u2019t scan."}{" "}
@@ -221,7 +221,7 @@ const QrPage = () => {
           {/* Live preview */}
           <div className="flex flex-col items-center">
             <div
-              className="w-full max-w-sm overflow-hidden rounded-2xl border border-gray-200 p-4 shadow-md"
+              className="w-full max-w-sm overflow-hidden rounded-2xl border border-line p-4 shadow-md"
               style={{
                 // Checkerboard, not white: the code is transparent now, and against
                 // a white card that would look identical to the old behaviour.
@@ -234,7 +234,7 @@ const QrPage = () => {
               <div ref={previewRef} className="[&>canvas]:h-auto [&>canvas]:w-full" />
             </div>
             {!hasLink && (
-              <p className="mt-3 text-sm text-gray-400">
+              <p className="mt-3 text-sm text-ink-faint">
                 Sample shown. Paste a link to create yours.
               </p>
             )}

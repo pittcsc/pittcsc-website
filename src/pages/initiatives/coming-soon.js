@@ -48,8 +48,8 @@ const ComingSoonPage = () => {
             </div>
 
             {/* Content Section */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 text-center relative z-10">
-              <p className="text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
+            <div className="bg-surface-raised/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-line mb-16 text-center relative z-10">
+              <p className="text-lg leading-relaxed text-ink max-w-3xl mx-auto">
                 This initiative page is currently under development. Check back soon for more information!
               </p>
             </div>

@@ -194,7 +194,7 @@ const InitiativePage = () => {
                     }}
                     target={item.external ? "_blank" : "_self"}
                     rel={item.external ? "noopener noreferrer" : ""}
-                    className={`group flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden 
+                    className={`group flex flex-col bg-surface-raised border border-line rounded-xl overflow-hidden 
                         hover:-translate-y-1 hover:shadow-xl hover:border-yellow-400 transition-transform transition-shadow`}
                     style={{ willChange: 'transform', contain: 'layout style paint' }}
                   >
@@ -213,24 +213,24 @@ const InitiativePage = () => {
                     {/* Content Container */}
                     <div className="flex flex-col flex-grow p-5">
                       {/* Category Badge */}
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2 block">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-ink-brand mb-2 block">
                         {item.category}
                       </span>
 
                       {/* Title */}
-                      <h2 className="text-lg font-bold text-slate-900 mb-1">
+                      <h2 className="text-lg font-bold text-ink mb-1">
                         {item.title}
                       </h2>
 
                       {/* Description */}
-                      <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed flex-grow mb-4">
+                      <p className="text-sm text-ink-muted line-clamp-3 leading-relaxed flex-grow mb-4">
                         {item.description}
                       </p>
 
                       {/* CTA Link */}
                       {item.link && (
                         <div className="mt-auto">
-                          <span className="text-blue-600 hover:text-yellow-500 font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                          <span className="text-ink-brand hover:text-yellow-500 font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                             Learn More
                             <FontAwesomeIcon
                               icon={faArrowRight}

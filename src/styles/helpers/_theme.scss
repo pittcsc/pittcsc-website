@@ -1,0 +1,93 @@
+/* =============================================================================
+   Theme tokens
+   =============================================================================
+
+   Every colour that depends on the colour scheme lives here, once, as a custom
+   property. Components use the Tailwind names registered in tailwind.config.js
+   (`bg-surface`, `text-ink`, `border-line`, …) and never say `dark:` themselves —
+   so a new component picks up dark mode by using the same words as everything
+   else, instead of having to remember a second set of classes for every colour.
+
+   Dark follows the operating system via `prefers-color-scheme`. That is a deliberate
+   v1: no toggle means no state, no storage, and no flash of the wrong scheme before
+   hydration. A toggle can be added later by switching Tailwind to `darkMode: "class"`
+   and moving this block under `.dark`.
+
+   Two things are *not* tokens on purpose. Pitt gold stays `secondary-100` in both
+   schemes; it is the brand accent and reads on either ground. And the filled navy of
+   `bg-primary` stays put too — a navy button with white text works on a dark page.
+   Only navy *text* lifts, via `ink-brand`, because #243e8b on #0f2027 is unreadable.
+
+   The dark page colour is #0f2027, carried over from the original dark-mode PR (#62).
+   ========================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  --surface: #ffffff;
+  --surface-raised: #f3f4f6; /* was bg-gray-100 */
+  --surface-sunken: #f9fafb; /* was bg-gray-50 */
+
+  --ink: #111827;
+  --ink-muted: #6b7280; /* was text-gray-500 */
+  --ink-faint: #9ca3af; /* was text-gray-400 */
+  --ink-brand: #243e8b; /* text-primary */
+
+  --line: #e5e7eb; /* was border-gray-200 */
+  --line-strong: #d1d5db; /* was border-gray-300 */
+
+  /* A decorative gold wash: pale gold in light, where it sits quietly under dark
+     text; in dark it has to drop well below the light ink that crosses it, so it
+     becomes a deep olive that still reads as "warm". Not for anything with meaning. */
+  --surface-accent: #f8e3b4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #0f2027;
+    --surface-raised: #1a2b35;
+    --surface-sunken: #0b181e;
+
+    --ink: #e5e7eb;
+    --ink-muted: #9ca3af;
+    --ink-faint: #6b7280;
+    --ink-brand: #8fa8ee;
+
+    --line: #2a3b45;
+    --line-strong: #3a4d58;
+
+    --surface-accent: #2e2c1c;
+  }
+}
+
+body {
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+/* @tailwindcss/forms paints every field white in its base layer, which beats the
+   browser's own colour-scheme handling. Same selectors, so this wins on order
+   without a bump in specificity. Anything that sets its own bg-* still overrides. */
+[type="text"],
+[type="email"],
+[type="url"],
+[type="password"],
+[type="number"],
+[type="date"],
+[type="datetime-local"],
+[type="month"],
+[type="search"],
+[type="tel"],
+[type="time"],
+[type="week"],
+[multiple],
+textarea,
+select {
+  background-color: var(--surface); /* white in light — unchanged; sunken in dark */
+  color: var(--ink);
+  border-color: var(--line-strong);
+
+  &::placeholder {
+    color: var(--ink-faint);
+  }
+}

@@ -430,13 +430,13 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
       <div className="flex flex-wrap items-end justify-between gap-3 mb-3">
         <div>
           <h2 className="text-lg font-bold">When are you free?</h2>
-          <p className="text-gray-500 text-sm">
+          <p className="text-ink-muted text-sm">
             Drag to add the times that work. Drag again to remove.
           </p>
         </div>
 
         <div
-          className="inline-flex p-1 bg-gray-100 rounded-full"
+          className="inline-flex p-1 bg-surface-sunken rounded-full"
           role="group"
           aria-label="What dragging adds"
         >
@@ -451,8 +451,8 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
               onClick={() => setTool(value)}
               className={`inline-flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-full transition ${
                 tool === value
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-900"
+                  ? "bg-surface-raised text-ink shadow-sm"
+                  : "text-ink-muted hover:text-ink"
               }`}
             >
               {/* The swatch carries the meaning, so the active pill doesn't have to
@@ -470,7 +470,7 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
             key={preset.label}
             type="button"
             onClick={() => applyPreset(preset)}
-            className="px-3 py-1.5 text-sm font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition"
+            className="px-3 py-1.5 text-sm font-bold bg-surface-raised border border-line-strong rounded-full hover:border-ink-muted transition"
           >
             {preset.label}
           </button>
@@ -479,12 +479,12 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
           <button
             type="button"
             onClick={clearAll}
-            className="px-3 py-1.5 text-gray-500 text-sm font-bold hover:text-gray-900 transition"
+            className="px-3 py-1.5 text-ink-muted text-sm font-bold hover:text-ink transition"
           >
             Clear
           </button>
         )}
-        <span className="ml-auto text-gray-500 text-sm" aria-live="polite">
+        <span className="ml-auto text-ink-muted text-sm" aria-live="polite">
           {liveRange || (selectedCount ? `${hours} hours selected` : "Nothing selected yet")}
         </span>
       </div>
@@ -507,7 +507,7 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
         }}
       />
 
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-gray-500 text-xs">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-ink-muted text-xs">
         <span className="inline-flex items-center gap-2">
           <span className="meet-swatch" data-state="2" /> Free
         </span>
@@ -522,7 +522,7 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
             <span className="meet-swatch" data-busy="true" /> Busy on your calendar
           </span>
         )}
-        <span className="text-gray-400">
+        <span className="text-ink-faint">
           Arrows move · Space toggles · Shift fills a block
         </span>
       </div>

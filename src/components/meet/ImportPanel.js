@@ -10,7 +10,7 @@ import {
 import { fetchGoogleBusy, googleConfigured } from "../../lib/meet/gcal";
 
 const BUTTON =
-  "px-4 py-2 text-sm font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition disabled:opacity-50";
+  "px-4 py-2 text-sm font-bold bg-surface-raised border border-line-strong rounded-full hover:border-ink-muted transition disabled:opacity-50";
 
 /**
  * Optional shortcut, shown right above the grid you'd otherwise fill in by hand: it
@@ -134,7 +134,7 @@ export default function ImportPanel({ slots, states, manual, onImport, windowMs 
   return (
     <div
       className={`px-4 py-3 border rounded-2xl transition ${
-        dragOver ? "border-primary border-dashed bg-blue-50" : "border-gray-200 bg-white"
+        dragOver ? "border-primary border-dashed bg-surface-sunken" : "border-line bg-surface-raised"
       }`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -152,7 +152,7 @@ export default function ImportPanel({ slots, states, manual, onImport, windowMs 
           <p className="font-bold">
             {dragOver ? "Drop the .ics files" : "Import your calendar"}
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-ink-muted text-sm">
             We&apos;ll select when you&apos;re free. Add as many calendars as you like
             — only free/busy is read, never event details.
           </p>
@@ -191,12 +191,12 @@ export default function ImportPanel({ slots, states, manual, onImport, windowMs 
           {sources.map((s) => (
             <li
               key={s.id}
-              className="flex items-center gap-2 px-3 py-1 text-sm border border-gray-200 rounded-full bg-gray-50"
+              className="flex items-center gap-2 px-3 py-1 text-sm border border-line rounded-full bg-surface-sunken"
             >
               <span className="font-semibold truncate max-w-[16rem]">{s.label}</span>
               <button
                 type="button"
-                className="text-gray-400 hover:text-red-700"
+                className="text-ink-faint hover:text-red-700"
                 aria-label={`Remove ${s.label}`}
                 onClick={() => apply(sources.filter((x) => x.id !== s.id))}
               >
@@ -210,7 +210,7 @@ export default function ImportPanel({ slots, states, manual, onImport, windowMs 
       {status && (
         <p
           className={`mt-3 text-sm ${
-            status.kind === "error" ? "text-red-700" : "text-gray-500"
+            status.kind === "error" ? "text-red-700" : "text-ink-muted"
           }`}
           role="status"
         >

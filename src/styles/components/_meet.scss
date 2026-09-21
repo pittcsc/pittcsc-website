@@ -13,7 +13,7 @@
       the create screen and as every other scheduling tool. A filled cell is never a
       prohibition.
    2. A state is never encoded by hue alone. Free is a solid dark-blue fill, "if needed"
-      is a mid-tone dotted texture, and can't-make-it is empty white. The three stay
+      is a mid-tone dotted texture, and can't-make-it is the empty ground. The three stay
       apart in greyscale and under every form of colour-vision deficiency.
 
    The input grid uses a flat brand fill; the group heatmap uses a graded ramp with a
@@ -22,17 +22,51 @@
    ========================================================================== */
 
 .meet {
-  --meet-line: #e5e7eb;
+  /* Surfaces and ink come from the site tokens (src/styles/helpers/_theme.scss),
+     so the grid follows the colour scheme with the rest of the page. The grid sits
+     in a card, so its ground is the raised surface. */
+  --meet-surface: var(--surface-raised);
+  --meet-ink: var(--ink);
+  --meet-ink-faint: var(--ink-faint);
+  --meet-line: var(--line);
+  --meet-line-strong: var(--line-strong);
   --meet-line-soft: #f1f2f6;
-  --meet-primary: #243e8b;
   --meet-gold: #ffb81c;
-  --meet-ink: #111827;
+
+  /* The fill for "free". Lifted in dark, where Pitt navy on a dark card would be
+     nearly invisible (about 1.5:1) — the same reason text-primary lifts. */
+  --meet-primary: #243e8b;
+
+  /* Light-only tints that need a dark counterpart. */
+  --meet-hover: #f5f7fc;      /* header/gutter hover */
+  --meet-tint: #eef1f9;       /* ramp start, day hover, month-picker range */
+  --meet-tint-strong: #e9ebf1; /* slider track */
+  --meet-maybe: #c3cbe4;      /* "if needed" cell ground */
+  --meet-maybe-dot: rgba(36, 62, 139, 0.75);
+  --meet-hatch: rgba(29, 39, 88, 0.3);  /* calendar-busy, on an empty cell */
+  --meet-disabled: #cbd0da;   /* month picker: out-of-range day */
+  --meet-shimmer-a: #eef0f6;
+  --meet-shimmer-b: #f8f9fc;
 
   --meet-cell-h: 26px;
   --meet-col-min: 46px;
   --meet-gutter: 58px;
 
   font-variant-numeric: tabular-nums;
+
+  @media (prefers-color-scheme: dark) {
+    --meet-line-soft: #1f303a;
+    --meet-primary: #4f6dd6;
+    --meet-hover: #1c2e38;
+    --meet-tint: #1c2e38;
+    --meet-tint-strong: #24373f;
+    --meet-maybe: #2c3f66;
+    --meet-maybe-dot: rgba(143, 168, 238, 0.85);
+    --meet-hatch: rgba(229, 231, 235, 0.35);
+    --meet-disabled: #3a4d58;
+    --meet-shimmer-a: #17262f;
+    --meet-shimmer-b: #1f303a;
+  }
 }
 
 /* ---------------------------------- grid ---------------------------------- */
@@ -41,7 +75,7 @@
   border: 1px solid var(--meet-line);
   border-radius: 1rem;
   overflow: hidden;
-  background: #fff;
+  background: var(--meet-surface);
 }
 
 .meet-grid-scroll {
@@ -59,7 +93,7 @@
   position: sticky;
   left: 0;
   z-index: 3;
-  background: #fff;
+  background: var(--meet-surface);
   border-bottom: 1px solid var(--meet-line);
   border-right: 1px solid var(--meet-line);
 }
@@ -70,7 +104,7 @@
   border: 0;
   border-bottom: 1px solid var(--meet-line);
   border-right: 1px solid var(--meet-line);
-  background: #fff;
+  background: var(--meet-surface);
   font: inherit;
   cursor: pointer;
   padding: 8px 4px 7px;
@@ -79,7 +113,7 @@
   transition: background 0.12s ease;
 
   &:hover {
-    background: #f5f7fc;
+    background: var(--meet-hover);
   }
 
   &:last-child {
@@ -93,14 +127,14 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: var(--meet-ink-faint);
 }
 
 .meet-daybtn__num {
   display: block;
   font-size: 15px;
   font-weight: 700;
-  color: #111827;
+  color: var(--meet-ink);
   margin-top: 1px;
 }
 
@@ -113,11 +147,11 @@
   appearance: none;
   border: 0;
   border-right: 1px solid var(--meet-line);
-  background: #fff;
+  background: var(--meet-surface);
   font: inherit;
   font-size: 11px;
   font-weight: 500;
-  color: #9ca3af;
+  color: var(--meet-ink-faint);
   padding: 0 8px 0 4px;
   cursor: pointer;
   touch-action: pan-y;
@@ -128,7 +162,7 @@
 
   &:hover {
     color: var(--meet-primary);
-    background: #f5f7fc;
+    background: var(--meet-hover);
   }
 }
 
@@ -143,7 +177,7 @@
   height: var(--meet-cell-h);
   border-right: 1px solid var(--meet-line);
   border-top: 1px solid var(--meet-line-soft);
-  background: #fff;
+  background: var(--meet-surface);
   touch-action: none;
   cursor: pointer;
   padding: 0;
@@ -155,7 +189,7 @@
 
   /* the rule sits at the top of the hour, where the clock label is */
   &[data-hour="true"] {
-    border-top-color: #d7dbe4;
+    border-top-color: var(--meet-line-strong);
   }
 
   &[data-firstrow="true"] {
@@ -167,7 +201,7 @@
   }
 
   &[data-void="true"] {
-    background: repeating-linear-gradient(135deg, #f8f9fc 0 5px, #eef0f5 5px 6px);
+    background: repeating-linear-gradient(135deg, var(--meet-surface) 0 5px, var(--meet-line-soft) 5px 6px);
     cursor: default;
   }
 
@@ -180,13 +214,13 @@
 
 /* 0 = can't make it (nothing selected) */
 .meet-cell[data-state="0"] {
-  background: #fff;
+  background: var(--meet-surface);
 }
 
 /* 1 = if needed — selected, but provisional, so it reads as a lighter texture */
 .meet-cell[data-state="1"] {
-  background-color: #c3cbe4;
-  background-image: radial-gradient(rgba(36, 62, 139, 0.75) 1.3px, transparent 1.3px);
+  background-color: var(--meet-maybe);
+  background-image: radial-gradient(var(--meet-maybe-dot) 1.3px, transparent 1.3px);
   background-size: 6px 6px;
 }
 
@@ -206,7 +240,7 @@
   pointer-events: none;
   background: repeating-linear-gradient(
     45deg,
-    rgba(29, 39, 88, 0.3) 0 2px,
+    var(--meet-hatch) 0 2px,
     transparent 2px 5px
   );
 }
@@ -223,9 +257,9 @@
 }
 
 .meet-swatch[data-busy="true"] {
-  background: #fff repeating-linear-gradient(
+  background: var(--meet-surface) repeating-linear-gradient(
       45deg,
-      rgba(29, 39, 88, 0.3) 0 2px,
+      var(--meet-hatch) 0 2px,
       transparent 2px 5px
     );
 }
@@ -269,7 +303,7 @@
   cursor: default;
 
   &[data-any="false"] {
-    background-image: repeating-linear-gradient(135deg, transparent 0 4px, #e2e5ed 4px 5px);
+    background-image: repeating-linear-gradient(135deg, transparent 0 4px, var(--meet-line-strong) 4px 5px);
   }
 }
 
@@ -298,7 +332,7 @@
   line-height: var(--meet-cell-h);
   text-align: center;
   display: block;
-  color: #111827;
+  color: var(--meet-ink);
 
   &[data-inverse="true"] {
     color: #fff;
@@ -330,19 +364,19 @@
   width: 14px;
   height: 14px;
   border-radius: 4px;
-  border: 1px solid #d7dbe4;
+  border: 1px solid var(--meet-line-strong);
   flex: none;
   display: inline-block;
   position: relative;
 }
 
 .meet-swatch[data-state="0"] {
-  background: #fff;
+  background: var(--meet-surface);
 }
 
 .meet-swatch[data-state="1"] {
-  background-color: #c3cbe4;
-  background-image: radial-gradient(rgba(36, 62, 139, 0.75) 1.3px, transparent 1.3px);
+  background-color: var(--meet-maybe);
+  background-image: radial-gradient(var(--meet-maybe-dot) 1.3px, transparent 1.3px);
   background-size: 6px 6px;
 }
 
@@ -353,16 +387,16 @@
 
 .meet-swatch[data-state="ramp"] {
   width: 38px;
-  background: linear-gradient(90deg, #eef1f9, var(--meet-primary));
+  background: linear-gradient(90deg, var(--meet-tint), var(--meet-primary));
 }
 
 .meet-swatch[data-state="best"] {
-  background: #fff;
+  background: var(--meet-surface);
   box-shadow: inset 0 0 0 2px var(--meet-gold);
 }
 
 .meet-swatch[data-state="none"] {
-  background-image: repeating-linear-gradient(135deg, transparent 0 4px, #e2e5ed 4px 5px);
+  background-image: repeating-linear-gradient(135deg, transparent 0 4px, var(--meet-line-strong) 4px 5px);
 }
 
 /* ------------------------------ month picker ------------------------------ */
@@ -375,10 +409,10 @@
 .meet-day {
   appearance: none;
   border: 1px solid transparent;
-  background: #fff;
+  background: var(--meet-surface);
   font: inherit;
   font-size: 14px;
-  color: #111827;
+  color: var(--meet-ink);
   height: 38px;
   border-radius: 10px;
   cursor: pointer;
@@ -386,7 +420,7 @@
   transition: background 0.1s ease, color 0.1s ease;
 
   &:hover:not(:disabled):not([data-on="true"]) {
-    background: #eef1f9;
+    background: var(--meet-tint);
     color: var(--meet-primary);
   }
 
@@ -396,7 +430,7 @@
   }
 
   &:disabled {
-    color: #cbd0da;
+    color: var(--meet-disabled);
     cursor: default;
   }
 
@@ -408,7 +442,7 @@
   }
 
   &[data-today="true"]:not([data-on="true"]) {
-    box-shadow: inset 0 0 0 1px #c7cddb;
+    box-shadow: inset 0 0 0 1px var(--meet-line-strong);
     font-weight: 700;
   }
 }
@@ -428,7 +462,7 @@
   right: 0;
   height: 6px;
   border-radius: 999px;
-  background: #e9ebf1;
+  background: var(--meet-tint-strong);
 }
 
 .meet-range__fill {
@@ -467,7 +501,7 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--meet-surface);
     border: 2px solid var(--meet-primary);
     box-shadow: 0 1px 3px rgba(17, 24, 39, 0.25);
     cursor: grab;
@@ -478,7 +512,7 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--meet-surface);
     border: 2px solid var(--meet-primary);
     box-shadow: 0 1px 3px rgba(17, 24, 39, 0.25);
     cursor: grab;
@@ -504,7 +538,7 @@
 }
 
 .meet-skeleton {
-  background: linear-gradient(90deg, #eef0f6 25%, #f8f9fc 37%, #eef0f6 63%);
+  background: linear-gradient(90deg, var(--meet-shimmer-a) 25%, var(--meet-shimmer-b) 37%, var(--meet-shimmer-a) 63%);
   background-size: 400% 100%;
   animation: meet-shimmer 1.3s ease infinite;
   border-radius: 1rem;

@@ -42,17 +42,17 @@ export default function Roster({ group, youId, muted, onToggleMute }) {
                 ? `Count ${person.name} again`
                 : `See what works without ${person.name}`
             }
-            className={`inline-flex items-center gap-2 py-1.5 pl-2 pr-3 text-sm bg-white border rounded-full transition ${
+            className={`inline-flex items-center gap-2 py-1.5 pl-2 pr-3 text-sm bg-surface-raised border rounded-full transition ${
               person.muted ? "opacity-40 line-through" : ""
             } ${
               person.id === youId
                 ? "border-primary ring-2 ring-blue-100"
-                : "border-gray-300 hover:border-gray-500"
+                : "border-line-strong hover:border-ink-muted"
             }`}
           >
             <Avatar name={person.name} />
             {person.name}
-            {person.id === youId && <span className="text-gray-400 text-xs">you</span>}
+            {person.id === youId && <span className="text-ink-faint text-xs">you</span>}
           </button>
         ))}
 
@@ -60,7 +60,7 @@ export default function Roster({ group, youId, muted, onToggleMute }) {
           <span
             key={person.id}
             title="Opened the link, hasn't marked anything yet"
-            className="inline-flex items-center gap-2 py-1.5 pl-2 pr-3 text-gray-400 text-sm border border-gray-300 border-dashed rounded-full"
+            className="inline-flex items-center gap-2 py-1.5 pl-2 pr-3 text-ink-faint text-sm border border-line-strong border-dashed rounded-full"
           >
             <Avatar name={person.name} pending />
             {person.name}
@@ -69,7 +69,7 @@ export default function Roster({ group, youId, muted, onToggleMute }) {
       </div>
 
       {hasMuted && (
-        <p className="mt-3 text-gray-400 text-sm">
+        <p className="mt-3 text-ink-faint text-sm">
           Showing results without {muted.size === 1 ? "that person" : "those people"}.
           Nothing changed for anyone else.
         </p>

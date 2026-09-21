@@ -59,18 +59,18 @@ const InitiativeTemplate = ({ data }) => {
                 </svg>
               </h1>
               {subtitle && (
-                <p className="text-xl text-gray-600 mt-4 text-center max-w-2xl">{subtitle}</p>
+                <p className="text-xl text-ink-muted mt-4 text-center max-w-2xl">{subtitle}</p>
               )}
             </div>
 
             {/* Content Section */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 mb-16 relative z-10">
+            <div className="bg-surface-raised/80 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-sm border border-line mb-16 relative z-10">
 
               {/* Paragraphs */}
               {description.length > 0 && (
                 <div className="mb-12 space-y-4">
                   {description.map((paragraph, index) => (
-                    <p key={index} className="text-lg leading-relaxed text-gray-700">
+                    <p key={index} className="text-lg leading-relaxed text-ink">
                       {paragraph}
                     </p>
                   ))}
@@ -81,21 +81,21 @@ const InitiativeTemplate = ({ data }) => {
               {eventsTable && eventsTable.rows && eventsTable.rows.length > 0 && (
                 <div className="mb-12 overflow-x-auto">
                   <h3 className="text-2xl font-bold text-primary mb-6">Schedule & Events</h3>
-                  <table className="min-w-full divide-y divide-gray-200 border rounded-lg overflow-hidden shadow-sm">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-line border rounded-lg overflow-hidden shadow-sm">
+                    <thead className="bg-surface-sunken">
                       <tr>
                         {eventsTable.headers?.map((header, idx) => (
-                          <th key={idx} scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th key={idx} scope="col" className="px-6 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">
                             {header}
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-surface divide-y divide-line">
                       {eventsTable.rows.map((row, rowIdx) => (
-                        <tr key={rowIdx} className={rowIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                        <tr key={rowIdx} className={rowIdx % 2 === 0 ? "bg-surface" : "bg-surface-sunken"}>
                           {row.map((cell, cellIdx) => (
-                            <td key={cellIdx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            <td key={cellIdx} className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                               {cell}
                             </td>
                           ))}
@@ -114,7 +114,7 @@ const InitiativeTemplate = ({ data }) => {
                     {highlightsList.map((item, index) => (
                       <li key={index} className="flex items-start space-x-3">
                         <span className="text-yellow-400 font-bold text-xl">•</span>
-                        <span className="text-gray-700">{item}</span>
+                        <span className="text-ink">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -137,7 +137,7 @@ const InitiativeTemplate = ({ data }) => {
 
               {/* Gallery Title */}
               {gallery.length > 0 && galleryTitle && (
-                <p className="text-lg leading-relaxed text-gray-700 mt-8">
+                <p className="text-lg leading-relaxed text-ink mt-8">
                   {galleryTitle}
                 </p>
               )}
@@ -150,7 +150,7 @@ const InitiativeTemplate = ({ data }) => {
                   <motion.div
                     key={index}
                     whileHover={{ scale: 1.02 }}
-                    className="rounded-xl overflow-hidden shadow-lg h-64 bg-gray-100 cursor-pointer"
+                    className="rounded-xl overflow-hidden shadow-lg h-64 bg-surface-raised cursor-pointer"
                     onClick={() => setSelectedImage(src)}
                   >
                     <img

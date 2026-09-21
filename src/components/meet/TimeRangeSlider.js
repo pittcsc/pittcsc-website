@@ -27,7 +27,7 @@ export default function TimeRangeSlider({ startMin, endMin, onChange }) {
           {timeLabel(startMin, { compact: true })} –{" "}
           {endMin === MAX ? "Midnight" : timeLabel(endMin, { compact: true })}
         </span>
-        <span className="text-sm text-gray-400">
+        <span className="text-sm text-ink-faint">
           {Math.round((endMin - startMin) / 60)} hour window
         </span>
       </div>
@@ -60,7 +60,7 @@ export default function TimeRangeSlider({ startMin, endMin, onChange }) {
         />
       </div>
 
-      <div className="relative h-4 text-gray-400 text-xs">
+      <div className="relative h-4 text-ink-faint text-xs">
         {TICKS.map((tick, i) => {
           // Edge ticks align to the edge instead of centring, or they hang off it.
           const edge =

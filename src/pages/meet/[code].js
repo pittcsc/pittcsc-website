@@ -47,7 +47,7 @@ const SAVE_DEBOUNCE_MS = 650;
 const POLL_MS = 15000;
 
 const CALLOUT =
-  "px-4 py-3 text-sm bg-secondary-200 border border-secondary-100 rounded-2xl";
+  "px-4 py-3 text-sm bg-secondary-200 text-ink border border-secondary-100 rounded-2xl";
 
 /** What a shared link says before React knows which meeting it is. */
 const SHARE_TITLE = "Add your availability | Computer Science Club @ Pitt";
@@ -261,7 +261,7 @@ export default function MeetRoom({ params, location }) {
     return (
       <Shell title={SHARE_TITLE}>
         <h1 className="mb-3 text-3xl font-bold">That link didn&apos;t work</h1>
-        <p className="mb-6 text-gray-500">{loadError}</p>
+        <p className="mb-6 text-ink-muted">{loadError}</p>
         <Link className={PRIMARY_BTN} to="/meet">
           Create a meeting
         </Link>
@@ -291,7 +291,7 @@ export default function MeetRoom({ params, location }) {
     <Shell title={`${meeting.name} | Computer Science Club @ Pitt`} wide>
       <header className="mb-5">
         <h1 className="text-3xl font-bold lg:text-4xl">{meeting.name}</h1>
-        <p className="mt-1 text-gray-500 text-sm">
+        <p className="mt-1 text-ink-muted text-sm">
           {summarizeDates(meeting.dates)} · {rangeLabel(meeting.startMin, meeting.endMin)} ·{" "}
           {durationLabel(meeting.durationMin)}
         </p>
@@ -327,25 +327,25 @@ export default function MeetRoom({ params, location }) {
         />
       ) : (
         <>
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-2xl">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3 text-sm bg-surface-sunken border border-line rounded-2xl">
             {group.total === 0 ? (
-              <span className="text-gray-500">
-                <b className="text-gray-900">No answers yet.</b> Be the first.
+              <span className="text-ink-muted">
+                <b className="text-ink">No answers yet.</b> Be the first.
               </span>
             ) : (
               <>
-                <span className="text-gray-500">
-                  <b className="text-gray-900">{group.total}</b> answered
+                <span className="text-ink-muted">
+                  <b className="text-ink">{group.total}</b> answered
                   {group.pending > 0 ? `, ${group.pending} still deciding` : ""}
                 </span>
                 {headline && (
                   <>
-                    <span className="hidden text-gray-300 sm:inline" aria-hidden="true">
+                    <span className="hidden text-ink-faint sm:inline" aria-hidden="true">
                       •
                     </span>
-                    <span className="text-gray-500">
+                    <span className="text-ink-muted">
                       Best so far{" "}
-                      <b className="text-gray-900">
+                      <b className="text-ink">
                         {headline.dow} {headline.md}, {headline.range}
                       </b>{" "}
                       — {best[0].count}/{group.total}
@@ -358,7 +358,7 @@ export default function MeetRoom({ params, location }) {
 
           <div className="flex flex-wrap items-center justify-between gap-3 my-5">
             <div
-              className="inline-flex p-1 bg-gray-100 rounded-full"
+              className="inline-flex p-1 bg-surface-sunken rounded-full"
               role="tablist"
               aria-label="Views"
             >
@@ -372,7 +372,7 @@ export default function MeetRoom({ params, location }) {
                 Group
                 <span
                   className={`px-2 py-0.5 ml-2 text-xs rounded-full ${
-                    tab === "group" ? "bg-white bg-opacity-20" : "bg-white text-gray-500"
+                    tab === "group" ? "bg-surface-raised bg-opacity-20" : "bg-surface-raised text-ink-muted"
                   }`}
                 >
                   {group.total}
@@ -381,14 +381,14 @@ export default function MeetRoom({ params, location }) {
             </div>
 
             {identity ? (
-              <div className="flex items-center gap-3 text-gray-400 text-sm">
+              <div className="flex items-center gap-3 text-ink-faint text-sm">
                 <SaveIndicator state={saveState} onRetry={() => flush()} />
                 <span>
-                  as <b className="text-gray-700">{identity.name}</b>
+                  as <b className="text-ink">{identity.name}</b>
                 </span>
                 <button
                   type="button"
-                  className="underline hover:text-gray-700"
+                  className="underline hover:text-ink"
                   onClick={() => {
                     clearIdentity(code);
                     setIdentity(null);
@@ -411,11 +411,11 @@ export default function MeetRoom({ params, location }) {
           </div>
 
           {differentTz && (
-            <p className="flex flex-wrap items-center gap-2 mb-4 text-gray-400 text-sm">
+            <p className="flex flex-wrap items-center gap-2 mb-4 text-ink-faint text-sm">
               <span>Shown in {tzCity(browserTz)} time.</span>
               <button
                 type="button"
-                className="underline hover:text-gray-700"
+                className="underline hover:text-ink"
                 onClick={() => setUseMeetingTz((v) => !v)}
               >
                 {useMeetingTz
@@ -443,7 +443,7 @@ export default function MeetRoom({ params, location }) {
               />
 
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-gray-400 text-sm">
+                <p className="text-ink-faint text-sm">
                   {hasSelection
                     ? submitted
                       ? "Saved. Change it any time."
@@ -569,7 +569,7 @@ function Tab({ selected, onClick, children }) {
       aria-selected={selected}
       onClick={onClick}
       className={`inline-flex items-center px-4 py-2 text-sm font-bold rounded-full transition ${
-        selected ? "bg-gray-900 text-white" : "text-gray-500 hover:text-gray-900"
+        selected ? "bg-ink text-surface" : "text-ink-muted hover:text-ink"
       }`}
     >
       {children}
@@ -585,7 +585,7 @@ function SaveIndicator({ state, onRetry }) {
       <span className="meet-dot" data-state={state} aria-hidden="true" />
       {text}
       {state === "error" && (
-        <button type="button" className="underline hover:text-gray-700" onClick={onRetry}>
+        <button type="button" className="underline hover:text-ink" onClick={onRetry}>
           Retry
         </button>
       )}
@@ -646,9 +646,9 @@ function NameGate({ code, meeting, group, onReady, onPeek, setMeeting }) {
   if (conflict) {
     const firstName = conflict.name.split(" ")[0];
     return (
-      <div className="p-6 max-w-md bg-white border border-gray-200 rounded-2xl">
+      <div className="p-6 max-w-md bg-surface-raised border border-line rounded-2xl">
         <p className="font-bold">Someone already answered as {conflict.name}</p>
-        <p className="mt-1 mb-4 text-gray-500 text-sm">
+        <p className="mt-1 mb-4 text-ink-muted text-sm">
           If that was you on another device, pick up where you left off.
         </p>
         <div className="flex flex-wrap gap-2">
@@ -667,7 +667,7 @@ function NameGate({ code, meeting, group, onReady, onPeek, setMeeting }) {
           </button>
           <button
             type="button"
-            className="px-5 py-2.5 font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition"
+            className="px-5 py-2.5 font-bold bg-surface-raised border border-line-strong rounded-full hover:border-ink-muted transition"
             disabled={busy}
             onClick={() => {
               setConflict(null);
@@ -683,7 +683,7 @@ function NameGate({ code, meeting, group, onReady, onPeek, setMeeting }) {
 
   return (
     <form
-      className="p-6 max-w-md bg-white border border-gray-200 rounded-2xl"
+      className="p-6 max-w-md bg-surface-raised border border-line rounded-2xl"
       onSubmit={(e) => {
         e.preventDefault();
         join();
@@ -696,7 +696,7 @@ function NameGate({ code, meeting, group, onReady, onPeek, setMeeting }) {
       <div className="flex flex-wrap gap-2">
         <input
           id="meet-you"
-          className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl focus:border-primary focus:ring-primary"
+          className="flex-1 px-4 py-2.5 border border-line-strong rounded-xl focus:border-primary focus:ring-primary"
           style={{ minWidth: 160 }}
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -711,7 +711,7 @@ function NameGate({ code, meeting, group, onReady, onPeek, setMeeting }) {
       {group.total > 0 && (
         <button
           type="button"
-          className="mt-4 text-gray-400 text-sm underline hover:text-gray-700"
+          className="mt-4 text-ink-faint text-sm underline hover:text-ink"
           onClick={onPeek}
         >
           See results without answering

@@ -253,7 +253,7 @@ const IndexPage = ({ data }) => {
                 variants={subtextAnimate}
                 initial="hidden"
                 animate={controls}
-                className="relative z-10 w-3/4 mt-8 text-base md:text-xl xl:text-2xl font-semibold leading-relaxed text-slate-800 xl:w-3/4"
+                className="relative z-10 w-3/4 mt-8 text-base md:text-xl xl:text-2xl font-semibold leading-relaxed text-ink xl:w-3/4"
               >
                 <span className="inline-block bg-yellow-400/20 pl-2 pr-1 py-1 rounded">
                   Proudly pushing the boundaries on what it means to be a Pitt student.
@@ -276,13 +276,13 @@ const IndexPage = ({ data }) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="min-w-300 px-4 py-2 font-bold bg-white border-4 border-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
+                    className="min-w-300 px-4 py-2 font-bold bg-surface-raised border-4 border-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition"
                   >
                     What We Do
                   </motion.button>
                 </Link>
               </motion.div>
-              <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-secondary-200 rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
+              <div className="absolute z-0 -left-20 top-0 w-40 h-40 bg-surface-accent rounded-2xl transform-gpu -rotate-12 lg:-left-40 lg:-top-8 xl:w-80 xl:h-80"></div>
             </motion.div>
             <div className="relative flex flex-col items-center justify-center w-full lg:w-1/2">
               <motion.div
@@ -367,7 +367,7 @@ const IndexPage = ({ data }) => {
                 initial="hidden"
                 animate={controls}
               >
-                <div className="mx-auto my-4 p-6 max-w-lg bg-secondary-200 rounded-3xl shadow-lg md:p-8 xl:my-0 xl:px-8 xl:py-12 xl:w-full">
+                <div className="mx-auto my-4 p-6 max-w-lg bg-secondary-200 text-gray-900 rounded-3xl shadow-lg md:p-8 xl:my-0 xl:px-8 xl:py-12 xl:w-full">
                   <h2 className="mb-4 text-3xl font-bold lg:my-4 xl:text-4xl">
                     Our Mission
                   </h2>
@@ -405,7 +405,7 @@ const IndexPage = ({ data }) => {
                   d="M2.5 11.4996C106.5 -17.5 411.5 37.9996 476 7.49968"
                 />
               </svg>
-              <div className="grid gap-2 grid-cols-3 items-center place-items-center mb-8 mx-auto p-6 max-w-lg bg-secondary-200 rounded-2xl shadow-lg md:flex md:flex-wrap md:gap-0 md:justify-around lg:mb-0 lg:px-6 lg:py-12 xl:max-w-xl">
+              <div className="grid gap-2 grid-cols-3 items-center place-items-center mb-8 mx-auto p-6 max-w-lg bg-secondary-200 text-gray-900 rounded-2xl shadow-lg md:flex md:flex-wrap md:gap-0 md:justify-around lg:mb-0 lg:px-6 lg:py-12 xl:max-w-xl">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -476,7 +476,7 @@ const IndexPage = ({ data }) => {
                 </motion.a>
               </div>
             </div>
-            <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg lg:w-1/2">
+            <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 text-gray-900 rounded-2xl shadow-lg lg:w-1/2">
               <iframe
                 src="https://calendar.google.com/calendar/embed?src=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com&ctz=America%2FNew_York"
                 title="CSC Google Calendar"

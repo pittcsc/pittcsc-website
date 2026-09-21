@@ -49,7 +49,7 @@ export default function MeetHome() {
               </svg>
             </h1>
 
-            <p className="mb-10 px-4 max-w-md text-gray-500 text-center">
+            <p className="mb-10 px-4 max-w-md text-ink-muted text-center">
               Share a link, add your availability, and find the best time for everyone.
             </p>
 
@@ -79,21 +79,21 @@ export default function MeetHome() {
 
               {recent.length > 0 && (
                 <div className="mt-12">
-                  <h2 className="mb-3 text-gray-400 text-xs font-bold tracking-wide uppercase">
+                  <h2 className="mb-3 text-ink-faint text-xs font-bold tracking-wide uppercase">
                     Recent
                   </h2>
                   <ul className="space-y-2">
                     {recent.map((entry) => (
                       <li
                         key={entry.code}
-                        className="flex items-stretch gap-2 bg-white border border-gray-200 rounded-2xl hover:border-gray-400 transition"
+                        className="flex items-stretch gap-2 bg-surface-raised border border-line rounded-2xl hover:border-line-strong transition"
                       >
                         <Link
                           to={`/meet/${entry.code}`}
                           className="flex flex-1 items-center justify-between min-w-0 px-4 py-3"
                         >
                           <span className="font-bold truncate">{entry.name}</span>
-                          <span className="flex-none ml-3 text-gray-400 text-sm">
+                          <span className="flex-none ml-3 text-ink-faint text-sm">
                             /meet/{entry.code}
                           </span>
                         </Link>
@@ -102,14 +102,14 @@ export default function MeetHome() {
                           onClick={() => setRecent(forgetMeeting(entry.code))}
                           aria-label={`Remove ${entry.name} from this list`}
                           title="Remove from this list. The meeting itself is unaffected."
-                          className="flex-none px-3 text-gray-300 text-xl leading-none hover:text-red-600 focus:text-red-600 transition"
+                          className="flex-none px-3 text-ink-faint text-xl leading-none hover:text-red-600 focus:text-red-600 transition"
                         >
                           &times;
                         </button>
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-2 text-gray-400 text-xs">
+                  <p className="mt-2 text-ink-faint text-xs">
                     Removing only clears it from this device. The link keeps working.
                   </p>
                 </div>

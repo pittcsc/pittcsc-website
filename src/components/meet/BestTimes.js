@@ -10,7 +10,7 @@ import {
 import { durationLabel } from "../../lib/meet/time";
 
 const ACTION =
-  "px-4 py-2 text-sm font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition";
+  "px-4 py-2 text-sm font-bold bg-surface-raised border border-line-strong rounded-full hover:border-ink-muted transition";
 
 /**
  * The answer. Ranked windows of the requested length, each expanding to name exactly
@@ -30,9 +30,9 @@ export default function BestTimes({
 
   if (!group.total) {
     return (
-      <div className="p-8 text-center bg-white border border-gray-200 rounded-2xl">
+      <div className="p-8 text-center bg-surface-raised border border-line rounded-2xl">
         <p className="font-bold">No one has answered yet</p>
-        <p className="mt-1 text-gray-500 text-sm">
+        <p className="mt-1 text-ink-muted text-sm">
           Share the link and the best times will show up here.
         </p>
       </div>
@@ -41,9 +41,9 @@ export default function BestTimes({
 
   if (!windows.length) {
     return (
-      <div className="p-6 bg-white border border-gray-200 rounded-2xl">
+      <div className="p-6 bg-surface-raised border border-line rounded-2xl">
         <p className="font-bold">Nothing fits {durationLabel(meeting.durationMin)}</p>
-        <p className="mt-1 text-gray-500 text-sm">
+        <p className="mt-1 text-ink-muted text-sm">
           The daily window is shorter than the meeting length.
         </p>
       </div>
@@ -61,10 +61,10 @@ export default function BestTimes({
           <div key={`${window.start}-${window.k}`}>
             <button
               type="button"
-              className={`flex items-center gap-4 w-full px-5 py-4 text-left bg-white border transition ${
+              className={`flex items-center gap-4 w-full px-5 py-4 text-left bg-surface-raised border transition ${
                 expanded
                   ? "border-primary rounded-t-2xl"
-                  : "border-gray-200 rounded-2xl hover:border-gray-400"
+                  : "border-line rounded-2xl hover:border-line-strong"
               }`}
               aria-expanded={expanded}
               onClick={() => setOpen(expanded ? -1 : rank)}
@@ -77,7 +77,7 @@ export default function BestTimes({
                 className={`grid flex-none place-items-center w-7 h-7 text-xs font-bold rounded-lg ${
                   rank === 0
                     ? "bg-secondary-100 text-yellow-900"
-                    : "bg-gray-100 text-gray-500"
+                    : "bg-surface-sunken text-ink-muted"
                 }`}
                 aria-hidden="true"
               >
@@ -87,10 +87,10 @@ export default function BestTimes({
               <span className="flex-1 min-w-0">
                 <span className="block font-bold">
                   {when.dowLong} {when.md}
-                  <span className="text-gray-400 font-normal"> · </span>
+                  <span className="text-ink-faint font-normal"> · </span>
                   {when.range}
                 </span>
-                <span className="block mt-0.5 text-gray-500 text-sm">
+                <span className="block mt-0.5 text-ink-muted text-sm">
                   {perfect ? "Works for everyone who answered" : summarize(window, group)}
                 </span>
               </span>
@@ -99,12 +99,12 @@ export default function BestTimes({
                 <span className={`block text-xl font-bold ${perfect ? "text-primary" : ""}`}>
                   {window.count}/{group.total}
                 </span>
-                <span className="block text-gray-400 text-xs">available</span>
+                <span className="block text-ink-faint text-xs">available</span>
               </span>
             </button>
 
             {expanded && (
-              <div className="px-5 pt-1 pb-5 space-y-3 bg-white border border-t-0 border-primary rounded-b-2xl">
+              <div className="px-5 pt-1 pb-5 space-y-3 bg-surface-raised border border-t-0 border-primary rounded-b-2xl">
                 {[
                   { label: STATE_LABEL.unavailable, kind: "no", people: window.no },
                   { label: STATE_LABEL.ifNeeded, kind: "maybe", people: window.maybe },
@@ -113,7 +113,7 @@ export default function BestTimes({
                   .filter((row) => row.people.length)
                   .map((row) => (
                     <div className="flex flex-wrap items-center gap-2" key={row.label}>
-                      <span className="text-gray-400 text-xs font-bold tracking-wide uppercase">
+                      <span className="text-ink-faint text-xs font-bold tracking-wide uppercase">
                         {row.label}
                       </span>
                       {row.people.map((person) => (
@@ -125,7 +125,7 @@ export default function BestTimes({
                   ))}
 
                 {group.pending > 0 && (
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-ink-faint text-sm">
                     {group.pending}{" "}
                     {group.pending === 1 ? "person hasn't" : "people haven't"} answered yet.
                   </p>

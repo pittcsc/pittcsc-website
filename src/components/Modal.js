@@ -54,7 +54,7 @@ function Modal({ open, children, onClose }) {
             <button
               onClick={onClose}
               onKeyDown={onClose}
-              className="absolute right-0 top-0 m-4 w-8 h-8 text-black text-2xl focus:outline-none"
+              className="absolute right-0 top-0 m-4 w-8 h-8 text-ink text-2xl focus:outline-none"
               tabIndex="-1"
             >
               <FontAwesomeIcon icon={faTimes} />

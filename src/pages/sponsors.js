@@ -158,7 +158,7 @@ const SponsorPage = ({ data }) => {
                   <path d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995" />
                 </svg>
               </h2>
-              <p className="mt-4 max-w-2xl text-center text-slate-600 leading-relaxed">
+              <p className="mt-4 max-w-2xl text-center text-ink-muted leading-relaxed">
                 As the largest student organization at Pitt, CSC gives partners
                 direct access to a deep, engaged pipeline of computer science
                 talent — on campus and online.
@@ -181,7 +181,7 @@ const SponsorPage = ({ data }) => {
                     className={`flex flex-col justify-center rounded-2xl p-6 shadow-md ${
                       isBlue
                         ? "bg-primary text-white"
-                        : "bg-secondary-100 text-primary"
+                        : "bg-secondary-100 text-navy"
                     }`}
                     style={
                       isBlue
@@ -194,7 +194,7 @@ const SponsorPage = ({ data }) => {
                     </span>
                     <span
                       className={`mt-2 text-sm font-medium leading-snug ${
-                        isBlue ? "text-blue-100" : "text-primary"
+                        isBlue ? "text-blue-100" : "text-navy"
                       }`}
                     >
                       {stat.label}
@@ -328,7 +328,7 @@ const SponsorPage = ({ data }) => {
                     whileTap={{ scale: 0.9 }}
                     href={"/initiatives"}
                     target="_self"
-                    className="min-w-300 mt-6 px-4 py-2 text-black font-bold bg-white border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:mt-0 lg:absolute lg:-bottom-6 lg:right-10"
+                    className="min-w-300 mt-6 px-4 py-2 text-ink font-bold bg-surface-raised border-4 border-secondary-100 rounded-full focus:outline-none hover:shadow-lg shadow-md transition lg:mt-0 lg:absolute lg:-bottom-6 lg:right-10"
                   >
                     View Our Initiatives!
                   </motion.a>
@@ -351,7 +351,7 @@ const SponsorPage = ({ data }) => {
                   <path d="M467 9.00001C323.851 9.00006 37.5532 -4.49999 3.00001 8.99995" />
                 </svg>
               </h2>
-              <p className="mt-4 max-w-2xl text-center text-slate-600 leading-relaxed">
+              <p className="mt-4 max-w-2xl text-center text-ink-muted leading-relaxed">
                 Every tier includes all the benefits of the tiers below it.
                 Benefits are valid for one year, from September 1 to August 31.
               </p>
@@ -371,18 +371,18 @@ const SponsorPage = ({ data }) => {
                   className={`relative flex flex-col rounded-2xl border p-6 shadow-md transition duration-200 hover:-translate-y-1 ${
                     t.featured
                       ? "border-secondary-100 bg-primary text-white hover:shadow-2xl hover:ring-4 hover:ring-secondary-100/60"
-                      : "border-slate-200 bg-white text-slate-900 hover:border-yellow-400 hover:shadow-xl"
+                      : "border-line bg-surface-raised text-ink hover:border-yellow-400 hover:shadow-xl"
                   }`}
                   style={t.featured ? { backgroundColor: "#243E8B" } : undefined}
                 >
                   {t.featured && (
-                    <span className="absolute -top-3 right-6 rounded-full bg-secondary-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary">
+                    <span className="absolute -top-3 right-6 rounded-full bg-secondary-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-navy">
                       Most Impact
                     </span>
                   )}
                   <span
                     className={`text-xs font-bold uppercase tracking-widest ${
-                      t.featured ? "text-secondary-100" : "text-blue-600"
+                      t.featured ? "text-secondary-100" : "text-ink-brand"
                     }`}
                   >
                     {t.tier}
@@ -392,7 +392,7 @@ const SponsorPage = ({ data }) => {
                     <span className="text-3xl font-extrabold">{t.price}</span>
                     <span
                       className={`text-sm ${
-                        t.featured ? "text-blue-100" : "text-slate-500"
+                        t.featured ? "text-blue-100" : "text-ink-muted"
                       }`}
                     >
                       / year
@@ -402,7 +402,7 @@ const SponsorPage = ({ data }) => {
                   {t.inherits && (
                     <p
                       className={`mt-4 text-sm font-semibold ${
-                        t.featured ? "text-secondary-100" : "text-blue-600"
+                        t.featured ? "text-secondary-100" : "text-ink-brand"
                       }`}
                     >
                       Everything in {t.inherits}, plus:
@@ -415,12 +415,12 @@ const SponsorPage = ({ data }) => {
                         <FontAwesomeIcon
                           icon={faCheck}
                           className={`mt-1 h-3.5 w-3.5 flex-shrink-0 ${
-                            t.featured ? "text-secondary-100" : "text-blue-600"
+                            t.featured ? "text-secondary-100" : "text-ink-brand"
                           }`}
                         />
                         <span
                           className={`text-sm leading-relaxed ${
-                            t.featured ? "text-blue-50" : "text-slate-600"
+                            t.featured ? "text-blue-50" : "text-ink-muted"
                           }`}
                         >
                           {benefit}
@@ -434,20 +434,20 @@ const SponsorPage = ({ data }) => {
 
             {/* Add-ons */}
             <div className="mt-12">
-              <h3 className="mb-6 text-center text-xl font-bold text-slate-900 lg:text-2xl">
+              <h3 className="mb-6 text-center text-xl font-bold text-ink lg:text-2xl">
                 Social Media Add-Ons
               </h3>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:mx-auto lg:max-w-3xl">
                 {addOns.map((addOn) => (
                   <div
                     key={addOn.name}
-                    className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-md transition duration-200 hover:-translate-y-1 hover:border-yellow-400 hover:shadow-xl"
+                    className="flex flex-col rounded-2xl border border-line bg-surface-raised p-6 shadow-md transition duration-200 hover:-translate-y-1 hover:border-yellow-400 hover:shadow-xl"
                   >
                     <div className="flex items-baseline justify-between gap-2">
-                      <h4 className="text-lg font-bold text-slate-900">
+                      <h4 className="text-lg font-bold text-ink">
                         {addOn.name}
                       </h4>
-                      <span className="text-2xl font-extrabold text-blue-600">
+                      <span className="text-2xl font-extrabold text-ink-brand">
                         {addOn.price}
                       </span>
                     </div>
@@ -456,9 +456,9 @@ const SponsorPage = ({ data }) => {
                         <li key={point} className="flex items-start gap-2">
                           <FontAwesomeIcon
                             icon={faCheck}
-                            className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-blue-600"
+                            className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-ink-brand"
                           />
-                          <span className="text-sm leading-relaxed text-slate-600">
+                          <span className="text-sm leading-relaxed text-ink-muted">
                             {point}
                           </span>
                         </li>
@@ -472,12 +472,12 @@ const SponsorPage = ({ data }) => {
 
           {/* ---------- How to Sponsor / CTA ---------- */}
           <section className="max-w-5xl mx-auto px-4 w-full">
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-md lg:p-12">
+            <div className="rounded-3xl border border-line bg-surface-sunken p-8 shadow-md lg:p-12">
               <div className="flex flex-col items-center text-center">
-                <h2 className="text-2xl font-bold text-slate-900 lg:text-4xl">
+                <h2 className="text-2xl font-bold text-ink lg:text-4xl">
                   Ready to Partner With Us?
                 </h2>
-                <p className="mt-4 max-w-2xl text-slate-600 leading-relaxed">
+                <p className="mt-4 max-w-2xl text-ink-muted leading-relaxed">
                   Grab the full 2026-2027 partnership package for tier details
                   and the sponsorship form, or reach out and we'll help you find
                   the right fit.
@@ -508,16 +508,16 @@ const SponsorPage = ({ data }) => {
                 </div>
               </div>
 
-              <div className="mt-10 grid grid-cols-1 gap-8 border-t border-slate-200 pt-8 text-center md:grid-cols-3">
+              <div className="mt-10 grid grid-cols-1 gap-8 border-t border-line pt-8 text-center md:grid-cols-3">
                 <div>
-                  <h3 className="font-bold text-slate-900">Give online</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  <h3 className="font-bold text-ink">Give online</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                     Visit{" "}
                     <a
                       href="https://give.pitt.edu"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-blue-600 hover:underline"
+                      className="font-semibold text-ink-brand hover:underline"
                     >
                       give.pitt.edu
                     </a>
@@ -526,8 +526,8 @@ const SponsorPage = ({ data }) => {
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900">Give by mail</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  <h3 className="font-bold text-ink">Give by mail</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                     University of Pittsburgh
                     <br />
                     PO Box 640093
@@ -536,19 +536,19 @@ const SponsorPage = ({ data }) => {
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900">Questions?</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  <h3 className="font-bold text-ink">Questions?</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                     Email us at{" "}
                     <a
                       href="mailto:pittcsc@gmail.com"
-                      className="font-semibold text-blue-600 hover:underline"
+                      className="font-semibold text-ink-brand hover:underline"
                     >
                       pittcsc@gmail.com
                     </a>{" "}
                     or contact SORC at{" "}
                     <a
                       href="mailto:sorc@pitt.edu"
-                      className="font-semibold text-blue-600 hover:underline"
+                      className="font-semibold text-ink-brand hover:underline"
                     >
                       sorc@pitt.edu
                     </a>

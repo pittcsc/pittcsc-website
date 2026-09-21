@@ -20,12 +20,12 @@ export default function ShareBar({ url, title }) {
   return (
     <div className="flex flex-wrap items-stretch gap-2">
       <div
-        className="flex flex-1 items-center min-w-0 px-4 py-3 text-gray-500 text-sm bg-gray-50 border border-gray-300 rounded-full overflow-hidden whitespace-nowrap"
+        className="flex flex-1 items-center min-w-0 px-4 py-3 text-ink-muted text-sm bg-surface-sunken border border-line-strong rounded-full overflow-hidden whitespace-nowrap"
         style={{ flexBasis: 220 }}
         title={url}
       >
         <span className="truncate">
-          {host}/meet/<b className="text-gray-900">{rest.join("/meet/")}</b>
+          {host}/meet/<b className="text-ink">{rest.join("/meet/")}</b>
         </span>
       </div>
 
@@ -42,7 +42,7 @@ export default function ShareBar({ url, title }) {
       {canShareNatively && (
         <button
           type="button"
-          className="px-5 py-3 font-bold bg-white border border-gray-300 rounded-full hover:border-gray-500 transition"
+          className="px-5 py-3 font-bold bg-surface-raised border border-line-strong rounded-full hover:border-ink-muted transition"
           onClick={() =>
             navigator.share({ title, text: title, url }).catch(() => {})
           }

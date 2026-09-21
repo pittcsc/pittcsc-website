@@ -27,7 +27,7 @@ export function Chip({ on, children, ...rest }) {
       className={`px-4 py-2 text-sm font-bold rounded-full border transition ${
         on
           ? "bg-primary border-primary text-white"
-          : "bg-white border-gray-300 text-gray-600 hover:border-gray-500 hover:text-gray-900"
+          : "bg-surface-raised border-line-strong text-ink-muted hover:border-ink-muted hover:text-ink"
       }`}
       aria-pressed={on}
       {...rest}
@@ -41,7 +41,7 @@ function Field({ label, hint, children }) {
   return (
     <div className="mb-8">
       <span className={`block font-bold ${hint ? "" : "mb-3"}`}>{label}</span>
-      {hint && <p className="mb-3 text-gray-500 text-sm">{hint}</p>}
+      {hint && <p className="mb-3 text-ink-muted text-sm">{hint}</p>}
       {children}
     </div>
   );
@@ -120,7 +120,7 @@ export default function CreateForm({ onCreated }) {
           ref={nameRef}
           id="meet-name"
           className={`px-4 py-3 w-full text-lg font-bold border rounded-xl focus:border-primary focus:ring-primary ${
-            nameMissing ? "border-red-400" : "border-gray-300"
+            nameMissing ? "border-red-400" : "border-line-strong"
           }`}
           placeholder="SteelHacks planning"
           value={name}
@@ -205,7 +205,7 @@ export default function CreateForm({ onCreated }) {
         {submitting ? "Creating…" : "Create meeting"}
       </motion.button>
 
-      <p className="mt-3 text-gray-400 text-sm text-center">
+      <p className="mt-3 text-ink-faint text-sm text-center">
         Times automatically adjust to each person&apos;s timezone.
       </p>
     </form>

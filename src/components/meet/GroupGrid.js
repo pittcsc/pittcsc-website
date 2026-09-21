@@ -66,7 +66,7 @@ export default function GroupGrid({
     <div>
       <GridFrame view={view} renderCell={renderCell} />
 
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-gray-500 text-xs">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-ink-muted text-xs">
         <span className={LEGEND_ITEM}>
           <span className="meet-swatch" data-state="ramp" /> Fewer free → everyone free
         </span>
@@ -82,15 +82,15 @@ export default function GroupGrid({
           </span>
           If needed
         </span>
-        <span className="text-gray-400">Tap a cell to see who&apos;s free</span>
+        <span className="text-ink-faint">Tap a cell to see who&apos;s free</span>
       </div>
 
       {detail && (
-        <div className="mt-4 p-4 bg-white border border-gray-200 rounded-2xl">
+        <div className="mt-4 p-4 bg-surface-raised border border-line rounded-2xl">
           <div className="mb-3 font-bold">{detail.heading}</div>
           {detail.groups.map((row) => (
             <div className="flex flex-wrap items-center gap-2 mb-2" key={row.label}>
-              <span className="text-gray-400 text-xs font-bold tracking-wide uppercase">
+              <span className="text-ink-faint text-xs font-bold tracking-wide uppercase">
                 {row.label}
               </span>
               {row.people.length ? (
@@ -100,7 +100,7 @@ export default function GroupGrid({
                   </Tag>
                 ))
               ) : (
-                <span className="text-gray-400 text-sm">nobody</span>
+                <span className="text-ink-faint text-sm">nobody</span>
               )}
             </div>
           ))}
@@ -113,10 +113,10 @@ export default function GroupGrid({
 export function Tag({ kind, children }) {
   const style =
     kind === "no"
-      ? "bg-gray-900 border-gray-900 text-white"
+      ? "bg-ink border-ink text-surface"
       : kind === "maybe"
       ? "bg-secondary-200 border-secondary-100 text-yellow-900"
-      : "bg-white border-gray-300 text-gray-700";
+      : "bg-surface-raised border-line-strong text-ink";
   return (
     <span className={`px-3 py-1 text-sm border rounded-full ${style}`}>{children}</span>
   );

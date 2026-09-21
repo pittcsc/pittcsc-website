@@ -147,7 +147,7 @@ const JoinPage = ({ data }) => {
                 }}
                 className="polka-background-subPage absolute -right-48 top-0 lg:-right-24"
               ></motion.div>
-              <div className="relative grid gap-2 grid-cols-3 items-center place-items-center mx-auto my-8 p-4 w-5/6 max-w-lg bg-secondary-200 rounded-2xl shadow-md md:flex md:flex-wrap md:gap-0 md:justify-around lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-xl">
+              <div className="relative grid gap-2 grid-cols-3 items-center place-items-center mx-auto my-8 p-4 w-5/6 max-w-lg bg-secondary-200 text-gray-900 rounded-2xl shadow-md md:flex md:flex-wrap md:gap-0 md:justify-around lg:px-6 lg:py-12 lg:w-3/4 xl:max-w-xl">
                 <motion.a
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -222,7 +222,7 @@ const JoinPage = ({ data }) => {
           <div className="w-screen bg-gradient-to-r from-primary to-blue-800">
             <section className="container flex items-center justify-center mx-auto px-4 py-24 w-full md:px-0 lg:py-32">
               <div className="flex flex-wrap gap-4 items-center justify-center w-full lg:justify-around">
-                <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 rounded-2xl shadow-lg xl:w-1/2">
+                <div className="relative flex flex-col items-center justify-center mb-8 p-4 w-full bg-secondary-200 text-gray-900 rounded-2xl shadow-lg xl:w-1/2">
                   <svg
                     className="absolute -bottom-10 -left-10 w-32 lg:-left-20 lg:w-64"
                     viewBox="0 0 306 200"

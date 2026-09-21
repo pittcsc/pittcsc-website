@@ -143,7 +143,7 @@ function EventItem({
       <AnimatePresence mode="wait">
         {modalOpen && (
           <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-            <div className="items-left flex flex-col justify-center p-8 w-full max-w-5xl bg-gray-100 rounded-2xl md:p-12 lg:p-16">
+            <div className="items-left flex flex-col justify-center p-8 w-full max-w-5xl bg-surface-raised rounded-2xl md:p-12 lg:p-16">
               <div className="mb-4">
                 <h2 className="mb-2 max-w-xs text-2xl font-bold md:text-3xl lg:max-w-full lg:text-4xl">
                   {name}
@@ -156,7 +156,7 @@ function EventItem({
                 <div className="flex space-x-2">
                   {tags.map((tag, i) => (
                     <div
-                      className={`text-sm px-4 py-2 ${tag.color ? `bg-${tag.color}-300` : "bg-gray-300"
+                      className={`text-sm px-4 py-2 ${tag.color ? `bg-${tag.color}-300` : "bg-line-strong"
                         } rounded-full`}
                       key={i}
                     >

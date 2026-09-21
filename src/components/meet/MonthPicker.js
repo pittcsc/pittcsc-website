@@ -8,7 +8,7 @@ const MONTHS = [
 const DOW = ["S", "M", "T", "W", "T", "F", "S"];
 
 const NAV =
-  "w-8 h-8 text-gray-500 text-lg leading-none bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-30 disabled:cursor-default";
+  "w-8 h-8 text-ink-muted text-lg leading-none bg-surface-raised border border-line-strong rounded-lg hover:bg-surface-sunken disabled:opacity-30 disabled:cursor-default";
 
 /**
  * Multi-select days, not a date range.
@@ -144,7 +144,7 @@ export default function MonthPicker({ value, onChange, tz }) {
 
   return (
     <div
-      className="p-3 bg-white border border-gray-200 rounded-2xl select-none"
+      className="p-3 bg-surface-raised border border-line rounded-2xl select-none"
       onPointerUp={endDrag}
       onPointerLeave={endDrag}
       onPointerCancel={endDrag}
@@ -171,7 +171,7 @@ export default function MonthPicker({ value, onChange, tz }) {
           better — adjacent selections visibly touch, scattered ones stand apart. A
           compressed restatement like "Sep 15, Sep 16 +3" only asks the reader to decode
           what they can already see. Grey, because this confirms rather than invites. */}
-      <div className="flex flex-wrap items-baseline justify-center gap-x-2 mt-1 mb-2 text-gray-500 text-sm">
+      <div className="flex flex-wrap items-baseline justify-center gap-x-2 mt-1 mb-2 text-ink-muted text-sm">
         <span>
           {value.length
             ? `${value.length} ${value.length === 1 ? "day" : "days"} selected`
@@ -180,7 +180,7 @@ export default function MonthPicker({ value, onChange, tz }) {
         {value.length > 0 && (
           <button
             type="button"
-            className="px-2 py-1.5 -my-1 underline hover:text-gray-900"
+            className="px-2 py-1.5 -my-1 underline hover:text-ink"
             onClick={() => onChange([])}
           >
             Clear
@@ -189,7 +189,7 @@ export default function MonthPicker({ value, onChange, tz }) {
         {offscreen && (
           <button
             type="button"
-            className="px-2 py-1.5 -my-1 underline hover:text-gray-900"
+            className="px-2 py-1.5 -my-1 underline hover:text-ink"
             onClick={() => setCursor(offscreen.jumpTo)}
           >
             {offscreen.count} not shown
@@ -200,7 +200,7 @@ export default function MonthPicker({ value, onChange, tz }) {
       <div className="grid gap-1 grid-cols-7">
         {DOW.map((d, i) => (
           <div
-            className="pb-1 text-gray-400 text-xs font-bold text-center"
+            className="pb-1 text-ink-faint text-xs font-bold text-center"
             key={`${d}${i}`}
             aria-hidden="true"
           >

@@ -25,7 +25,7 @@ export default function Avatar({ name, pending }) {
   return (
     <span
       className={`grid flex-none place-items-center w-5 h-5 text-white rounded-full ${
-        pending ? "text-gray-400 border border-gray-300 border-dashed" : ""
+        pending ? "text-ink-faint border border-line-strong border-dashed" : ""
       }`}
       style={{
         fontSize: 9,

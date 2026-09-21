@@ -40,7 +40,7 @@ function Header({ title }) {
     <header
       className={`mx-auto w-full p-4 header-max-width transition-shadow ${
         nav || shadow ? "shadow-md" : "shadow-none"
-      } md:shadow-none md:w-10/12 md:p-0 md:py-4 fixed bg-white z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center`}
+      } md:shadow-none md:w-10/12 md:p-0 md:py-4 fixed bg-surface z-30 md:relative md:bg-none md:flex md:justify-between md:items-center md:text-center`}
     >
       <div className="flex items-center justify-between mx-auto md:block md:mx-0">
         <Link to="/">
@@ -66,7 +66,7 @@ function Header({ title }) {
         </button>
       </div>
       <nav
-        className={`transition-all relative bg-white pointer-events-none max-h-0 opacity-0 ${
+        className={`transition-all relative bg-surface pointer-events-none max-h-0 opacity-0 ${
           nav ? "nav-max-height opacity-100 p-4 pointer-events-auto" : ""
         } md:max-h-full md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
