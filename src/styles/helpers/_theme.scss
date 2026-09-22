@@ -36,10 +36,27 @@
   --line: #e5e7eb; /* was border-gray-200 */
   --line-strong: #d1d5db; /* was border-gray-300 */
 
-  /* A decorative gold wash: pale gold in light, where it sits quietly under dark
-     text; in dark it has to drop well below the light ink that crosses it, so it
-     becomes a deep olive that still reads as "warm". Not for anything with meaning. */
+  /* Decorative washes. In light these are gold, which is the brand's warm accent
+     and sits quietly under dark text. In dark they go *cool*, not dimmer-gold:
+     translucent warm gold over a navy ground turns olive-brown, and on shapes this
+     large — the tilted hero card, the tagline box — that reads as dirty rather than
+     warm. Gold stays in dark, but only as crisp accents: rules, dots, borders. */
   --surface-accent: #f8e3b4;
+
+  /* The tagline's highlighter. The rule is transparent in light so the layout is
+     identical in both, and becomes the gold accent in dark, where the fill alone
+     no longer distinguishes the box. */
+  --highlight-bg: rgb(250 204 21 / 0.2);
+  --highlight-rule: transparent;
+
+  /* Brand navy as a *fill*. Lifts in dark: #243e8b on the dark page is 1.88:1, so a
+     filled button stops reading as a control at all. This is the same lifted navy
+     the availability grid uses, so every filled brand surface agrees. */
+  --fill-brand: #243e8b;
+
+  /* Decorative gold dots. Full strength on a dark ground reads as busy static; in
+     light the white behind them already softened them. */
+  --dots: #ffb81c;
 }
 
 /* The dark palette is the club's, worked out against the brand rather than derived
@@ -68,8 +85,11 @@
     --line: #243049;
     --line-strong: #33415f;
 
-    /* Gold at roughly 12% over the page, so the highlight stays a whisper. */
-    --surface-accent: #2a2520;
+    --surface-accent: #182240;
+    --highlight-bg: #182240;
+    --highlight-rule: #f2a81d;
+    --fill-brand: #496aab;
+    --dots: rgb(255 184 28 / 0.4);
   }
 }
 
@@ -107,4 +127,11 @@ select {
   &::placeholder {
     color: var(--ink-faint);
   }
+}
+
+/* The tagline's highlighter box. Cool fill in dark with a gold rule down the side,
+   rather than a gold wash that would go olive over the navy ground. */
+.hero-highlight {
+  background-color: var(--highlight-bg);
+  border-left: 3px solid var(--highlight-rule);
 }

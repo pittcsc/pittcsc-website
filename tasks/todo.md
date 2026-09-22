@@ -94,6 +94,41 @@ Not adopted: the table's light-mode column lists #26488C / #F2A81D / #F2F2F2, bu
 repo ships #243E8B / #FFB81C / #ffffff. Those are live-site brand values and changing
 them is a separate decision, so light mode is untouched.
 
+## Design pass (after seeing it rendered)
+
+Four issues raised on the first dark build, all addressed. The common thread: the
+first palette treated dark as a recolouring problem when parts of it are a *material*
+problem — a translucent warm gold and a raster-bright illustration behave differently
+on a dark ground no matter what hex you pick.
+
+1. **The brown blobs.** `--surface-accent: #2a2520` was gold-over-navy, which lands on
+   olive-brown. At the size of the tilted hero card and the tagline box that reads as
+   dirty rather than warm. Large surfaces are now cool (#182240); gold survives in dark
+   only as crisp accents — rules, dots, borders. The tagline keeps its shape with a 3px
+   gold left rule instead of a gold fill.
+2. **The illustration was a flashlight.** It turned out to be a Lottie, not a PNG, so
+   its colours are addressable JSON rather than baked pixels — no `<picture>` swap and
+   no brightness filter needed. `pittcscLogoAnimationDark.json` is the same animation
+   with six fills remapped (editor body, gutter, title bar, gutter dots, code bars, and
+   the panther lifted so it reads on the dark editor). `usePrefersDark` picks between
+   them and follows a live scheme change.
+3. **The buttons vanished.** #243e8b on the dark page is **1.88:1** — a filled button
+   stopped reading as a control at all. `colors.primary` now points at `--fill-brand`,
+   which lifts to the same #496aab the availability grid uses, so every filled brand
+   surface agrees: 3.47:1 against the page, 5.34:1 for its label. The suggested
+   alternative #3a5db0 was 2.97:1, just under the floor for a control.
+4. **The dots were loud.** Full-strength gold reads as static on dark; in light the
+   white behind them already did the softening. 40% in dark. The alpha lives in the
+   colour rather than an `opacity` property, because framer-motion writes an inline
+   opacity on that element and would win.
+
+Not taken: gold CTAs with dark text. Gold is the strongest option on contrast alone
+(10.69:1), but `bg-primary` is 18 usages — sponsor tiers, meet's buttons, the grid's
+selected chip — and turning all of them gold would collide with the actual gold accents
+and flatten the navy/gold hierarchy. Scoping gold to just CTAs means inventing a
+button tier the design system doesn't have. Lifting the fill fixes the correctness
+problem for all 18 in one rule. Worth revisiting as a deliberate design change.
+
 ## Review
 
 Landed on `feat/dark-mode`. What changed against the plan while doing it:

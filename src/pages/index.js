@@ -8,6 +8,7 @@ import { StaticImage } from "gatsby-plugin-image";
 import { getAcademicYear } from "../utils/dates";
 
 import animationData from "../animations/pittcscLogoAnimation.json";
+import animationDataDark from "../animations/pittcscLogoAnimationDark.json";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -34,15 +35,16 @@ import EventItem from "../components/eventItem";
 import { eventList } from "../components/data";
 
 import SafeLottie from "../components/SafeLottie";
+import { usePrefersDark } from "../lib/useColorScheme";
 
-const logoAnimationOptions = {
+const lottieOptions = (animation) => ({
   loop: false,
   autoplay: true,
-  animationData: animationData,
+  animationData: animation,
   renderSettings: {
     preserveAspectRatio: "xMidYMid slice",
   },
-};
+});
 
 const container = {
   hidden: { opacity: 0 },
@@ -158,6 +160,10 @@ const hitUnderlineAnimate = {
 };
 
 const IndexPage = ({ data }) => {
+  // The editor illustration is a Lottie, so its colours live in JSON rather than in
+  // CSS: on a dark page the light-grey editor body became the brightest thing on
+  // screen and pulled the eye clean off the headline. Same animation, recoloured.
+  const prefersDark = usePrefersDark();
   const site = (data || {})?.site;
   const futureEvents = eventList
     .slice()
@@ -255,7 +261,7 @@ const IndexPage = ({ data }) => {
                 animate={controls}
                 className="relative z-10 w-3/4 mt-8 text-base md:text-xl xl:text-2xl font-semibold leading-relaxed text-ink xl:w-3/4"
               >
-                <span className="inline-block bg-yellow-400/20 pl-2 pr-1 py-1 rounded">
+                <span className="hero-highlight inline-block pl-2 pr-1 py-1 rounded">
                   Proudly pushing the boundaries on what it means to be a Pitt student.
                 </span>
               </motion.p>
@@ -299,7 +305,7 @@ const IndexPage = ({ data }) => {
               >
                 {typeof window !== "undefined" && (
                   <SafeLottie
-                    options={logoAnimationOptions}
+                    options={lottieOptions(prefersDark ? animationDataDark : animationData)}
                     className=""
                     eventListeners={[]}
                   />

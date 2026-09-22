@@ -16,7 +16,9 @@ module.exports = {
       // Scheme-dependent colours are custom properties defined in
       // src/styles/helpers/_theme.scss; these are just their Tailwind names.
       colors: {
-        primary: "#243E8B",
+        // The filled brand surface. Lifts in dark so a button still reads as a
+        // control; `navy` below stays fixed for text on gold bands.
+        primary: "var(--fill-brand)",
         // Fixed navy for text on a fixed gold band (see textColor.primary below,
         // which lifts in dark mode and would wash out on gold).
         navy: "#243E8B",
