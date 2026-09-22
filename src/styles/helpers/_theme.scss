@@ -42,21 +42,34 @@
   --surface-accent: #f8e3b4;
 }
 
+/* The dark palette is the club's, worked out against the brand rather than derived
+   by inverting the light one — navy-tinted near-black instead of grey, and the whole
+   neutral ramp carrying the same hue (220°) as the brand blue.
+ 
+   The move that makes it work: #243e8b does not survive a dark ground (about 2:1), so
+   in dark the brand navy stops being a text colour and becomes a *fill* colour only.
+   A lighter tint of it takes over for text, links and outlines. That is why
+   `textColor.primary` points at --ink-brand while `colors.primary` stays fixed.
+ 
+   Three values here are not in the supplied table, derived to sit in the same family:
+   --surface-sunken (one step below the page), --line-strong (one above the border) and
+   --ink-faint (one below the secondary text). */
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface: #0f2027;
-    --surface-raised: #1a2b35;
-    --surface-sunken: #0b181e;
+    --surface: #0f1320;
+    --surface-raised: #182033;
+    --surface-sunken: #090c14;
 
-    --ink: #e5e7eb;
-    --ink-muted: #9ca3af;
-    --ink-faint: #6b7280;
-    --ink-brand: #8fa8ee;
+    --ink: #edeef2;
+    --ink-muted: #a9b3c7;
+    --ink-faint: #79839b;
+    --ink-brand: #7e94bf;
 
-    --line: #2a3b45;
-    --line-strong: #3a4d58;
+    --line: #243049;
+    --line-strong: #33415f;
 
-    --surface-accent: #2e2c1c;
+    /* Gold at roughly 12% over the page, so the highlight stays a whisper. */
+    --surface-accent: #2a2520;
   }
 }
 
@@ -68,6 +81,10 @@ body {
 /* @tailwindcss/forms paints every field white in its base layer, which beats the
    browser's own colour-scheme handling. Same selectors, so this wins on order
    without a bump in specificity. Anything that sets its own bg-* still overrides. */
+/* `input` with no type attribute defaults to text but matches none of the
+   type-qualified selectors below — including @tailwindcss/forms' own, which is how
+   one of these ended up white-on-white in dark mode. */
+input:not([type]),
 [type="text"],
 [type="email"],
 [type="url"],

@@ -55,17 +55,24 @@
   font-variant-numeric: tabular-nums;
 
   @media (prefers-color-scheme: dark) {
-    --meet-line-soft: #1f303a;
-    --meet-primary: #4f6dd6;
-    --meet-hover: #1c2e38;
-    --meet-tint: #1c2e38;
-    --meet-tint-strong: #24373f;
-    --meet-maybe: #2c3f66;
-    --meet-maybe-dot: rgba(143, 168, 238, 0.85);
-    --meet-hatch: rgba(229, 231, 235, 0.35);
-    --meet-disabled: #3a4d58;
-    --meet-shimmer-a: #17262f;
-    --meet-shimmer-b: #1f303a;
+    --meet-line-soft: #1e2942;
+
+    /* The grid fill is the one place the brand navy cannot simply be kept. A filled
+       cell has to read as filled against the card it sits on, and #26488c manages
+       only 1.85:1 there; the heatmap also prints a headcount on it in white. This is
+       the same hue lifted until both hold: 5.3:1 for the digits, 3.0:1 against the
+       card. Filled buttons elsewhere keep the unmodified navy. */
+    --meet-primary: #496aab;
+
+    --meet-hover: #1e2740;
+    --meet-tint: #1e2740;
+    --meet-tint-strong: #26314c;
+    --meet-maybe: #2f3a57;
+    --meet-maybe-dot: rgba(126, 148, 191, 0.9);
+    --meet-hatch: rgba(237, 238, 242, 0.35);
+    --meet-disabled: #33415f;
+    --meet-shimmer-a: #182033;
+    --meet-shimmer-b: #1e2942;
   }
 }
 

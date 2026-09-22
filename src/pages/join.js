@@ -159,7 +159,7 @@ const JoinPage = ({ data }) => {
                 >
                   <FontAwesomeIcon
                     icon={faDiscord}
-                    className="text-primary text-6xl xl:text-7xl"
+                    className="text-navy text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -173,7 +173,7 @@ const JoinPage = ({ data }) => {
                 >
                   <FontAwesomeIcon
                     icon={faLinkedin}
-                    className="text-primary text-6xl xl:text-7xl"
+                    className="text-navy text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -187,7 +187,7 @@ const JoinPage = ({ data }) => {
                 >
                   <FontAwesomeIcon
                     icon={faGithub}
-                    className="text-primary text-6xl xl:text-7xl"
+                    className="text-navy text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -199,7 +199,7 @@ const JoinPage = ({ data }) => {
                 >
                   <FontAwesomeIcon
                     icon={faEnvelope}
-                    className="text-primary text-6xl xl:text-7xl"
+                    className="text-navy text-6xl xl:text-7xl"
                   />
                 </motion.a>
                 <motion.a
@@ -213,7 +213,7 @@ const JoinPage = ({ data }) => {
                 >
                   <FontAwesomeIcon
                     icon={faInstagram}
-                    className="text-primary text-6xl xl:text-7xl"
+                    className="text-navy text-6xl xl:text-7xl"
                   />
                 </motion.a>
               </div>

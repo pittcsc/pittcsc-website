@@ -67,6 +67,33 @@ ink-brand/surface ≥ 4.5:1 — verified by script before shipping.
 - Illustrations on `index` (polka, arrows): checked per-page in step 7; fixed only
   if they actually break.
 
+## Palette revision (after review)
+
+The dark values were replaced with a brand-derived palette supplied on review. It
+reached the same structural conclusion independently — navy cannot carry text on a
+dark ground (about 2:1), so it demotes to a fill-only colour and a lighter tint takes
+over for text, links and outlines — which is what `--ink-brand` vs `colors.primary`
+already encoded. Only the numbers changed.
+
+The ground moved from teal-tinted (#0f2027, inherited from #62) to navy-tinted
+(#0f1320), and the whole neutral ramp now carries the brand's 220° hue instead of
+Tailwind's neutral greys. Verified all four contrast claims in the supplied table:
+8.78, 6.06, 8.79, 9.16 against the stated ~8.8, ~6, ~8.8, ~9.
+
+Three tokens the table doesn't name were derived in the same family: `surface-sunken`
+(a step below the page), `line-strong` (a step above the border), `ink-faint` (a step
+below secondary text).
+
+One place its rule "keep filled navy" could not be taken literally: a filled *grid
+cell* in /meet has to read as filled against the card it sits on, and #26488c manages
+1.85:1 there, with a white headcount printed on it besides. `--meet-primary` is the
+same hue lifted to #496aab — 5.34:1 for the digits, 3.04:1 against the card. Filled
+buttons everywhere else keep the unmodified navy.
+
+Not adopted: the table's light-mode column lists #26488C / #F2A81D / #F2F2F2, but the
+repo ships #243E8B / #FFB81C / #ffffff. Those are live-site brand values and changing
+them is a separate decision, so light mode is untouched.
+
 ## Review
 
 Landed on `feat/dark-mode`. What changed against the plan while doing it:
@@ -95,3 +122,14 @@ grids. 83/83 tests.
 
 Header logo confirmed fine on dark without a second asset. 404 page had the Gatsby
 starter's hard-coded `#232129`; dropped so it inherits ink.
+
+Two things the crawler missed and only looking at the page caught:
+
+- **Social icons on the pale-gold card** rendered at 1.85:1 — they are `text-primary`,
+  which lifts, on a band that is fixed in both schemes. The crawler only inspected
+  nodes with text content and an SVG icon has none. Ten of them across index and join
+  now use the fixed `text-navy`, and the crawler covers `<svg>`.
+- **Inputs with no `type` attribute** matched neither @tailwindcss/forms' base nor the
+  override, so the meeting-name and join-name fields stayed white — with near-white
+  text in them. `input:not([type])` added to the selector list; typed text now
+  15.97:1.
