@@ -1,0 +1,36 @@
+# Runtime versions live in .tool-versions (also readable by asdf).
+# Tasks use those runtimes without requiring shell activation.
+
+[tasks.setup]
+description = "Install dependencies, start local Supabase, and create missing env files"
+run = "node scripts/local-dev.mjs setup"
+
+[tasks.dev]
+description = "Start local Supabase, Gatsby, and the Go API (Ctrl+C stops app servers)"
+depends = ["dev:web", "dev:api"]
+
+[tasks."dev:web"]
+description = "Start Gatsby with local Supabase ready"
+depends = ["db:start"]
+run = "npm run develop"
+
+[tasks."dev:api"]
+description = "Start the Go API with local Supabase ready"
+depends = ["db:start"]
+run = "npm run dev:api"
+
+[tasks."db:start"]
+description = "Start local Supabase and create missing env files; never reset data"
+run = "node scripts/local-dev.mjs start"
+
+[tasks."db:stop"]
+description = "Stop local Supabase, preserving its data"
+run = "./node_modules/.bin/supabase stop"
+
+[tasks.check]
+description = "Run JavaScript tests and Go tests, vet, and build; no Docker required"
+run = ["npm test", "npm run test:api", "cd backend && go vet ./... && go build ./..."]
+
+[tasks.build]
+description = "Build the public Gatsby site"
+run = "npm run build"

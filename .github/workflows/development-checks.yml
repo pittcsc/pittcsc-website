@@ -1,0 +1,25 @@
+name: Development checks
+
+on:
+  pull_request:
+    branches: [crm-expansion, master]
+  push:
+    branches: [crm-expansion, master]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          version: 2026.9.12
+      - run: mise exec -- npm ci --legacy-peer-deps
+      - run: mise run check
+      - run: mise run build
+        env:
+          GATSBY_TELEMETRY_DISABLED: "1"
