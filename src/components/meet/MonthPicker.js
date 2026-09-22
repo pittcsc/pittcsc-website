@@ -1,5 +1,13 @@
-import React, { useMemo, useRef, useState } from "react";
-import { dayLabel, isoAddDays, isoOf, isoToday, isoWeekday, parseIso } from "../../lib/meet/time";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  dayLabel,
+  isoAddDays,
+  isoOf,
+  isoRange,
+  isoToday,
+  isoWeekday,
+  parseIso,
+} from "../../lib/meet/time";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -53,21 +61,9 @@ export default function MonthPicker({ value, onChange, tz }) {
     return { count: other.length, jumpTo: { y: p.y, m: p.m }, month: MONTHS[p.m - 1] };
   }, [value, monthKey]);
 
-  const rangeBetween = (a, b) => {
-    const lo = a < b ? a : b;
-    const hi = a < b ? b : a;
-    const out = [];
-    let day = lo;
-    for (let guard = 0; guard < 400 && day <= hi; guard += 1) {
-      out.push(day);
-      day = isoAddDays(day, 1);
-    }
-    return out;
-  };
-
   const applyRange = (from, to, adding) => {
     const next = new Set(selected);
-    for (const iso of rangeBetween(from, to)) {
+    for (const iso of isoRange(from, to)) {
       if (iso < today) continue;
       if (adding) next.add(iso);
       else next.delete(iso);
@@ -75,27 +71,65 @@ export default function MonthPicker({ value, onChange, tz }) {
     onChange(Array.from(next).sort());
   };
 
+  /**
+   * The drag lives in the ref; `preview` only mirrors it so the cells can paint.
+   *
+   * Reading the range back out of the ref rather than out of state is what makes a
+   * plain click correct: pointerdown and pointerup arrive in the same tick, so the
+   * pointerup handler's captured `preview` is still the *previous* drag's. Committing
+   * that stale range is how a click on one day used to re-add a whole week.
+   */
   const startDrag = (iso) => {
     if (iso < today) return;
     const adding = !selected.has(iso);
-    drag.current = { from: iso, adding };
-    setPreview({ from: iso, to: iso, adding });
+    drag.current = { from: iso, to: iso, adding };
+    setPreview(drag.current);
     applyRange(iso, iso, adding);
   };
 
   const extendDrag = (iso) => {
     if (!drag.current || iso < today) return;
-    setPreview({ ...drag.current, to: iso });
+    drag.current = { ...drag.current, to: iso };
+    setPreview(drag.current);
   };
 
   const endDrag = () => {
-    if (drag.current && preview) applyRange(preview.from, preview.to, preview.adding);
+    const held = drag.current;
+    if (!held) return;
     drag.current = null;
     setPreview(null);
+    applyRange(held.from, held.to, held.adding);
   };
 
+  /**
+   * A drag has to end wherever the pointer is released, not only over the calendar.
+   *
+   * Hanging this off the calendar's own pointerup meant a release it never saw — a
+   * drag finished off the edge of the window, a tab switch, a context menu, a touch
+   * the browser turned into a scroll — left the drag open forever. The preview then
+   * outlived it and kept painting those days filled: Clear emptied the real selection
+   * underneath while the cells stayed dark, and the next click committed the
+   * abandoned range instead of its own. A week you could not get rid of.
+   */
+  const latestEnd = useRef(endDrag);
+  latestEnd.current = endDrag;
+  const dragging = preview !== null;
+
+  useEffect(() => {
+    if (!dragging) return undefined;
+    const end = () => latestEnd.current();
+    window.addEventListener("pointerup", end);
+    window.addEventListener("pointercancel", end);
+    window.addEventListener("blur", end);
+    return () => {
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+      window.removeEventListener("blur", end);
+    };
+  }, [dragging]);
+
   const previewSet = useMemo(
-    () => (preview ? new Set(rangeBetween(preview.from, preview.to)) : null),
+    () => (preview ? new Set(isoRange(preview.from, preview.to)) : null),
     [preview]
   );
 
@@ -143,12 +177,7 @@ export default function MonthPicker({ value, onChange, tz }) {
     });
 
   return (
-    <div
-      className="p-3 bg-white border border-gray-200 rounded-2xl select-none"
-      onPointerUp={endDrag}
-      onPointerLeave={endDrag}
-      onPointerCancel={endDrag}
-    >
+    <div className="p-3 bg-white border border-gray-200 rounded-2xl select-none">
       <div className="flex items-center justify-between">
         <button
           type="button"
