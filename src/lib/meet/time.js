@@ -123,6 +123,24 @@ export function isoAddDays(iso, n) {
   return isoOf(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate());
 }
 
+/**
+ * Every day from `a` to `b`, inclusive, in ascending order. Endpoints may arrive in
+ * either order — a drag can run backwards across the calendar.
+ */
+export function isoRange(a, b) {
+  const lo = a < b ? a : b;
+  const hi = a < b ? b : a;
+  const out = [];
+  let day = lo;
+  // A month picker never spans a year, so the guard is slack but finite: a bad
+  // endpoint truncates the range instead of hanging the tab.
+  for (let guard = 0; guard < 400 && day <= hi; guard += 1) {
+    out.push(day);
+    day = isoAddDays(day, 1);
+  }
+  return out;
+}
+
 /** 0 = Sunday. */
 export function isoWeekday(iso) {
   const p = parseIso(iso);
