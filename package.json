@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "develop": "gatsby develop",
+    "dev:api": "cd backend && go run ./cmd/api",
+    "test:api": "cd backend && go test ./...",
     "start": "gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
@@ -63,6 +65,7 @@
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwind": "^2.2.12",
+    "supabase": "2.117.0",
     "tailwindcss": "^3.3.3"
   }
 }
