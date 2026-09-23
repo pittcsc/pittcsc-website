@@ -38,3 +38,31 @@ docker exec -i supabase_db_pittcsc-website psql -U postgres -d postgres \
 ```
 
 The fixtures are synthetic hook payloads, not seeded member accounts.
+
+## Go identity verification
+
+`GET /auth/session` accepts `Authorization: Bearer <access token>` and returns
+only the verified user's `id` and current login `email`. Missing/invalid/revoked
+sessions return 401; dependency outages return a retryable 503. All responses
+use `Cache-Control: no-store`. CORS allows the configured frontend origin.
+
+`SUPABASE_AUTH_URL` is the exact expected issuer, defaulting locally to
+`http://127.0.0.1:54321/auth/v1`; existing local env files need no rewrite. Hosted
+environments must set their own HTTPS issuer explicitly. Go accepts ES256/RS256
+keys from that issuer's `/.well-known/jwks.json`, checks signature, issuer,
+audience, expiration, user/session IDs, and rejects anonymous/non-Pitt identities.
+It never trusts a token-supplied key URL or browser-supplied user ID.
+
+JWKS are cached for ten minutes. Unknown key IDs trigger a refresh, at most once
+per five seconds; a newly rotated key may therefore require a retry within that
+window. A failed fetch cannot extend an expired cache. Publish replacement keys
+before switching signing keys; cached removed keys can live for up to ten minutes.
+
+Each protected request reads `auth.sessions` and `auth.users` through Go's DB
+connection, checking session ownership, confirmation, current Pitt email, bans,
+deletion, and session expiry. These reads are not cached. Supabase alone mutates
+these managed records. Removing a session through Auth logout rejects its old
+JWT on subsequent API requests immediately, even before the JWT expires.
+
+This endpoint proves identity only. Future CRM endpoints must additionally check
+current application account status, roles, ownership, and allowed fields.
