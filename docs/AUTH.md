@@ -66,3 +66,23 @@ JWT on subsequent API requests immediately, even before the JWT expires.
 
 This endpoint proves identity only. Future CRM endpoints must additionally check
 current application account status, roles, ownership, and allowed fields.
+
+## Browser sessions
+
+The Supabase browser SDK persists and refreshes sessions. No absolute lifetime,
+inactivity timeout, or single-device restriction is configured, allowing sessions
+to last six months or longer across restarts while browser storage remains intact.
+Clearing site data, private-browser cleanup, revocation, or losing the refresh
+token still requires signing in again. Access JWTs remain short-lived (one hour).
+
+The shared browser session store exposes only the identity verified by Go, never
+tokens. It clears identity data while restoring/verifying, on errors, and on
+sign-out events from other tabs. Late requests cannot repopulate cleared private
+state. Expired access tokens get one refresh/retry; outages offer a retry without
+discarding the SDK session.
+
+Logout explicitly uses Supabase's `local` scope (its default is global). It clears
+private UI state immediately and returns to `/` after Auth confirms sign-out.
+Failed/offline logout keeps private data hidden and offers retry; it does not
+claim the remote session was revoked. Other independent browser sessions remain
+active. Staff-triggered global logout is outside this issue.

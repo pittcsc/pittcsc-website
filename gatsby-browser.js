@@ -1,4 +1,5 @@
 import "./src/styles/global.scss"
+export { wrapRootElement } from "./src/components/auth/AuthProvider";
 
 // Global error handler to catch and suppress react-lottie destroy errors
 // This is a known issue with react-lottie where destroy() is called when anim is null
