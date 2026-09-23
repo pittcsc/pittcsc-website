@@ -189,7 +189,7 @@ function Header({ title }) {
                 to={auth.status === "authenticated" ? "/dashboard" : "/login"}
                 className="block px-4 py-2 w-44 md:w-36 lg:w-auto text-center text-white text-lg font-bold bg-primary rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:shadow-lg shadow-md transition md:text-base"
               >
-                {auth.status === "authenticated" ? "Dashboard" : "Sign in / Create account"}
+                {auth.status === "authenticated" ? "Dashboard" : "Sign in"}
               </Link>
             </motion.div>
           </li>

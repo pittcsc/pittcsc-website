@@ -31,7 +31,7 @@ The public website remains accessible to everyone, including signed-in users. Si
 - Signed out: the public navbar shows **Sign in / Create account**.
 - Signed in: that button becomes **Dashboard**.
 - The dashboard has its own layout, navigation, account menu, and logout action.
-- A **Visit website** link returns to the public site without signing out.
+- A **Back to Website** link returns to the public site without signing out.
 - Logging out clears the local session and private UI state, then returns to `/`.
 
 Initial route structure:

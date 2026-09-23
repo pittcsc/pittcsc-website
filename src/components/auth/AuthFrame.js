@@ -11,7 +11,7 @@ export default function AuthFrame({ children }) {
         </Link>
         {children}
         <Link className="csc-auth-website" to="/">
-          Visit website
+          Back to Website
         </Link>
       </div>
     </main>
