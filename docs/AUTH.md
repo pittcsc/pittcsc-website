@@ -86,3 +86,22 @@ private UI state immediately and returns to `/` after Auth confirms sign-out.
 Failed/offline logout keeps private data hidden and offers retry; it does not
 claim the remote session was revoked. Other independent browser sessions remain
 active. Staff-triggered global logout is outside this issue.
+
+## Login and return navigation
+
+`/login` offers email entry, code entry, loading, invalid/expired-code feedback,
+resend countdown, retries, and change-email. New and returning users follow the
+same path. A verified session reaches the minimal `/dashboard` landing page,
+which displays the verified login email and logout. The full dashboard and
+profile onboarding remain separate work. `/dashboard/*` has a Gatsby client-only
+match and a scoped Netlify fallback, preserving existing public/API routes.
+
+The public auth link reads **Sign in / Create account** or **Dashboard**. Public
+content, `/join`, meeting tools, and Notion integrations remain available.
+
+The `returnTo` query parameter accepts only relative paths in `/dashboard` or
+`/attendance`, with query/hash preserved. Other inputs fall back to `/dashboard`.
+External/protocol-relative URLs, encoded paths, backslashes, and public redirect
+routes such as `/zoom` and `/blog` are rejected. Future attendance URLs should use
+`/attendance/<event>` (or deliberately update the allowlist and tests). This issue
+does not implement attendance routes or record attendance on login.

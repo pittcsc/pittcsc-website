@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
+import { useAuth } from "./auth/AuthProvider";
 
 import logo from "../images/hero_image.png";
 
@@ -13,6 +14,7 @@ import {
 import { motion } from "framer-motion";
 
 function Header({ title }) {
+  const auth = useAuth();
   const [nav, setNav] = useState(false);
   const [shadow, setShadow] = useState(false);
 
@@ -71,7 +73,7 @@ function Header({ title }) {
         } md:max-h-full md:bg-none md:opacity-100 md:pointer-events-auto`}
       >
         <ul
-          className={`flex flex-col justify-center items-center space-y-2 md:flex-row md:items-center md:gap-8 md:space-y-0`}
+          className={`flex flex-col justify-center items-center space-y-2 md:flex-row md:items-center md:gap-3 lg:gap-8 md:space-y-0`}
         >
           <li className="py-2 md:py-0">
             <Link to="/">
@@ -182,15 +184,14 @@ function Header({ title }) {
             </a>
           </li>
           <li>
-            <Link to="/join">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="px-4 py-2 w-32 text-white text-lg font-bold bg-primary rounded-full focus:outline-none hover:shadow-lg shadow-md transition md:w-24 md:text-base"
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Link
+                to={auth.status === "authenticated" ? "/dashboard" : "/login"}
+                className="block px-4 py-2 w-44 md:w-36 lg:w-auto text-center text-white text-lg font-bold bg-primary rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:shadow-lg shadow-md transition md:text-base"
               >
-                Join
-              </motion.button>
-            </Link>
+                {auth.status === "authenticated" ? "Dashboard" : "Sign in / Create account"}
+              </Link>
+            </motion.div>
           </li>
         </ul>
       </nav>
