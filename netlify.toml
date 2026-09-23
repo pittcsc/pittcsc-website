@@ -12,6 +12,11 @@ package = "@netlify/plugin-gatsby"
   status = 301
 
 [[redirects]]
+  from = "/dashboard/*"
+  to = "/dashboard/index.html"
+  status = 200
+
+[[redirects]]
   from = "/zoom"
   to = "https://pitt.zoom.us/my/pittcsc"
   status = 200

@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
 )
 
 type pingFunc func(context.Context) error
@@ -31,7 +33,7 @@ func TestHealth(t *testing.T) {
 					t.Error("database check must have a bounded deadline")
 				}
 				return tc.err
-			}), "http://localhost:8000")
+			}), "http://localhost:8000", nil)
 			response := httptest.NewRecorder()
 			handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/health", nil))
 			if response.Code != tc.code || strings.TrimSpace(response.Body.String()) != tc.body {
@@ -39,6 +41,45 @@ func TestHealth(t *testing.T) {
 			}
 			if response.Header().Get("Cache-Control") != "no-store" || response.Header().Get("Content-Type") != "application/json" {
 				t.Fatal("health responses must be JSON and not cached")
+			}
+		})
+	}
+}
+
+type authenticateFunc func(context.Context, string) (auth.Identity, error)
+
+func (f authenticateFunc) Authenticate(ctx context.Context, header string) (auth.Identity, error) {
+	return f(ctx, header)
+}
+
+func TestSessionEndpoint(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		err    error
+		status int
+	}{
+		{"valid", nil, 200}, {"unauthorized", auth.ErrUnauthorized, 401},
+		{"unavailable", auth.ErrUnavailable, 503}, {"private error", errors.New("database credentials"), 503},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := NewHandler(nil, "http://localhost:8000", authenticateFunc(func(ctx context.Context, header string) (auth.Identity, error) {
+				if header != "Bearer test" {
+					t.Fatal("missing bearer header")
+				}
+				if _, ok := ctx.Deadline(); !ok {
+					t.Fatal("missing request deadline")
+				}
+				return auth.Identity{ID: "verified-id", Email: "student@pitt.edu"}, tc.err
+			}))
+			r := httptest.NewRequest("GET", "/auth/session", nil)
+			r.Header.Set("Authorization", "Bearer test")
+			w := httptest.NewRecorder()
+			h.ServeHTTP(w, r)
+			if w.Code != tc.status || w.Header().Get("Cache-Control") != "no-store" {
+				t.Fatalf("status %d", w.Code)
+			}
+			if tc.err != nil && (strings.Contains(w.Body.String(), "verified-id") || strings.Contains(w.Body.String(), "credentials")) {
+				t.Fatal("private data leaked on error")
 			}
 		})
 	}
@@ -52,7 +93,7 @@ func TestHealthRespectsRequestCancellation(t *testing.T) {
 			t.Fatal("request cancellation did not reach database check")
 		}
 		return ctx.Err()
-	}), "http://localhost:8000")
+	}), "http://localhost:8000", nil)
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/health", nil).WithContext(ctx))
 	if response.Code != http.StatusServiceUnavailable {
@@ -78,7 +119,7 @@ func TestHealthRoutingAndCORS(t *testing.T) {
 					t.Fatal("unexpected database check")
 				}
 				return nil
-			}), "http://localhost:8000")
+			}), "http://localhost:8000", nil)
 			req := httptest.NewRequest(tc.method, tc.path, nil)
 			req.Header.Set("Origin", tc.origin)
 			response := httptest.NewRecorder()

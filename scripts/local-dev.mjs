@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { generateKeyPairSync, randomUUID } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -40,8 +41,34 @@ export function localValues(status) {
       GATSBY_SUPABASE_URL: status.API_URL,
       GATSBY_SUPABASE_PUBLISHABLE_KEY: status.PUBLISHABLE_KEY,
     },
-    backend: { DATABASE_URL: database.toString() },
+    backend: {
+      DATABASE_URL: database.toString(),
+      SUPABASE_AUTH_URL: `${api.origin}/auth/v1`,
+    },
   };
+}
+
+export function createSigningKeys(destination) {
+  if (existsSync(destination)) return false;
+  const { privateKey } = generateKeyPairSync("ec", { namedCurve: "P-256" });
+  const key = {
+    ...privateKey.export({ format: "jwk" }),
+    kid: randomUUID(),
+    alg: "ES256",
+    use: "sig",
+    key_ops: ["sign", "verify"],
+    ext: true,
+  };
+  try {
+    writeFileSync(destination, JSON.stringify([key]) + "\n", {
+      flag: "wx",
+      mode: 0o600,
+    });
+    return true;
+  } catch (error) {
+    if (error.code === "EEXIST") return false;
+    throw error;
+  }
 }
 
 export function createEnvFile(example, destination, values) {
@@ -81,9 +108,12 @@ function main(mode) {
   const supabase = resolve(root, "node_modules/.bin/supabase");
   if (!existsSync(supabase))
     throw new Error("Dependencies are missing. Run `mise run setup` first.");
+  createSigningKeys(resolve(root, "supabase/signing_keys.json"));
   // Suppress the successful status table, which includes secrets. Progress/errors
   // still reach stderr; use the JSON status below only in memory.
   run(supabase, ["start"], { stdio: ["ignore", "pipe", "inherit"] });
+  // Apply only pending local migrations. Never reset or target a linked project.
+  run(supabase, ["migration", "up", "--local"]);
   const status = JSON.parse(
     run(supabase, ["status", "-o", "json"], {
       stdio: ["ignore", "pipe", "inherit"],

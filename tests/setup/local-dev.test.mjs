@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { createPrivateKey } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { createEnvFile, localValues } from "../../scripts/local-dev.mjs";
+import { createEnvFile, createSigningKeys, localValues } from "../../scripts/local-dev.mjs";
 
 const status = {
   API_URL: "http://127.0.0.1:54321",
@@ -24,7 +25,26 @@ test("local config copies only public frontend fields and the backend database U
     status.PUBLISHABLE_KEY,
   );
   assert.equal(values.backend.DATABASE_URL, `${status.DB_URL}?sslmode=disable`);
+  assert.equal(values.backend.SUPABASE_AUTH_URL, `${status.API_URL}/auth/v1`);
   assert.ok(!JSON.stringify(values).includes(status.SECRET_KEY));
+});
+
+test("local signing key is asymmetric, private, and preserved on subsequent setup", () => {
+  const dir = mkdtempSync(join(tmpdir(), "csc-key-test-"));
+  try {
+    const destination = join(dir, "keys.json");
+    assert.equal(createSigningKeys(destination), true);
+    const original = readFileSync(destination, "utf8");
+    const [key] = JSON.parse(original);
+    assert.equal(key.alg, "ES256");
+    assert.deepEqual(key.key_ops, ["sign", "verify"]);
+    assert.equal(createPrivateKey({ key, format: "jwk" }).asymmetricKeyType, "ec");
+    assert.equal(statSync(destination).mode & 0o777, 0o600);
+    assert.equal(createSigningKeys(destination), false);
+    assert.equal(readFileSync(destination, "utf8"), original);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test("rejects missing publishable keys and remote services", () => {

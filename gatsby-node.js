@@ -7,6 +7,14 @@ const notion = new Client({
 
 const database_id = process.env.GATSBY_NOTION_DATABASE_ID;
 
+// Only this separate dashboard subtree is client-routed. Its generated HTML
+// contains a loading shell; private identity data is fetched in the browser.
+exports.onCreatePage = ({ page, actions }) => {
+  if (page.path === "/dashboard/" && page.matchPath !== "/dashboard/*") {
+    actions.createPage({ ...page, matchPath: "/dashboard/*" });
+  }
+};
+
 const getEvents = async () => {
   if (!process.env.GATSBY_NOTION_TOKEN || !database_id) {
     console.warn("Notion token or database ID missing. Skipping event fetch.");

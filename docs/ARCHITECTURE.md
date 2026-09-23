@@ -6,7 +6,10 @@ Extend the existing website into a club management application while preserving 
 
 CSC will manage its own accounts, member profiles, roles, events, and other club data.
 
-This document records the agreed architecture and implementation direction. The dashboard and new backend described here are planned, not yet implemented.
+This document records implementation and the agreed direction. Local email OTP,
+Go identity/session verification, auth-aware navigation, and a minimal signed-in
+landing page are implemented in #158. The full dashboard, profiles, roles, and
+CRM features below remain planned. See [AUTH.md](AUTH.md) for implemented behavior.
 
 ## Technology and hosting
 
@@ -28,7 +31,7 @@ The public website remains accessible to everyone, including signed-in users. Si
 - Signed out: the public navbar shows **Sign in / Create account**.
 - Signed in: that button becomes **Dashboard**.
 - The dashboard has its own layout, navigation, account menu, and logout action.
-- A **Visit website** link returns to the public site without signing out.
+- A **Back to Website** link returns to the public site without signing out.
 - Logging out clears the local session and private UI state, then returns to `/`.
 
 Initial route structure:
@@ -48,18 +51,31 @@ There is no initial frontend framework migration. Keep dashboard components sepa
 
 ## CSC accounts and roles
 
-Use Supabase Auth in the dedicated CSC Supabase project. Members register and sign in through the CSC application using the Supabase client SDK, which also handles session refresh and sign-out.
+Use Supabase Auth with emailed six-digit codes, valid for 15 minutes, and a
+60-second resend cooldown. New and returning users share the same flow and must
+use an exact `@pitt.edu` login address. Private Auth hooks enforce the domain on
+signup and token issuance. Personal profile contact emails are separate future
+data and never become login identities. The SDK persists and refreshes sessions
+without a configured lifetime/inactivity cutoff, and logout revokes the current
+browser session only. Hosted Supabase/SMTP setup is a separate launch task.
 
-On first authenticated use of CSC, the Go API creates a CSC profile linked to the verified Supabase Auth user ID (the access token's `sub` claim), defaulting its role to `member`. Enforce uniqueness on that user ID so repeated or concurrent requests cannot create duplicate profiles. Use the stable user ID as the identity link, not an email address.
+When profiles and authorization are implemented (#159/#160), first authenticated
+use will create a CSC profile linked uniquely to the verified Auth user ID
+(`sub`) and assign the default `member` role. Repeated/concurrent requests must
+not duplicate profiles or assignments. Use the stable user ID, not email, as the
+identity link. The current `/auth/session` endpoint returns identity only.
 
 CSC manages its own application permissions:
 
-- CSC roles are `member` and `staff`, stored authoritatively in CSC's Postgres database.
+- Planned CSC roles are additive: `member`, `foundry`, `staff`, and `alumni`, stored authoritatively in Postgres with multiple assignments per user.
+- New users default to `member`; users cannot self-assign elevated roles. Foundry/alumni alone do not confer staff permissions.
 - Staff have member access plus event and member management capabilities.
 - Provision the first CSC staff account during setup. Subsequent role changes require authorized staff action and an audit record.
 - CSC account suspension is enforced through CSC profile status on API requests, including requests with an otherwise valid access token.
 
-The exact sign-in methods will be selected during implementation. Authentication credentials remain managed by Supabase Auth. CSC application roles are stored in the club profile and are separate from Supabase's built-in database access roles.
+Authentication credentials remain managed by Supabase Auth. Planned CSC role
+assignments are separate from Supabase's built-in database access roles and from
+user-editable Auth metadata.
 
 ## API and authorization
 
@@ -68,14 +84,19 @@ The normal request flow is:
 1. React signs the user in through Supabase Auth.
 2. React sends the Supabase access token as a bearer token with requests to the Go API over HTTPS.
 3. Go verifies the token's signature, issuer, audience, and expiry using a JWT library. Configure asymmetric signing keys in Supabase and use the CSC project's published JWKS for verification, with caching and key rotation support.
-4. Go resolves the CSC profile by the verified user ID in the `sub` claim and checks its current status and role.
+4. Go checks the current Auth session and user in Postgres on every protected request, so logout invalidates API access immediately. Future CRM requests must also resolve the profile and check its current application status and all assigned roles.
 5. Go authorizes the operation, reads or writes Postgres, and returns the permitted data.
 
 Client-side route guards control navigation and presentation. The Go API independently enforces authentication, roles, record access, and editable fields on every protected operation. A role supplied by the browser is never authoritative.
 
 Start with a JSON REST API. Initial operations include retrieving the current profile, listing published events, creating and editing events, publishing events, and managing members. Members must not receive event drafts or staff-only member information.
 
-All club profile, event, and other CRM data access goes through Go. The browser communicates directly with Supabase Auth for authentication only. Keep database credentials and privileged Supabase keys server-side and disable Supabase's generated Data API for this application; the Auth service remains available. Use a database connection pool sized for the database limits and Cloud Run instance configuration.
+All future CRM data access goes through Go. The browser communicates directly
+with Supabase Auth for authentication only. Keep privileged credentials
+server-side. Local Auth hooks live in a private, unexposed schema. Disable the
+generated Data API before introducing CRM tables; the current local scaffold
+still enables it but exposes no CRM data. Auth must remain available. Size the
+database pool for database and Cloud Run limits.
 
 Serve the Go API from a dedicated endpoint, such as `api.pittcsc.org`, with explicit frontend origin configuration. Existing Gatsby API routes can continue operating during the transition; avoid introducing routing rules that accidentally replace them.
 
@@ -85,7 +106,8 @@ Manage the Postgres schema with versioned SQL migrations.
 
 | Record | Initial purpose |
 | --- | --- |
-| `users` | Internal ID, unique Supabase Auth user ID, member profile, CSC role, account status, and timestamps |
+| `users` | Internal ID, unique Supabase Auth user ID, member profile, account status, and timestamps |
+| `roles`, `user_roles` | Additive role assignments, unique per user/role pair |
 | `events` | Title, description, location, start/end times, timezone, draft/published/cancelled status, creator, and timestamps |
 | `audit_log` | Actor, action, affected record, timestamp, and relevant change details for staff operations |
 

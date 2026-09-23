@@ -15,6 +15,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
 	"github.com/pittcsc/pittcsc-website/backend/internal/server"
 )
 
@@ -54,11 +55,17 @@ func run() error {
 	}
 	defer pool.Close()
 
+	// A local default keeps existing local env files usable without rewriting them.
+	verifier, err := auth.NewVerifier(envOr("SUPABASE_AUTH_URL", "http://127.0.0.1:54321/auth/v1"), auth.PostgresSessions{DB: pool})
+	if err != nil {
+		return err
+	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	api := &http.Server{
 		Addr:              net.JoinHostPort(envOr("HOST", "127.0.0.1"), port),
-		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000")),
+		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000"), verifier),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,

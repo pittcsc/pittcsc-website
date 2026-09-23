@@ -34,3 +34,7 @@ run = ["npm test", "npm run test:api", "cd backend && go vet ./... && go build .
 [tasks.build]
 description = "Build the public Gatsby site"
 run = "npm run build"
+
+[tasks."test:auth"]
+description = "Test real local Supabase/Mailpit authentication against the running Go API"
+run = "node scripts/test-auth-local.mjs"

@@ -1,8 +1,10 @@
 # Local development
 
 The existing Gatsby site runs alongside a Go API and local Supabase. The current
-API implements database readiness at `/health`; authentication and CRM features
-will be added separately. No database tables or seed accounts are needed yet.
+API implements database readiness at `/health` and verified identity at
+`/auth/session`. Local Pitt email OTP sign-in is available at `/login`, with a
+minimal signed-in page at `/dashboard`. Profiles, roles, and CRM features follow
+separately. See [authentication](AUTH.md) for behavior and local testing.
 
 ## Quick start
 
@@ -41,7 +43,8 @@ Both files are gitignored; admin and storage keys are not copied.
 The public site works without production credentials. Notion-backed events are
 omitted without Notion configuration; Google Calendar import is hidden without
 its client ID; `/meet` uses local file storage without Upstash credentials.
-Authentication and CRM features are not implemented yet.
+Authentication uses local Supabase and Mailpit; no hosted email credentials are
+needed. CRM features beyond the signed-in landing page are not implemented yet.
 
 ## Daily commands
 
@@ -53,6 +56,7 @@ Authentication and CRM features are not implemented yet.
 | `mise run db:stop` | Stop Supabase, preserving local data |
 | `mise run check` | Run JavaScript tests and Go tests, vet, and build; no Docker needed |
 | `mise run build` | Production Gatsby build |
+| `mise run test:auth` | Real local Supabase/Mailpit/Go auth checks (API must be running) |
 | `mise exec -- npm run clean` | Clear Gatsby's generated cache/output |
 
 Ctrl+C stops the application servers. Supabase stays running in Docker until
@@ -78,8 +82,7 @@ GATSBY_SUPABASE_PUBLISHABLE_KEY=YOUR_LOCAL_PUBLISHABLE_KEY
 ```
 
 Use the Publishable key printed by `npx supabase status`. These variables are
-public browser configuration for the upcoming dashboard; adding them does not
-yet initialize authentication or change the public website. Restart Gatsby after
+public browser configuration used by authentication. Restart Gatsby after
 editing them. Never put a Supabase secret/service-role key, database password, or
 S3 credential in a `GATSBY_*` variable.
 
@@ -92,6 +95,7 @@ credentials are separate from the new Go API configuration.
 HOST=127.0.0.1
 PORT=8080
 FRONTEND_ORIGIN=http://localhost:8000
+SUPABASE_AUTH_URL=http://127.0.0.1:54321/auth/v1
 DATABASE_URL=postgresql://postgres:YOUR_LOCAL_PASSWORD@127.0.0.1:54322/postgres?sslmode=disable
 ```
 
@@ -100,8 +104,10 @@ only for the local Docker database. The Go process loads `backend/.env` when
 started with `npm run dev:api`; existing process environment variables take
 precedence. It does not load Gatsby's environment file.
 
-The health endpoint connects directly to Postgres and does not need Supabase
-admin, storage, or S3 keys. Keep these unused credentials out of the frontend.
+The API connects directly to Postgres and uses public JWKS for JWT verification.
+`SUPABASE_AUTH_URL` defaults to the local issuer when absent, so existing local
+env files remain usable. No Supabase admin, storage, or S3 keys are needed. Keep
+privileged credentials out of the frontend.
 
 `FRONTEND_ORIGIN` is the single browser origin allowed by the API's CORS headers.
 If you open Gatsby at `http://127.0.0.1:8000` instead of `http://localhost:8000`,
@@ -162,8 +168,9 @@ mise run check
 ```
 
 Unit tests cover database availability, cancellation, HTTP routing, and allowed
-browser origins without requiring a running database. Use the curl check above
-to verify the real local database connection.
+browser origins, plus authentication failures, JWKS rotation, and browser session
+behavior without requiring a running database. Use the curl check above to verify
+the database and `mise run test:auth` for real local OTP/session integration.
 The existing `/meet` HTTP integration tests skip when Gatsby is not running;
 the remaining JavaScript tests and Go tests run in `mise run check` and CI.
 
@@ -201,6 +208,9 @@ the database provider's TLS settings. Keep local, staging, and production
 credentials separate. The pool currently permits five connections per API
 instance; account for that when configuring service instance limits.
 
-Schema migrations and sample data will be added when the first CRM tables are
-implemented. This setup does not modify the local Supabase schema or existing
-application data.
+Startup generates an ignored local asymmetric signing key once and applies
+pending local migrations without resetting data. The current migration adds
+private Pitt-email Auth hooks; it does not create CRM tables or edit managed Auth
+tables. After changing `supabase/config.toml`, stop and restart local Supabase to
+load the settings. See [AUTH.md](AUTH.md) for fixtures, checks, and the separate
+hosted rollout requirements.
