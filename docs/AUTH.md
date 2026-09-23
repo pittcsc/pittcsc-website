@@ -105,3 +105,68 @@ External/protocol-relative URLs, encoded paths, backslashes, and public redirect
 routes such as `/zoom` and `/blog` are rejected. Future attendance URLs should use
 `/attendance/<event>` (or deliberately update the allowlist and tests). This issue
 does not implement attendance routes or record attendance on login.
+
+## Verification and manual walkthrough
+
+With Docker running, start `mise run dev`, then run:
+
+```sh
+mise run check
+mise run test:auth
+mise run build
+```
+
+`test:auth` refuses nonlocal URLs and uses only public frontend configuration. It
+creates synthetic `csc-auth-test-*` accounts in local Auth, reads their OTP emails
+from local Mailpit in memory, and checks domain rejection, real resend limits,
+invalid/reused codes, new/returning identity, persistence, refresh, and immediate
+logout revocation while another session stays valid. It waits about a minute for
+the real resend cooldown and signs out its sessions afterward. Synthetic accounts
+and messages remain for inspection; the script does not delete or reset data.
+
+Unit tests additionally cover expired/wrong-project/malformed tokens, JWKS cache
+rotation and concurrent fetches, API outages, browser cleanup races, and redirect
+validation. The real integration test does not wait 15 minutes for OTP expiry or
+six months for session longevity; those settings and error paths have separate
+configuration/unit coverage. The SQL checks above exercise hook permissions.
+
+For the deeper browser testing pass:
+
+1. Open `/login`; try a non-Pitt address, then a synthetic `@pitt.edu` address.
+   Read its code in Mailpit, try an incorrect code, and then the correct code.
+2. Check resend countdown, change-email, duplicate clicks, and request failure
+   recovery. Request a code and wait over 15 minutes to check actual expiry.
+3. Reload `/dashboard`, restart the browser, and open a second tab. Confirm the
+   session restores without another code and no identity appears while loading.
+4. Visit `/dashboard/events` directly while signed out; sign in and confirm the
+   path is preserved. Try `/login?returnTo=https://example.com` and confirm the
+   fallback is `/dashboard`. The nested page is still the minimal landing screen.
+5. Sign out; confirm return to `/`, private data disappears in other tabs, and a
+   separate browser stays signed in. Test offline logout and its retry action.
+6. Check keyboard labels/focus, mobile widths, public navigation, and API-outage
+   retries. Future attendance testing must confirm an explicit check-in click.
+
+## Hosted rollout (separate from local completion)
+
+No hosted settings or migrations are applied by this implementation. Before
+public launch, the maintainer must configure the actual Supabase project and:
+
+- Apply the private hook migration to the intended environment and enable both
+  Auth hooks; configure six-digit codes, 900-second expiry, 60-second resend,
+  email confirmation, both templates, and the correct site/redirect URLs.
+- Use asymmetric signing keys, configure Go's HTTPS issuer and DB connection,
+  and set only the public URL/publishable key/API URL in Gatsby's environment.
+  Preserve the long-lived-session policy and verify live-session DB checks.
+- Configure custom SMTP and a verified sender domain with the provider's
+  SPF/DKIM records and appropriate DMARC policy. Supabase's default sender is
+  restricted and unsuitable for public delivery. See [SMTP setup](https://supabase.com/docs/guides/auth/auth-smtp).
+- Test delivery to actual Pitt inboxes, including spam/quarantine, new and
+  returning users, delays, resends, and expired codes. Keep SMTP credentials in
+  hosted server configuration, never the browser or local onboarding.
+- Set email and request budgets for expected meeting bursts, including users
+  sharing campus IPs; monitor delivery failures, bounces, and unusual requests.
+  Retain server-enforced limits and plan CAPTCHA integration if abuse warrants
+  it. CAPTCHA is not enabled in local development. The UI countdown is only UX,
+  not an abuse boundary. See [Auth rate limits](https://supabase.com/docs/guides/auth/rate-limits).
+- Finish profile/status/role enforcement before exposing private CRM features,
+  and disable the generated Data API for the application before adding CRM data.
