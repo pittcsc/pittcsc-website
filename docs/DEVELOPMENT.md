@@ -50,7 +50,7 @@ needed. CRM features beyond the signed-in landing page are not implemented yet.
 
 | Command | Purpose |
 | --- | --- |
-| `mise run dev` | Start local Supabase, Gatsby, and Go together |
+| `mise run dev` | Start local Supabase, Gatsby, and Go together; stop all with Ctrl+C |
 | `mise run setup` | Reinstall locked dependencies after cloning or dependency changes |
 | `mise run db:start` | Start only Supabase and create any missing env files |
 | `mise run db:stop` | Stop Supabase, preserving local data |
@@ -59,8 +59,10 @@ needed. CRM features beyond the signed-in landing page are not implemented yet.
 | `mise run test:auth` | Real local Supabase/Mailpit/Go auth checks (API must be running) |
 | `mise exec -- npm run clean` | Clear Gatsby's generated cache/output |
 
-Ctrl+C stops the application servers. Supabase stays running in Docker until
-`mise run db:stop`. Normal startup never deletes your database.
+Ctrl+C in `mise run dev` stops Gatsby, Go, and the local Supabase containers.
+Their Docker images and local database data remain available for the next run.
+If you started Supabase separately with `mise run setup` or `mise run db:start`,
+use `mise run db:stop` when finished. Normal startup never deletes your database.
 Gatsby reloads frontend edits automatically. The minimal Go server currently
 needs a restart after backend code changes.
 
@@ -157,8 +159,9 @@ status. Each database check has a two-second timeout. Connection credentials and
 raw database errors are not returned to clients. This endpoint is a readiness
 check, not a database-independent liveness check.
 
-Press Ctrl+C in each application terminal to stop Gatsby and Go. The API drains
-requests and closes its database pool on shutdown. Stop Supabase separately with
+Press Ctrl+C in `mise run dev` to stop both application servers and Supabase.
+The API drains requests and closes its database pool on shutdown. If running
+the servers in separate terminals, stop each one with Ctrl+C, then run
 `mise run db:stop`; no reset is needed for normal development.
 
 ## Backend checks

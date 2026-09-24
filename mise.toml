@@ -6,8 +6,8 @@ description = "Install dependencies, start local Supabase, and create missing en
 run = "node scripts/local-dev.mjs setup"
 
 [tasks.dev]
-description = "Start local Supabase, Gatsby, and the Go API (Ctrl+C stops app servers)"
-depends = ["dev:web", "dev:api"]
+description = "Start local Supabase, Gatsby, and Go; stop all on exit"
+run = "node scripts/dev.mjs"
 
 [tasks."dev:web"]
 description = "Start Gatsby with local Supabase ready"
