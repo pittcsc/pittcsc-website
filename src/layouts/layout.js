@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { CookiesProvider } from "react-cookie";
 
-const Layout = ({ title, header, children }) => {
+const Layout = ({ title, header, children, showFooter = true }) => {
   return (
     <CookiesProvider>
       <div>
@@ -15,7 +15,7 @@ const Layout = ({ title, header, children }) => {
         <AnimatePresence mode="wait">
           <main key="main">{children}</main>
         </AnimatePresence>
-        <Footer />
+        {showFooter && <Footer />}
       </div>
     </CookiesProvider>
   );
@@ -23,6 +23,7 @@ const Layout = ({ title, header, children }) => {
 
 Layout.propTypes = {
   title: PropTypes.string,
+  showFooter: PropTypes.bool,
 };
 
 export default Layout;
