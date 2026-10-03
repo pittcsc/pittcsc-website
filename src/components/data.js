@@ -52,7 +52,7 @@ export const officerList = [
     title: "Director of Technology",
     linkedIn: "https://www.linkedin.com/in/aarashzakeri/",
     email: "AAZ48@pitt.edu",
-    image: "../images/officers_2026/aarash.jpeg",
+    image: "../images/officers_2026/aarash.jpg",
     bio: "Hello, I'm Aarash and I'm excited to be the Director of Technology for this year! I'm a senior majoring in Computer Science and Computational Biology, and I like everything to do with math, computer systems, food, and cool posters. I've interned at UTSW Bioinformatics, own a discord bot with 112k+ users, and I'll be working at Triple this summer.\n\nI'm excited for my last year at Pitt to be my best! Feel free to reach out to my for anything tech related or to just say hi.",
   },
   {
