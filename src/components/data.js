@@ -75,11 +75,10 @@ export const officerList = [
 
 export const initiativeLeadList = [
   {
-    name: "Shreyash Ranjan",
+    name: "Abigail Huang",
     title: "SteelHacks Co-Executive Director",
-    linkedIn: "https://www.linkedin.com/in/shreyash-ranjan/",
-    email: "shr172@pitt.edu",
-    image: "../images/officers_2025/shreyash.jpeg",
+    email: "ash304@pitt.edu",
+    image: "../images/officers_2025/abigail.jpeg",
   },
   {
     name: "Denys Tsinyk",

@@ -28,16 +28,18 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
                   {bio}
                 </div>
                 <div className="flex items-center justify-start space-x-8">
-                  <motion.a
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    href={linkedIn}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-3xl"
-                  >
-                    <FontAwesomeIcon icon={faLinkedin} />
-                  </motion.a>
+                  {linkedIn && (
+                    <motion.a
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      href={linkedIn}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center text-3xl"
+                    >
+                      <FontAwesomeIcon icon={faLinkedin} />
+                    </motion.a>
+                  )}
                   <motion.a
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -70,16 +72,18 @@ function TeamCard({ bio, image, name, title, linkedIn, email }) {
           <div className="pt-4 text-lg font-medium md:text-xl">{name}</div>
           <div className="px-2 text-xs">{title}</div>
         </figcaption>
-        <motion.a
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          href={linkedIn}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute bottom-4 left-4 flex items-center justify-center text-2xl"
-        >
-          <FontAwesomeIcon icon={faLinkedin} />
-        </motion.a>
+        {linkedIn && (
+          <motion.a
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            href={linkedIn}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-4 left-4 flex items-center justify-center text-2xl"
+          >
+            <FontAwesomeIcon icon={faLinkedin} />
+          </motion.a>
+        )}
         {email && (
           <motion.a
             whileHover={{ scale: 1.1 }}
