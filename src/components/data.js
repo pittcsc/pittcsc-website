@@ -4,7 +4,7 @@ export const officerList = [
     title: "President",
     linkedIn: "https://www.linkedin.com/in/liambrem/",
     email: "LEB253@pitt.edu",
-    image: "../images/officers_2025/liam.jpeg",
+    image: "../images/officers_2026/liam.jpeg",
     bio: "Hi everyone, I’m Liam and CSC’s President! I’m a Junior studying Computer Science & minoring in Econ, and for the past 2 summers, I've interned at Meta. I also TA for a few classes here at Pitt. Outside of school/work, I enjoy playing music (guitar & banjo), playing soccer, going to the gym, and traveling.\n\nSuper excited for this upcoming year and for what CSC has to offer! Feel free to reach out to me anytime.",
   },
   {
@@ -12,7 +12,7 @@ export const officerList = [
     title: "Vice President",
     linkedIn: "https://www.linkedin.com/in/insiah-kizilbash/",
     email: "ink27@pitt.edu",
-    image: "../images/officers_2025/insiah.jpeg",
+    image: "../images/officers_2026/insiah.jpeg",
     bio: "Hey everyone! I’m Insiah, a senior majoring in CS, and the Vice President this year! So far, I’ve interned at PNC Bank and was a SWE fellow for Netflix.\n\nIn my free time, I love trying new cafes/restaurants (i’m a big foodie!), hanging out with friends, and watching sports.\n\nSuper excited to meet everyone this year, so please feel free to reach out!",
   },
   {
@@ -20,7 +20,7 @@ export const officerList = [
     title: "Business Manager",
     linkedIn: "https://www.linkedin.com/in/caseykarwatske/",
     email: "CBK37@pitt.edu",
-    image: "../images/officers_2025/Casey.jpeg",
+    image: "../images/officers_2026/Casey.jpeg",
     bio: "Hey guys! I'm Casey, the CSC Business Manager. I'm a Sophomore dual-majoring in Math and CS. In my free time I like to lift weights, watch movies and do escape rooms. I'm super hyped for everything CSC has planned next year. Hit me up anytime to talk business.",
   },
   {
@@ -28,7 +28,7 @@ export const officerList = [
     title: "Events Coordinator",
     linkedIn: "https://www.linkedin.com/in/prestonpro/",
     email: "PJP76@pitt.edu",
-    image: "../images/officers_2025/preston.jpeg",
+    image: "../images/officers_2026/preston.jpeg",
     bio: "Hey everyone, I'm Preston, CSC's Events Coordinator! I'm a Sophomore studying Computer Science and minoring in Philosophy, and this summer I will be interning at Character.AI. I also interned for a Pitt alum-founded YC company (H2P) and was a member of PittCSC's Development Board! In my free time, I enjoy reading philosophy and fiction, playing sports (and chess), trying new food, and hanging out with friends. Super excited to meet everyone and to see what CSC has in store! Feel free to reach out anytime, I'm always happy to chat!",
   },
   {
@@ -36,7 +36,7 @@ export const officerList = [
     title: "Partnerships Coordinator",
     linkedIn: "",
     email: "JBD58@pitt.edu",
-    image: "../images/officers_2025/jayson.jpeg",
+    image: "../images/officers_2026/jayson.jpeg",
     bio: "Hi everyone! Im Jayson Dang! Im a sophomore studying CS + Psychology. I like lifting, climbing, cycling, and reading manga. Please feel free to reach out!\n\nSet your heart ablaze ❤️‍🔥",
   },
   {
@@ -44,15 +44,15 @@ export const officerList = [
     title: "Director of Outreach",
     linkedIn: "https://www.linkedin.com/in/gabriella-flynn/",
     email: "GGF13@pitt.edu",
-    image: "../images/officers_2025/gabby.jpeg",
+    image: "../images/officers_2026/gabby.jpeg",
     bio: "Hi! I’m Gabby, the Director of Outreach for CSC! I am a junior majoring in Computer Science and minoring in Business. I have experience working in IT, teaching data science, working at a startup, and being a coach for MLH! For fun I like to cook and bake, listen to new music, crochet, and hang out with my friends and family! I’m so excited for the upcoming semesters with CSC and can’t wait for everyone to see what we have in store! Feel free to reach out for anything ranging from advice to outreach ideas!",
   },
   {
     name: "Aarash Zakeri",
     title: "Director of Technology",
-    linkedIn: "",
+    linkedIn: "https://www.linkedin.com/in/aarashzakeri/",
     email: "AAZ48@pitt.edu",
-    image: "../images/officers_2025/aarash.jpeg",
+    image: "../images/officers_2026/aarash.jpg",
     bio: "Hello, I'm Aarash and I'm excited to be the Director of Technology for this year! I'm a senior majoring in Computer Science and Computational Biology, and I like everything to do with math, computer systems, food, and cool posters. I've interned at UTSW Bioinformatics, own a discord bot with 112k+ users, and I'll be working at Triple this summer.\n\nI'm excited for my last year at Pitt to be my best! Feel free to reach out to my for anything tech related or to just say hi.",
   },
   {
@@ -68,7 +68,7 @@ export const officerList = [
     title: "Creative Media Officer",
     linkedIn: "https://www.linkedin.com/in/avaluu/",
     email: "aml470@pitt.edu",
-    image: "../images/officers_2025/ava.jpeg",
+    image: "../images/officers_2026/ava.jpeg",
     bio: "Hi! I'm Ava, the current Creative Media Officer. I'm a junior majoring in CS and minoring in business. I like to doomscroll, eat good food, bake, cook, listen to music, eat, and travel.\n\nFeel free to reach out! :)",
   },
 ];
