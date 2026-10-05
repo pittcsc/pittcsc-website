@@ -20,12 +20,19 @@ function run(command, args, options = {}) {
 }
 
 export function localValues(status) {
-  for (const key of ["API_URL", "DB_URL", "PUBLISHABLE_KEY"]) {
+  // CLI status omits API_URL when PostgREST is disabled. Storage and Auth still
+  // share the local gateway; derive its origin without copying storage keys.
+  const apiURL =
+    status.API_URL ||
+    (status.STORAGE_S3_URL && new URL(status.STORAGE_S3_URL).origin);
+  if (!apiURL)
+    throw new Error("Local Supabase status is missing its gateway URL.");
+  for (const key of ["DB_URL", "PUBLISHABLE_KEY"]) {
     if (typeof status[key] !== "string" || !status[key]) {
       throw new Error(`Local Supabase status is missing ${key}.`);
     }
   }
-  const api = new URL(status.API_URL);
+  const api = new URL(apiURL);
   const database = new URL(status.DB_URL);
   for (const url of [api, database]) {
     if (!["127.0.0.1", "localhost", "[::1]"].includes(url.hostname)) {
@@ -38,7 +45,7 @@ export function localValues(status) {
   return {
     frontend: {
       GATSBY_API_URL: "http://localhost:8080",
-      GATSBY_SUPABASE_URL: status.API_URL,
+      GATSBY_SUPABASE_URL: api.origin,
       GATSBY_SUPABASE_PUBLISHABLE_KEY: status.PUBLISHABLE_KEY,
     },
     backend: {
