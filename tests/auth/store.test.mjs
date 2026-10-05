@@ -206,3 +206,34 @@ test("code flow uses only Supabase OTP APIs and presents validation/retry errors
   assert.equal((await store.requestCode("student@pitt.edu")).rateLimited, true);
   store.stop();
 });
+
+test("routine token refresh keeps the account editor mounted, but a denied identity clears it", async () => {
+  const f = fixture();
+  let rejected = false;
+  const states = [];
+  const store = createAuthStore({
+    getClient: async () => ({ auth: f.auth }),
+    fetchIdentity: async () => {
+      if (rejected) throw Object.assign(new Error(), { status: 403 });
+      return identity;
+    },
+  });
+  await store.start();
+  store.subscribe(() => states.push(store.getSnapshot().status));
+  f.emit("TOKEN_REFRESHED", {
+    access_token: "fresh",
+    user: { id: identity.id },
+  });
+  await tick();
+  assert.ok(states.every((state) => state === "authenticated"));
+  assert.equal(store.getSnapshot().identity.id, identity.id);
+  rejected = true;
+  f.emit("TOKEN_REFRESHED", {
+    access_token: "fresh",
+    user: { id: identity.id },
+  });
+  await tick();
+  assert.equal(store.getSnapshot().identity, null);
+  assert.match(store.getSnapshot().error, /suspended/);
+  store.stop();
+});
