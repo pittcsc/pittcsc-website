@@ -126,11 +126,11 @@ export function createAuthStore({ getClient, fetchIdentity }) {
             session = null;
             publish("signedOut");
           } else if (!logoutRequested) {
-            // A routine refresh for the same user must not unmount account
-            // forms and discard unsaved edits. Verification failures still
-            // clear the private view immediately when they are received.
+            // Refresh and tab-focus recovery can both announce an existing
+            // session. Keep drafts mounted for the same verified user while
+            // rechecking identity; verification failures still clear the view.
             const preserveIdentity =
-              event === "TOKEN_REFRESHED" &&
+              (event === "TOKEN_REFRESHED" || event === "SIGNED_IN") &&
               state.status === "authenticated" &&
               next?.user?.id === state.identity?.id;
             invalidate();

@@ -207,7 +207,7 @@ test("code flow uses only Supabase OTP APIs and presents validation/retry errors
   store.stop();
 });
 
-test("routine token refresh keeps the account editor mounted, but a denied identity clears it", async () => {
+test("token refresh and same-user tab recovery preserve drafts, but a denied identity clears them", async () => {
   const f = fixture();
   let rejected = false;
   const states = [];
@@ -220,11 +220,10 @@ test("routine token refresh keeps the account editor mounted, but a denied ident
   });
   await store.start();
   store.subscribe(() => states.push(store.getSnapshot().status));
-  f.emit("TOKEN_REFRESHED", {
-    access_token: "fresh",
-    user: { id: identity.id },
-  });
-  await tick();
+  for (const event of ["TOKEN_REFRESHED", "SIGNED_IN"]) {
+    f.emit(event, { access_token: "fresh", user: { id: identity.id } });
+    await tick();
+  }
   assert.ok(states.every((state) => state === "authenticated"));
   assert.equal(store.getSnapshot().identity.id, identity.id);
   rejected = true;
@@ -235,5 +234,18 @@ test("routine token refresh keeps the account editor mounted, but a denied ident
   await tick();
   assert.equal(store.getSnapshot().identity, null);
   assert.match(store.getSnapshot().error, /suspended/);
+  store.stop();
+});
+
+test("signing in as a different account immediately hides the previous account", async () => {
+  const f = fixture();
+  const store = createAuthStore({
+    getClient: async () => ({ auth: f.auth }),
+    fetchIdentity: async () => identity,
+  });
+  await store.start();
+  f.emit("SIGNED_IN", { access_token: "other", user: { id: "other-user" } });
+  assert.equal(store.getSnapshot().identity, null);
+  assert.equal(store.getSnapshot().status, "loading");
   store.stop();
 });
