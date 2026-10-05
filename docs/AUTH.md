@@ -146,27 +146,101 @@ For the deeper browser testing pass:
 6. Check keyboard labels/focus, mobile widths, public navigation, and API-outage
    retries. Future attendance testing must confirm an explicit check-in click.
 
-## Hosted rollout (separate from local completion)
+## Hosted test environment and rollout
 
-No hosted settings or migrations are applied by this implementation. Before
-public launch, the maintainer must configure the actual Supabase project and:
+Each Supabase project and Netlify deploy context needs its own configuration.
+Repeat the one-time setup below for a new staging or production environment;
+subsequent code builds do not require repeating Auth settings. Apply each new
+database migration to each intended project. Never use local credentials or a
+test project's database for production.
 
-- Apply the private hook migration to the intended environment and enable both
-  Auth hooks; configure six-digit codes, 900-second expiry, 60-second resend,
-  email confirmation, both templates, and the correct site/redirect URLs.
-- Use asymmetric signing keys, configure Go's HTTPS issuer and DB connection,
-  and set only the public URL/publishable key/API URL in Gatsby's environment.
-  Preserve the long-lived-session policy and verify live-session DB checks.
-- Configure custom SMTP and a verified sender domain with the provider's
-  SPF/DKIM records and appropriate DMARC policy. Supabase's default sender is
-  restricted and unsuitable for public delivery. See [SMTP setup](https://supabase.com/docs/guides/auth/auth-smtp).
-- Test delivery to actual Pitt inboxes, including spam/quarantine, new and
-  returning users, delays, resends, and expired codes. Keep SMTP credentials in
-  hosted server configuration, never the browser or local onboarding.
-- Set email and request budgets for expected meeting bursts, including users
-  sharing campus IPs; monitor delivery failures, bounces, and unusual requests.
-  Retain server-enforced limits and plan CAPTCHA integration if abuse warrants
-  it. CAPTCHA is not enabled in local development. The UI countdown is only UX,
-  not an abuse boundary. See [Auth rate limits](https://supabase.com/docs/guides/auth/rate-limits).
-- Finish profile/status/role enforcement before exposing private CRM features,
-  and disable the generated Data API for the application before adding CRM data.
+### Current test setup (2026-10-05)
+
+- Supabase project `ryixupgxhsrwynescbez` (`pittcsc-website`): the private
+  Pitt-email hook migration was applied, and a remote dry run reported no pending
+  migrations. Its public JWKS endpoint exposes an ES256 signing key.
+- In the Supabase dashboard, the Before User Created and Custom Access Token
+  hooks, Gmail test SMTP, 900-second email OTP expiry, code-based Confirm signup
+  and Magic link templates, six-digit email OTP length, and Site URL were
+  configured. Hosted Auth initially sent eight-digit codes despite the
+  six-digit template wording; changing **Email OTP length** to six resolved the
+  mismatch. A user confirmed a fresh code worked in the hosted sign-in flow.
+- Netlify branch deploy: `feat/user-auth` at
+  `https://feat-user-auth--pittcsc-stinky-boy.netlify.app`. The URL returned HTTP
+  200. Its branch-specific `GATSBY_SUPABASE_URL`,
+  `GATSBY_SUPABASE_PUBLISHABLE_KEY`, and `GATSBY_API_URL` were included in a
+  rebuilt Gatsby bundle. An accidental pair of literal backticks around the
+  Supabase URL caused the initial connection error; removing them fixed it.
+  `master` and `crm-expansion` do not contain this auth branch's changes.
+- The Go API is deployed temporarily on Render Free at
+  `https://pittcsc-api-test.onrender.com`. `/health` returned HTTP 200 with a
+  connected database; `/auth/session` returned HTTP 401 without a token. Its
+  first build failed because the command targeted `./cmd/app`; the working
+  command is `go build -o app ./cmd/api`. Render Free sleeps after idle traffic,
+  so the next request can be slow. The Render build log used Go 1.27.1 while
+  the repository pins Go 1.26.2; pin `GO_VERSION` for repeatable builds. The
+  remaining hosted walkthrough checks in step 8 have not all been performed.
+  No production Auth environment was configured.
+
+### Repeatable setup checklist
+
+1. Create a separate Supabase project and record its project ref. From the repo,
+   run `mise exec -- npx supabase link --project-ref <project-ref>`. Confirm the
+   target before `mise exec -- npx supabase db push --dry-run`, then apply the
+   reviewed migrations with `mise exec -- npx supabase db push`. Never reset a
+   remote database. The current migration creates private `csc_auth` functions;
+   it does not edit Supabase-managed Auth tables.
+2. In **Authentication → Hooks**, enable **Before User Created** with
+   `csc_auth.before_user_created` and **Custom Access Token** with
+   `csc_auth.custom_access_token`. Configure an asymmetric signing key and check
+   that `/auth/v1/.well-known/jwks.json` exposes an ES256 or RS256 public key.
+   `supabase/config.toml` configures local Auth; a database migration alone does
+   not turn on hosted Auth hooks or copy other Auth dashboard settings.
+3. In **Authentication → Sign In / Providers → Email**, enable email signup and
+   confirmation, explicitly set **Email OTP length** to six and expiration to
+   900 seconds, and check the server-side resend interval is 60 seconds. The
+   email template's wording does not control code length. In **URL
+   Configuration**, set the test site's URL and any redirect URLs needed by
+   that environment.
+4. Configure custom SMTP before editing hosted email templates. For a small
+   test, `pittcsc@gmail.com` uses `smtp.gmail.com` on port 465, the same address
+   for sender and username, and a Google app password entered only in the
+   Supabase dashboard. This is temporary test delivery. For public launch, use
+   a dedicated provider and verified sending domain with SPF/DKIM and an
+   appropriate DMARC policy. Supabase's default sender is restricted; see
+   [SMTP setup](https://supabase.com/docs/guides/auth/auth-smtp).
+5. In **Authentication → Email Templates**, set both **Confirm signup** and
+   **Magic link** to the subject `Your Pitt CSC sign-in code` and the contents
+   of [code.html](../supabase/templates/code.html). Keep `{{ .Token }}` in both:
+   the browser asks for a code, while the default `{{ .ConfirmationURL }}` sends
+   a link.
+6. Create a Netlify branch deploy from a branch containing the auth code. Use
+   its stable branch URL as Supabase's Site URL and Go's `FRONTEND_ORIGIN`.
+   For that branch only, set `GATSBY_SUPABASE_URL` to the hosted project URL and
+   `GATSBY_SUPABASE_PUBLISHABLE_KEY` to its public key. After deploying Go, set
+   `GATSBY_API_URL` to its HTTPS origin and rebuild Netlify. `GATSBY_*` values
+   are public browser configuration; never put SMTP, database, or service-role
+   credentials there. Enter URLs without literal backticks or quotes. Netlify
+   environment changes need a new build to take effect.
+7. For temporary testing, create a Render Free Go web service from the auth
+   branch with root directory `backend`, build command
+   `go build -o app ./cmd/api`, and start command `./app`. Set `HOST=0.0.0.0`,
+   the exact Netlify `FRONTEND_ORIGIN`, and
+   `SUPABASE_AUTH_URL=https://<project-ref>.supabase.co/auth/v1`. Render
+   supplies `PORT`. Store `DATABASE_URL` only in server-side environment
+   settings: use the intended Supabase project's session-pooler connection
+   string with `sslmode=require`. Render Free sleeps after 15 minutes idle and
+   is for testing, not dependable club use. The planned Cloud Run deployment
+   also needs `HOST=0.0.0.0` and receives `PORT` from its host. The API permits
+   five database connections per instance; account for instance limits.
+8. Verify `/health`, then test real Pitt inbox delivery, new and returning
+   account codes, invalid/reused/expired codes, resend limits, session restore,
+   `/dashboard` refresh, logout, and direct nested dashboard URLs. Check that
+   the Go API rejects missing, invalid, and revoked tokens. Monitor delivery
+   failures and rates; set hosted email/request budgets for meeting bursts and
+   consider CAPTCHA if needed. The UI countdown is not an abuse boundary. See
+   [Auth rate limits](https://supabase.com/docs/guides/auth/rate-limits).
+
+Before exposing private CRM features, finish database-backed profile, status,
+and role enforcement and disable the generated Data API for application data.
+Keep all hosted credentials out of this repository and these instructions.
