@@ -1,7 +1,9 @@
 # Member profiles
 
 Issue #159 adds **My Account** at `/dashboard/account`. Each signed-in user can
-read and edit only their own profile. The dashboard links to the editor; direct
+read and edit only their own profile. Signed-in app screens share a top-right
+**My Account** button in the header that links to the editor and a top-left CSC
+logo linking to the public website; direct
 visits and refreshes use the existing Gatsby client route and Netlify fallback.
 Data and files load at runtime and never enter Gatsby's public output.
 

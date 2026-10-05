@@ -1,8 +1,64 @@
-.csc-auth {
+.csc-auth-layout {
   min-height: 100vh;
-  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
   background: #f4f6fa;
   color: #182b49;
+
+  .csc-auth-brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #003594;
+  }
+  :is(a, button, input):focus-visible {
+    outline: 3px solid #996b00;
+    outline-offset: 3px;
+  }
+}
+
+.csc-auth-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1rem, 4vw, 3rem);
+  background: white;
+  border-bottom: 1px solid #d7dfeb;
+
+  .csc-auth-logo {
+    display: block;
+    flex-shrink: 0;
+  }
+  .csc-auth-logo img {
+    display: block;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .csc-auth-account {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    background: #003594;
+    color: white;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px #182b4926;
+    transition: box-shadow 150ms;
+
+    &:hover {
+      box-shadow: 0 8px 16px #182b4933;
+    }
+  }
+}
+
+.csc-auth {
+  flex: 1;
+  padding: 3rem 1rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -58,11 +114,6 @@
     background: #edf1f8;
     color: #003594;
   }
-  .csc-auth-brand {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #003594;
-  }
   .csc-auth-website {
     display: inline-block;
     margin-top: 2rem;
@@ -70,10 +121,6 @@
   }
   [role="alert"] {
     color: #9c2222;
-  }
-  :is(a, button, input):focus-visible {
-    outline: 3px solid #996b00;
-    outline-offset: 3px;
   }
   .csc-auth-actions {
     display: flex;

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, navigate } from "gatsby";
+import { navigate } from "gatsby";
 import AuthFrame from "../components/auth/AuthFrame";
 import SessionStatus, {
   logoutToWebsite,
@@ -32,7 +32,6 @@ export default function Dashboard({ location }) {
                 You're signed in as <strong>{auth.identity.email}</strong>.
               </p>
               <p>Manage your club profile from My Account.</p>
-              <Link to="/dashboard/account">My Account</Link>
             </>
           )}
           <button onClick={() => void logoutToWebsite(auth.signOut)}>

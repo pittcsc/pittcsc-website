@@ -94,7 +94,8 @@ active. Staff-triggered global logout is outside this issue.
 `/login` offers email entry, code entry, loading, invalid/expired-code feedback,
 resend countdown, retries, and change-email. New and returning users follow the
 same path. A verified session reaches the `/dashboard` landing page,
-which displays the verified login email, My Account link, and logout. The private
+which displays the verified login email and logout. Signed-in app screens have a
+shared header with a top-right **My Account** button. The private
 editor at `/dashboard/account` accepts partial saves without a completion gate.
 The full dashboard remains separate work. `/dashboard/*` has a Gatsby client-only
 match and a scoped Netlify fallback, preserving existing public/API routes.
