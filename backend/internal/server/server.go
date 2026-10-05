@@ -72,6 +72,7 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 	})
 	mux.HandleFunc("OPTIONS /auth/session", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	registerProfileRoutes(mux, authentication, profiles)
+	registerAssetRoutes(mux, authentication, profiles)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")

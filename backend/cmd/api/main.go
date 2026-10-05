@@ -68,8 +68,8 @@ func run() error {
 		Addr:              net.JoinHostPort(envOr("HOST", "127.0.0.1"), port),
 		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000"), verifier, profile.Store{DB: pool}),
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      30 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
 	serverErrors := make(chan error, 1)
