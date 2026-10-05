@@ -38,3 +38,7 @@ run = "npm run build"
 [tasks."test:auth"]
 description = "Test real local Supabase/Mailpit authentication against the running Go API"
 run = "node scripts/test-auth-local.mjs"
+
+[tasks."test:profiles"]
+description = "Test local profiles and files using synthetic Auth fixtures (API must be running)"
+run = "node scripts/test-profiles-local.mjs"
