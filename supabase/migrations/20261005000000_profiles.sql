@@ -12,7 +12,6 @@ create table csc.profiles (
   majors text[] not null default '{}',
   account_status text not null default 'active'
     check (account_status in ('active', 'suspended')),
-  avatar_asset_id uuid,
   resume_asset_id uuid,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -28,7 +27,7 @@ create table csc.profiles (
 create table csc.profile_assets (
   id uuid primary key default gen_random_uuid(),
   auth_user_id uuid not null references csc.profiles(auth_user_id) on delete cascade,
-  kind text not null check (kind in ('avatar', 'resume')),
+  kind text not null check (kind = 'resume'),
   media_type text not null,
   bytes bytea not null,
   updated_at timestamptz not null default now(),
@@ -36,15 +35,10 @@ create table csc.profile_assets (
   unique (id, auth_user_id),
   check (
     (kind = 'resume' and media_type = 'application/pdf' and octet_length(bytes) between 1 and 10485760)
-    or
-    (kind = 'avatar' and media_type in ('image/jpeg', 'image/png', 'image/webp') and octet_length(bytes) between 1 and 5242880)
   )
 );
 
 alter table csc.profiles
-  add constraint profiles_avatar_owner_fk
-  foreign key (avatar_asset_id, auth_user_id)
-  references csc.profile_assets(id, auth_user_id),
   add constraint profiles_resume_owner_fk
   foreign key (resume_asset_id, auth_user_id)
   references csc.profile_assets(id, auth_user_id);

@@ -44,13 +44,3 @@ export function profileInput(form) {
     majors,
   };
 }
-
-export function initials(profile) {
-  return (
-    [profile.preferredName || profile.firstName, profile.lastName]
-      .filter(Boolean)
-      .map((value) => [...value.trim()][0] || "")
-      .join("")
-      .toUpperCase() || "?"
-  );
-}

@@ -1,10 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  formFromProfile,
-  profileInput,
-  initials,
-} from "../../src/lib/account/form.mjs";
+import { formFromProfile, profileInput } from "../../src/lib/account/form.mjs";
 
 test("empty and partial profiles can be saved without invented data", () => {
   const form = formFromProfile({ majors: [] });
@@ -48,18 +44,5 @@ test("invalid years, duplicate majors and overly long fields explain the problem
   assert.throws(
     () => profileInput({ ...form, majors: ["x".repeat(121)] }),
     /120/,
-  );
-});
-
-test("default avatar follows the preferred name and handles an empty account", () => {
-  assert.equal(initials({}), "?");
-  assert.equal(initials({ firstName: "Fixture", lastName: "Member" }), "FM");
-  assert.equal(
-    initials({
-      firstName: "Fixture",
-      preferredName: "Test",
-      lastName: "Member",
-    }),
-    "TM",
   );
 });

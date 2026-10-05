@@ -45,7 +45,7 @@ The public site works without production credentials. Notion-backed events are
 omitted without Notion configuration; Google Calendar import is hidden without
 its client ID; `/meet` uses local file storage without Upstash credentials.
 Authentication uses local Supabase and Mailpit; no hosted email credentials are
-needed. My Account supports names, graduation year, majors, an avatar, and a resume
+needed. My Account supports names, graduation year, majors, and a resume
 PDF. Roles, staff access, and other CRM workflows are not implemented yet.
 
 ## Daily commands

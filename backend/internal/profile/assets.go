@@ -14,6 +14,9 @@ type Asset struct {
 }
 
 func (s Store) PutAsset(ctx context.Context, authUserID, kind, mediaType string, data []byte) error {
+	if kind != "resume" {
+		return ErrInvalidFile
+	}
 	tx, err := s.DB.Begin(ctx)
 	if err != nil {
 		return err
@@ -38,11 +41,7 @@ func (s Store) PutAsset(ctx context.Context, authUserID, kind, mediaType string,
 	if err != nil {
 		return err
 	}
-	column := "avatar_asset_id"
-	if kind == "resume" {
-		column = "resume_asset_id"
-	}
-	_, err = tx.Exec(ctx, `update csc.profiles set `+column+` = $2::uuid, updated_at = now() where auth_user_id = $1::uuid`, authUserID, id)
+	_, err = tx.Exec(ctx, `update csc.profiles set resume_asset_id = $2::uuid, updated_at = now() where auth_user_id = $1::uuid`, authUserID, id)
 	if err != nil {
 		return err
 	}
@@ -50,6 +49,9 @@ func (s Store) PutAsset(ctx context.Context, authUserID, kind, mediaType string,
 }
 
 func (s Store) GetAsset(ctx context.Context, authUserID, kind string) (Asset, error) {
+	if kind != "resume" {
+		return Asset{}, ErrInvalidFile
+	}
 	var asset Asset
 	err := s.DB.QueryRow(ctx, `
 		select a.media_type, a.bytes, a.updated_at from csc.profile_assets a
@@ -63,6 +65,9 @@ func (s Store) GetAsset(ctx context.Context, authUserID, kind string) (Asset, er
 }
 
 func (s Store) DeleteAsset(ctx context.Context, authUserID, kind string) error {
+	if kind != "resume" {
+		return ErrInvalidFile
+	}
 	tx, err := s.DB.Begin(ctx)
 	if err != nil {
 		return err
@@ -76,11 +81,7 @@ func (s Store) DeleteAsset(ctx context.Context, authUserID, kind string) error {
 	if status != "active" {
 		return ErrSuspended
 	}
-	column := "avatar_asset_id"
-	if kind == "resume" {
-		column = "resume_asset_id"
-	}
-	_, err = tx.Exec(ctx, `update csc.profiles set `+column+` = null, updated_at = now() where auth_user_id = $1::uuid`, authUserID)
+	_, err = tx.Exec(ctx, `update csc.profiles set resume_asset_id = null, updated_at = now() where auth_user_id = $1::uuid`, authUserID)
 	if err != nil {
 		return err
 	}

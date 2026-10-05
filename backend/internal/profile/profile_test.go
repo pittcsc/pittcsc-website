@@ -19,7 +19,7 @@ func TestPartialProfilesAndCompletion(t *testing.T) {
 		t.Fatal("partial profile marked complete")
 	}
 	if !complete(Record{FirstName: ptr("Test"), LastName: ptr("Member"), GraduationYear: ptr(2028), Majors: []string{"Computer Science"}}) {
-		t.Fatal("complete profile must not require a preferred name, avatar, or resume")
+		t.Fatal("complete profile must not require a preferred name or resume")
 	}
 }
 

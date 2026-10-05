@@ -69,7 +69,7 @@ func TestAssetRoutes(t *testing.T) {
 	}
 }
 func TestAssetDeniedRequestsAndFailures(t *testing.T) {
-	for _, kind := range []string{"avatar", "resume"} {
+	for _, kind := range []string{"resume"} {
 		for _, method := range []string{"GET", "PUT", "DELETE"} {
 			store := &assetStub{}
 			w := assetRequest(store, method, "/profile/"+kind, "", "", "")
@@ -99,10 +99,9 @@ func TestAssetDeniedRequestsAndFailures(t *testing.T) {
 		path, body, media string
 		status            int
 	}{
-		{"/profile/avatar", "<svg/>", "image/svg+xml", 415},
-		{"/profile/avatar", "not an image", "image/png", 400},
+		{"/profile/resume", "<svg/>", "image/svg+xml", 415},
+		{"/profile/resume", "not a PDF", "image/png", 415},
 		{"/profile/resume", "not a PDF", "application/pdf", 400},
-		{"/profile/avatar", strings.Repeat("a", profile.AvatarLimit+1), "image/png", 413},
 		{"/profile/resume", strings.Repeat("a", profile.ResumeLimit+1), "application/pdf", 413},
 	} {
 		w := assetRequest(store, "PUT", tc.path, tc.body, tc.media, "valid")
@@ -113,5 +112,17 @@ func TestAssetDeniedRequestsAndFailures(t *testing.T) {
 	w := assetRequest(store, http.MethodGet, "/profile/other-owner/resume", "", "", "valid")
 	if w.Code != 404 {
 		t.Fatal("unexpected other-user asset route")
+	}
+}
+
+func TestAvatarRoutesRemoved(t *testing.T) {
+	for _, token := range []string{"", "valid"} {
+		for _, method := range []string{"GET", "PUT", "DELETE", "OPTIONS"} {
+			store := &assetStub{}
+			w := assetRequest(store, method, "/profile/avatar", "", "image/png", token)
+			if w.Code != 404 || store.fileOwner != "" || store.puts != 0 || store.deletes != 0 {
+				t.Fatalf("removed image route reached storage: %s status %d", method, w.Code)
+			}
+		}
 	}
 }
