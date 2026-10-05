@@ -18,8 +18,8 @@ type authenticator interface {
 	Authenticate(context.Context, string) (auth.Identity, error)
 }
 
-// NewHandler serves readiness and the current verified identity, never CRM data.
-func NewHandler(db databasePinger, frontendOrigin string, authentication authenticator) http.Handler {
+// NewHandler serves public readiness and private, authenticated account routes.
+func NewHandler(db databasePinger, frontendOrigin string, authentication authenticator, profiles profileStore) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
@@ -62,15 +62,22 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 			_ = json.NewEncoder(w).Encode(map[string]string{"error": message})
 			return
 		}
+		if profiles != nil {
+			if _, err := profiles.GetOrCreate(ctx, identity.ID); err != nil {
+				writeProfileError(w, err)
+				return
+			}
+		}
 		_ = json.NewEncoder(w).Encode(identity)
 	})
 	mux.HandleFunc("OPTIONS /auth/session", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
+	registerProfileRoutes(mux, authentication, profiles)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")
 		if origin := r.Header.Get("Origin"); origin != "" && origin == frontendOrigin {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
 		}
 		mux.ServeHTTP(w, r)

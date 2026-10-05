@@ -16,6 +16,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 	"github.com/pittcsc/pittcsc-website/backend/internal/server"
 )
 
@@ -65,7 +66,7 @@ func run() error {
 	defer stop()
 	api := &http.Server{
 		Addr:              net.JoinHostPort(envOr("HOST", "127.0.0.1"), port),
-		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000"), verifier),
+		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000"), verifier, profile.Store{DB: pool}),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
