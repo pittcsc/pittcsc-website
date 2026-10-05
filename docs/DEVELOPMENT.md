@@ -3,8 +3,9 @@
 The existing Gatsby site runs alongside a Go API and local Supabase. The current
 API implements database readiness at `/health` and verified identity at
 `/auth/session`. Local Pitt email OTP sign-in is available at `/login`, with a
-minimal signed-in page at `/dashboard`. Profiles, roles, and CRM features follow
-separately. See [authentication](AUTH.md) for behavior and local testing.
+signed-in page at `/dashboard`, with a private profile editor at
+`/dashboard/account`. See [authentication](AUTH.md) and [profiles](PROFILES.md) for
+behavior and local testing. Roles, staff tools, and other CRM features follow separately.
 
 ## Quick start
 
@@ -44,7 +45,8 @@ The public site works without production credentials. Notion-backed events are
 omitted without Notion configuration; Google Calendar import is hidden without
 its client ID; `/meet` uses local file storage without Upstash credentials.
 Authentication uses local Supabase and Mailpit; no hosted email credentials are
-needed. CRM features beyond the signed-in landing page are not implemented yet.
+needed. My Account supports names, graduation year, majors, an avatar, and a resume
+PDF. Roles, staff access, and other CRM workflows are not implemented yet.
 
 ## Daily commands
 
@@ -57,6 +59,7 @@ needed. CRM features beyond the signed-in landing page are not implemented yet.
 | `mise run check` | Run JavaScript tests and Go tests, vet, and build; no Docker needed |
 | `mise run build` | Production Gatsby build |
 | `mise run test:auth` | Real local Supabase/Mailpit/Go auth checks (API must be running) |
+| `mise run test:profiles` | Real local profile/upload checks with synthetic accounts (API must be running) |
 | `mise exec -- npm run clean` | Clear Gatsby's generated cache/output |
 
 Ctrl+C in `mise run dev` stops Gatsby, Go, and the local Supabase containers.
@@ -212,8 +215,9 @@ credentials separate. The pool currently permits five connections per API
 instance; account for that when configuring service instance limits.
 
 Startup generates an ignored local asymmetric signing key once and applies
-pending local migrations without resetting data. The current migration adds
-private Pitt-email Auth hooks; it does not create CRM tables or edit managed Auth
-tables. After changing `supabase/config.toml`, stop and restart local Supabase to
-load the settings. See [AUTH.md](AUTH.md) for fixtures, checks, and the separate
-hosted rollout requirements.
+pending local migrations without resetting data. Migrations add private Pitt-email
+Auth hooks and profile/file tables; they do not edit managed Auth tables. Local
+Data API access is disabled while Auth remains enabled. After changing
+`supabase/config.toml`, stop and restart local Supabase to load settings. See
+[AUTH.md](AUTH.md) and [PROFILES.md](PROFILES.md) for fixtures, checks, and the
+separate hosted rollout requirements.
