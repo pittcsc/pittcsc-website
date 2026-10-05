@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { navigate } from "gatsby";
+import { Link, navigate } from "gatsby";
 import AuthFrame from "../components/auth/AuthFrame";
 import SessionStatus, {
   logoutToWebsite,
 } from "../components/auth/SessionStatus";
 import { useAuth } from "../components/auth/AuthProvider";
 import { loginURL } from "../lib/auth/policy.mjs";
+import MyAccount from "../components/account/MyAccount";
 
 export default function Dashboard({ location }) {
   const auth = useAuth();
@@ -20,13 +21,20 @@ export default function Dashboard({ location }) {
 
   return (
     <AuthFrame>
-      <h1>Your CSC account</h1>
       {auth.status === "authenticated" ? (
         <>
-          <p>
-            You're signed in as <strong>{auth.identity.email}</strong>.
-          </p>
-          <p>Your account is ready. Club dashboard features are coming soon.</p>
+          {/^\/dashboard\/account\/?$/.test(location.pathname) ? (
+            <MyAccount key={auth.identity.id} identity={auth.identity} />
+          ) : (
+            <>
+              <h1>Your CSC account</h1>
+              <p>
+                You're signed in as <strong>{auth.identity.email}</strong>.
+              </p>
+              <p>Manage your club profile from My Account.</p>
+              <Link to="/dashboard/account">My Account</Link>
+            </>
+          )}
           <button onClick={() => void logoutToWebsite(auth.signOut)}>
             Log out
           </button>

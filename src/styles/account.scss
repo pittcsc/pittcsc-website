@@ -1,0 +1,58 @@
+.csc-auth:has(.csc-account) .csc-auth-card {
+  max-width: 44rem;
+}
+
+.csc-account {
+  .csc-account-back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    text-decoration: underline;
+  }
+  .csc-account-completion {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: #edf1f8;
+  }
+  .csc-account-completion p {
+    margin: 0.5rem 0 0;
+  }
+  .csc-account-email {
+    font-size: 0.9rem;
+  }
+  fieldset {
+    min-width: 0;
+    border: 0;
+    margin: 1.5rem 0 0;
+    padding: 0;
+  }
+  legend {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  label span {
+    font-weight: 400;
+  }
+  .csc-account-name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .csc-account-major {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+  }
+  .csc-account-major > div {
+    flex: 1;
+    min-width: 0;
+  }
+  .csc-account-major button {
+    width: auto;
+  }
+  @media (max-width: 480px) {
+    .csc-account-name-grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+}
