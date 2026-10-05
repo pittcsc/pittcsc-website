@@ -154,23 +154,33 @@ subsequent code builds do not require repeating Auth settings. Apply each new
 database migration to each intended project. Never use local credentials or a
 test project's database for production.
 
-### Current test setup (2026-09-28)
+### Current test setup (2026-10-05)
 
 - Supabase project `ryixupgxhsrwynescbez` (`pittcsc-website`): the private
   Pitt-email hook migration was applied, and a remote dry run reported no pending
   migrations. Its public JWKS endpoint exposes an ES256 signing key.
 - In the Supabase dashboard, the Before User Created and Custom Access Token
   hooks, Gmail test SMTP, 900-second email OTP expiry, code-based Confirm signup
-  and Magic link templates, and Site URL were configured. These dashboard
-  settings have not yet been verified by an end-to-end hosted sign-in.
+  and Magic link templates, six-digit email OTP length, and Site URL were
+  configured. Hosted Auth initially sent eight-digit codes despite the
+  six-digit template wording; changing **Email OTP length** to six resolved the
+  mismatch. A user confirmed a fresh code worked in the hosted sign-in flow.
 - Netlify branch deploy: `feat/user-auth` at
   `https://feat-user-auth--pittcsc-stinky-boy.netlify.app`. The URL returned HTTP
-  200. Branch-specific Supabase URL and publishable-key build variables were
-  entered, but the deployed auth flow has not yet been verified. `master` and
-  `crm-expansion` do not contain this auth branch's changes.
-- The Go API has not been deployed to Cloud Run. Netlify's `GATSBY_API_URL`,
-  the Go service's hosted Auth/database connections, and the hosted sign-in
-  walkthrough remain. No production Auth environment was configured.
+  200. Its branch-specific `GATSBY_SUPABASE_URL`,
+  `GATSBY_SUPABASE_PUBLISHABLE_KEY`, and `GATSBY_API_URL` were included in a
+  rebuilt Gatsby bundle. An accidental pair of literal backticks around the
+  Supabase URL caused the initial connection error; removing them fixed it.
+  `master` and `crm-expansion` do not contain this auth branch's changes.
+- The Go API is deployed temporarily on Render Free at
+  `https://pittcsc-api-test.onrender.com`. `/health` returned HTTP 200 with a
+  connected database; `/auth/session` returned HTTP 401 without a token. Its
+  first build failed because the command targeted `./cmd/app`; the working
+  command is `go build -o app ./cmd/api`. Render Free sleeps after idle traffic,
+  so the next request can be slow. The Render build log used Go 1.27.1 while
+  the repository pins Go 1.26.2; pin `GO_VERSION` for repeatable builds. The
+  remaining hosted walkthrough checks in step 8 have not all been performed.
+  No production Auth environment was configured.
 
 ### Repeatable setup checklist
 
@@ -187,9 +197,11 @@ test project's database for production.
    `supabase/config.toml` configures local Auth; a database migration alone does
    not turn on hosted Auth hooks or copy other Auth dashboard settings.
 3. In **Authentication → Sign In / Providers → Email**, enable email signup and
-   confirmation, use six-digit OTPs with a 900-second expiry, and check the
-   server-side resend interval is 60 seconds. In **URL Configuration**, set the
-   test site's URL and any redirect URLs needed by that environment.
+   confirmation, explicitly set **Email OTP length** to six and expiration to
+   900 seconds, and check the server-side resend interval is 60 seconds. The
+   email template's wording does not control code length. In **URL
+   Configuration**, set the test site's URL and any redirect URLs needed by
+   that environment.
 4. Configure custom SMTP before editing hosted email templates. For a small
    test, `pittcsc@gmail.com` uses `smtp.gmail.com` on port 465, the same address
    for sender and username, and a Google app password entered only in the
@@ -208,14 +220,19 @@ test project's database for production.
    `GATSBY_SUPABASE_PUBLISHABLE_KEY` to its public key. After deploying Go, set
    `GATSBY_API_URL` to its HTTPS origin and rebuild Netlify. `GATSBY_*` values
    are public browser configuration; never put SMTP, database, or service-role
-   credentials there. Netlify environment changes need a new build to take
-   effect.
-7. Deploy `backend/` to Cloud Run with the Go build target `./cmd/api`. Set
-   `HOST=0.0.0.0`, the exact Netlify `FRONTEND_ORIGIN`, and
-   `SUPABASE_AUTH_URL=https://<project-ref>.supabase.co/auth/v1`. Cloud Run
-   supplies `PORT`. Store `DATABASE_URL` as a server-side secret using the
-   intended Supabase project's connection string with TLS enabled. The API
-   permits five database connections per instance; account for instance limits.
+   credentials there. Enter URLs without literal backticks or quotes. Netlify
+   environment changes need a new build to take effect.
+7. For temporary testing, create a Render Free Go web service from the auth
+   branch with root directory `backend`, build command
+   `go build -o app ./cmd/api`, and start command `./app`. Set `HOST=0.0.0.0`,
+   the exact Netlify `FRONTEND_ORIGIN`, and
+   `SUPABASE_AUTH_URL=https://<project-ref>.supabase.co/auth/v1`. Render
+   supplies `PORT`. Store `DATABASE_URL` only in server-side environment
+   settings: use the intended Supabase project's session-pooler connection
+   string with `sslmode=require`. Render Free sleeps after 15 minutes idle and
+   is for testing, not dependable club use. The planned Cloud Run deployment
+   also needs `HOST=0.0.0.0` and receives `PORT` from its host. The API permits
+   five database connections per instance; account for instance limits.
 8. Verify `/health`, then test real Pitt inbox delivery, new and returning
    account codes, invalid/reused/expired codes, resend limits, session restore,
    `/dashboard` refresh, logout, and direct nested dashboard URLs. Check that
