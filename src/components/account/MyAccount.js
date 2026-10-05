@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import { formFromProfile, profileInput } from "../../lib/account/form.mjs";
+import AccountFiles from "./AccountFiles";
 import "../../styles/account.scss";
 
 export default function MyAccount({ identity }) {
@@ -215,6 +216,18 @@ export default function MyAccount({ identity }) {
               {saving ? "Saving…" : "Save profile"}
             </button>
           </form>
+          <AccountFiles
+            profile={profile}
+            userID={identity.id}
+            request={request}
+            onChanged={async (signal) => {
+              const value = await request("/profile", {
+                userID: identity.id,
+                signal,
+              });
+              if (!signal.aborted) setProfile(value);
+            }}
+          />
         </>
       )}
     </div>

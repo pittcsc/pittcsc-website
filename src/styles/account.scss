@@ -49,6 +49,47 @@
   .csc-account-major button {
     width: auto;
   }
+  .csc-account-files {
+    margin-top: 2.5rem;
+    border-top: 1px solid #d7dfeb;
+  }
+  .csc-account-files h2 {
+    margin-top: 2rem;
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  .csc-account-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 6rem;
+    height: 6rem;
+    margin-top: 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #edf1f8;
+    color: #003594;
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+  .csc-account-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .csc-account-file-help {
+    font-size: 0.875rem;
+    margin: 0.5rem 0;
+  }
+  .csc-account-file-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.75rem;
+  }
+  .csc-account-file-actions button {
+    width: auto;
+    flex: 1 1 10rem;
+  }
   @media (max-width: 480px) {
     .csc-account-name-grid {
       grid-template-columns: 1fr;
