@@ -1,9 +1,125 @@
 import React, { useEffect, useRef, useState } from "react";
-import { navigate } from "gatsby";
-import AuthFrame from "../components/auth/AuthFrame";
+import { Link, navigate } from "gatsby";
 import SessionStatus from "../components/auth/SessionStatus";
 import { useAuth } from "../components/auth/AuthProvider";
 import { RESEND_SECONDS, safeReturnTo } from "../lib/auth/policy.mjs";
+import logo from "../images/hero_image.png";
+import "../styles/login.scss";
+
+const PERKS = [
+  "RSVP for events and check in at meetings",
+  "Follow Dev Lab, Mock Interviews and SteelHacks",
+  "One account across everything CSC",
+];
+
+const CODE_LENGTH = 6;
+
+function IconCheck(props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#213f9d"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M5 12l5 5L20 7" />
+    </svg>
+  );
+}
+
+function IconAlert(props) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 7v6M12 17h.01" />
+    </svg>
+  );
+}
+
+function BrandPanel() {
+  return (
+    <aside className="csc-login-brand">
+      <Link className="csc-login-wordmark" to="/">
+        <img src={logo} alt="" width={64} height={49} />
+        Pitt CSC
+      </Link>
+
+      <div className="csc-login-pitch">
+        <h2>
+          One account for{" "}
+          <span className="csc-login-underline">
+            everything
+            <svg
+              viewBox="0 0 200 16"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 11 C 60 3, 140 2, 197 9"
+                stroke="#f5b82e"
+                strokeWidth="5"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </svg>
+          </span>{" "}
+          CSC.
+        </h2>
+        <p>
+          Sign in with your Pitt email to RSVP for events, check in at meetings,
+          and follow initiatives like Dev Lab, Mock Interviews and SteelHacks.
+        </p>
+        <ul className="csc-login-perks">
+          {PERKS.map((perk) => (
+            <li key={perk}>
+              <IconCheck />
+              {perk}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="csc-login-codewindow" aria-hidden="true">
+        <div className="csc-login-codewindow-bar">
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="csc-login-codewindow-body">
+          <div>
+            <i style={{ width: 60 }} />
+            <i style={{ width: 90 }} />
+          </div>
+          <div className="indent">
+            <i style={{ width: 110 }} />
+            <i className="accent" style={{ width: 40 }} />
+          </div>
+          <div className="indent">
+            <i style={{ width: 70 }} />
+            <i style={{ width: 70 }} />
+          </div>
+          <div>
+            <i style={{ width: 30 }} />
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
 
 export default function Login({ location }) {
   const auth = useAuth();
@@ -76,7 +192,9 @@ export default function Login({ location }) {
     }
     setSentEmail(result.email);
     setCode("");
-    setNotice("Code sent. Check your inbox and spam folder.");
+    setNotice(
+      `Code sent to ${result.email}. Check your inbox and spam folder.`,
+    );
     inputRef.current?.focus();
   }
 
@@ -94,107 +212,180 @@ export default function Login({ location }) {
     if (result.error) setError(result.error);
   }
 
-  return (
-    <AuthFrame>
-      <h1>Sign in / Create account</h1>
-      {auth.status !== "signedOut" ? (
-        auth.status === "authenticated" ? (
+  const onCodeStep = Boolean(sentEmail);
+
+  function renderBody() {
+    if (auth.status !== "signedOut") {
+      return auth.status === "authenticated" ? (
+        <>
+          <h1>You’re signed in</h1>
           <p role="status">Taking you back…</p>
-        ) : (
-          <SessionStatus auth={auth} />
-        )
+        </>
       ) : (
         <>
-          <p>
-            Use your Pitt email to sign in or create your CSC account. No
-            password needed.
-          </p>
-          {auth.error && <p role="status">{auth.error}</p>}
-          <form onSubmit={sentEmail ? verifyCode : sendCode} aria-busy={busy}>
-            {sentEmail ? (
+          <h1>Sign in or join</h1>
+          <SessionStatus auth={auth} />
+        </>
+      );
+    }
+
+    return (
+      <>
+        <div className="csc-login-steps">
+          <div>
+            <span className="done" />
+            <span className={onCodeStep ? "done" : undefined} />
+          </div>
+          <p>Step {onCodeStep ? 2 : 1} of 2</p>
+        </div>
+
+        {auth.error && (
+          <div className="csc-login-alert error" role="status">
+            <IconAlert />
+            <span>{auth.error}</span>
+          </div>
+        )}
+
+        <form onSubmit={onCodeStep ? verifyCode : sendCode} aria-busy={busy}>
+          <div className="csc-login-fieldset">
+            {onCodeStep ? (
               <>
-                <p>
-                  Enter the code sent to <strong>{sentEmail}</strong>. It
-                  expires in 15 minutes.
-                </p>
-                <label htmlFor="login-code">Six-digit code</label>
-                <input
-                  ref={inputRef}
-                  id="login-code"
-                  name="code"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  pattern="[0-9]{6}"
-                  maxLength={6}
-                  required
-                  value={code}
-                  onChange={(event) => setCode(event.target.value)}
-                  disabled={busy}
-                  aria-describedby={error ? "login-error" : undefined}
-                  aria-invalid={Boolean(error)}
-                />
+                <div className="csc-login-heading">
+                  <h1>Check your inbox</h1>
+                  <p>
+                    We sent a {CODE_LENGTH}-digit code to{" "}
+                    <strong>{sentEmail}</strong>. It expires in 15 minutes.
+                  </p>
+                </div>
+                <div className="csc-login-field">
+                  <label htmlFor="login-code">Verification code</label>
+                  <div className="csc-login-code" data-invalid={Boolean(error)}>
+                    <input
+                      ref={inputRef}
+                      id="login-code"
+                      name="code"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      pattern="[0-9]{6}"
+                      maxLength={CODE_LENGTH}
+                      required
+                      value={code}
+                      onChange={(event) => setCode(event.target.value)}
+                      disabled={busy}
+                      aria-describedby={error ? "login-error" : undefined}
+                      aria-invalid={Boolean(error)}
+                    />
+                    <div className="csc-login-code-boxes" aria-hidden="true">
+                      {Array.from({ length: CODE_LENGTH }, (_, index) => (
+                        <span
+                          key={index}
+                          className={
+                            code[index]
+                              ? "filled"
+                              : index === code.length
+                                ? "next"
+                                : undefined
+                          }
+                        >
+                          {code[index] || ""}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {error && (
+                    <p
+                      id="login-error"
+                      className="csc-login-inline-error"
+                      role="alert"
+                    >
+                      <IconAlert />
+                      {error}
+                    </p>
+                  )}
+                </div>
               </>
             ) : (
               <>
-                <label htmlFor="login-email">Pitt email</label>
-                <input
-                  ref={inputRef}
-                  id="login-email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@pitt.edu"
-                  required
-                  value={email}
-                  disabled={busy}
-                  onChange={(event) => {
-                    setEmail(event.target.value);
-                    setRetryAt(
-                      cooldowns.current.get(
-                        event.target.value.trim().toLowerCase(),
-                      ) || 0,
-                    );
-                    setNow(Date.now());
-                    setError(null);
-                  }}
-                  aria-describedby={error ? "login-error" : undefined}
-                  aria-invalid={Boolean(error)}
-                />
+                <div className="csc-login-heading">
+                  <h1>Sign in or join</h1>
+                  <p>
+                    Enter your Pitt email and we’ll send you a {CODE_LENGTH}
+                    -digit code. New here? We’ll set up your account in the same
+                    step. No password needed.
+                  </p>
+                </div>
+                <div className="csc-login-field">
+                  <label htmlFor="login-email">Pitt email</label>
+                  <input
+                    ref={inputRef}
+                    id="login-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="abc123@pitt.edu"
+                    required
+                    value={email}
+                    disabled={busy}
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                      setRetryAt(
+                        cooldowns.current.get(
+                          event.target.value.trim().toLowerCase(),
+                        ) || 0,
+                      );
+                      setNow(Date.now());
+                      setError(null);
+                    }}
+                    aria-describedby={error ? "login-error" : undefined}
+                    aria-invalid={Boolean(error)}
+                  />
+                  {error && (
+                    <p
+                      id="login-error"
+                      className="csc-login-inline-error"
+                      role="alert"
+                    >
+                      <IconAlert />
+                      {error}
+                    </p>
+                  )}
+                </div>
               </>
             )}
-            {error && (
-              <p id="login-error" role="alert">
-                {error}
-              </p>
-            )}
-            <p role="status">{notice}</p>
+
+            {/* Persistent live region so a later notice is announced. */}
+            <div
+              className={notice ? "csc-login-alert notice" : "csc-login-quiet"}
+              role="status"
+            >
+              {notice && (
+                <>
+                  <IconCheck width="18" height="18" stroke="#f5b82e" />
+                  <span>{notice}</span>
+                </>
+              )}
+            </div>
+
             <button
+              className="csc-login-submit"
               type="submit"
-              disabled={busy || (!sentEmail && remaining > 0)}
+              disabled={busy || (!onCodeStep && remaining > 0)}
             >
               {busy
                 ? action === "send"
                   ? "Sending code…"
                   : "Checking code…"
-                : sentEmail
-                  ? "Verify code"
+                : onCodeStep
+                  ? "Verify & continue"
                   : remaining > 0
                     ? `Try again in ${remaining}s`
                     : "Send code"}
             </button>
-            {sentEmail && (
-              <div className="csc-auth-actions">
+
+            {onCodeStep && (
+              <div className="csc-login-links">
                 <button
-                  className="csc-auth-secondary"
-                  type="button"
-                  disabled={busy || remaining > 0}
-                  onClick={() => void sendCode()}
-                >
-                  {remaining > 0 ? `Resend in ${remaining}s` : "Resend code"}
-                </button>
-                <button
-                  className="csc-auth-secondary"
                   type="button"
                   disabled={busy}
                   onClick={() => {
@@ -204,14 +395,37 @@ export default function Login({ location }) {
                     setNotice("");
                   }}
                 >
-                  Change email
+                  Use a different email
+                </button>
+                <button
+                  type="button"
+                  disabled={busy || remaining > 0}
+                  onClick={() => void sendCode()}
+                >
+                  {remaining > 0 ? `Resend in ${remaining}s` : "Resend code"}
                 </button>
               </div>
             )}
-          </form>
-        </>
-      )}
-    </AuthFrame>
+          </div>
+        </form>
+      </>
+    );
+  }
+
+  return (
+    <div className="csc-login">
+      <BrandPanel />
+      <main className="csc-login-panel">
+        <div className="csc-login-cardwrap">
+          <div className="csc-login-card">
+            {renderBody()}
+            <Link className="csc-login-back" to="/">
+              Back to website
+            </Link>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 
