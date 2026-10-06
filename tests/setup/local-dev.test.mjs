@@ -1,10 +1,20 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { createPrivateKey } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { createEnvFile, createSigningKeys, localValues } from "../../scripts/local-dev.mjs";
+import {
+  createEnvFile,
+  createSigningKeys,
+  localValues,
+} from "../../scripts/local-dev.mjs";
 
 const status = {
   API_URL: "http://127.0.0.1:54321",
@@ -38,13 +48,40 @@ test("local signing key is asymmetric, private, and preserved on subsequent setu
     const [key] = JSON.parse(original);
     assert.equal(key.alg, "ES256");
     assert.deepEqual(key.key_ops, ["sign", "verify"]);
-    assert.equal(createPrivateKey({ key, format: "jwk" }).asymmetricKeyType, "ec");
+    assert.equal(
+      createPrivateKey({ key, format: "jwk" }).asymmetricKeyType,
+      "ec",
+    );
     assert.equal(statSync(destination).mode & 0o777, 0o600);
     assert.equal(createSigningKeys(destination), false);
     assert.equal(readFileSync(destination, "utf8"), original);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("Auth setup uses the gateway with the Data API disabled", () => {
+  const values = localValues({
+    ...status,
+    API_URL: undefined,
+    STORAGE_S3_URL: "http://127.0.0.1:54321/storage/v1/s3",
+  });
+  assert.equal(values.frontend.GATSBY_SUPABASE_URL, status.API_URL);
+  assert.equal(values.backend.SUPABASE_AUTH_URL, `${status.API_URL}/auth/v1`);
+  assert.ok(!JSON.stringify(values).includes(status.SECRET_KEY));
+  assert.throws(
+    () => localValues({ ...status, API_URL: undefined }),
+    /missing/,
+  );
+  assert.throws(
+    () =>
+      localValues({
+        ...status,
+        API_URL: undefined,
+        STORAGE_S3_URL: "https://example.com/storage/v1/s3",
+      }),
+    /remote/,
+  );
 });
 
 test("rejects missing publishable keys and remote services", () => {

@@ -206,3 +206,46 @@ test("code flow uses only Supabase OTP APIs and presents validation/retry errors
   assert.equal((await store.requestCode("student@pitt.edu")).rateLimited, true);
   store.stop();
 });
+
+test("token refresh and same-user tab recovery preserve drafts, but a denied identity clears them", async () => {
+  const f = fixture();
+  let rejected = false;
+  const states = [];
+  const store = createAuthStore({
+    getClient: async () => ({ auth: f.auth }),
+    fetchIdentity: async () => {
+      if (rejected) throw Object.assign(new Error(), { status: 403 });
+      return identity;
+    },
+  });
+  await store.start();
+  store.subscribe(() => states.push(store.getSnapshot().status));
+  for (const event of ["TOKEN_REFRESHED", "SIGNED_IN"]) {
+    f.emit(event, { access_token: "fresh", user: { id: identity.id } });
+    await tick();
+  }
+  assert.ok(states.every((state) => state === "authenticated"));
+  assert.equal(store.getSnapshot().identity.id, identity.id);
+  rejected = true;
+  f.emit("TOKEN_REFRESHED", {
+    access_token: "fresh",
+    user: { id: identity.id },
+  });
+  await tick();
+  assert.equal(store.getSnapshot().identity, null);
+  assert.match(store.getSnapshot().error, /suspended/);
+  store.stop();
+});
+
+test("signing in as a different account immediately hides the previous account", async () => {
+  const f = fixture();
+  const store = createAuthStore({
+    getClient: async () => ({ auth: f.auth }),
+    fetchIdentity: async () => identity,
+  });
+  await store.start();
+  f.emit("SIGNED_IN", { access_token: "other", user: { id: "other-user" } });
+  assert.equal(store.getSnapshot().identity, null);
+  assert.equal(store.getSnapshot().status, "loading");
+  store.stop();
+});

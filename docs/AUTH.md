@@ -2,8 +2,8 @@
 
 Issue [#158](https://github.com/pittcsc/pittcsc-website/issues/158) implements local
 Pitt email OTP authentication. Supabase owns identities, codes, and sessions; Go
-verifies identities. Club profiles, role authorization, contact emails, and the
-full dashboard are separate issues.
+verifies identities. [Profiles](PROFILES.md) (#159) add private My Account editing
+and files. Roles, contact emails, and the full dashboard follow separately.
 
 ## Local Supabase configuration
 
@@ -42,7 +42,8 @@ The fixtures are synthetic hook payloads, not seeded member accounts.
 ## Go identity verification
 
 `GET /auth/session` accepts `Authorization: Bearer <access token>` and returns
-only the verified user's `id` and current login `email`. Missing/invalid/revoked
+only the verified user's `id` and current login `email`, after provisioning and
+checking their application profile. Suspended accounts return 403. Missing/invalid/revoked
 sessions return 401; dependency outages return a retryable 503. All responses
 use `Cache-Control: no-store`. CORS allows the configured frontend origin.
 
@@ -64,8 +65,9 @@ deletion, and session expiry. These reads are not cached. Supabase alone mutates
 these managed records. Removing a session through Auth logout rejects its old
 JWT on subsequent API requests immediately, even before the JWT expires.
 
-This endpoint proves identity only. Future CRM endpoints must additionally check
-current application account status, roles, ownership, and allowed fields.
+This endpoint returns identity only, and also enforces current profile status.
+Profile endpoints enforce ownership and allowed fields. Future staff endpoints
+must additionally enforce the roles introduced in #160.
 
 ## Browser sessions
 
@@ -91,9 +93,11 @@ active. Staff-triggered global logout is outside this issue.
 
 `/login` offers email entry, code entry, loading, invalid/expired-code feedback,
 resend countdown, retries, and change-email. New and returning users follow the
-same path. A verified session reaches the minimal `/dashboard` landing page,
-which displays the verified login email and logout. The full dashboard and
-profile onboarding remain separate work. `/dashboard/*` has a Gatsby client-only
+same path. A verified session reaches the `/dashboard` landing page,
+which displays the verified login email and logout. Signed-in app screens have a
+shared header with a top-right **My Account** button. The private
+editor at `/dashboard/account` accepts partial saves without a completion gate.
+The full dashboard remains separate work. `/dashboard/*` has a Gatsby client-only
 match and a scoped Netlify fallback, preserving existing public/API routes.
 
 The public auth link reads **Sign in / Create account** or **Dashboard**. Public
@@ -138,9 +142,9 @@ For the deeper browser testing pass:
    recovery. Request a code and wait over 15 minutes to check actual expiry.
 3. Reload `/dashboard`, restart the browser, and open a second tab. Confirm the
    session restores without another code and no identity appears while loading.
-4. Visit `/dashboard/events` directly while signed out; sign in and confirm the
+4. Visit `/dashboard/account` directly while signed out; sign in and confirm the
    path is preserved. Try `/login?returnTo=https://example.com` and confirm the
-   fallback is `/dashboard`. The nested page is still the minimal landing screen.
+   fallback is `/dashboard`. The nested account page should show your profile editor.
 5. Sign out; confirm return to `/`, private data disappears in other tabs, and a
    separate browser stays signed in. Test offline logout and its retry action.
 6. Check keyboard labels/focus, mobile widths, public navigation, and API-outage
@@ -241,6 +245,7 @@ test project's database for production.
    consider CAPTCHA if needed. The UI countdown is not an abuse boundary. See
    [Auth rate limits](https://supabase.com/docs/guides/auth/rate-limits).
 
-Before exposing private CRM features, finish database-backed profile, status,
-and role enforcement and disable the generated Data API for application data.
-Keep all hosted credentials out of this repository and these instructions.
+Before exposing hosted profiles, follow the migration and Data API handoff in
+[PROFILES.md](PROFILES.md). Profile status and ownership are implemented; role
+enforcement remains required for future staff features in #160. Keep hosted
+credentials out of this repository and these instructions.

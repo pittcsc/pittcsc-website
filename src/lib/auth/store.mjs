@@ -27,7 +27,11 @@ export function createAuthStore({ getClient, fetchIdentity }) {
     pending?.abort();
   };
 
-  async function acceptSession(next, allowRefresh = true) {
+  async function acceptSession(
+    next,
+    allowRefresh = true,
+    preserveIdentity = false,
+  ) {
     if (stopped || logoutRequested) return;
     invalidate();
     const attempt = generation;
@@ -37,7 +41,7 @@ export function createAuthStore({ getClient, fetchIdentity }) {
       return;
     }
     pending = new AbortController();
-    publish("loading");
+    if (!preserveIdentity) publish("loading");
     try {
       const identity = await fetchIdentity(
         session.access_token,
@@ -84,6 +88,12 @@ export function createAuthStore({ getClient, fetchIdentity }) {
         } catch {
           /* Already denied by Go. */
         }
+      } else if (error.status === 403) {
+        publish(
+          "error",
+          null,
+          "Your account is suspended. Contact Pitt CSC staff.",
+        );
       } else {
         publish(
           "error",
@@ -116,12 +126,19 @@ export function createAuthStore({ getClient, fetchIdentity }) {
             session = null;
             publish("signedOut");
           } else if (!logoutRequested) {
+            // Refresh and tab-focus recovery can both announce an existing
+            // session. Keep drafts mounted for the same verified user while
+            // rechecking identity; verification failures still clear the view.
+            const preserveIdentity =
+              (event === "TOKEN_REFRESHED" || event === "SIGNED_IN") &&
+              state.status === "authenticated" &&
+              next?.user?.id === state.identity?.id;
             invalidate();
-            publish("loading");
+            if (!preserveIdentity) publish("loading");
             const scheduled = generation;
             setTimeout(() => {
               if (scheduled === generation && !stopped)
-                void acceptSession(next);
+                void acceptSession(next, true, preserveIdentity);
             }, 0);
           }
         });
