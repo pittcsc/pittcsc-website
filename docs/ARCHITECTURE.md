@@ -48,7 +48,8 @@ Initial route structure:
 | `/login` | Sign in or create a CSC account | Everyone |
 | `/dashboard` | Member home or staff overview | Signed-in CSC members and staff |
 | `/dashboard/account` | Own profile editor and files (implemented) | Signed-in account owner |
-| `/dashboard/staff` | Member search and role editing (implemented) | Active staff |
+| `/dashboard/staff` | Staff tool cards (implemented) | Active staff |
+| `/dashboard/staff/user-management` | Member search and role editing (implemented) | Active staff |
 | `/dashboard/events` | Upcoming published events (planned) | Members and staff |
 | `/dashboard/staff/events` | Create, edit, and publish events (planned) | Staff |
 | `/dashboard/staff/members` | Member details, status management (planned) | Staff |

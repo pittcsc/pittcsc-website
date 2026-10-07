@@ -48,6 +48,7 @@
     text-decoration: none;
 
     &:hover,
+    &.is-current,
     &[aria-current="page"] {
       text-decoration: underline;
       text-decoration-color: #ffb81c;

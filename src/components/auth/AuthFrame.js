@@ -26,6 +26,7 @@ export default function AuthFrame({
                 className="csc-auth-nav-link"
                 to="/dashboard/staff"
                 activeClassName="is-current"
+                partiallyActive
               >
                 Staff
               </Link>

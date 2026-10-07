@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "gatsby";
 import {
   confirmMessage,
   displayName,
@@ -7,11 +8,13 @@ import {
   pageSummary,
   rolePath,
   searchPath,
-} from "../../lib/staff/members.mjs";
-import "../../styles/staff.scss";
+} from "../../../lib/staff/user-management.mjs";
+import { STAFF_BASE } from "../../../lib/staff/tools.mjs";
+import "../../../styles/staff/user-management.scss";
 
-// Toggles render from the server catalog; Go enforces every change.
-export default function MemberRoles({ identity, request, revalidate }) {
+// Search members and edit roles. Toggles render from the server catalog; Go
+// enforces every change.
+export default function UserManagement({ identity, request, revalidate }) {
   const [catalog, setCatalog] = useState(null);
   const [query, setQuery] = useState("");
   const [submitted, setSubmitted] = useState("");
@@ -112,8 +115,11 @@ export default function MemberRoles({ identity, request, revalidate }) {
   const pages = results ? pageCount(results) : 1;
 
   return (
-    <section className="csc-staff" aria-labelledby="csc-staff-members">
-      <h2 id="csc-staff-members">Members</h2>
+    <section className="csc-staff csc-staff-users">
+      <Link to={STAFF_BASE} className="csc-staff-back">
+        ← Staff Dashboard
+      </Link>
+      <h1>User Management</h1>
       <form
         className="csc-staff-search"
         role="search"

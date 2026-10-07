@@ -8,7 +8,7 @@ import {
   pageSummary,
   rolePath,
   searchPath,
-} from "../../src/lib/staff/members.mjs";
+} from "../../src/lib/staff/user-management.mjs";
 
 test("search paths include only set filters and encode input", () => {
   assert.equal(searchPath(), "/staff/users");

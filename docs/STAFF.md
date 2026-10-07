@@ -1,7 +1,10 @@
 # Staff foundation
 
-`/dashboard/staff` is the **Staff Dashboard**; it lets staff search members and
-edit their roles (see [Manage roles](#manage-roles)). The dashboard navbar shows **Staff** only to active users with the staff role; the
+`/dashboard/staff` is the **Staff Dashboard**: a grid of cards, one per staff
+tool. **User Management** at `/dashboard/staff/user-management` is the first
+tool; it lets staff search members and edit their roles (see
+[Manage roles](#manage-roles)). Unknown staff paths show a not-found message.
+The dashboard navbar shows **Staff** only to active users with the staff role; the
 original public website navbar is unchanged. Signed-out direct visits go through
 login and return to the staff route. Signed-in non-staff users see **Access
 restricted** with a link to My Account.
@@ -26,6 +29,20 @@ accounts, 401 for invalid/revoked sessions, and 503 on dependency failure. Both
 responses are private and uncached. The staff guard uses the existing verified
 Auth session and current database profile/status/roles on every request.
 Foundry and alumni confer no additional privileges.
+
+## Add a staff tool
+
+1. Add an entry (slug, title, description, button text) to the ordered registry
+   in `src/lib/staff/tools.mjs`. Its page is `/dashboard/staff/<slug>`.
+2. Put the tool's component in `src/components/staff/<slug>/`, its helpers in
+   `src/lib/staff/<slug>.mjs` with tests in `tests/staff/`, and its styles in
+   `src/styles/staff/<slug>.scss`.
+3. Map the slug to the component and an icon in `src/components/staff/tools.js`.
+4. Register its API routes in Go behind `withStaff`, plus any record-specific
+   checks. The registry and staff access check only control presentation.
+
+Tools receive the verified `identity`, an authenticated `request` client, and
+`revalidate`, and render inside the shared staff access check.
 
 ## Manage roles
 

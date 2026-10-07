@@ -48,7 +48,7 @@ its client ID; `/meet` uses local file storage without Upstash credentials.
 Authentication uses local Supabase and Mailpit; no hosted email credentials are
 needed. My Account supports names, graduation year, majors, and a resume
 PDF. Active staff can open `/dashboard/staff` using the dashboard-only Staff
-link to search members and edit roles. Event management and other CRM tools are
+link; its User Management tool searches members and edits roles. Event management and other CRM tools are
 not implemented yet.
 
 ## Daily commands

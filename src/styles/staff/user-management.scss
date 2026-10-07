@@ -1,13 +1,4 @@
-.csc-auth:has(.csc-staff) .csc-auth-card {
-  max-width: 56rem;
-}
-
-.csc-staff {
-  h2 {
-    margin-top: 1.5rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-  }
+.csc-staff-users {
   .csc-staff-search {
     display: grid;
     grid-template-columns: 1fr 12rem;

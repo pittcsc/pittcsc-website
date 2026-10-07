@@ -49,6 +49,7 @@ export default function Dashboard({ location }) {
               key={auth.identity.id}
               identity={auth.identity}
               revalidate={auth.revalidate}
+              pathname={location.pathname}
             />
           ) : account ? (
             <MyAccount key={auth.identity.id} identity={auth.identity} />
