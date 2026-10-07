@@ -37,10 +37,9 @@
   }
   .csc-staff-member {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
     padding: 1rem 0;
     border-top: 1px solid #d7dfeb;
   }
@@ -94,7 +93,7 @@
   }
   .csc-staff-confirm,
   .csc-staff-member > [role="alert"] {
-    flex-basis: 100%;
+    align-self: stretch;
     margin: 0;
   }
   .csc-staff-confirm {
