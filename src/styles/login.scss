@@ -76,7 +76,9 @@ $error: #b42318;
     stroke-width: 5;
     stroke-linecap: round;
     stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
+    // No non-scaling-stroke: it measures dashes in screen space while
+    // framer-motion's pathLength="1" normalises against user space, so the
+    // draw-on stops partway along. Let the stroke scale with the viewBox.
   }
 }
 
@@ -140,7 +142,9 @@ $error: #b42318;
     stroke-width: 5;
     stroke-linecap: round;
     stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
+    // No non-scaling-stroke: it measures dashes in screen space while
+    // framer-motion's pathLength="1" normalises against user space, so the
+    // draw-on stops partway along. Let the stroke scale with the viewBox.
   }
 }
 
@@ -439,6 +443,12 @@ $error: #b42318;
   .csc-login-swoosh {
     bottom: 0;
     height: 90px;
+
+    // The viewBox is squashed hardest here, and the stroke scales with it,
+    // so thicken it to keep the lines the same visual weight as on desktop.
+    path {
+      stroke-width: 11;
+    }
   }
   .csc-login-spacer {
     display: none;
