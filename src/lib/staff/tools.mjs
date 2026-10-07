@@ -11,6 +11,11 @@ export const staffTools = [
     description:
       "Search members by name or email and grant or revoke their roles.",
   },
+  {
+    slug: "events",
+    title: "Events",
+    description: "Create and manage club events and sync them to Google Calendar.",
+  },
 ];
 
 export function staffToolPath(slug) {
