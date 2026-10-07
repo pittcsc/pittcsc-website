@@ -13,3 +13,6 @@ public
 
 # Generated per-checkout Supabase JWT private keys.
 supabase/signing_keys.json
+
+# Local agent/editor session config
+.claude/

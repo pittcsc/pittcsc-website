@@ -1,0 +1,485 @@
+// Sign-in screen. Scoped to .csc-login-* so the shared AuthFrame styles in
+// auth.scss (still used by /dashboard) are untouched.
+
+$navy: #213f9d;
+$navy-dark: #182f78;
+$ink: #1b2a4a;
+$body: #3d4a66;
+$muted: #4a5875;
+$gold: #f5b82e;
+$cream: #f8e3b4;
+$mist: #f4f5f9;
+$line: #c9cfdc;
+$border: #8a94ab;
+$error: #b42318;
+
+.csc-login {
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  background: $mist;
+  color: $ink;
+
+  :is(a, button, input, select):focus-visible {
+    outline: 3px solid $gold;
+    outline-offset: 2px;
+  }
+}
+
+/* ---------------------------------------------------------------- brand --- */
+
+.csc-login-brand {
+  flex: 1 1 520px;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3rem;
+  padding: 3.5rem clamp(2rem, 4vw, 4rem);
+  background: $navy;
+  color: #fff;
+
+  // Dot field, drawn in CSS so there is no extra request for pure ornament.
+  &::before {
+    content: "";
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 340px;
+    height: 300px;
+    background-image: radial-gradient($gold 1.6px, transparent 2px);
+    background-size: 22px 22px;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+  }
+}
+
+// Hand-drawn swooshes across the lower panel. Stroked, not filled, so the
+// paths can be drawn on with framer-motion's pathLength.
+.csc-login-swoosh {
+  position: absolute;
+  left: 0;
+  bottom: 70px;
+  width: 100%;
+  height: 220px;
+  pointer-events: none;
+
+  path {
+    fill: none;
+    stroke: $gold;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    // No non-scaling-stroke: it measures dashes in screen space while
+    // framer-motion's pathLength="1" normalises against user space, so the
+    // draw-on stops partway along. Let the stroke scale with the viewBox.
+  }
+}
+
+.csc-login-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: inherit;
+  font-weight: 700;
+  font-size: 1.375rem;
+  text-decoration: none;
+  align-self: flex-start;
+
+  // Same mark the site header uses, on a white tile so it reads on navy.
+  .csc-login-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 60px;
+    height: 52px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 16px #0a143c40;
+  }
+  img {
+    display: block;
+    width: 46px;
+    height: auto;
+  }
+}
+
+.csc-login-spacer {
+  height: 52px;
+}
+
+.csc-login-pitch {
+  margin: 0;
+  max-width: 35rem;
+  font-size: clamp(2.5rem, 4.4vw, 4rem);
+  line-height: 1.06;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.csc-login-underline {
+  position: relative;
+  display: inline-block;
+  // The underline is one absolutely positioned svg across the span, so the span
+  // must not break across lines or it would only cover the last fragment.
+  white-space: nowrap;
+
+  svg {
+    position: absolute;
+    left: 0;
+    bottom: -22px;
+    width: 100%;
+    height: 18px;
+    overflow: visible;
+  }
+  path {
+    fill: none;
+    stroke: $gold;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    // No non-scaling-stroke: it measures dashes in screen space while
+    // framer-motion's pathLength="1" normalises against user space, so the
+    // draw-on stops partway along. Let the stroke scale with the viewBox.
+  }
+}
+
+/* ----------------------------------------------------------------- form --- */
+
+.csc-login-panel {
+  flex: 1 1 560px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+.csc-login-cardwrap {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+
+  // Offset cream slab behind the card.
+  &::before {
+    content: "";
+    position: absolute;
+    left: -28px;
+    top: 28px;
+    right: 28px;
+    bottom: -28px;
+    border-radius: 28px;
+    background: $cream;
+  }
+}
+
+.csc-login-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 3rem;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 16px 48px #1b2a4a1f;
+
+  h1 {
+    margin: 0;
+    font-size: 2.125rem;
+    line-height: 1.15;
+    font-weight: 800;
+  }
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: $body;
+  }
+}
+
+.csc-login-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+
+  div {
+    display: flex;
+    gap: 0.5rem;
+  }
+  span {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e3e6ee;
+  }
+  span.done {
+    background: $navy;
+  }
+  p {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $muted;
+  }
+}
+
+.csc-login-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.csc-login-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.csc-login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+  input[type="email"] {
+    height: 56px;
+    padding: 0 1.125rem;
+    border: 1.5px solid $border;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 1.0625rem;
+    color: $ink;
+    background: #fff;
+
+    &:focus {
+      border-color: $navy;
+      outline: none;
+      box-shadow: 0 0 0 4px #213f9d33;
+    }
+    &[aria-invalid="true"] {
+      border-color: $error;
+    }
+    &:disabled {
+      background: $mist;
+      border-color: #e3e6ee;
+      color: #5c6680;
+    }
+  }
+}
+
+/* Six display boxes with the real input laid over them, so the field keeps its
+   label, autofill and one-time-code hint while looking like the mock. */
+.csc-login-code {
+  position: relative;
+
+  .csc-login-code-boxes {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.625rem;
+    // The real input sits under these, filling the whole block; let clicks
+    // through so tapping any box focuses it.
+    pointer-events: none;
+  }
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    border: 2px solid $line;
+    border-radius: 12px;
+    background: #f7f8fb;
+    font-size: 1.625rem;
+    font-weight: 700;
+  }
+  span.filled {
+    border-color: $ink;
+    background: #fff;
+  }
+  input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: transparent;
+    caret-color: transparent;
+    font-size: 1rem;
+    // @tailwindcss/forms rings focused inputs with a 1px #2563eb box-shadow.
+    // This input is stretched over all six boxes, so that ring would draw one
+    // rectangle around the whole group. Focus is shown by the active box
+    // instead (see below).
+    box-shadow: none;
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+  // Light up the next empty box while the hidden input has focus.
+  input:focus ~ .csc-login-code-boxes span.next {
+    border-color: $navy;
+    box-shadow: 0 0 0 3px #213f9d33;
+  }
+  &[data-invalid="true"] span {
+    border-color: $error;
+  }
+}
+
+.csc-login-submit {
+  height: 56px;
+  border: 0;
+  border-radius: 12px;
+  background: $navy;
+  color: #fff;
+  font: inherit;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $navy-dark;
+  }
+  &:disabled {
+    background: $line;
+    color: $body;
+    cursor: not-allowed;
+  }
+}
+
+.csc-login-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 500;
+    color: $ink;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:disabled {
+      color: $muted;
+      text-decoration: none;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.csc-login-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  &.error {
+    background: #fdecea;
+    color: #7a1a12;
+  }
+  &.notice {
+    background: $ink;
+    color: #fff;
+    font-weight: 500;
+  }
+}
+
+// Empty live region: present for assistive tech, invisible and taking no space.
+.csc-login-quiet {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.csc-login-inline-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $error;
+}
+
+/* ----------------------------------------------------------- responsive --- */
+
+@media (max-width: 900px) {
+  .csc-login-brand {
+    flex-basis: 100%;
+    gap: 1.5rem;
+    // Bottom padding reserves a clear band for the swooshes so they never
+    // cross the headline on a short panel.
+    padding: 2rem 1.5rem 7rem;
+
+    &::before {
+      display: none;
+    }
+  }
+  .csc-login-pitch {
+    font-size: 2.125rem;
+  }
+  .csc-login-swoosh {
+    bottom: 0;
+    height: 90px;
+
+    // The viewBox is squashed hardest here, and the stroke scales with it,
+    // so thicken it to keep the lines the same visual weight as on desktop.
+    path {
+      stroke-width: 11;
+    }
+  }
+  .csc-login-spacer {
+    display: none;
+  }
+  .csc-login-panel {
+    padding: 2rem 1rem 3rem;
+  }
+  .csc-login-cardwrap::before {
+    display: none;
+  }
+  .csc-login-card {
+    padding: 1.75rem;
+    gap: 1.5rem;
+  }
+  .csc-login-card h1 {
+    font-size: 1.75rem;
+  }
+  .csc-login-code span {
+    height: 56px;
+    font-size: 1.375rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .csc-login-code .csc-login-code-boxes {
+    gap: 0.375rem;
+  }
+  .csc-login-code span {
+    height: 50px;
+    font-size: 1.125rem;
+  }
+}
