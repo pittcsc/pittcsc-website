@@ -3,7 +3,9 @@
 `/dashboard/staff` is the **Staff Dashboard**: a grid of cards, one per staff
 tool. **User Management** at `/dashboard/staff/user-management` is the first
 tool; it lets staff search members and edit their roles (see
-[Manage roles](#manage-roles)). Unknown staff paths show a not-found message.
+[Manage roles](#manage-roles)). **Events** at `/dashboard/staff/events` creates,
+edits, and cancels events, with Google Calendar sync and staff-visible history;
+see [events](EVENTS.md). Unknown staff paths show a not-found message.
 The dashboard navbar shows **Staff** only to active users with the staff role; the
 original public website navbar is unchanged. Signed-out direct visits go through
 login and return to the staff route. Signed-in non-staff users see **Access
@@ -111,7 +113,7 @@ operator, not proof of an authenticated application actor. The command prints
 neither account details nor credentials.
 
 Still unimplemented: suspension/account status tools, a member detail view, a
-role-change history viewer, and event tools.
+role-change history viewer.
 
 Run `mise run check` for unit tests. With local Supabase and Go running, use
 `mise run test:staff` to exercise default assignments, role combinations,
