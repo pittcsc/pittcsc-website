@@ -13,6 +13,7 @@ import "../../styles/staff/dashboard.scss";
 export default function StaffDashboard({ identity, revalidate, pathname }) {
   const [access, setAccess] = useState("loading");
   const [attempt, setAttempt] = useState(0);
+  const [verified, setVerified] = useState(false);
   const staff = hasStaffRole(identity);
   const request = useMemo(
     () =>
@@ -37,7 +38,10 @@ export default function StaffDashboard({ identity, revalidate, pathname }) {
           signal: controller.signal,
           responseType: "empty",
         });
-        if (!controller.signal.aborted) setAccess("allowed");
+        if (!controller.signal.aborted) {
+          setVerified(true);
+          setAccess("allowed");
+        }
       } catch (error) {
         if (controller.signal.aborted) return;
         setAccess(error.status === 403 ? "restricted" : "error");
@@ -65,7 +69,8 @@ export default function StaffDashboard({ identity, revalidate, pathname }) {
         <Link to="/dashboard/account">Go to My Account</Link>
       </>
     );
-  if (access === "loading") return <p role="status">Checking staff access…</p>;
+  if (access === "loading" && !verified)
+    return <p role="status">Checking staff access…</p>;
   if (access === "error")
     return (
       <>
@@ -79,8 +84,16 @@ export default function StaffDashboard({ identity, revalidate, pathname }) {
   const Tool = route.view === "tool" && toolViews[route.tool.slug]?.Component;
   if (Tool)
     return (
-      <Tool identity={identity} request={request} revalidate={revalidate} />
+      <>
+        {access === "loading" && <p role="status">Checking staff access…</p>}
+        {/* Keep drafts mounted, but hidden and inert during a successful
+            recheck. Denial/error above still unmounts private tools. */}
+        <div hidden={access !== "allowed"}>
+          <Tool identity={identity} request={request} revalidate={revalidate} />
+        </div>
+      </>
     );
+  if (access === "loading") return <p role="status">Checking staff access…</p>;
   if (route.view === "home") return <StaffHome />;
   return (
     <>
