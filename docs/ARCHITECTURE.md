@@ -36,7 +36,8 @@ The public website remains accessible to everyone, including signed-in users. Si
 - The dashboard has its own layout, navigation, account menu, and logout action.
 - Only its navbar displays **Staff**, and only for active users with the staff role.
   The staff page has an API-verified access check, member search, and role editing.
-- A **Back to Website** link returns to the public site without signing out.
+- On My Account, a **Back to Website** link returns to the public site without
+  signing out, and a logout button signs out. Other dashboard pages omit both.
 - Logging out clears the local session and private UI state, then returns to `/`.
 
 Initial route structure:
