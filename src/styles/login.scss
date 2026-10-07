@@ -312,9 +312,15 @@ $error: #b42318;
     color: transparent;
     caret-color: transparent;
     font-size: 1rem;
+    // @tailwindcss/forms rings focused inputs with a 1px #2563eb box-shadow.
+    // This input is stretched over all six boxes, so that ring would draw one
+    // rectangle around the whole group. Focus is shown by the active box
+    // instead (see below).
+    box-shadow: none;
 
     &:focus {
       outline: none;
+      box-shadow: none;
     }
   }
   // Light up the next empty box while the hidden input has focus.
@@ -414,13 +420,6 @@ $error: #b42318;
   font-size: 0.875rem;
   font-weight: 500;
   color: $error;
-}
-
-.csc-login-back {
-  align-self: flex-start;
-  font-size: 0.875rem;
-  color: $muted;
-  text-decoration: underline;
 }
 
 /* ----------------------------------------------------------- responsive --- */

@@ -409,12 +409,7 @@ export default function Login({ location }) {
       <BrandPanel />
       <main className="csc-login-panel">
         <div className="csc-login-cardwrap">
-          <div className="csc-login-card">
-            {renderBody()}
-            <Link className="csc-login-back" to="/">
-              Back to website
-            </Link>
-          </div>
+          <div className="csc-login-card">{renderBody()}</div>
         </div>
       </main>
     </div>
