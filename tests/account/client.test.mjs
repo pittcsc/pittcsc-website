@@ -117,3 +117,24 @@ test("another account cannot receive the current account's data", async () => {
   );
   assert.equal(calls, 0);
 });
+
+test("staff checks distinguish forbidden from outages and accept an empty success", async () => {
+  for (const status of [403, 503]) {
+    const f = fixture(async () =>
+      Response.json({ error: "Unavailable" }, { status }),
+    );
+    await assert.rejects(
+      f.request("/staff/access", { userID: "owner", responseType: "empty" }),
+      { status },
+    );
+    assert.equal(f.refreshes(), 0);
+  }
+  const f = fixture(async () => new Response(null, { status: 204 }));
+  assert.equal(
+    await f.request("/staff/access", {
+      userID: "owner",
+      responseType: "empty",
+    }),
+    null,
+  );
+});

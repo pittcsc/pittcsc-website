@@ -18,6 +18,7 @@ var (
 )
 
 type Record struct {
+	Roles          []string  `json:"-"`
 	FirstName      *string   `json:"firstName"`
 	LastName       *string   `json:"lastName"`
 	PreferredName  *string   `json:"preferredName"`
@@ -102,10 +103,11 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 	var status string
 	err := s.DB.QueryRow(ctx, `
 		select first_name, last_name, preferred_name, graduation_year, majors,
-		  account_status, resume_asset_id is not null, updated_at
+		  account_status, resume_asset_id is not null, updated_at,
+		  array(select role from csc.user_roles where auth_user_id = $1::uuid order by role)
 		from csc.profiles where auth_user_id = $1::uuid
 	`, authUserID).Scan(&record.FirstName, &record.LastName, &record.PreferredName,
-		&record.GraduationYear, &record.Majors, &status, &record.HasResume, &record.UpdatedAt)
+		&record.GraduationYear, &record.Majors, &status, &record.HasResume, &record.UpdatedAt, &record.Roles)
 	if err != nil {
 		return Record{}, err
 	}

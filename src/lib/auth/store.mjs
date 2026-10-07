@@ -257,6 +257,9 @@ export function createAuthStore({ getClient, fetchIdentity }) {
     },
     start,
     retry,
+    // Recheck current roles/status without destroying unsaved account drafts.
+    // Failures still clear all private state; generation guards reject stale work.
+    revalidate: () => session && acceptSession(session, true, true),
     signOut,
     requestCode,
     verifyCode,

@@ -16,7 +16,10 @@ export function createAccountClient({ getClient, apiURL, fetchImpl = fetch }) {
       signal?.throwIfAborted();
       const { data, error } = await sdk.auth.getSession();
       if (error || !data.session || data.session.user.id !== userID) {
-        throw new Error("Your session changed. Please sign in again.");
+        throw Object.assign(
+          new Error("Your session changed. Please sign in again."),
+          { status: 401 },
+        );
       }
       return data.session;
     };
@@ -37,16 +40,21 @@ export function createAccountClient({ getClient, apiURL, fetchImpl = fetch }) {
         await assertSession();
         const refreshed = await sdk.auth.refreshSession();
         if (refreshed.error)
-          throw new Error(
-            "Your session could not be refreshed. Please try again.",
+          throw Object.assign(
+            new Error("Your session could not be refreshed. Please try again."),
+            { status: refreshed.error.status || 0 },
           );
         session = await assertSession();
         continue;
       }
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(
-          error.error || "Your account could not be updated. Please try again.",
+        throw Object.assign(
+          new Error(
+            error.error ||
+              "Your account could not be updated. Please try again.",
+          ),
+          { status: response.status },
         );
       }
       const value =

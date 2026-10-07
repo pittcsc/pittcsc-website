@@ -42,3 +42,7 @@ run = "node scripts/test-auth-local.mjs"
 [tasks."test:profiles"]
 description = "Test local profiles and files using synthetic Auth fixtures (API must be running)"
 run = "node scripts/test-profiles-local.mjs"
+
+[tasks."test:staff"]
+description = "Test local staff roles and provisioning with synthetic accounts (API must be running)"
+run = "node scripts/test-staff-local.mjs"

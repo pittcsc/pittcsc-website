@@ -7,9 +7,25 @@ import SessionStatus, {
 import { useAuth } from "../components/auth/AuthProvider";
 import { loginURL } from "../lib/auth/policy.mjs";
 import MyAccount from "../components/account/MyAccount";
+import StaffDashboard from "../components/staff/StaffDashboard";
 
 export default function Dashboard({ location }) {
   const auth = useAuth();
+  useEffect(() => {
+    void auth.revalidate();
+    const recheck = () => {
+      void auth.revalidate();
+    };
+    const visible = () => {
+      if (document.visibilityState === "visible") recheck();
+    };
+    window.addEventListener("focus", recheck);
+    document.addEventListener("visibilitychange", visible);
+    return () => {
+      window.removeEventListener("focus", recheck);
+      document.removeEventListener("visibilitychange", visible);
+    };
+  }, [location.pathname, auth.revalidate]);
   useEffect(() => {
     if (auth.status === "signedOut") {
       void navigate(
@@ -20,10 +36,16 @@ export default function Dashboard({ location }) {
   }, [auth.status, location.pathname, location.search, location.hash]);
 
   return (
-    <AuthFrame>
+    <AuthFrame dashboard>
       {auth.status === "authenticated" ? (
         <>
-          {/^\/dashboard\/account\/?$/.test(location.pathname) ? (
+          {/^\/dashboard\/staff(?:\/|$)/.test(location.pathname) ? (
+            <StaffDashboard
+              key={auth.identity.id}
+              identity={auth.identity}
+              revalidate={auth.revalidate}
+            />
+          ) : /^\/dashboard\/account\/?$/.test(location.pathname) ? (
             <MyAccount key={auth.identity.id} identity={auth.identity} />
           ) : (
             <>

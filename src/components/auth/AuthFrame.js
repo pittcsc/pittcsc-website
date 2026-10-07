@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "gatsby";
 import { useAuth } from "./AuthProvider";
+import { hasStaffRole } from "../../lib/auth/roles.mjs";
 import logo from "../../images/hero_image.png";
 import "../../styles/auth.scss";
 
-export default function AuthFrame({ children }) {
-  const { status } = useAuth();
+export default function AuthFrame({ children, dashboard = false }) {
+  const { status, identity } = useAuth();
   const authenticated = status === "authenticated";
 
   return (
@@ -16,6 +17,15 @@ export default function AuthFrame({ children }) {
             <img src={logo} alt="CSC at Pitt Logo" width={48} height={48} />
           </Link>
           <nav aria-label="Account navigation">
+            {dashboard && hasStaffRole(identity) && (
+              <Link
+                className="csc-auth-nav-link"
+                to="/dashboard/staff"
+                activeClassName="is-current"
+              >
+                Staff
+              </Link>
+            )}
             <Link className="csc-auth-account" to="/dashboard/account">
               My Account
             </Link>
