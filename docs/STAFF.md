@@ -13,12 +13,40 @@ responses are private and uncached. The staff guard uses the existing verified
 Auth session and current database profile/status/roles on every request.
 Foundry and alumni confer no additional privileges.
 
+## Provision staff
+
+Have the user sign in and open the dashboard once to create their profile. A
+trusted operator with database access can then run this from `backend/`:
+
+```sh
+mise exec -- go run ./cmd/grant-staff --email student@pitt.edu --operator "Setup operator"
+```
+
+Replace the example email and operator label. The command uses `DATABASE_URL`
+from the environment or `backend/.env`; existing environment values win. Local
+development uses the local database. Hosted execution requires separately
+authorized access to the intended hosted database; do not copy hosted credentials
+into local env files. No remote migration or grant is part of local setup.
+
+Only existing, verified, active accounts are eligible. The command adds `staff`
+without replacing other roles. Grant and audit commit in one transaction, and
+retries/concurrent grants create one assignment and one audit entry. Audit records
+contain the target, role, action, timestamp, supplied operator attribution, and
+database login role. The operator label is attribution supplied by a trusted
+operator, not proof of an authenticated application actor. The command prints
+neither account details nor credentials. There is no browser grant endpoint.
+
 This is the foundation from issues #160 and #162, not the complete role/member
 administration feature: member lookup, role-management UI/API, suspension tools,
 last-active-staff safeguards for future removal operations, and event tools
 remain unimplemented. The foundation exposes no role removal operation.
 
-Run `mise run check` for unit tests. After local migrations, run the read-only
+Run `mise run check` for unit tests. With local Supabase and Go running, use
+`mise run test:staff` to exercise default assignments, role combinations,
+self-escalation denial, concurrent grants/audit idempotency, operator validation,
+suspension, revocation, and logout using synthetic accounts. It leaves synthetic
+accounts/mail and audit records for inspection, and signs out its sessions.
+It refuses nonlocal services and database URLs. After local migrations, run the read-only
 database assertions with:
 
 ```sh
