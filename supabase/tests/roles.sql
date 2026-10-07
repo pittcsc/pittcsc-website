@@ -20,5 +20,12 @@ begin
   if (select array_agg(name order by name) from csc.roles) <> array['alumni','foundry','member','staff'] then
     raise exception 'Unexpected role catalog';
   end if;
+  if exists (select 1 from csc.roles where label is null or description is null) then
+    raise exception 'Role catalog is missing display metadata';
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'role_audit_actor_check'
+    and conrelid = 'csc.role_audit'::regclass) then
+    raise exception 'Audit rows must name exactly one actor or operator';
+  end if;
 end $$;
 rollback;
