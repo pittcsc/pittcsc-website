@@ -1,80 +1,172 @@
-.csc-auth:has(.csc-account) .csc-auth-card {
+// My Account profile editor. Inherits the card, field and button styling from
+// auth.scss; this file only adds what the form itself needs.
+
+@import "./helpers/account-tokens";
+
+// The profile form needs more room than the signed-in landing card.
+.csc-auth:has(.csc-account) .csc-auth-cardwrap {
   max-width: 44rem;
 }
 
 .csc-account {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
   .csc-account-back {
-    display: inline-block;
-    margin-top: 1.5rem;
-    text-decoration: underline;
+    align-self: flex-start;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $acc-muted;
+    text-decoration: none;
+
+    &:hover {
+      color: $acc-navy;
+      text-decoration: underline;
+    }
   }
+
+  // Profile-completion prompt. Cream when there's still something to add,
+  // which reads as a nudge rather than the red of a real error.
   .csc-account-completion {
-    padding: 1rem;
-    border-radius: 0.5rem;
-    background: #edf1f8;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 1rem 1.125rem;
+    border-radius: $acc-radius-control;
+    background: $acc-cream-soft;
+
+    strong {
+      font-size: 0.9375rem;
+      font-weight: 700;
+    }
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
   }
-  .csc-account-completion p {
-    margin: 0.5rem 0 0;
-  }
+
   .csc-account-email {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    color: $acc-muted;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
   fieldset {
     min-width: 0;
-    border: 0;
-    margin: 1.5rem 0 0;
+    margin: 0;
     padding: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
   }
   legend {
-    font-size: 1.2rem;
+    padding: 0;
+    margin-bottom: 1.125rem;
+    font-size: 1.25rem;
     font-weight: 700;
   }
   label span {
     font-weight: 400;
+    color: $acc-muted;
   }
+
   .csc-account-name-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1.125rem;
+  }
+
+  .csc-account-majors {
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
   }
   .csc-account-major {
     display: flex;
     align-items: flex-end;
     gap: 0.75rem;
+
+    > div {
+      flex: 1;
+      min-width: 0;
+    }
+    button {
+      width: auto;
+      flex-shrink: 0;
+    }
   }
-  .csc-account-major > div {
-    flex: 1;
-    min-width: 0;
-  }
-  .csc-account-major button {
-    width: auto;
-  }
+
   .csc-account-files {
-    margin-top: 2.5rem;
-    border-top: 1px solid #d7dfeb;
-  }
-  .csc-account-files h2 {
-    margin-top: 2rem;
-    font-weight: 700;
-    font-size: 1.2rem;
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
   }
   .csc-account-file-help {
     font-size: 0.875rem;
-    margin: 0.5rem 0;
+    color: $acc-muted;
+  }
+  .csc-account-file input[type="file"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1.5px dashed $acc-border;
+    border-radius: $acc-radius-control;
+    background: $acc-mist;
+    font-size: 0.875rem;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    &::file-selector-button {
+      margin-right: 0.75rem;
+      padding: 0.5rem 0.875rem;
+      border: 0;
+      border-radius: 8px;
+      background: $acc-navy;
+      color: #fff;
+      font: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
   }
   .csc-account-file-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0 0.75rem;
+    gap: 0.75rem;
+
+    button {
+      width: auto;
+      flex: 1 1 10rem;
+    }
   }
-  .csc-account-file-actions button {
-    width: auto;
-    flex: 1 1 10rem;
-  }
+
   @media (max-width: 480px) {
     .csc-account-name-grid {
       grid-template-columns: 1fr;
-      gap: 0;
+      gap: 1.125rem;
+    }
+    .csc-account-major {
+      flex-direction: column;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+      }
     }
   }
 }

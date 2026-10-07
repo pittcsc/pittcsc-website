@@ -17,8 +17,9 @@ export default function AuthFrame({
     <div className="csc-auth-layout">
       {authenticated && (
         <header className="csc-auth-header">
-          <Link className="csc-auth-logo" to="/" aria-label="Pitt CSC home">
-            <img src={logo} alt="CSC at Pitt Logo" width={48} height={48} />
+          <Link className="csc-auth-logo" to="/">
+            <img src={logo} alt="" width={64} height={49} />
+            Pitt CSC
           </Link>
           <nav aria-label="Account navigation">
             {dashboard && hasStaffRole(identity) && (
@@ -38,18 +39,20 @@ export default function AuthFrame({
         </header>
       )}
       <main className="csc-auth">
-        <div className="csc-auth-card">
-          {!authenticated && (
-            <Link className="csc-auth-brand" to="/">
-              Pitt CSC
-            </Link>
-          )}
-          {children}
-          {websiteLink && (
-            <Link className="csc-auth-website" to="/">
-              Back to Website
-            </Link>
-          )}
+        <div className="csc-auth-cardwrap">
+          <div className="csc-auth-card">
+            {!authenticated && (
+              <Link className="csc-auth-brand" to="/">
+                Pitt CSC
+              </Link>
+            )}
+            {children}
+            {websiteLink && (
+              <Link className="csc-auth-website" to="/">
+                Back to Website
+              </Link>
+            )}
+          </div>
         </div>
       </main>
     </div>
