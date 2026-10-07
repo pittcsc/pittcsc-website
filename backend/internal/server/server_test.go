@@ -33,7 +33,7 @@ func TestHealth(t *testing.T) {
 					t.Error("database check must have a bounded deadline")
 				}
 				return tc.err
-			}), "http://localhost:8000", nil, nil, nil)
+			}), "http://localhost:8000", nil, nil, nil, nil)
 			response := httptest.NewRecorder()
 			handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/health", nil))
 			if response.Code != tc.code || strings.TrimSpace(response.Body.String()) != tc.body {
@@ -70,7 +70,7 @@ func TestSessionEndpoint(t *testing.T) {
 					t.Fatal("missing request deadline")
 				}
 				return auth.Identity{ID: "verified-id", Email: "student@pitt.edu"}, tc.err
-			}), nil, nil)
+			}), nil, nil, nil)
 			r := httptest.NewRequest("GET", "/auth/session", nil)
 			r.Header.Set("Authorization", "Bearer test")
 			w := httptest.NewRecorder()
@@ -93,7 +93,7 @@ func TestHealthRespectsRequestCancellation(t *testing.T) {
 			t.Fatal("request cancellation did not reach database check")
 		}
 		return ctx.Err()
-	}), "http://localhost:8000", nil, nil, nil)
+	}), "http://localhost:8000", nil, nil, nil, nil)
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/health", nil).WithContext(ctx))
 	if response.Code != http.StatusServiceUnavailable {
@@ -119,7 +119,7 @@ func TestHealthRoutingAndCORS(t *testing.T) {
 					t.Fatal("unexpected database check")
 				}
 				return nil
-			}), "http://localhost:8000", nil, nil, nil)
+			}), "http://localhost:8000", nil, nil, nil, nil)
 			req := httptest.NewRequest(tc.method, tc.path, nil)
 			req.Header.Set("Origin", tc.origin)
 			response := httptest.NewRecorder()

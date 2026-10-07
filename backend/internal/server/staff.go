@@ -22,7 +22,11 @@ type roleStore interface {
 // withStaff checks the current database profile/status/roles on every request.
 // Future staff operations must use this guard as well as record-specific checks.
 func withStaff(authentication authenticator, profiles profileStore, next func(http.ResponseWriter, *http.Request, auth.Identity, profile.Record)) http.HandlerFunc {
-	return withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, record profile.Record) {
+	return withStaffTimeout(authentication, profiles, 5*time.Second, next)
+}
+
+func withStaffTimeout(authentication authenticator, profiles profileStore, timeout time.Duration, next func(http.ResponseWriter, *http.Request, auth.Identity, profile.Record)) http.HandlerFunc {
+	return withProfile(authentication, profiles, timeout, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, record profile.Record) {
 		if !slices.Contains(record.Roles, "staff") {
 			writeJSONError(w, http.StatusForbidden, "Access restricted. Staff access is required.")
 			return

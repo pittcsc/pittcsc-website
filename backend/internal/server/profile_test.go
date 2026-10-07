@@ -46,7 +46,7 @@ func profileRequest(t *testing.T, store *profilesStub, method, path, body, token
 		r.Header.Set("Authorization", "Bearer "+token)
 	}
 	w := httptest.NewRecorder()
-	NewHandler(nil, "http://localhost:8000", verifiedAuth(), store, nil).ServeHTTP(w, r)
+	NewHandler(nil, "http://localhost:8000", verifiedAuth(), store, nil, nil).ServeHTTP(w, r)
 	return w
 }
 
@@ -112,7 +112,7 @@ func TestProfileEditableFields(t *testing.T) {
 }
 
 func TestProfileRequestLimitsAndPreflight(t *testing.T) {
-	h := NewHandler(nil, "http://localhost:8000", verifiedAuth(), &profilesStub{}, nil)
+	h := NewHandler(nil, "http://localhost:8000", verifiedAuth(), &profilesStub{}, nil, nil)
 	r := httptest.NewRequest("PUT", "/profile", strings.NewReader(`{}`))
 	r.Header.Set("Authorization", "Bearer valid")
 	w := httptest.NewRecorder()
