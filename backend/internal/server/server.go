@@ -62,17 +62,26 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 			_ = json.NewEncoder(w).Encode(map[string]string{"error": message})
 			return
 		}
+		roles := []string{}
 		if profiles != nil {
-			if _, err := profiles.GetOrCreate(ctx, identity.ID); err != nil {
+			record, err := profiles.GetOrCreate(ctx, identity.ID)
+			if err != nil {
 				writeProfileError(w, err)
 				return
 			}
+			if record.Roles != nil {
+				roles = record.Roles
+			}
 		}
-		_ = json.NewEncoder(w).Encode(identity)
+		_ = json.NewEncoder(w).Encode(struct {
+			auth.Identity
+			Roles []string `json:"roles"`
+		}{identity, roles})
 	})
 	mux.HandleFunc("OPTIONS /auth/session", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	registerProfileRoutes(mux, authentication, profiles)
 	registerAssetRoutes(mux, authentication, profiles)
+	registerStaffRoutes(mux, authentication, profiles)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")
