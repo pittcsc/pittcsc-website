@@ -46,3 +46,7 @@ run = "node scripts/test-profiles-local.mjs"
 [tasks."test:staff"]
 description = "Test local staff roles and provisioning with synthetic accounts (API must be running)"
 run = "node scripts/test-staff-local.mjs"
+
+[tasks."test:events"]
+description = "Test local staff events with synthetic accounts and a simulated Google Calendar"
+run = "node scripts/test-events-local.mjs"

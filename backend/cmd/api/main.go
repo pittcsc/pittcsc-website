@@ -16,6 +16,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
+	"github.com/pittcsc/pittcsc-website/backend/internal/events"
 	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 	"github.com/pittcsc/pittcsc-website/backend/internal/roles"
 	"github.com/pittcsc/pittcsc-website/backend/internal/server"
@@ -57,6 +58,19 @@ func run() error {
 	}
 	defer pool.Close()
 
+	var calendar events.Calendar
+	switch envOr("GOOGLE_CALENDAR_MODE", "disabled") {
+	case "disabled":
+	case "google":
+		calendar, err = events.NewGoogle()
+		if err != nil {
+			return err
+		}
+	default:
+		return errors.New("GOOGLE_CALENDAR_MODE must be disabled or google")
+	}
+	eventStore := events.Store{DB: pool, Calendar: calendar, CalendarID: envOr("GOOGLE_CALENDAR_ID", events.ClubCalendarID)}
+
 	// A local default keeps existing local env files usable without rewriting them.
 	verifier, err := auth.NewVerifier(envOr("SUPABASE_AUTH_URL", "http://127.0.0.1:54321/auth/v1"), auth.PostgresSessions{DB: pool})
 	if err != nil {
@@ -67,7 +81,7 @@ func run() error {
 	defer stop()
 	api := &http.Server{
 		Addr:              net.JoinHostPort(envOr("HOST", "127.0.0.1"), port),
-		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000"), verifier, profile.Store{DB: pool}, roles.Store{DB: pool}),
+		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000"), verifier, profile.Store{DB: pool}, roles.Store{DB: pool}, eventStore),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      30 * time.Second,

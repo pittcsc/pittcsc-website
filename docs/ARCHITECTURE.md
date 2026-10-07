@@ -11,8 +11,11 @@ Go identity/session verification, auth-aware navigation, and a minimal signed-in
 landing page are implemented in #158. Private profile editing and files are
 implemented in #159. Additive roles, operator staff provisioning, and the protected
 staff dashboard implement the foundation of #160/#162; staff can search members and
-change their roles. Other CRM management tools remain planned. See [AUTH.md](AUTH.md), [PROFILES.md](PROFILES.md), and
-[STAFF.md](STAFF.md) for implemented behavior.
+change their roles. Staff event creation, editing, cancellation, audit history,
+and Google Calendar delivery are implemented; see [EVENTS.md](EVENTS.md) for the
+agreed scope refining #163/#164. Member event viewing remains deferred.
+See [AUTH.md](AUTH.md), [PROFILES.md](PROFILES.md), and [STAFF.md](STAFF.md)
+for the other implemented behavior.
 
 ## Technology and hosting
 
@@ -51,7 +54,7 @@ Initial route structure:
 | `/dashboard/staff` | Staff tool cards (implemented) | Active staff |
 | `/dashboard/staff/user-management` | Member search and role editing (implemented) | Active staff |
 | `/dashboard/events` | Upcoming published events (planned) | Members and staff |
-| `/dashboard/staff/events` | Create, edit, and publish events (planned) | Staff |
+| `/dashboard/staff/events` | Create, edit, cancel, and sync events; audit history (implemented) | Active staff |
 | `/dashboard/staff/members` | Member details, status management (planned) | Staff |
 
 Use Gatsby client-only routes for the dashboard and load its data at runtime from the Go API. Configure hosting so direct visits and refreshes on nested dashboard routes work. Private data must not be included in generated public pages or Gatsby build-time data.
@@ -80,7 +83,7 @@ CSC manages its own application permissions:
 
 - CSC roles are additive: `member`, `foundry`, `staff`, and `alumni`, stored authoritatively in Postgres with multiple assignments per user.
 - New users default to `member`; users cannot self-assign elevated roles. Foundry/alumni alone do not confer staff permissions.
-- Staff have member access and can search active members and grant or revoke `staff`, `foundry`, and `alumni`. `member` is permanent. Event management and account status tools are future capabilities.
+- Staff have member access and can search active members and grant or revoke `staff`, `foundry`, and `alumni`. `member` is permanent. All active staff can manage events; account status tools remain planned.
 - A trusted operator bootstraps the first staff account with the audited command in [STAFF.md](STAFF.md); dashboard changes are audited with the authenticated staff actor.
 - CSC account suspension is enforced through CSC profile status on API requests, including requests with an otherwise valid access token.
 
@@ -100,7 +103,11 @@ The normal request flow is:
 
 Client-side route guards control navigation and presentation. The Go API independently enforces authentication, roles, record access, and editable fields on every protected operation. A role supplied by the browser is never authoritative.
 
-Start with a JSON REST API. Initial operations include retrieving the current profile, listing published events, creating and editing events, publishing events, and managing members. Members must not receive event drafts or staff-only member information.
+Use a JSON REST API. Implemented operations include the current profile, staff
+member/role management, and staff event management. Event save publishes
+immediately; there is no draft/publish workflow. Event APIs currently require
+staff, with member event viewing deferred. Members must not receive staff-only
+records or audit history.
 
 All future CRM data access goes through Go. The browser communicates directly
 with Supabase Auth for authentication only. Keep privileged credentials
@@ -121,8 +128,8 @@ Manage the Postgres schema with versioned SQL migrations.
 | `csc.profile_assets` | Implemented: private file bytes, ownership, type, and update time; unique per user/kind |
 | `csc.roles`, `csc.user_roles` | Implemented: role catalog with display labels; additive assignments, unique per user/role pair |
 | `csc.role_audit` | Implemented: transactional grant/revoke audit with target, role, action, staff actor or operator label, database actor, and time |
-| `events` | Title, description, location, start/end times, timezone, draft/published/cancelled status, creator, and timestamps |
-| `audit_log` | Planned: general staff-operation audit history |
+| `csc.events` | Implemented: stable ID, title, description, location, start/end times, fixed New York timezone, active/cancelled status, version, creator/timestamps, and calendar identity/delivery status |
+| `csc.event_audit` | Implemented: event mutations and sync results with staff actor, snapshot, and time |
 
 The application-owned `csc.profiles` table references Supabase's managed `auth.users` identities. Credentials remain in Supabase Auth. Private file access goes through Go; bounded files are stored transactionally in Postgres for this initial release. See [PROFILES.md](PROFILES.md) for limits and ownership enforcement.
 
@@ -132,7 +139,14 @@ When attendance is implemented, add an `attendance` table relating users to even
 
 ## Events and future integrations
 
-Postgres becomes the authoritative source for CRM events. Staff changes appear in the dashboard through API requests without rebuilding the website.
+Postgres is the authoritative source for CRM events. Staff changes appear in the
+staff dashboard through API requests without rebuilding the website. Save and
+publish are one action; calendar delivery is attempted after the database commit.
+Edits update the existing Google entry; cancellation removes it while keeping the
+CRM record and audit. Delivery failures require an explicit staff retry, with no
+background checks or retries. The existing CSC calendar is fixed in the staff UI.
+Server-only configuration supports a separate nonproduction calendar. See
+[EVENTS.md](EVENTS.md) for concurrency, credentials, and recovery.
 
 The existing public event integration imports Notion data during Gatsby builds. It can remain during the initial rollout. When public events move to the CRM, preserve the existing presentation and feed it published events from the new source. Define that transition explicitly so staff do not have to maintain competing event records.
 
@@ -145,11 +159,13 @@ QR attendance and Google Drive automation are later phases:
 
 ## Implementation sequence
 
-The first complete workflow is: **staff creates and publishes an event, and a member sees it in their dashboard**.
+The current event release delivers **staff saves an event and it appears on the
+public CSC Google Calendar**, once the server integration is configured. Member
+dashboard event viewing is a later phase.
 
 1. Set up CSC Supabase Auth, provision CSC profiles, and implement access-token verification, the current-user API, logout, and role checks.
 2. Add the dashboard layout, routes, and authentication-aware public navbar.
-3. Implement event creation, editing, publishing, and member event viewing.
+3. Implement staff event creation, editing, cancellation, and Google Calendar sync (implemented); add member event viewing later.
 4. Add member search, account status management, and audited role changes.
 5. Expand into QR attendance, Drive integration, and additional CRM features.
 

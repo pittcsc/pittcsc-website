@@ -45,7 +45,7 @@ func TestStaffRoleCombinations(t *testing.T) {
 
 func TestStaffRevocationAndFailures(t *testing.T) {
 	store := &profilesStub{roles: []string{"member", "staff"}}
-	h := NewHandler(nil, "http://localhost:8000", verifiedAuth(), store, nil)
+	h := NewHandler(nil, "http://localhost:8000", verifiedAuth(), store, nil, nil)
 	request := func(token string) *httptest.ResponseRecorder {
 		r := httptest.NewRequest("GET", "/staff/access", nil)
 		r.Header.Set("Authorization", token)
@@ -135,7 +135,7 @@ func staffRequest(t *testing.T, profiles *profilesStub, store *roleStoreStub, me
 	if store != nil {
 		roleChanges = store
 	}
-	NewHandler(nil, "http://localhost:8000", verifiedAuth(), profiles, roleChanges).ServeHTTP(w, r)
+	NewHandler(nil, "http://localhost:8000", verifiedAuth(), profiles, roleChanges, nil).ServeHTTP(w, r)
 	return w
 }
 
