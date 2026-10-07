@@ -40,7 +40,7 @@ func assetRequest(store *assetStub, method, path, body, contentType, token strin
 		r.Header.Set("Authorization", "Bearer "+token)
 	}
 	w := httptest.NewRecorder()
-	NewHandler(nil, "http://localhost:8000", verifiedAuth(), store).ServeHTTP(w, r)
+	NewHandler(nil, "http://localhost:8000", verifiedAuth(), store, nil).ServeHTTP(w, r)
 	return w
 }
 func TestAssetRoutes(t *testing.T) {
