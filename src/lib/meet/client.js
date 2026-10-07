@@ -66,9 +66,14 @@ export function createMeeting(input) {
  */
 const etags = new Map();
 
-export async function fetchMeeting(code) {
+/**
+ * `fresh` skips the conditional request. The map above outlives the room that filled
+ * it, so a caller holding no meeting yet must ask for a body — a 304 would hand it
+ * nothing to revalidate against.
+ */
+export async function fetchMeeting(code, { fresh = false } = {}) {
   const url = `/api/meet/get?code=${encodeURIComponent(code)}`;
-  const known = etags.get(code);
+  const known = fresh ? null : etags.get(code);
 
   let res;
   try {

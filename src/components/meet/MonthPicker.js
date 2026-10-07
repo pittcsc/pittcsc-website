@@ -8,6 +8,7 @@ import {
   isoWeekday,
   parseIso,
 } from "../../lib/meet/time";
+import { bindDragRelease } from "../../lib/meet/drag";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -113,20 +114,8 @@ export default function MonthPicker({ value, onChange, tz }) {
    */
   const latestEnd = useRef(endDrag);
   latestEnd.current = endDrag;
-  const dragging = preview !== null;
 
-  useEffect(() => {
-    if (!dragging) return undefined;
-    const end = () => latestEnd.current();
-    window.addEventListener("pointerup", end);
-    window.addEventListener("pointercancel", end);
-    window.addEventListener("blur", end);
-    return () => {
-      window.removeEventListener("pointerup", end);
-      window.removeEventListener("pointercancel", end);
-      window.removeEventListener("blur", end);
-    };
-  }, [dragging]);
+  useEffect(() => bindDragRelease(window, () => latestEnd.current()), []);
 
   const previewSet = useMemo(
     () => (preview ? new Set(isoRange(preview.from, preview.to)) : null),
