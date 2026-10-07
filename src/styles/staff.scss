@@ -1,0 +1,124 @@
+.csc-auth:has(.csc-staff) .csc-auth-card {
+  max-width: 56rem;
+}
+
+.csc-staff {
+  h2 {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .csc-staff-search {
+    display: grid;
+    grid-template-columns: 1fr 12rem;
+    gap: 1rem;
+  }
+  .csc-staff-search label {
+    margin-top: 1rem;
+  }
+  select {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid #66758c;
+    border-radius: 0.5rem;
+    background: white;
+    font-size: 1rem;
+  }
+  .csc-staff-summary {
+    font-size: 0.9rem;
+    color: #4a5a72;
+  }
+  .csc-staff-members {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .csc-staff-member {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid #d7dfeb;
+  }
+  .csc-staff-member-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .csc-staff-member-info span {
+    font-size: 0.875rem;
+    color: #4a5a72;
+  }
+  .csc-staff-roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .csc-staff-roles legend,
+  .csc-staff-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  label.csc-staff-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    margin: 0;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .csc-staff-role input {
+    display: inline-block;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    accent-color: #003594;
+  }
+  .csc-staff-role:has(input:disabled) {
+    color: #66758c;
+    cursor: not-allowed;
+  }
+  .csc-staff-confirm,
+  .csc-staff-member > [role="alert"] {
+    flex-basis: 100%;
+    margin: 0;
+  }
+  .csc-staff-confirm {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: #edf1f8;
+  }
+  .csc-staff-confirm p {
+    margin: 0;
+  }
+  .csc-staff-confirm button,
+  nav button {
+    width: auto;
+  }
+  nav {
+    align-items: center;
+  }
+  .csc-staff-page {
+    margin-top: 1rem;
+  }
+  @media (max-width: 480px) {
+    .csc-staff-search {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+}

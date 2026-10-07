@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { hasStaffRole } from "../../lib/auth/roles.mjs";
 import { createAccountClient } from "../../lib/account/client.mjs";
+import MemberRoles from "./MemberRoles";
 
 export default function StaffDashboard({ identity, revalidate }) {
   const [access, setAccess] = useState("loading");
@@ -69,5 +70,14 @@ export default function StaffDashboard({ identity, revalidate }) {
         </button>
       </>
     );
-  return <h1>Staff Dashboard</h1>;
+  return (
+    <>
+      <h1>Staff Dashboard</h1>
+      <MemberRoles
+        identity={identity}
+        request={request}
+        revalidate={revalidate}
+      />
+    </>
+  );
 }
