@@ -73,7 +73,7 @@ function BrandPanel() {
       <h2 className="csc-login-pitch">
         One account for{" "}
         <span className="csc-login-underline">
-          everything
+          everything CSC.
           <svg
             viewBox="0 0 200 16"
             preserveAspectRatio="none"
@@ -85,8 +85,7 @@ function BrandPanel() {
               {...motionProps}
             />
           </svg>
-        </span>{" "}
-        CSC.
+        </span>
       </h2>
 
       <svg

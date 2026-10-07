@@ -127,11 +127,14 @@ $error: #b42318;
 .csc-login-underline {
   position: relative;
   display: inline-block;
+  // The underline is one absolutely positioned svg across the span, so the span
+  // must not break across lines or it would only cover the last fragment.
+  white-space: nowrap;
 
   svg {
     position: absolute;
     left: 0;
-    bottom: -12px;
+    bottom: -22px;
     width: 100%;
     height: 18px;
     overflow: visible;
