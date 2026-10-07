@@ -2,7 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
-import { formFromProfile, profileInput } from "../../lib/account/form.mjs";
+import {
+  formFromProfile,
+  profileInput,
+  HANDLES,
+} from "../../lib/account/form.mjs";
 import AccountFiles from "./AccountFiles";
 import "../../styles/account.scss";
 
@@ -100,8 +104,9 @@ export default function MyAccount({ identity }) {
             </strong>
             {!profile.complete && (
               <p>
-                Add your first and last name, graduation year, and at least one
-                major. You can finish later.
+                Add your first and last name, graduation year, at least one
+                major, and your GitHub, LeetCode and LinkedIn usernames. You can
+                finish later.
               </p>
             )}
           </div>
@@ -208,6 +213,27 @@ export default function MyAccount({ identity }) {
                 >
                   Add another major
                 </button>
+              </fieldset>
+              <fieldset className="csc-account-handles">
+                <legend>Profiles</legend>
+                {Object.entries(HANDLES).map(([field, spec]) => (
+                  <div className="csc-account-handle" key={field}>
+                    <label htmlFor={field}>{spec.label}</label>
+                    <div className="csc-account-handle-input">
+                      <span aria-hidden="true">{spec.base}</span>
+                      <input
+                        id={field}
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck="false"
+                        maxLength={100}
+                        placeholder={spec.placeholder}
+                        value={form[field]}
+                        onChange={(event) => change(field, event.target.value)}
+                      />
+                    </div>
+                  </div>
+                ))}
               </fieldset>
             </fieldset>
             {error && <p role="alert">{error}</p>}

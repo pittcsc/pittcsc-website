@@ -15,24 +15,29 @@ insert make provisioning safe to retry and run concurrently. Email comes from th
 current Auth identity and is read-only. The OTP/login workflow is unchanged.
 
 Partial saves are allowed. Completion requires first name, last name, graduation
-year, and one major. The incomplete-profile prompt does not gate dashboard access.
+year, one major, and all three of the GitHub, LeetCode and LinkedIn usernames.
+The incomplete-profile prompt does not gate dashboard access.
 
 | Field | Rule |
 | --- | --- |
 | First, last, preferred name | Trimmed text, up to 100 characters each; preferred name is optional for completion |
 | Graduation year | One integer from 1900 through 2100, or blank while incomplete |
 | Majors | Up to eight free-text entries of 120 characters each; duplicates ignoring case are rejected |
+| GitHub, LeetCode, LinkedIn | Bare usernames, never URLs; a pasted profile URL is reduced to its handle in the browser. All three are required for completion |
+| Avatar | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels |
 | Resume | One optional PDF, at most 10 MiB |
 
-Names, year, and majors save together with **Save profile**. The last successful
+Names, year, majors, and the three usernames save together with **Save profile**. The last successful
 save wins if multiple tabs edit the same profile. Failures preserve edits for
 retry. Routine token refresh preserves the editor; logout, account changes, and
 failed identity verification hide private state and cancel requests.
 
-The resume has separate save, replace, and remove actions. PDFs are checked for
-their header, end marker, and size, then downloaded as attachments with their
-original bytes. This validates file type; it does not scan for malware or repair
-malformed PDFs. Profile pictures are deferred beyond this PR.
+Files have separate save, replace, and remove actions. Avatars are decoded and
+re-encoded to strip metadata and trailing bytes; WebP is stored as PNG. The default
+avatar uses preferred/first name and last-name initials, or a generic placeholder
+for an empty profile. PDFs are checked for their header, end marker, and size,
+then downloaded as attachments with their original bytes. This validates file
+type; it does not scan for malware or repair malformed PDFs.
 
 ## Storage and authorization
 
@@ -59,21 +64,18 @@ file references. Ownership always comes from the verified identity. Responses us
 | `GET /auth/session` | Provision/check profile, return current verified Auth identity |
 | `GET /profile` | Own fields, completion, email, file flags, and update timestamp |
 | `PUT /profile` | Replace editable text/year/major fields; omitted or blank fields are cleared |
-| `GET /profile/resume` | Retrieve own file; missing files return 404 |
-| `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
-| `DELETE /profile/resume` | Remove own file; repeated removal succeeds |
+| `GET /profile/avatar`, `GET /profile/resume` | Retrieve own file; missing files return 404 |
+| `PUT /profile/avatar`, `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
+| `DELETE /profile/avatar`, `DELETE /profile/resume` | Remove own file; repeated removal succeeds |
 
-Role schema/assignment, staff access, discovery, secondary email, and profile
-pictures remain later work, including #160.
+Role schema/assignment, staff access, discovery, secondary email, and shared
+avatar access remain later work, including #160.
 
 ## Local verification and hosted handoff
 
 With Docker running, use `mise run db:start` to apply pending local migrations
 without resetting data. Restart local Supabase once when adopting the changed API
-setting. Existing env files remain intact. The unpublished profile migration now includes
-only resume storage. Checkouts that already applied its earlier draft may retain
-unused image columns/rows locally; the app neither reads nor exposes them. No
-database reset or data deletion is needed. With Go and Gatsby running:
+setting. Existing env files remain intact. With Go and Gatsby running:
 
 ```sh
 mise run check
@@ -94,7 +96,7 @@ Synthetic accounts/profiles/mail remain for inspection, and sessions are signed
 out. The SQL check verifies browser-role isolation.
 
 For browser review, sign in, save a partial profile, complete it with multiple
-majors, reload the nested URL, and upload/download/replace/remove a resume. Check narrow
+majors, reload the nested URL, and upload/replace/remove both files. Check narrow
 screens, retries, and logout while requests are pending.
 
 Hosted rollout is separate: review/apply the migration to the intended project,

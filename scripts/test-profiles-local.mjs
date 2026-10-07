@@ -141,7 +141,7 @@ async function main() {
     );
 
   stage = "unauthenticated requests";
-  for (const path of ["/profile", "/profile/resume"])
+  for (const path of ["/profile", "/profile/avatar", "/profile/resume"])
     check((await api(null, path)).status === 401, "Missing token accepted");
   stage = "synthetic Auth fixtures";
   const owner = await fixture("owner");
@@ -163,8 +163,7 @@ async function main() {
   check(count("profiles", owner.id) === 1, "Duplicate profile created");
   const initial = await (await api(owner, "/profile")).json();
   check(
-    !("hasAvatar" in initial) &&
-      initial.firstName === null &&
+    initial.firstName === null &&
       !initial.complete &&
       initial.majors.length === 0 &&
       initial.email === owner.email,
@@ -203,7 +202,7 @@ async function main() {
     { account_status: "suspended" },
     { email: other.email },
     { auth_user_id: other.id },
-    { resume_asset_id: other.id },
+    { avatar_asset_id: other.id },
     { graduationYear: 2028.5 },
     { majors: ["Math", "math"] },
   ]) {
@@ -269,17 +268,30 @@ async function main() {
     ).equals(replacementPDF),
     "Old resume remained after replacement",
   );
-  stage = "removed image routes and rejected-file preservation";
-  for (const method of ["GET", "PUT", "DELETE", "OPTIONS"]) {
-    check(
-      (await api(owner, "/profile/avatar", method)).status === 404,
-      "Removed image route remains available",
-    );
-  }
+  stage = "avatar uploads and rejected-file preservation";
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+    "base64",
+  );
+  check(
+    (await api(owner, "/profile/avatar", "PUT", png, "image/png")).status ===
+      204,
+    "Avatar upload failed",
+  );
+  const image = await api(owner, "/profile/avatar");
+  check(
+    image.status === 200 && image.headers.get("content-type") === "image/png",
+    "Avatar download failed",
+  );
+  check(
+    (await api(other, "/profile/avatar")).status === 404,
+    "Another member received the avatar",
+  );
   for (const [path, data, media, status] of [
-    ["resume", "<svg/>", "image/svg+xml", 415],
-    ["resume", "not a PDF", "image/png", 415],
+    ["avatar", "<svg/>", "image/svg+xml", 415],
+    ["avatar", "not an image", "image/png", 400],
     ["resume", "not a PDF", "application/pdf", 400],
+    ["avatar", Buffer.alloc(5 * 1024 * 1024 + 1), "image/png", 413],
     ["resume", Buffer.alloc(10 * 1024 * 1024 + 1), "application/pdf", 413],
   ])
     check(
@@ -288,9 +300,8 @@ async function main() {
       "Invalid file accepted",
     );
   check(
-    Buffer.from(
-      await (await api(owner, "/profile/resume")).arrayBuffer(),
-    ).equals(replacementPDF) && count("profile_assets", owner.id) === 1,
+    (await api(owner, "/profile/avatar")).status === 200 &&
+      count("profile_assets", owner.id) === 2,
     "Rejected upload damaged saved files",
   );
   stage = "current database account status";
@@ -303,7 +314,7 @@ async function main() {
       ["/profile", "GET"],
       ["/profile", "PUT"],
       ["/profile/resume", "GET"],
-      ["/profile/resume", "PUT"],
+      ["/profile/avatar", "PUT"],
       ["/profile/resume", "DELETE"],
     ]) {
       check(
@@ -318,7 +329,7 @@ async function main() {
     );
   }
   stage = "idempotent file removal";
-  for (const kind of ["resume"]) {
+  for (const kind of ["avatar", "resume"]) {
     for (let i = 0; i < 2; i++)
       check(
         (await api(owner, `/profile/${kind}`, "DELETE")).status === 204,
@@ -331,7 +342,9 @@ async function main() {
   }
   const removed = await (await api(owner, "/profile")).json();
   check(
-    !removed.hasResume && count("profile_assets", owner.id) === 0,
+    !removed.hasAvatar &&
+      !removed.hasResume &&
+      count("profile_assets", owner.id) === 0,
     "File references or bytes remained",
   );
   stage = "immediate logout rejection";

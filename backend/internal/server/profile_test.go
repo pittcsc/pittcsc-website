@@ -80,7 +80,7 @@ func TestProfileAuthorizationAndProvisioning(t *testing.T) {
 func TestProfileEditableFields(t *testing.T) {
 	for _, body := range []string{
 		`{"roles":["staff"]}`, `{"auth_user_id":"someone-else"}`, `{"id":"someone-else"}`,
-		`{"account_status":"active"}`, `{"email":"new@pitt.edu"}`, `{"resume_asset_id":"other-file"}`,
+		`{"account_status":"active"}`, `{"email":"new@pitt.edu"}`, `{"avatar_asset_id":"other-file"}`,
 		`{"graduationYear":2028.5}`, `{"graduationYear":"2028"}`, `{"majors":[""]}`,
 		`{"firstName":"` + strings.Repeat("x", 101) + `"}`, `null`, `{}`, // empty object is allowed below
 		`{} {}`, `{"firstName":`,
