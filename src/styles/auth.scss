@@ -29,6 +29,13 @@
     display: block;
     flex-shrink: 0;
   }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
   .csc-auth-logo img {
     display: block;
     width: 48px;

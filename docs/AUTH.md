@@ -42,9 +42,9 @@ The fixtures are synthetic hook payloads, not seeded member accounts.
 ## Go identity verification
 
 `GET /auth/session` accepts `Authorization: Bearer <access token>` and returns
-only the verified user's `id` and current login `email`, after provisioning and
-checking their application profile. Suspended accounts return 403. Missing/invalid/revoked
-sessions return 401; dependency outages return a retryable 503. All responses
+the verified user's `id`, current login `email`, and current database `roles`,
+after provisioning and checking their application profile. Suspended accounts
+return 403. Missing/invalid/revoked sessions return 401; dependency outages return a retryable 503. All responses
 use `Cache-Control: no-store`. CORS allows the configured frontend origin.
 
 `SUPABASE_AUTH_URL` is the exact expected issuer, defaulting locally to
@@ -65,9 +65,10 @@ deletion, and session expiry. These reads are not cached. Supabase alone mutates
 these managed records. Removing a session through Auth logout rejects its old
 JWT on subsequent API requests immediately, even before the JWT expires.
 
-This endpoint returns identity only, and also enforces current profile status.
-Profile endpoints enforce ownership and allowed fields. Future staff endpoints
-must additionally enforce the roles introduced in #160.
+This endpoint returns verified identity and current database roles, and also
+enforces current profile status. Profile endpoints enforce ownership and allowed
+fields. `/staff/access` requires current staff membership; future staff endpoints
+must reuse that server guard. See [STAFF.md](STAFF.md).
 
 ## Browser sessions
 
@@ -246,6 +247,6 @@ test project's database for production.
    [Auth rate limits](https://supabase.com/docs/guides/auth/rate-limits).
 
 Before exposing hosted profiles, follow the migration and Data API handoff in
-[PROFILES.md](PROFILES.md). Profile status and ownership are implemented; role
-enforcement remains required for future staff features in #160. Keep hosted
-credentials out of this repository and these instructions.
+[PROFILES.md](PROFILES.md). Roles and staff access also require the migration in
+[STAFF.md](STAFF.md); hosted migration and provisioning are separate operations.
+Keep hosted credentials out of this repository and these instructions.

@@ -249,3 +249,53 @@ test("signing in as a different account immediately hides the previous account",
   assert.equal(store.getSnapshot().status, "loading");
   store.stop();
 });
+
+test("explicit revalidation replaces revoked roles without unmounting account drafts", async () => {
+  const f = fixture();
+  let roles = ["member", "staff"];
+  const store = createAuthStore({
+    getClient: async () => ({ auth: f.auth }),
+    fetchIdentity: async () => ({ ...identity, roles }),
+  });
+  await store.start();
+  const states = [];
+  store.subscribe(() => states.push(store.getSnapshot()));
+  roles = ["member"];
+  await store.revalidate();
+  assert.deepEqual(store.getSnapshot().identity.roles, ["member"]);
+  assert.ok(states.every((state) => state.status === "authenticated"));
+  store.stop();
+});
+
+test("revalidation clears stale staff on failure and ignores late replies after logout", async () => {
+  const f = fixture();
+  let failure = false;
+  let release;
+  const store = createAuthStore({
+    getClient: async () => ({ auth: f.auth }),
+    fetchIdentity: async () => {
+      if (failure) throw Object.assign(new Error(), { status: 503 });
+      if (release === null)
+        return new Promise((resolve) => {
+          release = resolve;
+        });
+      return { ...identity, roles: ["staff"] };
+    },
+  });
+  await store.start();
+  failure = true;
+  await store.revalidate();
+  assert.equal(store.getSnapshot().identity, null);
+  assert.equal(store.getSnapshot().status, "error");
+  failure = false;
+  await store.retry();
+  release = null;
+  const pending = store.revalidate();
+  await tick();
+  await store.signOut();
+  release({ ...identity, roles: ["staff"] });
+  await pending;
+  assert.equal(store.getSnapshot().status, "signedOut");
+  assert.equal(store.getSnapshot().identity, null);
+  store.stop();
+});

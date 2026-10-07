@@ -31,6 +31,7 @@ export function useAuth() {
   return {
     ...state,
     retry: store.retry,
+    revalidate: store.revalidate,
     signOut: store.signOut,
     requestCode: store.requestCode,
     verifyCode: store.verifyCode,

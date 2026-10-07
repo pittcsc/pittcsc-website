@@ -9,8 +9,10 @@ CSC will manage its own accounts, member profiles, roles, events, and other club
 This document records implementation and the agreed direction. Local email OTP,
 Go identity/session verification, auth-aware navigation, and a minimal signed-in
 landing page are implemented in #158. Private profile editing and files are
-implemented in #159. Roles, the full dashboard, and other CRM features remain
-planned. See [AUTH.md](AUTH.md) and [PROFILES.md](PROFILES.md) for implemented behavior.
+implemented in #159. Additive roles, operator staff provisioning, and the protected
+staff placeholder implement the foundation of #160/#162. CRM management tools
+remain planned. See [AUTH.md](AUTH.md), [PROFILES.md](PROFILES.md), and
+[STAFF.md](STAFF.md) for implemented behavior.
 
 ## Technology and hosting
 
@@ -32,6 +34,8 @@ The public website remains accessible to everyone, including signed-in users. Si
 - Signed out: the public navbar shows **Sign in / Create account**.
 - Signed in: that button becomes **Dashboard**.
 - The dashboard has its own layout, navigation, account menu, and logout action.
+- Only its navbar displays **Staff**, and only for active users with the staff role.
+  The staff page is an empty placeholder with an API-verified access check.
 - A **Back to Website** link returns to the public site without signing out.
 - Logging out clears the local session and private UI state, then returns to `/`.
 
@@ -43,9 +47,10 @@ Initial route structure:
 | `/login` | Sign in or create a CSC account | Everyone |
 | `/dashboard` | Member home or staff overview | Signed-in CSC members and staff |
 | `/dashboard/account` | Own profile editor and files (implemented) | Signed-in account owner |
-| `/dashboard/events` | Upcoming published events | Members and staff |
-| `/dashboard/staff/events` | Create, edit, and publish events | Staff |
-| `/dashboard/staff/members` | Search and manage members | Staff |
+| `/dashboard/staff` | Staff placeholder (implemented) | Active staff |
+| `/dashboard/events` | Upcoming published events (planned) | Members and staff |
+| `/dashboard/staff/events` | Create, edit, and publish events (planned) | Staff |
+| `/dashboard/staff/members` | Search and manage members (planned) | Staff |
 
 Use Gatsby client-only routes for the dashboard and load its data at runtime from the Go API. Configure hosting so direct visits and refreshes on nested dashboard routes work. Private data must not be included in generated public pages or Gatsby build-time data.
 
@@ -63,20 +68,21 @@ browser session only. Hosted Supabase/SMTP setup is a separate launch task.
 
 First authenticated API use creates an empty CSC profile linked uniquely to the
 verified Auth user ID (`sub`). Repeated/concurrent requests do not duplicate it.
-The `/auth/session` endpoint provisions/checks the profile and returns identity
-only. Partial saves are supported; completion requires first and last name,
-graduation year, and one major, without gating dashboard access. Default `member`
-assignment and the multi-role model are deferred to #160; #159 introduces no roles.
+The `/auth/session` endpoint provisions/checks the profile and returns verified
+identity and current database roles. Partial saves are supported; completion
+requires first and last name, graduation year, and one major, without gating
+dashboard access. New profiles receive `member` atomically; existing profiles
+were backfilled by the roles migration.
 
 CSC manages its own application permissions:
 
-- Planned CSC roles are additive: `member`, `foundry`, `staff`, and `alumni`, stored authoritatively in Postgres with multiple assignments per user.
-- In #160, new users will default to `member`; users cannot self-assign elevated roles. Foundry/alumni alone do not confer staff permissions.
-- Staff have member access plus event and member management capabilities.
-- Provision the first CSC staff account during setup. Subsequent role changes require authorized staff action and an audit record.
+- CSC roles are additive: `member`, `foundry`, `staff`, and `alumni`, stored authoritatively in Postgres with multiple assignments per user.
+- New users default to `member`; users cannot self-assign elevated roles. Foundry/alumni alone do not confer staff permissions.
+- Staff have member access and a protected staff placeholder. Event and member management are future capabilities.
+- A trusted operator grants staff with the audited command in [STAFF.md](STAFF.md). Browser role administration and safeguards for future removal operations remain planned.
 - CSC account suspension is enforced through CSC profile status on API requests, including requests with an otherwise valid access token.
 
-Authentication credentials remain managed by Supabase Auth. Planned CSC role
+Authentication credentials remain managed by Supabase Auth. CSC role
 assignments are separate from Supabase's built-in database access roles and from
 user-editable Auth metadata.
 
@@ -87,7 +93,7 @@ The normal request flow is:
 1. React signs the user in through Supabase Auth.
 2. React sends the Supabase access token as a bearer token with requests to the Go API over HTTPS.
 3. Go verifies the token's signature, issuer, audience, and expiry using a JWT library. Configure asymmetric signing keys in Supabase and use the CSC project's published JWKS for verification, with caching and key rotation support.
-4. Go checks the current Auth session, user, and profile status in Postgres on every protected request, so logout or suspension invalidates access immediately. Future role-gated CRM requests must also check current assigned roles.
+4. Go checks the current Auth session, user, and profile status in Postgres on every protected request, so logout or suspension invalidates access immediately. The staff guard also requires the current database staff role; future staff routes must use it.
 5. Go authorizes the operation, reads or writes Postgres, and returns the permitted data.
 
 Client-side route guards control navigation and presentation. The Go API independently enforces authentication, roles, record access, and editable fields on every protected operation. A role supplied by the browser is never authoritative.
@@ -111,9 +117,10 @@ Manage the Postgres schema with versioned SQL migrations.
 | --- | --- |
 | `csc.profiles` | Implemented: internal ID, unique Auth user ID, profile fields, status, file references, and timestamps |
 | `csc.profile_assets` | Implemented: private file bytes, ownership, type, and update time; unique per user/kind |
-| `roles`, `user_roles` | Additive role assignments, unique per user/role pair |
+| `csc.roles`, `csc.user_roles` | Implemented: additive role assignments, unique per user/role pair |
+| `csc.role_audit` | Implemented: transactional operator grant audit with target, role, action, operator/database actor, and time |
 | `events` | Title, description, location, start/end times, timezone, draft/published/cancelled status, creator, and timestamps |
-| `audit_log` | Actor, action, affected record, timestamp, and relevant change details for staff operations |
+| `audit_log` | Planned: general staff-operation audit history |
 
 The application-owned `csc.profiles` table references Supabase's managed `auth.users` identities. Credentials remain in Supabase Auth. Private file access goes through Go; bounded files are stored transactionally in Postgres for this initial release. See [PROFILES.md](PROFILES.md) for limits and ownership enforcement.
 

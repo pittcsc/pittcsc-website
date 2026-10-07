@@ -1,5 +1,19 @@
 # Staff foundation
 
+`/dashboard/staff` is an empty placeholder headed **Staff Dashboard**. The
+dashboard navbar shows **Staff** only to active users with the staff role; the
+original public website navbar is unchanged. Signed-out direct visits go through
+login and return to the staff route. Signed-in non-staff users see **Access
+restricted** with a link to My Account.
+
+Dashboard navigation, window focus, and returning to a visible tab recheck roles
+and account status. The staff page separately calls the protected access endpoint,
+hides its placeholder during checks, and offers retry on failure. Revocation
+removes the link and restricts the page; suspension clears authenticated UI.
+This is request-driven revalidation, not a live push channel. An idle foreground
+tab can retain its current UI until the next check; every API request still uses
+current database authorization. Account drafts survive successful rechecks.
+
 Application roles are additive: `member`, `foundry`, `staff`, and `alumni`.
 The private `csc.roles` / `csc.user_roles` tables own assignments; Auth metadata
 and browser input cannot assign roles. A migration gives existing profiles
