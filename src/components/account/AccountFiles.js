@@ -1,7 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { initials } from "../../lib/account/form.mjs";
 
-export default function AccountFiles({ profile, userID, request, onChanged }) {
+// `only` renders a single section, so the guided flow can ask for the resume
+// and the optional picture as separate questions. Omitted, both are shown.
+export default function AccountFiles({
+  profile,
+  userID,
+  request,
+  onChanged,
+  only,
+}) {
   const [avatarURL, setAvatarURL] = useState("");
   const [previewError, setPreviewError] = useState("");
   const [previewAttempt, setPreviewAttempt] = useState(0);
@@ -31,50 +39,63 @@ export default function AccountFiles({ profile, userID, request, onChanged }) {
     };
   }, [profile.hasAvatar, profile.updatedAt, userID, request, previewAttempt]);
 
+  const showAvatar = only !== "resume";
+  const showResume = only !== "avatar";
+
   return (
     <section className="csc-account-files" aria-label="Profile files">
-      <h2>Profile picture</h2>
-      <div className="csc-account-avatar">
-        {avatarURL ? (
-          <img src={avatarURL} alt="Your profile avatar" />
-        ) : (
-          <span aria-label="Default profile avatar">{initials(profile)}</span>
-        )}
-      </div>
-      {previewError && (
+      {showAvatar && (
         <>
-          <p role="alert">{previewError}</p>
-          <button
-            className="csc-auth-secondary"
-            onClick={() => setPreviewAttempt((value) => value + 1)}
-          >
-            Retry picture
-          </button>
+          <h2>Profile picture</h2>
+          <div className="csc-account-avatar">
+            {avatarURL ? (
+              <img src={avatarURL} alt="Your profile avatar" />
+            ) : (
+              <span aria-label="Default profile avatar">
+                {initials(profile)}
+              </span>
+            )}
+          </div>
+          {previewError && (
+            <>
+              <p role="alert">{previewError}</p>
+              <button
+                className="csc-auth-secondary"
+                onClick={() => setPreviewAttempt((value) => value + 1)}
+              >
+                Retry picture
+              </button>
+            </>
+          )}
+          <FileEditor
+            kind="avatar"
+            label="Avatar"
+            exists={profile.hasAvatar}
+            userID={userID}
+            request={request}
+            onChanged={onChanged}
+          />
         </>
       )}
-      <FileEditor
-        kind="avatar"
-        label="Avatar"
-        exists={profile.hasAvatar}
-        userID={userID}
-        request={request}
-        onChanged={onChanged}
-      />
-      <h2>Resume</h2>
-      <p>
-        {profile.hasResume
-          ? "Your resume is saved."
-          : "No resume uploaded yet."}{" "}
-        Visible only to you.
-      </p>
-      <FileEditor
-        kind="resume"
-        label="Resume PDF"
-        exists={profile.hasResume}
-        userID={userID}
-        request={request}
-        onChanged={onChanged}
-      />
+      {showResume && (
+        <>
+          <h2>Resume</h2>
+          <p>
+            {profile.hasResume
+              ? "Your resume is saved."
+              : "No resume uploaded yet."}{" "}
+            Visible only to you.
+          </p>
+          <FileEditor
+            kind="resume"
+            label="Resume PDF"
+            exists={profile.hasResume}
+            userID={userID}
+            request={request}
+            onChanged={onChanged}
+          />
+        </>
+      )}
     </section>
   );
 }

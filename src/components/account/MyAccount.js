@@ -131,6 +131,7 @@ function HandleFields({ form, change }) {
         <span aria-hidden="true">{spec.base}</span>
         <input
           id={field}
+          className="csc-field-bare"
           autoCapitalize="none"
           autoCorrect="off"
           spellCheck="false"
@@ -156,7 +157,13 @@ const STEPS = [
     hint: "Your usernames, not the full links — pasting a profile URL works too.",
     Fields: HandleFields,
   },
-  { id: "files", title: "Add a photo and resume", optional: true },
+  { id: "resume", title: "Add your resume", files: "resume" },
+  {
+    id: "photo",
+    title: "Add a photo",
+    files: "avatar",
+    optional: true,
+  },
 ];
 
 // Each Next saves, so someone who leaves mid-flow should come back to the
@@ -170,6 +177,7 @@ function firstUnanswered(profile) {
     profile.githubUsername &&
       profile.leetcodeUsername &&
       profile.linkedinUsername,
+    profile.hasResume,
   ];
   const index = answered.findIndex((value) => !value);
   return index === -1 ? STEPS.length - 1 : index;
@@ -264,8 +272,8 @@ export default function MyAccount({ identity }) {
     setError("");
     setNotice("");
     try {
-      // The uploads step has nothing of its own to write.
-      if (!STEPS[step].optional && !(await persist())) return;
+      // The upload steps write through their own endpoints, not this form.
+      if (!STEPS[step].files && !(await persist())) return;
       if (lifetime.current.signal.aborted) return;
       if (step < STEPS.length - 1) {
         setStep(step + 1);
@@ -283,20 +291,22 @@ export default function MyAccount({ identity }) {
     setNotice("");
   };
 
-  const files = profile && (
-    <AccountFiles
-      profile={profile}
-      userID={identity.id}
-      request={request}
-      onChanged={async (signal) => {
-        const value = await request("/profile", {
-          userID: identity.id,
-          signal,
-        });
-        if (!signal.aborted) setProfile(value);
-      }}
-    />
-  );
+  const renderFiles = (only) =>
+    profile && (
+      <AccountFiles
+        profile={profile}
+        userID={identity.id}
+        request={request}
+        only={only}
+        onChanged={async (signal) => {
+          const value = await request("/profile", {
+            userID: identity.id,
+            signal,
+          });
+          if (!signal.aborted) setProfile(value);
+        }}
+      />
+    );
 
   function renderGuided() {
     const current = STEPS[step];
@@ -323,7 +333,7 @@ export default function MyAccount({ identity }) {
             {current.hint && <p className="csc-account-hint">{current.hint}</p>}
             {current.Fields && <current.Fields form={form} change={change} />}
           </fieldset>
-          {current.optional && files}
+          {current.files && renderFiles(current.files)}
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}
           <div className="csc-account-nav">
@@ -373,7 +383,7 @@ export default function MyAccount({ identity }) {
             {saving ? "Saving…" : "Save profile"}
           </button>
         </form>
-        {files}
+        {renderFiles()}
       </>
     );
   }
@@ -403,8 +413,8 @@ export default function MyAccount({ identity }) {
             {!profile.complete && !guided && (
               <p>
                 Add your first and last name, graduation year, at least one
-                major, and your GitHub, LeetCode and LinkedIn usernames. You can
-                finish later.
+                major, your GitHub, LeetCode and LinkedIn usernames, and your
+                resume. A profile picture is optional. You can finish later.
               </p>
             )}
           </div>

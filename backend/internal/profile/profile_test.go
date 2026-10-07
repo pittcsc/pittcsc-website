@@ -23,13 +23,22 @@ func TestPartialProfilesAndCompletion(t *testing.T) {
 		FirstName: ptr("Test"), LastName: ptr("Member"),
 		GraduationYear: ptr(2028), Majors: []string{"Computer Science"},
 		GitHubUsername: ptr("octocat"), LeetCodeUsername: ptr("octocat"),
-		LinkedInUsername: ptr("test-member"),
+		LinkedInUsername: ptr("test-member"), HasResume: true,
 	}
 	if !complete(full) {
-		t.Fatal("complete profile must not require a preferred name or resume")
+		t.Fatal("complete profile must not require a preferred name or a picture")
 	}
 
-	// All three handles are required, so dropping any one is incomplete.
+	// A profile picture is optional and must not affect completion.
+	withAvatar := full
+	withAvatar.HasAvatar = true
+	withoutAvatar := full
+	withoutAvatar.HasAvatar = false
+	if !complete(withAvatar) || !complete(withoutAvatar) {
+		t.Fatal("a profile picture must not change completion")
+	}
+
+	// Every required field, dropped one at a time.
 	for _, drop := range []struct {
 		name  string
 		apply func(*Record)
@@ -37,11 +46,12 @@ func TestPartialProfilesAndCompletion(t *testing.T) {
 		{"github", func(r *Record) { r.GitHubUsername = nil }},
 		{"leetcode", func(r *Record) { r.LeetCodeUsername = nil }},
 		{"linkedin", func(r *Record) { r.LinkedInUsername = nil }},
+		{"resume", func(r *Record) { r.HasResume = false }},
 	} {
 		record := full
 		drop.apply(&record)
 		if complete(record) {
-			t.Fatalf("profile without a %s handle must not be complete", drop.name)
+			t.Fatalf("profile without a %s must not be complete", drop.name)
 		}
 	}
 }

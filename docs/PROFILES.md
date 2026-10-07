@@ -15,7 +15,8 @@ insert make provisioning safe to retry and run concurrently. Email comes from th
 current Auth identity and is read-only. The OTP/login workflow is unchanged.
 
 Partial saves are allowed. Completion requires first name, last name, graduation
-year, one major, and all three of the GitHub, LeetCode and LinkedIn usernames.
+year, one major, all three of the GitHub, LeetCode and LinkedIn usernames,
+and a resume. A profile picture is optional.
 The incomplete-profile prompt does not gate dashboard access.
 
 | Field | Rule |
@@ -24,8 +25,8 @@ The incomplete-profile prompt does not gate dashboard access.
 | Graduation year | One integer from 1900 through 2100, or blank while incomplete |
 | Majors | Up to eight free-text entries of 120 characters each; duplicates ignoring case are rejected |
 | GitHub, LeetCode, LinkedIn | Bare usernames, never URLs; a pasted profile URL is reduced to its handle in the browser. All three are required for completion |
-| Avatar | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels |
-| Resume | One optional PDF, at most 10 MiB |
+| Profile picture | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels; never affects completion |
+| Resume | One PDF, at most 10 MiB; required for completion |
 
 An incomplete profile is filled in one question at a time, and each **Next**
 saves, so leaving mid-flow keeps what was answered and returns to the first
