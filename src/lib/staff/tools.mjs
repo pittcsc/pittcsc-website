@@ -1,6 +1,7 @@
 // Staff tool registry, in dashboard order. To add a tool: add an entry here,
-// map its slug to a component in components/staff/tools.js, and protect its API
-// routes with the Go staff guard. This list only controls presentation.
+// map its slug to a component and icon in components/staff/tools.js, and
+// protect its API routes with the Go staff guard. This list only controls
+// presentation.
 export const STAFF_BASE = "/dashboard/staff";
 
 export const staffTools = [
@@ -9,7 +10,6 @@ export const staffTools = [
     title: "User Management",
     description:
       "Search members by name or email and grant or revoke their roles.",
-    action: "Open user management",
   },
 ];
 

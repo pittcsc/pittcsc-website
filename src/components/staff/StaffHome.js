@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "gatsby";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { staffToolPath, staffTools } from "../../lib/staff/tools.mjs";
 import { toolViews } from "./tools";
 
@@ -14,25 +15,18 @@ export default function StaffHome({ identity }) {
       <ul className="csc-staff-tools">
         {staffTools
           .filter((tool) => toolViews[tool.slug])
-          .map((tool) => {
-            const { Icon } = toolViews[tool.slug];
-            return (
-              <li key={tool.slug} className="csc-staff-tool">
-                <span className="csc-staff-tool-icon">
-                  <Icon />
-                </span>
-                <h2 id={`csc-staff-tool-${tool.slug}`}>{tool.title}</h2>
-                <p>{tool.description}</p>
-                <Link
-                  to={staffToolPath(tool.slug)}
-                  className="csc-staff-tool-open"
-                  aria-describedby={`csc-staff-tool-${tool.slug}`}
-                >
-                  {tool.action}
-                </Link>
-              </li>
-            );
-          })}
+          .map((tool) => (
+            <li key={tool.slug} className="csc-staff-tool">
+              <span className="csc-staff-tool-icon">
+                <FontAwesomeIcon icon={toolViews[tool.slug].icon} />
+              </span>
+              <h2>
+                {/* Stretched over the whole card so the card is the target. */}
+                <Link to={staffToolPath(tool.slug)}>{tool.title}</Link>
+              </h2>
+              <p>{tool.description}</p>
+            </li>
+          ))}
       </ul>
     </section>
   );

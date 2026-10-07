@@ -37,6 +37,7 @@
     list-style: none;
   }
   .csc-staff-tool {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -64,6 +65,7 @@
     border-radius: 0.6rem;
     background: #edf1f8;
     color: #003594;
+    font-size: 1.25rem;
   }
   h2 {
     margin: 1.25rem 0 0;
@@ -72,20 +74,28 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
+  h2 a {
+    color: inherit;
+    text-decoration: none;
+
+    // Stretch the link over the card; the card shows its focus ring instead.
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+    &:focus-visible {
+      outline: none;
+    }
+  }
+  .csc-staff-tool:has(a:focus-visible) {
+    outline: 3px solid #996b00;
+    outline-offset: 3px;
+  }
   .csc-staff-tool p {
-    flex: 1;
-    margin: 0.5rem 0 1.25rem;
+    margin: 0.5rem 0 0;
     color: #4a5a72;
     font-size: 0.95rem;
-  }
-  .csc-staff-tool-open {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    background: #003594;
-    color: white;
-    font-weight: 600;
   }
 }

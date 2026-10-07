@@ -32,12 +32,13 @@ Foundry and alumni confer no additional privileges.
 
 ## Add a staff tool
 
-1. Add an entry (slug, title, description, button text) to the ordered registry
+1. Add an entry (slug, title, description) to the ordered registry
    in `src/lib/staff/tools.mjs`. Its page is `/dashboard/staff/<slug>`.
 2. Put the tool's component in `src/components/staff/<slug>/`, its helpers in
    `src/lib/staff/<slug>.mjs` with tests in `tests/staff/`, and its styles in
    `src/styles/staff/<slug>.scss`.
-3. Map the slug to the component and an icon in `src/components/staff/tools.js`.
+3. Map the slug to the component and a Font Awesome icon in
+   `src/components/staff/tools.js`.
 4. Register its API routes in Go behind `withStaff`, plus any record-specific
    checks. The registry and staff access check only control presentation.
 

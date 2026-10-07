@@ -20,7 +20,7 @@ test("tool slugs are unique, URL-safe, and fully described", () => {
   assert.equal(new Set(slugs).size, slugs.length);
   for (const tool of staffTools) {
     assert.match(tool.slug, /^[a-z]+(?:-[a-z]+)*$/);
-    for (const field of ["title", "description", "action"])
+    for (const field of ["title", "description"])
       assert.ok(tool[field], `${tool.slug} is missing ${field}`);
   }
 });
