@@ -81,7 +81,7 @@ export default function StaffDashboard({ identity, revalidate, pathname }) {
     return (
       <Tool identity={identity} request={request} revalidate={revalidate} />
     );
-  if (route.view === "home") return <StaffHome identity={identity} />;
+  if (route.view === "home") return <StaffHome />;
   return (
     <>
       <h1>Page not found</h1>

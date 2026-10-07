@@ -4,14 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { staffToolPath, staffTools } from "../../lib/staff/tools.mjs";
 import { toolViews } from "./tools";
 
-export default function StaffHome({ identity }) {
+export default function StaffHome() {
   return (
     <section className="csc-staff csc-staff-home">
       <p className="csc-staff-eyebrow">Staff tools</p>
       <h1>Staff Dashboard</h1>
-      <p className="csc-staff-intro">
-        Signed in as <strong>{identity.email}</strong>
-      </p>
       <ul className="csc-staff-tools">
         {staffTools
           .filter((tool) => toolViews[tool.slug])
