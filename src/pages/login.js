@@ -1,16 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, navigate } from "gatsby";
+import { motion, useReducedMotion } from "framer-motion";
 import SessionStatus from "../components/auth/SessionStatus";
 import { useAuth } from "../components/auth/AuthProvider";
 import { RESEND_SECONDS, safeReturnTo } from "../lib/auth/policy.mjs";
 import logo from "../images/hero_image.png";
 import "../styles/login.scss";
-
-const PERKS = [
-  "RSVP for events and check in at meetings",
-  "Follow Dev Lab, Mock Interviews and SteelHacks",
-  "One account across everything CSC",
-];
 
 const CODE_LENGTH = 6;
 
@@ -50,73 +45,70 @@ function IconAlert(props) {
   );
 }
 
+// Same draw-on animation the index hero uses for its swooshes: pathLength 0 -> 1.
+const drawLine = {
+  hidden: { pathLength: 0, opacity: 0 },
+  show: (i = 0) => ({
+    pathLength: 1,
+    opacity: 1,
+    transition: { duration: 0.8, delay: i * 0.15 },
+  }),
+};
+
 function BrandPanel() {
+  const reduceMotion = useReducedMotion();
+  const motionProps = reduceMotion
+    ? {}
+    : { variants: drawLine, initial: "hidden", animate: "show" };
+
   return (
     <aside className="csc-login-brand">
       <Link className="csc-login-wordmark" to="/">
-        <img src={logo} alt="" width={64} height={49} />
+        <span className="csc-login-mark">
+          <img src={logo} alt="" width={64} height={49} />
+        </span>
         Pitt CSC
       </Link>
 
-      <div className="csc-login-pitch">
-        <h2>
-          One account for{" "}
-          <span className="csc-login-underline">
-            everything
-            <svg
-              viewBox="0 0 200 16"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M3 11 C 60 3, 140 2, 197 9"
-                stroke="#f5b82e"
-                strokeWidth="5"
-                fill="none"
-                strokeLinecap="round"
-              />
-            </svg>
-          </span>{" "}
-          CSC.
-        </h2>
-        <p>
-          Sign in with your Pitt email to RSVP for events, check in at meetings,
-          and follow initiatives like Dev Lab, Mock Interviews and SteelHacks.
-        </p>
-        <ul className="csc-login-perks">
-          {PERKS.map((perk) => (
-            <li key={perk}>
-              <IconCheck />
-              {perk}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <h2 className="csc-login-pitch">
+        One account for{" "}
+        <span className="csc-login-underline">
+          everything
+          <svg
+            viewBox="0 0 200 16"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <motion.path
+              d="M3 11 C 60 3, 140 2, 197 9"
+              custom={2}
+              {...motionProps}
+            />
+          </svg>
+        </span>{" "}
+        CSC.
+      </h2>
 
-      <div className="csc-login-codewindow" aria-hidden="true">
-        <div className="csc-login-codewindow-bar">
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className="csc-login-codewindow-body">
-          <div>
-            <i style={{ width: 60 }} />
-            <i style={{ width: 90 }} />
-          </div>
-          <div className="indent">
-            <i style={{ width: 110 }} />
-            <i className="accent" style={{ width: 40 }} />
-          </div>
-          <div className="indent">
-            <i style={{ width: 70 }} />
-            <i style={{ width: 70 }} />
-          </div>
-          <div>
-            <i style={{ width: 30 }} />
-          </div>
-        </div>
-      </div>
+      <svg
+        className="csc-login-swoosh"
+        viewBox="0 0 720 220"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <motion.path
+          d="M-20 60 C 160 0, 360 40, 740 200"
+          custom={0}
+          {...motionProps}
+        />
+        <motion.path
+          d="M-20 104 C 160 44, 340 90, 700 230"
+          custom={1}
+          {...motionProps}
+        />
+      </svg>
+
+      {/* Balances space-between so the headline sits off the bottom edge. */}
+      <div className="csc-login-spacer" aria-hidden="true" />
     </aside>
   );
 }
