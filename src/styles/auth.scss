@@ -32,9 +32,28 @@
 
   nav {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: 0.5rem;
+  }
+
+  .csc-auth-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    color: inherit;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover,
+    &[aria-current="page"] {
+      text-decoration: underline;
+      text-decoration-color: #ffb81c;
+      text-decoration-thickness: 3px;
+      text-underline-offset: 0.4rem;
+    }
   }
   .csc-auth-logo img {
     display: block;

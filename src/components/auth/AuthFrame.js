@@ -17,18 +17,18 @@ export default function AuthFrame({ children, dashboard = false }) {
             <img src={logo} alt="CSC at Pitt Logo" width={48} height={48} />
           </Link>
           <nav aria-label="Account navigation">
-            <Link className="csc-auth-account" to="/dashboard/account">
-              My Account
-            </Link>
             {dashboard && hasStaffRole(identity) && (
               <Link
-                className="csc-auth-account"
+                className="csc-auth-nav-link"
                 to="/dashboard/staff"
                 activeClassName="is-current"
               >
                 Staff
               </Link>
             )}
+            <Link className="csc-auth-account" to="/dashboard/account">
+              My Account
+            </Link>
           </nav>
         </header>
       )}
