@@ -10,8 +10,8 @@ This document records implementation and the agreed direction. Local email OTP,
 Go identity/session verification, auth-aware navigation, and a minimal signed-in
 landing page are implemented in #158. Private profile editing and files are
 implemented in #159. Additive roles, operator staff provisioning, and the protected
-staff placeholder implement the foundation of #160/#162. CRM management tools
-remain planned. See [AUTH.md](AUTH.md), [PROFILES.md](PROFILES.md), and
+staff dashboard implement the foundation of #160/#162; staff can search members and
+change their roles. Other CRM management tools remain planned. See [AUTH.md](AUTH.md), [PROFILES.md](PROFILES.md), and
 [STAFF.md](STAFF.md) for implemented behavior.
 
 ## Technology and hosting
@@ -35,7 +35,7 @@ The public website remains accessible to everyone, including signed-in users. Si
 - Signed in: that button becomes **Dashboard**.
 - The dashboard has its own layout, navigation, account menu, and logout action.
 - Only its navbar displays **Staff**, and only for active users with the staff role.
-  The staff page is an empty placeholder with an API-verified access check.
+  The staff page has an API-verified access check, member search, and role editing.
 - A **Back to Website** link returns to the public site without signing out.
 - Logging out clears the local session and private UI state, then returns to `/`.
 
@@ -47,10 +47,10 @@ Initial route structure:
 | `/login` | Sign in or create a CSC account | Everyone |
 | `/dashboard` | Member home or staff overview | Signed-in CSC members and staff |
 | `/dashboard/account` | Own profile editor and files (implemented) | Signed-in account owner |
-| `/dashboard/staff` | Staff placeholder (implemented) | Active staff |
+| `/dashboard/staff` | Member search and role editing (implemented) | Active staff |
 | `/dashboard/events` | Upcoming published events (planned) | Members and staff |
 | `/dashboard/staff/events` | Create, edit, and publish events (planned) | Staff |
-| `/dashboard/staff/members` | Search and manage members (planned) | Staff |
+| `/dashboard/staff/members` | Member details, status management (planned) | Staff |
 
 Use Gatsby client-only routes for the dashboard and load its data at runtime from the Go API. Configure hosting so direct visits and refreshes on nested dashboard routes work. Private data must not be included in generated public pages or Gatsby build-time data.
 
@@ -78,8 +78,8 @@ CSC manages its own application permissions:
 
 - CSC roles are additive: `member`, `foundry`, `staff`, and `alumni`, stored authoritatively in Postgres with multiple assignments per user.
 - New users default to `member`; users cannot self-assign elevated roles. Foundry/alumni alone do not confer staff permissions.
-- Staff have member access and a protected staff placeholder. Event and member management are future capabilities.
-- A trusted operator grants staff with the audited command in [STAFF.md](STAFF.md). Browser role administration and safeguards for future removal operations remain planned.
+- Staff have member access and can search active members and grant or revoke `staff`, `foundry`, and `alumni`. `member` is permanent. Event management and account status tools are future capabilities.
+- A trusted operator bootstraps the first staff account with the audited command in [STAFF.md](STAFF.md); dashboard changes are audited with the authenticated staff actor.
 - CSC account suspension is enforced through CSC profile status on API requests, including requests with an otherwise valid access token.
 
 Authentication credentials remain managed by Supabase Auth. CSC role
@@ -117,8 +117,8 @@ Manage the Postgres schema with versioned SQL migrations.
 | --- | --- |
 | `csc.profiles` | Implemented: internal ID, unique Auth user ID, profile fields, status, file references, and timestamps |
 | `csc.profile_assets` | Implemented: private file bytes, ownership, type, and update time; unique per user/kind |
-| `csc.roles`, `csc.user_roles` | Implemented: additive role assignments, unique per user/role pair |
-| `csc.role_audit` | Implemented: transactional operator grant audit with target, role, action, operator/database actor, and time |
+| `csc.roles`, `csc.user_roles` | Implemented: role catalog with display labels; additive assignments, unique per user/role pair |
+| `csc.role_audit` | Implemented: transactional grant/revoke audit with target, role, action, staff actor or operator label, database actor, and time |
 | `events` | Title, description, location, start/end times, timezone, draft/published/cancelled status, creator, and timestamps |
 | `audit_log` | Planned: general staff-operation audit history |
 

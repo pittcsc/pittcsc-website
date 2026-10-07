@@ -217,6 +217,8 @@ func (s Store) Change(ctx context.Context, actorID, targetID, role string, grant
 		if targetID == actorID {
 			return Member{}, ErrSelfRevoke
 		}
+		// Backstop: the actor rechecked above is another holder, so this only
+		// fires if the policy later lets non-holders manage protected roles.
 		var holders int
 		err = tx.QueryRow(ctx, `
 			select count(*) from csc.user_roles r

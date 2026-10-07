@@ -230,6 +230,7 @@ async function main() {
     !(await (await api(user, "/auth/session")).json()).roles.includes("member"),
     "Removed role restored on read",
   );
+  await roleManagement({ fixture, api, grant });
   stage = "logout";
   check(
     !(await user.client.auth.signOut({ scope: "local" })).error,
@@ -240,7 +241,249 @@ async function main() {
     "Signed-out token accepted",
   );
   console.log(
-    "PASS: default roles, concurrent provisioning/grants, additive roles, operator validation, audit idempotency, self-escalation denial, suspension, revocation, and logout",
+    "PASS: default roles, concurrent provisioning/grants, additive roles, operator validation, audit idempotency, self-escalation denial, suspension, revocation, dashboard role management, and logout",
+  );
+}
+
+// Dashboard role management through the Go API with synthetic accounts only.
+async function roleManagement({ fixture, api, grant }) {
+  const json = async (response, status, message) => {
+    check(response.status === status, `${message} (${response.status})`);
+    return status === 204 ? null : response.json();
+  };
+  const audits = (target, role, action, actor) =>
+    sql(
+      `select count(*) from csc.role_audit where target_user_id = '${target}' and role = '${role}' and action = '${action}' and actor_user_id = '${actor}' and operator is null`,
+    );
+  const rolePath = (target, role) => `/staff/users/${target.id}/roles/${role}`;
+  stage = "role management fixtures";
+  const [a, b, c] = await Promise.all(
+    ["manager-a", "manager-b", "target"].map(fixture),
+  );
+  for (const account of [a, b, c])
+    await json(await api(account, "/auth/session"), 200, "Session failed");
+  await grant(a.email);
+  await grant(b.email);
+  const marker = c.email.split("@")[0].slice(-12);
+  await json(
+    await api(
+      c,
+      "/profile",
+      "PUT",
+      JSON.stringify({ firstName: "Ada", lastName: `Fixture${marker}` }),
+    ),
+    200,
+    "Fixture profile not saved",
+  );
+
+  stage = "role management denies non-staff";
+  for (const [method, path] of [
+    ["GET", "/staff/roles"],
+    ["GET", "/staff/users"],
+    ["PUT", rolePath(c, "staff")],
+    ["DELETE", rolePath(a, "staff")],
+  ]) {
+    check(
+      (await api(null, path, method)).status === 401,
+      "Anonymous role access",
+    );
+    check((await api(c, path, method)).status === 403, "Non-staff role access");
+  }
+  check(
+    sql(
+      `select count(*) from csc.user_roles where auth_user_id = '${c.id}' and role = 'staff'`,
+    ) === "0",
+    "Self-escalation changed roles",
+  );
+
+  stage = "role catalog";
+  const { roles } = await json(
+    await api(a, "/staff/roles"),
+    200,
+    "Catalog failed",
+  );
+  const byName = Object.fromEntries(roles.map((role) => [role.name, role]));
+  check(
+    !byName.member.editable &&
+      byName.staff.editable &&
+      byName.staff.confirm &&
+      byName.foundry.editable &&
+      !byName.foundry.confirm &&
+      byName.alumni.editable &&
+      roles.every((role) => role.label),
+    "Unexpected catalog policy",
+  );
+
+  stage = "member search";
+  const search = async (query) =>
+    (await json(await api(a, `/staff/users?${query}`), 200, "Search failed"))
+      .users;
+  const byEmail = await search(
+    `q=${encodeURIComponent(c.email.toUpperCase())}`,
+  );
+  check(
+    byEmail.length === 1 &&
+      byEmail[0].id === c.id &&
+      byEmail[0].email === c.email,
+    "Email search failed",
+  );
+  const byName2 = await search(
+    `q=${encodeURIComponent(`ada fixture${marker}`)}`,
+  );
+  check(
+    byName2.length === 1 && byName2[0].firstName === "Ada",
+    "Full-name search failed",
+  );
+  const staffOnly = await search(
+    `q=${encodeURIComponent(a.email.split("@")[0].slice(-36))}&role=staff`,
+  );
+  check(
+    staffOnly.length === 2 &&
+      [a.id, b.id].every((id) => staffOnly.some((m) => m.id === id)),
+    "Role filter failed",
+  );
+  check(
+    (await search(`q=${encodeURIComponent(`%${marker}`)}`)).length === 0,
+    "LIKE wildcards were not escaped",
+  );
+  const firstPage = await json(
+    await api(a, "/staff/users"),
+    200,
+    "Browse failed",
+  );
+  check(
+    firstPage.users.length <= 25 && firstPage.pageSize === 25,
+    "Page size not enforced",
+  );
+  for (const query of ["role=nonexistent", "page=0", "role=Staff"])
+    check(
+      (await api(a, `/staff/users?${query}`)).status === 400,
+      "Invalid search accepted",
+    );
+
+  stage = "concurrent idempotent dashboard grants";
+  const grants = await Promise.all(
+    Array.from({ length: 6 }, () => api(a, rolePath(c, "foundry"), "PUT")),
+  );
+  check(
+    grants.every((r) => r.status === 200),
+    "Concurrent grant failed",
+  );
+  check(
+    (await grants[0].json()).roles.join() === "foundry,member",
+    "Grant response stale",
+  );
+  check(audits(c.id, "foundry", "grant", a.id) === "1", "Grant audit wrong");
+  await json(
+    await api(a, rolePath(c, "alumni"), "DELETE"),
+    200,
+    "No-op revoke failed",
+  );
+  check(
+    sql(
+      `select count(*) from csc.role_audit where target_user_id = '${c.id}' and role = 'alumni'`,
+    ) === "0",
+    "No-op change audited",
+  );
+  await json(
+    await api(b, rolePath(c, "foundry"), "DELETE"),
+    200,
+    "Revoke failed",
+  );
+  check(audits(c.id, "foundry", "revoke", b.id) === "1", "Revoke audit wrong");
+
+  stage = "read-only, unknown, and invalid targets";
+  await json(
+    await api(a, rolePath(c, "member"), "DELETE"),
+    403,
+    "Member removable",
+  );
+  await json(
+    await api(a, rolePath(c, "admin"), "PUT"),
+    404,
+    "Unknown role accepted",
+  );
+  await json(
+    await api(a, "/staff/users/not-a-uuid/roles/foundry", "PUT"),
+    404,
+    "Invalid target accepted",
+  );
+  check(
+    sql(
+      `select count(*) from csc.user_roles where auth_user_id = '${c.id}'`,
+    ) === "1",
+    "Rejected change modified roles",
+  );
+
+  stage = "protected staff role";
+  await json(
+    await api(a, rolePath(a, "staff"), "DELETE"),
+    409,
+    "Self-revoke accepted",
+  );
+  const promoted = await json(
+    await api(a, rolePath(c, "staff"), "PUT"),
+    200,
+    "Staff grant failed",
+  );
+  check(promoted.roles.includes("staff"), "Staff not granted");
+  await json(await api(c, "/staff/access"), 204, "Granted staff denied");
+  await json(
+    await api(a, rolePath(c, "staff"), "DELETE"),
+    200,
+    "Staff revoke failed",
+  );
+  await json(
+    await api(c, "/staff/access"),
+    403,
+    "Revoked staff retained access",
+  );
+
+  stage = "suspended accounts";
+  sql(
+    `update csc.profiles set account_status = 'suspended' where auth_user_id = '${c.id}'`,
+  );
+  try {
+    check(
+      (await search(`q=${encodeURIComponent(c.email)}`)).length === 0,
+      "Suspended account listed",
+    );
+    await json(
+      await api(a, rolePath(c, "alumni"), "PUT"),
+      404,
+      "Suspended target changed",
+    );
+  } finally {
+    sql(
+      `update csc.profiles set account_status = 'active' where auth_user_id = '${c.id}'`,
+    );
+  }
+
+  stage = "concurrent mutual staff revocation";
+  // Each actor passes the request guard, but the locked recheck lets only one win.
+  const mutual = await Promise.all([
+    api(a, rolePath(b, "staff"), "DELETE"),
+    api(b, rolePath(a, "staff"), "DELETE"),
+  ]);
+  const statuses = mutual.map((r) => r.status).sort();
+  check(
+    statuses[0] === 200 && statuses[1] === 403,
+    `Mutual revocation not serialized (${statuses})`,
+  );
+  const survivor = mutual[0].status === 200 ? a : b;
+  await json(await api(survivor, "/staff/access"), 204, "Survivor lost staff");
+
+  stage = "revoked actor cannot change roles";
+  const loser = survivor === a ? b : a;
+  await json(
+    await api(loser, rolePath(c, "alumni"), "PUT"),
+    403,
+    "Revoked actor changed roles",
+  );
+  await json(
+    await api(survivor, rolePath(survivor, "staff"), "DELETE"),
+    409,
+    "Self-revoke accepted",
   );
 }
 
