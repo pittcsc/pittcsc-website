@@ -3,8 +3,14 @@ import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { hasStaffRole } from "../../lib/auth/roles.mjs";
 import { createAccountClient } from "../../lib/account/client.mjs";
+import { staffRoute, STAFF_BASE } from "../../lib/staff/tools.mjs";
+import StaffHome from "./StaffHome";
+import { toolViews } from "./tools";
+import "../../styles/staff/dashboard.scss";
 
-export default function StaffDashboard({ identity, revalidate }) {
+// Guards every staff page with the API access check, then shows the staff home
+// or the tool for this path. Each tool's API routes are authorized in Go.
+export default function StaffDashboard({ identity, revalidate, pathname }) {
   const [access, setAccess] = useState("loading");
   const [attempt, setAttempt] = useState(0);
   const staff = hasStaffRole(identity);
@@ -69,5 +75,18 @@ export default function StaffDashboard({ identity, revalidate }) {
         </button>
       </>
     );
-  return <h1>Staff Dashboard</h1>;
+  const route = staffRoute(pathname);
+  const Tool = route.view === "tool" && toolViews[route.tool.slug]?.Component;
+  if (Tool)
+    return (
+      <Tool identity={identity} request={request} revalidate={revalidate} />
+    );
+  if (route.view === "home") return <StaffHome />;
+  return (
+    <>
+      <h1>Page not found</h1>
+      <p>There's no staff tool at this address.</p>
+      <Link to={STAFF_BASE}>Go to the Staff Dashboard</Link>
+    </>
+  );
 }

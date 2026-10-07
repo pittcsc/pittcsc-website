@@ -1,4 +1,5 @@
-// Package roles provides operator-only provisioning, never a browser endpoint.
+// Package roles owns the role policy, member search, and audited role changes.
+// GrantStaff is the operator-only bootstrap; dashboard changes use Store.Change.
 package roles
 
 import (
@@ -41,9 +42,7 @@ func GrantStaff(ctx context.Context, db *pgxpool.Pool, email, operator string) (
 	err = tx.QueryRow(ctx, `
 		select p.auth_user_id::text from csc.profiles p
 		join auth.users u on u.id = p.auth_user_id
-		where lower(u.email) = $1 and p.account_status = 'active'
-		  and u.email_confirmed_at is not null and u.deleted_at is null
-		  and not u.is_anonymous and (u.banned_until is null or u.banned_until <= now())
+		where lower(u.email) = $1 and `+eligible+`
 		for update of p
 	`, email).Scan(&id)
 	if errors.Is(err, pgx.ErrNoRows) {

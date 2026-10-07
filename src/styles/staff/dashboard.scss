@@ -1,0 +1,97 @@
+// Shared staff layout and the staff home's tool cards. Each tool keeps its own
+// stylesheet next to the others in this folder.
+.csc-auth:has(.csc-staff) .csc-auth-card {
+  max-width: 56rem;
+}
+
+.csc-staff {
+  .csc-staff-back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    text-decoration: underline;
+  }
+}
+
+.csc-staff-home {
+  .csc-staff-eyebrow {
+    margin: 1.5rem 0 0;
+    color: #003594;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin-top: 0.25rem;
+  }
+  .csc-staff-tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .csc-staff-tool {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+    border: 1px solid #d7dfeb;
+    border-radius: 0.75rem;
+    background: #f9fafc;
+    transition:
+      border-color 150ms,
+      box-shadow 150ms;
+
+    &:hover,
+    &:focus-within {
+      border-color: #003594;
+      box-shadow: 0 8px 16px #182b4914;
+    }
+  }
+  .csc-staff-tool-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid #003594;
+    border-radius: 0.6rem;
+    background: #edf1f8;
+    color: #003594;
+    font-size: 1.25rem;
+  }
+  h2 {
+    margin: 1.25rem 0 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h2 a {
+    color: inherit;
+    text-decoration: none;
+
+    // Stretch the link over the card; the card shows its focus ring instead.
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+    &:focus-visible {
+      outline: none;
+    }
+  }
+  .csc-staff-tool:has(a:focus-visible) {
+    outline: 3px solid #996b00;
+    outline-offset: 3px;
+  }
+  .csc-staff-tool p {
+    margin: 0.5rem 0 0;
+    color: #4a5a72;
+    font-size: 0.95rem;
+  }
+}

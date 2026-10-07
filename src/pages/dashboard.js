@@ -35,17 +35,23 @@ export default function Dashboard({ location }) {
     }
   }, [auth.status, location.pathname, location.search, location.hash]);
 
+  const authenticated = auth.status === "authenticated";
+  const account = /^\/dashboard\/account\/?$/.test(location.pathname);
+
+  // Only My Account offers logout and the website link; status screens keep
+  // the website link so users are never stuck.
   return (
-    <AuthFrame dashboard>
-      {auth.status === "authenticated" ? (
+    <AuthFrame dashboard websiteLink={!authenticated || account}>
+      {authenticated ? (
         <>
           {/^\/dashboard\/staff(?:\/|$)/.test(location.pathname) ? (
             <StaffDashboard
               key={auth.identity.id}
               identity={auth.identity}
               revalidate={auth.revalidate}
+              pathname={location.pathname}
             />
-          ) : /^\/dashboard\/account\/?$/.test(location.pathname) ? (
+          ) : account ? (
             <MyAccount key={auth.identity.id} identity={auth.identity} />
           ) : (
             <>
@@ -56,9 +62,11 @@ export default function Dashboard({ location }) {
               <p>Manage your club profile from My Account.</p>
             </>
           )}
-          <button onClick={() => void logoutToWebsite(auth.signOut)}>
-            Log out
-          </button>
+          {account && (
+            <button onClick={() => void logoutToWebsite(auth.signOut)}>
+              Log out
+            </button>
+          )}
         </>
       ) : auth.status === "signedOut" ? (
         <p role="status">Taking you to sign-in…</p>

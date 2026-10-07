@@ -5,7 +5,11 @@ import { hasStaffRole } from "../../lib/auth/roles.mjs";
 import logo from "../../images/hero_image.png";
 import "../../styles/auth.scss";
 
-export default function AuthFrame({ children, dashboard = false }) {
+export default function AuthFrame({
+  children,
+  dashboard = false,
+  websiteLink = true,
+}) {
   const { status, identity } = useAuth();
   const authenticated = status === "authenticated";
 
@@ -22,6 +26,7 @@ export default function AuthFrame({ children, dashboard = false }) {
                 className="csc-auth-nav-link"
                 to="/dashboard/staff"
                 activeClassName="is-current"
+                partiallyActive
               >
                 Staff
               </Link>
@@ -40,9 +45,11 @@ export default function AuthFrame({ children, dashboard = false }) {
             </Link>
           )}
           {children}
-          <Link className="csc-auth-website" to="/">
-            Back to Website
-          </Link>
+          {websiteLink && (
+            <Link className="csc-auth-website" to="/">
+              Back to Website
+            </Link>
+          )}
         </div>
       </main>
     </div>
