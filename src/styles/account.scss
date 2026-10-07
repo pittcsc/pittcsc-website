@@ -57,6 +57,44 @@
     flex-direction: column;
     gap: 1.25rem;
   }
+
+  // Guided flow: one question per step, same indicator as the sign-in screen.
+  .csc-account-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+
+    div {
+      display: flex;
+      gap: 0.5rem;
+    }
+    span {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: $acc-hairline;
+    }
+    span.done {
+      background: $acc-navy;
+    }
+    p {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: $acc-muted;
+    }
+  }
+  .csc-account-hint {
+    font-size: 0.875rem;
+    color: $acc-muted;
+  }
+  .csc-account-nav {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+    }
+  }
   fieldset {
     min-width: 0;
     margin: 0;

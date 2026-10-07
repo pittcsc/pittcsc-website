@@ -27,7 +27,11 @@ The incomplete-profile prompt does not gate dashboard access.
 | Avatar | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels |
 | Resume | One optional PDF, at most 10 MiB |
 
-Names, year, majors, and the three usernames save together with **Save profile**. The last successful
+An incomplete profile is filled in one question at a time, and each **Next**
+saves, so leaving mid-flow keeps what was answered and returns to the first
+unanswered question. Once complete, My Account becomes a single page where
+names, year, majors, and the three usernames save together with **Save
+profile**. The last successful
 save wins if multiple tabs edit the same profile. Failures preserve edits for
 retry. Routine token refresh preserves the editor; logout, account changes, and
 failed identity verification hide private state and cancel requests.
