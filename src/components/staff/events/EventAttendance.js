@@ -101,17 +101,15 @@ export default function EventAttendance({ record, identity, request, denied }) {
   return (
     <section className="csc-event-attendance" aria-label="Event attendance">
       <h2>Attendance</h2>
-      <p>
-        {record.status === "cancelled"
-          ? "Check-in is closed. Existing attendance remains below."
-          : "Display this code at the event. Members sign in and tap “I'm Here!” to check in."}
-      </p>
+      {record.status === "cancelled" && (
+        <p>Check-in is closed. Existing attendance remains below.</p>
+      )}
       {url && (
         <div className="csc-event-qr">
           <div ref={previewRef} className="csc-event-qr-preview" aria-label="Attendance QR code" />
           <div className="csc-event-qr-controls">
-            <label>
-              <input type="checkbox" checked={white} onChange={(e) => setWhite(e.target.checked)} />{" "}
+            <label className="csc-event-qr-background">
+              <input type="checkbox" checked={white} onChange={(e) => setWhite(e.target.checked)} />
               White background
             </label>
             <div className="csc-auth-actions">
