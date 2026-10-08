@@ -216,7 +216,7 @@ test project's database for production.
    appropriate DMARC policy. Supabase's default sender is restricted; see
    [SMTP setup](https://supabase.com/docs/guides/auth/auth-smtp).
 5. In **Authentication → Email Templates**, set both **Confirm signup** and
-   **Magic link** to the subject `Your Pitt CSC sign-in code` and the contents
+   **Magic link** to the subject `Your PittCSC sign-in code` and the contents
    of [code.html](../supabase/templates/code.html). Keep `{{ .Token }}` in both:
    the browser asks for a code, while the default `{{ .ConfirmationURL }}` sends
    a link.

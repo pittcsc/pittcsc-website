@@ -109,7 +109,9 @@ port = 54324
 # smtp_port = 54325
 # pop3_port = 54326
 # admin_email = "admin@email.com"
-# sender_name = "Admin"
+# The From name locally. Production is hosted Supabase, so the real one is set
+# in the dashboard under Authentication -> Emails; keep the two in step.
+sender_name = "PittCSC"
 
 [storage]
 enabled = true
@@ -233,11 +235,11 @@ otp_length = 6
 otp_expiry = 900
 
 [auth.email.template.confirmation]
-subject = "Your Pitt CSC sign-in code"
+subject = "Your PittCSC sign-in code"
 content_path = "./supabase/templates/code.html"
 
 [auth.email.template.magic_link]
-subject = "Your Pitt CSC sign-in code"
+subject = "Your PittCSC sign-in code"
 content_path = "./supabase/templates/code.html"
 
 # Use a production-ready SMTP server
