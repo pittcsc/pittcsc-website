@@ -117,6 +117,10 @@ export default function EventAttendance({ record, identity, request, denied }) {
               <button type="button" className="csc-auth-secondary" onClick={() => void download("png")}>Download PNG</button>
               <button type="button" className="csc-auth-secondary" onClick={() => void download("svg")}>Download SVG</button>
             </div>
+            <p className="csc-event-attendance-link">
+              <strong>Sign-in and check-in link</strong>
+              <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+            </p>
           </div>
         </div>
       )}

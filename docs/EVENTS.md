@@ -37,8 +37,9 @@ and [#164](https://github.com/pittcsc/pittcsc-website/issues/164):
 
 Every saved CRM event, including one created before attendance was added, has a
 stable URL at `/attendance/<event-id>`. The staff event detail shows its branded
-QR code and offers **Copy QR image**, PNG/SVG downloads, and a transparent or
-white background. The URL uses the Go API's configured `FRONTEND_ORIGIN`, so
+QR code and its clickable sign-in/check-in URL. It offers **Copy QR image**,
+PNG/SVG downloads, and a transparent or white background. The URL uses the Go
+API's configured `FRONTEND_ORIGIN`, so
 hosted deployments must set that value to the public HTTPS website origin. The
 API refuses to start on a nonlocal bind address with a localhost or private
 frontend origin. Event edits

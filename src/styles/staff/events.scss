@@ -30,6 +30,12 @@
   .csc-event-qr-controls {
     flex: 1 1 220px;
   }
+  .csc-event-attendance-link a {
+    display: block;
+    color: #003594;
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+  }
   .csc-event-qr-background {
     display: inline-flex;
     align-items: center;
