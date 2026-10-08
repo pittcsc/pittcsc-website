@@ -98,7 +98,7 @@ export default function Attendance({ location }) {
               {currentEvent?.status === "cancelled" ? (
                 <p role="status">Check-in is closed for this cancelled event.</p>
               ) : currentEvent?.checkedInAt ? (
-                <p role="status">You're already checked in.</p>
+                <p role="status">You're checked in.</p>
               ) : currentEvent ? (
                 <button type="button" disabled={submitting} onClick={() => void checkIn()}>
                   {submitting ? "Checking in…" : "I'm Here!"}
