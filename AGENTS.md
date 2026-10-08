@@ -1,7 +1,7 @@
 # Repository agent guidance
 
 Read [development instructions](docs/DEVELOPMENT.md) for setup and testing, and
-the [repository guide](docs/REPOSITORY.md) for code boundaries and detailed invariants.
+the [repository guide](docs/REPOSITORY.md) for active content sources and code boundaries.
 
 ## Branches and tooling
 
@@ -12,7 +12,6 @@ the [repository guide](docs/REPOSITORY.md) for code boundaries and detailed inva
 - Use npm and the existing `package-lock.json`; do not introduce another package manager.
 - Do not change frameworks, runtime pins, deployment configuration, or dependencies
   as incidental cleanup. Runtime files currently disagree; see the development docs.
-- `CONTRIBUTING.md` is a symlink to `docs/DEVELOPMENT.md`; edit the target directly.
 
 ## Public site and content
 
@@ -31,7 +30,7 @@ the [repository guide](docs/REPOSITORY.md) for code boundaries and detailed inva
 - Preserve 30-minute slots, unavailable/if-needed/available states, and the
   distinction between pending and submitted participants.
 - Preserve calendar imports, manual overrides, calendar-aware presets, and
-  timezone/DST projection; detailed behavior is in the repository guide.
+  timezone/DST projection; see [public-tool invariants](docs/PUBLIC_TOOLS.md).
 - Keep persistence server-side, including atomic writes and compare-and-set retries.
 - Never point meeting tests at hosted or production data. The existing HTTP suite
   does not enforce this; use the isolated local setup in the development docs.

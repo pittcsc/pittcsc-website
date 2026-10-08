@@ -2,7 +2,9 @@
 
 This guide applies to the public Gatsby site on `master`. Go, Supabase, and CRM
 setup are separate on `crm-expansion`; use that branch's docs for those systems.
-See the [repository guide](REPOSITORY.md) for architecture and subsystem invariants.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for issues and PR workflow, the
+[repository guide](REPOSITORY.md) for architecture, and
+[public-tool invariants](PUBLIC_TOOLS.md) for meeting/QR behavior.
 
 ## Setup and runtime
 
@@ -32,10 +34,7 @@ Docker, Go, or Supabase is required. Gatsby reloads edits; Ctrl+C stops your ser
 | `npm run build` | Production Gatsby build |
 | `npm run clean` | Clear generated Gatsby cache/output when needed |
 
-## Contribution conventions
-
-Public-site PRs target `master`; CRM PRs target `crm-expansion`. Propagating shared
-instructions to the other branch is separate work.
+## Code conventions
 
 Match nearby JS/JSX style and use `.mjs` for Node scripts/tests. Gatsby configuration
 uses CommonJS; do not switch the root package to ESM to silence Node's
