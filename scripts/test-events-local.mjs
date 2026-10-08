@@ -83,10 +83,8 @@ async function main() {
       },
     );
     clients.push(client);
-    check(
-      !(await client.auth.signInWithOtp({ email })).error,
-      "OTP request failed",
-    );
+    const sent = await client.auth.signInWithOtp({ email });
+    check(!sent.error, `OTP request failed (${sent.error?.code || sent.error?.status || "unknown"})`);
     let code;
     for (let n = 0; n < 30 && !code; n++) {
       const result = await (
@@ -258,6 +256,41 @@ async function main() {
     "Duplicate creation audit",
   );
 
+  stage = "attendance URL, explicit check-in, and private roster";
+  const attendancePath = `/attendance/${id}`;
+  check(
+    event.attendanceUrl ===
+      `${localURL(backend.FRONTEND_ORIGIN || "http://localhost:8000")}${attendancePath}`,
+    "Attendance QR destination must use the configured frontend origin",
+  );
+  check((await api(null, attendancePath)).status === 401, "Anonymous attendance read");
+  check((await api(null, attendancePath, "POST")).status === 401, "Anonymous check-in");
+  const initial = await json(await api(member, attendancePath));
+  check(initial.title === event.title && !initial.checkedInAt, "GET recorded attendance");
+  const submissions = await Promise.all(
+    Array.from({ length: 6 }, () => api(member, attendancePath, "POST")),
+  );
+  check(submissions.every((response) => response.status === 200), "Concurrent check-ins failed");
+  const submitted = await Promise.all(submissions.map((response) => response.json()));
+  check(
+    submitted.every((value) => value.checkedInAt === submitted[0].checkedInAt),
+    "Retry changed the original check-in time",
+  );
+  check(
+    (await api(member, `${path}/attendance`)).status === 403,
+    "Member reached private roster",
+  );
+  const roster = await json(await api(a, `${path}/attendance`));
+  check(
+    roster.count === 1 && roster.attendees.length === 1 &&
+      roster.attendees[0].email === member.email,
+    "Roster lost or duplicated attendance",
+  );
+  check(
+    !("attendees" in (await json(await api(member, attendancePath)))),
+    "Member response leaked roster",
+  );
+
   stage = "other staff edits and stale version conflicts";
   const edit = {
     ...input,
@@ -267,6 +300,11 @@ async function main() {
   };
   event = await json(await api(b, path, "PUT", edit));
   check(event.title === edit.title && event.version === 2, "Edit failed");
+  check(
+    event.attendanceUrl.endsWith(attendancePath) &&
+      (await json(await api(member, attendancePath))).title === edit.title,
+    "Event edit broke stable attendance link",
+  );
   check(
     (await api(a, path, "PUT", { ...edit, title: "Stale change" })).status ===
       409,
@@ -289,6 +327,12 @@ async function main() {
     await api(a, `${path}/cancel`, "POST", { version: event.version }),
   );
   check(event.status === "cancelled", "Cancellation not saved");
+  check(
+    (await api(b, attendancePath, "POST")).status === 409 &&
+      (await json(await api(member, attendancePath))).status === "cancelled" &&
+      (await json(await api(a, `${path}/attendance`))).count === 1,
+    "Cancellation did not close check-in and retain roster",
+  );
   await json(await api(a, `${path}/cancel`, "POST", { version: 1 }));
   check(
     (await api(a, path, "PUT", { ...edit, version: event.version })).status ===
@@ -368,7 +412,7 @@ async function main() {
     "Logged-out session accepted",
   );
   console.log(
-    "PASS: event authorization, validation/DST, concurrent creation, staff edits, conflicts, history, cancellation, list fixtures, disabled mode, simulated Google outages/retries/recreation, concurrent sync/cancel, revocation, suspension, and logout",
+    "PASS: event and attendance authorization, stable QR destinations, explicit and concurrent check-in, private roster, staff edits, cancellation, fixtures, disabled mode, simulated Google retries, revocation, suspension, and logout",
   );
 }
 

@@ -135,7 +135,11 @@ The application-owned `csc.profiles` table references Supabase's managed `auth.u
 
 Keep stable records across academic years. Represent dates and terms as data rather than creating a new set of tables each year.
 
-When attendance is implemented, add an `attendance` table relating users to events, with a uniqueness constraint appropriate to one check-in per member per event. Add registrations or RSVPs separately if needed: registering and attending are distinct actions.
+`csc.attendance` relates an event to the verified Auth user, with a unique key
+for one check-in per account per event. The Go API records it only after an
+explicit authenticated POST. Staff can read the roster; members can read their
+own status. See [EVENTS.md](EVENTS.md#qr-attendance). Registrations and RSVPs
+remain separate future actions.
 
 ## Events and future integrations
 
@@ -150,12 +154,16 @@ Server-only configuration supports a separate nonproduction calendar. See
 
 The existing public event integration imports Notion data during Gatsby builds. It can remain during the initial rollout. When public events move to the CRM, preserve the existing presentation and feed it published events from the new source. Define that transition explicitly so staff do not have to maintain competing event records.
 
-QR attendance and Google Drive automation are later phases:
+QR attendance is implemented:
 
-- Reuse the existing branded QR generation UI where practical.
-- Event QR codes should point to stable CSC URLs. The eventual check-in workflow will define token validation, eligibility, and duplicate prevention.
-- Drive integration can begin with a stored folder or document link. Automated folder creation and permission management belong in the Go backend once the workflow is defined.
-- Keep core event records in Postgres, with external service IDs or links attached to them.
+- Staff event details reuse the existing branded QR generation logic.
+- Event QR codes point to stable CSC URLs. Any active account can check in once;
+  cancellation closes check-in. There is no scheduled time cutoff.
+
+Google Drive automation remains a later phase. It can begin with a stored folder
+or document link. Automated folder creation and permission management belong in
+the Go backend once the workflow is defined. Core event records stay in Postgres,
+with external service IDs or links attached to them.
 
 ## Implementation sequence
 
@@ -167,6 +175,6 @@ dashboard event viewing is a later phase.
 2. Add the dashboard layout, routes, and authentication-aware public navbar.
 3. Implement staff event creation, editing, cancellation, and Google Calendar sync (implemented); add member event viewing later.
 4. Add member search, account status management, and audited role changes.
-5. Expand into QR attendance, Drive integration, and additional CRM features.
+5. Add QR attendance (implemented), then Drive integration and additional CRM features.
 
 Before rollout, verify that CSC registration and sign-in work, invalid tokens are rejected, member requests cannot perform staff operations, role/status changes affect subsequent API requests, and nested dashboard URLs work on direct navigation. Use a non-production environment for development and testing, with deployment configuration and handoff documentation suitable for future club maintainers.

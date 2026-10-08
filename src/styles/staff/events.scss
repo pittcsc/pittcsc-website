@@ -1,4 +1,73 @@
 .csc-staff-events {
+  .csc-event-attendance {
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border: 1px solid #d8dce8;
+    border-radius: 0.75rem;
+  }
+  .csc-event-attendance h2 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .csc-event-qr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+  .csc-event-qr-preview {
+    width: min(100%, 300px);
+    padding: 0.75rem;
+    border: 1px solid #d8dce8;
+    border-radius: 0.5rem;
+    background: white;
+  }
+  .csc-event-qr-preview canvas {
+    width: 100%;
+    height: auto;
+  }
+  .csc-event-qr-controls {
+    flex: 1 1 220px;
+  }
+  .csc-event-attendance-link a {
+    display: block;
+    color: #003594;
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+  }
+  .csc-event-qr-background {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+  }
+  .csc-event-qr-background input[type="checkbox"] {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    padding: 0;
+    flex: none;
+    border-radius: 0.2rem;
+  }
+  .csc-event-roster {
+    padding-left: 1.5rem;
+  }
+  .csc-event-roster-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .csc-event-roster li {
+    margin: 0.75rem 0;
+  }
+  .csc-event-roster span,
+  .csc-event-roster time {
+    display: block;
+  }
   .csc-events-heading {
     display: flex;
     align-items: center;

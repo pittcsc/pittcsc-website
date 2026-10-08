@@ -13,6 +13,9 @@ exports.onCreatePage = ({ page, actions }) => {
   if (page.path === "/dashboard/" && page.matchPath !== "/dashboard/*") {
     actions.createPage({ ...page, matchPath: "/dashboard/*" });
   }
+  if (page.path === "/attendance/" && page.matchPath !== "/attendance/*") {
+    actions.createPage({ ...page, matchPath: "/attendance/*" });
+  }
 };
 
 const getEvents = async () => {

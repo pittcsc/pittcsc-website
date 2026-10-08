@@ -108,6 +108,7 @@ type Event struct {
 	SyncStatus      string     `json:"syncStatus"`
 	SyncError       string     `json:"syncError"`
 	SyncedAt        *time.Time `json:"syncedAt"`
+	AttendanceURL   string     `json:"attendanceUrl,omitempty"`
 }
 
 func (e Event) matches(input Input) bool {

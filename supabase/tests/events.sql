@@ -5,7 +5,7 @@ declare
   relation text;
   role_name text;
 begin
-  foreach relation in array array['csc.events', 'csc.event_audit'] loop
+  foreach relation in array array['csc.events', 'csc.event_audit', 'csc.attendance'] loop
     if not exists (select 1 from pg_class where oid = relation::regclass and relrowsecurity) then
       raise exception 'Event table must enable RLS';
     end if;

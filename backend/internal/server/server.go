@@ -82,7 +82,7 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 	registerProfileRoutes(mux, authentication, profiles)
 	registerAssetRoutes(mux, authentication, profiles)
 	registerStaffRoutes(mux, authentication, profiles, roleChanges)
-	registerEventRoutes(mux, authentication, profiles, eventRecords)
+	registerEventRoutes(mux, frontendOrigin, authentication, profiles, eventRecords)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")

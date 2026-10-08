@@ -13,10 +13,11 @@ import (
 )
 
 type eventsStub struct {
-	calls     int
-	actor, id string
-	input     events.Input
-	err       error
+	calls           int
+	actor, id       string
+	input           events.Input
+	err             error
+	attendanceCalls int
 }
 
 func (s *eventsStub) List(context.Context, string, int) (events.Page, error) {
@@ -46,6 +47,21 @@ func (s *eventsStub) Sync(_ context.Context, actor, id string) (events.Event, er
 	s.actor, s.id = actor, id
 	return events.Event{}, s.err
 }
+func (s *eventsStub) CheckInStatus(_ context.Context, actor, id string) (events.CheckInStatus, error) {
+	s.attendanceCalls++
+	s.actor, s.id = actor, id
+	return events.CheckInStatus{ID: id, Title: "Workshop", Status: "active"}, s.err
+}
+func (s *eventsStub) CheckIn(_ context.Context, actor, id string) (events.CheckInStatus, error) {
+	s.attendanceCalls++
+	s.actor, s.id = actor, id
+	return events.CheckInStatus{ID: id, Title: "Workshop", Status: "active"}, s.err
+}
+func (s *eventsStub) Attendance(_ context.Context, id string, page int) (events.AttendancePage, error) {
+	s.attendanceCalls++
+	s.id = id
+	return events.AttendancePage{Attendees: []events.Attendee{}, Page: page}, s.err
+}
 
 const validEventJSON = `{"title":"Workshop","location":"Room 101","start":"2027-01-15T18:00","end":"2027-01-15T19:00","version":0}`
 
@@ -63,6 +79,7 @@ func eventRequest(p *profilesStub, store eventStore, method, path, body, token s
 func TestEventsAuthorizeEveryOperation(t *testing.T) {
 	for _, operation := range []struct{ method, path, body string }{
 		{"GET", "/staff/events", ""}, {"GET", "/staff/events/test", ""}, {"GET", "/staff/events/test/history", ""},
+		{"GET", "/staff/events/test/attendance", ""},
 		{"PUT", "/staff/events/test", validEventJSON}, {"POST", "/staff/events/test/cancel", `{"version":1}`}, {"POST", "/staff/events/test/sync", ""},
 	} {
 		for mask := 0; mask < 16; mask++ {
@@ -75,7 +92,7 @@ func TestEventsAuthorizeEveryOperation(t *testing.T) {
 			s := &eventsStub{}
 			w := eventRequest(&profilesStub{roles: assigned}, s, operation.method, operation.path+"?role=staff&userId=attacker", operation.body, "valid")
 			allowed := mask&4 != 0
-			if (w.Code == 200) != allowed || (s.calls > 0) != allowed {
+			if (w.Code == 200) != allowed || (s.calls+s.attendanceCalls > 0) != allowed {
 				t.Fatalf("authorization failed for %s %s roles %v: %d", operation.method, operation.path, assigned, w.Code)
 			}
 			if w.Header().Get("Cache-Control") != "no-store" {
@@ -91,7 +108,7 @@ func TestEventsAuthorizeEveryOperation(t *testing.T) {
 		} {
 			s := &eventsStub{}
 			w := eventRequest(&profilesStub{roles: []string{"staff"}, err: tc.err}, s, operation.method, operation.path, operation.body, tc.token)
-			if w.Code != tc.code || s.calls != 0 {
+			if w.Code != tc.code || s.calls+s.attendanceCalls != 0 {
 				t.Fatal("unauthorized event operation reached storage")
 			}
 		}
@@ -108,6 +125,9 @@ func TestEventFieldsAndActor(t *testing.T) {
 	var saved events.Event
 	if json.Unmarshal(w.Body.Bytes(), &saved) != nil || saved.SyncStatus != "failed" {
 		t.Fatal("calendar failure must return saved event status")
+	}
+	if saved.AttendanceURL != "http://localhost:8000/attendance/client-uuid" {
+		t.Fatal("attendance URL must use configured frontend origin and stable event ID")
 	}
 	for _, body := range []string{"null", "[]", "{}", validEventJSON + `{}`, strings.Replace(validEventJSON, `"version":0`, `"actor":"attacker"`, 1), strings.Replace(validEventJSON, `"version":0`, `"status":"cancelled"`, 1), strings.Replace(validEventJSON, `"version":0`, `"calendarId":"attacker"`, 1), strings.Replace(validEventJSON, `"version":0`, `"timezone":"UTC"`, 1), strings.Replace(validEventJSON, "19:00", "17:00", 1), strings.Repeat("x", 33000)} {
 		s = &eventsStub{}
