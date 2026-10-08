@@ -12,6 +12,7 @@ import {
   syncMessage,
 } from "../../../lib/staff/events.mjs";
 import "../../../styles/staff/events.scss";
+import EventAttendance from "./EventAttendance";
 
 export default function Events({ identity, request, revalidate }) {
   const [filter, setFilter] = useState("upcoming");
@@ -453,6 +454,12 @@ function EventEditor({ selected, identity, request, denied, onBack }) {
           )}
           {record && (
             <>
+              <EventAttendance
+                record={record}
+                identity={identity}
+                request={request}
+                denied={denied}
+              />
               <div className="csc-auth-actions csc-events-actions">
                 <button
                   className="csc-auth-secondary"

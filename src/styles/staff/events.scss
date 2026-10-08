@@ -1,4 +1,48 @@
 .csc-staff-events {
+  .csc-event-attendance {
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border: 1px solid #d8dce8;
+    border-radius: 0.75rem;
+  }
+  .csc-event-qr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+  .csc-event-qr-preview {
+    width: min(100%, 300px);
+    padding: 0.75rem;
+    border: 1px solid #d8dce8;
+    border-radius: 0.5rem;
+    background: white;
+  }
+  .csc-event-qr-preview canvas {
+    width: 100%;
+    height: auto;
+  }
+  .csc-event-qr-controls {
+    flex: 1 1 220px;
+  }
+  .csc-event-roster {
+    padding-left: 1.5rem;
+  }
+  .csc-event-roster-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .csc-event-roster li {
+    margin: 0.75rem 0;
+  }
+  .csc-event-roster span,
+  .csc-event-roster time {
+    display: block;
+  }
   .csc-events-heading {
     display: flex;
     align-items: center;
