@@ -1,15 +1,28 @@
 # Pitt CSC Website
-The new Pitt CSC Website, now built with Gatsby, Tailwind, and Framer Motion.
 
-## How to run locally
+The Pitt CSC website, built with Gatsby, Tailwind, and Framer Motion.
 
-```console
-npm install
+## Run locally
+
+With a compatible Node/npm runtime (see [CONTRIBUTING.md](CONTRIBUTING.md)), run:
+
+```sh
+npm ci --legacy-peer-deps
 npm run develop
 ```
 
-## Accessing Data in Content Folder
+Open http://localhost:8000. No Docker, Go, or Supabase is required for the public
+site on `master`. Preserve existing env files; hosted credentials are optional.
 
-JSON files added to the Content folder are accessible via [GraphQL](https://www.gatsbyjs.com/docs/graphql/) using the [JSON gatsby transformer plugin](https://www.gatsbyjs.com/plugins/gatsby-transformer-json/).
+Agents should follow [AGENTS.md](AGENTS.md); [CLAUDE.md](CLAUDE.md) imports the same
+instructions. The [repository guide](docs/REPOSITORY.md) maps active code, content
+sources, public tools, verification, and known limitations. CRM work is separate
+on `crm-expansion`.
 
-Accessing site content through GraphQL queries is preferred over directly importing the JSON files to components.
+## Content sources
+
+JSON in `content/` can be sourced through Gatsby's JSON transformer and GraphQL.
+Inspect the active page consumer before editing: officers/leads use
+`src/components/data.js`, sponsors are defined in their page, and initiatives
+use `src/data/` modules. Use GraphQL where content is already sourced that way;
+do not migrate data sources as incidental cleanup.
