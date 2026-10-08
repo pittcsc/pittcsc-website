@@ -1,9 +1,8 @@
 # Repository guide
 
-Use this map to find the active implementation before editing. Read
-[shared agent instructions](../AGENTS.md) for repo-wide rules and
-[local development](DEVELOPMENT.md) for setup. This guide describes the current
-`master` checkout. CRM-specific implementation lives on a separate branch.
+This map describes the active implementation in the `master` checkout.
+CRM-specific implementation lives on a separate branch. See
+[local development](DEVELOPMENT.md) for setup and testing procedures.
 
 ## Code map and boundaries
 
@@ -23,8 +22,10 @@ Use this map to find the active implementation before editing. Read
 
 `src/images/` assets are imported through Gatsby/Webpack. `static/` files are
 served at root URLs, and PDFs under `src/downloads/` are imported by components.
-Preserve filenames/case and existing external links. Reuse current components
-and page data conventions instead of migrating content sources as incidental work.
+Preserve filenames/case and existing external links. Gatsby's JSON transformer
+makes sourced `content/` JSON available through GraphQL, but inspect page consumers
+before editing: the sources in the table are the active ones. Use GraphQL where
+content is already sourced that way; do not migrate sources as incidental work.
 
 Keep browser-only imports and storage guarded or dynamically loaded so Gatsby
 server rendering and hydration work. Preserve `/meet`, `/qr`, Gatsby functions,
@@ -94,14 +95,10 @@ appearance, keyboard behavior, or QR scannability. Report manual checks actually
 performed and any unavailable checks. No new browser-test framework is required
 by this setup.
 
-Ordinary `npm test` skips meeting HTTP tests when Gatsby is absent. For meeting
-integration work, start your own Gatsby with `MEET_DATA_DIR` pointing to an
-isolated local directory and hosted integrations disabled, then run
-`node --test tests/meet/api.test.mjs`. Verify `MEET_TEST_BASE` is a loopback HTTP
-origin, or leave it unset for localhost:8000. These tests write data; the existing
-suite does not refuse hosted targets, enforce execution, or manage a server.
-Check that all 16 HTTP tests actually executed and report failures/skips honestly.
-See the development guide for safe setup and runtime limitations.
+For meeting HTTP integration, follow the
+[isolated local testing procedure](DEVELOPMENT.md#verification). That procedure
+covers server startup, integration configuration, storage isolation, and skips;
+do not point these write tests at hosted data.
 
 Review changed files and diffs for credentials without printing private env
 contents or raw secrets. Automated secret scanning and new CI checks are separate
@@ -128,10 +125,10 @@ tooling follow-ups, not features provided by this documentation.
 - The real `/meet` HTTP concurrency test currently fails: a twelve-submission
   burst can exhaust the store's six compare-and-set attempts and return HTTP 409.
   This was observed in local integration testing; ordinary tests can skip the
-  HTTP suite without Gatsby. A rejected submission
-  is not evidence that a successful write was lost. Fix burst handling or agree
-  on a retry contract in a separate application task; do not hide the failure by
-  weakening or skipping the test.
+  HTTP suite without Gatsby. A rejected submission is not evidence that a
+  successful write was lost. Fix burst handling or agree on a retry contract in a
+  separate application task; do not hide the failure by weakening or skipping
+  the test.
 - The tracked `.cursor/debug.log` and `package.json.bak` are legacy artifacts,
   not implementation/configuration sources. Do not add agent transcripts, logs,
   credentials, or new backup files to source control; cleanup is separate work.

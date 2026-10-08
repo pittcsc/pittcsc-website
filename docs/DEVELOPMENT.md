@@ -2,7 +2,7 @@
 
 This guide applies to the public Gatsby site on `master`. Go, Supabase, and CRM
 setup are separate on `crm-expansion`; use that branch's docs for those systems.
-See [AGENTS.md](../AGENTS.md) and the [repository guide](REPOSITORY.md) before editing.
+See the [repository guide](REPOSITORY.md) for architecture and subsystem invariants.
 
 ## Setup and runtime
 
@@ -32,6 +32,18 @@ Docker, Go, or Supabase is required. Gatsby reloads edits; Ctrl+C stops your ser
 | `npm run build` | Production Gatsby build |
 | `npm run clean` | Clear generated Gatsby cache/output when needed |
 
+## Contribution conventions
+
+Public-site PRs target `master`; CRM PRs target `crm-expansion`. Propagating shared
+instructions to the other branch is separate work.
+
+Match nearby JS/JSX style and use `.mjs` for Node scripts/tests. Gatsby configuration
+uses CommonJS; do not switch the root package to ESM to silence Node's
+module-detection warnings. Reuse the public layout, shared initiative template,
+Tailwind/SCSS conventions, and existing image pipeline. Preserve responsive
+branding, navigation, SEO, animations, analytics behavior, and asset/download URLs
+unless changing them is part of the task.
+
 ## Optional integrations
 
 The public site works without production credentials. Notion-backed events are
@@ -54,6 +66,8 @@ contents into logs, screenshots, or issues.
 
 Run `npm test` for code changes and `npm run build` for frontend/runtime/build
 changes. Docs changes need local link/content review and credential review.
+Add focused behavior tests for changes and regression coverage for bugs; include
+validation failures, retries, and duplicate/concurrent writes where relevant.
 Always run `git diff --check`. See the repository guide's verification matrix
 for focused and manual checks; a build does not prove appearance, accessibility,
 or QR scannability.
@@ -82,18 +96,14 @@ Check that all 16 HTTP tests executed. Stop only your own server afterward and
 clean up only the temporary data you created. Do not stop unknown processes or
 change shared data to make a test pass.
 
-Local integration testing found an existing concurrency failure: twelve
-simultaneous submissions can exhaust six compare-and-set attempts and return
-HTTP 409. Report failures and skips honestly; a fix is a separate application task.
+The existing meeting concurrency failure is described in the repository guide's
+[known limitations](REPOSITORY.md#known-limitations-and-separate-follow-ups).
+Report failures and skips honestly; a fix is a separate application task.
 
 ## Scope and follow-ups
 
-Public-site PRs target `master`; CRM PRs target `crm-expansion`. Propagating
-shared instructions to the other branch is separate work. This guidance adds no
-CI jobs, test infrastructure, runtime upgrades, or hosting changes.
+This guidance adds no CI jobs, test infrastructure, runtime upgrades, or hosting changes.
 
-The scheduled Netlify workflow currently embeds a build hook. Do not print or
-reuse that deployment credential. Rotating it and moving the replacement to a
-GitHub Actions secret require a separate security fix and maintainer rollout.
-Instructions alone do not enforce behavior; automated checks and branch
-protection require their own scoped tasks.
+See the repository guide for
+[deployment-credential remediation and maintainer rollout](REPOSITORY.md#agent-loading-and-maintainer-rollout).
+Automated checks and branch protection require their own scoped tasks.
