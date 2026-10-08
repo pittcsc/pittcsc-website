@@ -30,8 +30,46 @@ and [#164](https://github.com/pittcsc/pittcsc-website/issues/164):
 - The member dashboard event list and a link back from Google to a member event
   page are deferred. The public Notion event cards and existing calendar embeds
   keep their current implementation. New CRM events appear only on the calendar.
-- Recurring/all-day events, invitations, attendance, Drive/Slides, and importing
-  existing Google events are outside this release.
+- Recurring/all-day events, invitations, Drive/Slides, and importing existing
+  Google events are outside this release. Attendance is described below.
+
+## QR attendance
+
+Every saved CRM event, including one created before attendance was added, has a
+stable URL at `/attendance/<event-id>`. The staff event detail shows its branded
+QR code and offers **Copy QR image**, PNG/SVG downloads, and a transparent or
+white background. The URL uses the Go API's configured `FRONTEND_ORIGIN`, so
+hosted deployments must set that value to the public website origin. Event edits
+and Google Calendar failures do not change the URL. The QR contains only this
+URL; it contains no user details or credentials.
+
+A signed-out visitor goes directly to Pitt email OTP sign-in and returns to the
+same attendance page. The page shows the event title and signed-in email. The
+visitor must explicitly click **I'm Here!** to check in. Scanning, page loads,
+and login completion never record attendance. Any active CSC account can check
+in, including accounts with incomplete profiles and any additive role mix.
+Check-in stays open after event creation, even after its scheduled end, until
+staff cancel the event. A cancelled event closes check-in but retains its roster.
+A static QR can be shared, so this workflow does not prove physical presence.
+
+The Go API verifies the current session and account status. A database lock
+coordinates check-in with cancellation and suspension, and the unique
+`(event_id, auth_user_id)` key makes retries and concurrent submissions return
+the original check-in time. Staff see the count and a paginated roster in event
+details; ordinary members can read only their own check-in state. The roster
+shows name when available, Pitt email, and check-in time. Corrections and
+exports are follow-up work.
+
+| Request | Purpose |
+| --- | --- |
+| `GET /attendance/{id}` | Authenticated event title/status and own check-in time; no write |
+| `POST /attendance/{id}` | Explicit authenticated check-in for the verified user |
+| `GET /staff/events/{id}/attendance?page=1` | Staff-only count and 25-person roster page |
+
+The `20261009000000_attendance.sql` migration creates private `csc.attendance`
+with RLS and no browser grants. It applies locally with
+`mise exec -- npx supabase migration up --local`; never apply it to a hosted
+database without authorization for that target.
 
 ## Delivery and recovery
 
@@ -79,7 +117,8 @@ attempt. Removal treats an already absent/deleted entry as success.
 
 ## API
 
-All routes require active staff and return uncached private responses.
+The staff event routes below require active staff and return uncached private
+responses. Member attendance routes are described above.
 
 | Request | Purpose |
 | --- | --- |

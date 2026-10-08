@@ -108,9 +108,10 @@ content, `/join`, meeting tools, and Notion integrations remain available.
 The `returnTo` query parameter accepts only relative paths in `/dashboard` or
 `/attendance`, with query/hash preserved. Other inputs fall back to `/dashboard`.
 External/protocol-relative URLs, encoded paths, backslashes, and public redirect
-routes such as `/zoom` and `/blog` are rejected. Future attendance URLs should use
-`/attendance/<event>` (or deliberately update the allowlist and tests). This issue
-does not implement attendance routes or record attendance on login.
+routes such as `/zoom` and `/blog` are rejected. Event QR URLs use
+`/attendance/<event-id>`; signed-out visitors return there after OTP. Login
+completion never records attendance. The member explicitly clicks **I'm Here!**;
+see [events](EVENTS.md#qr-attendance).
 
 ## Verification and manual walkthrough
 
@@ -150,7 +151,8 @@ For the deeper browser testing pass:
 5. Sign out; confirm return to `/`, private data disappears in other tabs, and a
    separate browser stays signed in. Test offline logout and its retry action.
 6. Check keyboard labels/focus, mobile widths, public navigation, and API-outage
-   retries. Future attendance testing must confirm an explicit check-in click.
+   retries. Check that opening an attendance link and completing login leave
+   attendance unchanged until the explicit **I'm Here!** click.
 
 ## Hosted test environment and rollout
 

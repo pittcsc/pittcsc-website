@@ -50,7 +50,9 @@ needed. My Account supports names, graduation year, majors, and a resume
 PDF. Active staff can open `/dashboard/staff` using the dashboard-only Staff
 link; its User Management tool searches members and edits roles. Its Events tool
 creates, edits, and cancels events with manual calendar recovery; see
-[events](EVENTS.md). Google delivery defaults to disabled for local development.
+[events](EVENTS.md). Saved events also show a stable attendance QR and a
+staff-only check-in roster. Google delivery defaults to disabled for local
+development.
 
 ## Daily commands
 
@@ -65,7 +67,7 @@ creates, edits, and cancels events with manual calendar recovery; see
 | `mise run test:auth` | Real local Supabase/Mailpit/Go auth checks (API must be running) |
 | `mise run test:profiles` | Real local profile/upload checks with synthetic accounts (API must be running) |
 | `mise run test:staff` | Real local roles, staff access, provisioning, and role-management checks (API must be running) |
-| `mise run test:events` | Local event API/database checks and simulated Google Calendar failures/retries (API must be running with calendar disabled) |
+| `mise run test:events` | Local event and attendance API/database checks with synthetic accounts and simulated Google Calendar failures (API must be running with calendar disabled) |
 | `mise exec -- npm run clean` | Clear Gatsby's generated cache/output |
 
 Ctrl+C in `mise run dev` stops Gatsby, Go, and the local Supabase containers.
