@@ -7,9 +7,11 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -40,6 +42,11 @@ func run() error {
 		return errors.New("DATABASE_URL is required; configure backend/.env or the environment")
 	}
 	port := envOr("PORT", "8080")
+	host := envOr("HOST", "127.0.0.1")
+	frontendOrigin := envOr("FRONTEND_ORIGIN", "http://localhost:8000")
+	if err := validateFrontendOrigin(host, frontendOrigin); err != nil {
+		return err
+	}
 	portNumber, err := strconv.Atoi(port)
 	if err != nil || portNumber < 1 || portNumber > 65535 {
 		return errors.New("PORT must be an integer between 1 and 65535")
@@ -80,8 +87,8 @@ func run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	api := &http.Server{
-		Addr:              net.JoinHostPort(envOr("HOST", "127.0.0.1"), port),
-		Handler:           server.NewHandler(pool, envOr("FRONTEND_ORIGIN", "http://localhost:8000"), verifier, profile.Store{DB: pool}, roles.Store{DB: pool}, eventStore),
+		Addr:              net.JoinHostPort(host, port),
+		Handler:           server.NewHandler(pool, frontendOrigin, verifier, profile.Store{DB: pool}, roles.Store{DB: pool}, eventStore),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      30 * time.Second,
@@ -114,4 +121,20 @@ func envOr(name, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func validateFrontendOrigin(bindHost, origin string) error {
+	u, err := url.Parse(origin)
+	if err != nil || u.Hostname() == "" || u.User != nil || u.Path != "" || u.RawQuery != "" || u.Fragment != "" ||
+		(u.Scheme != "http" && u.Scheme != "https") {
+		return errors.New("FRONTEND_ORIGIN must be an HTTP(S) origin without a path")
+	}
+	localBind := bindHost == "127.0.0.1" || bindHost == "localhost" || bindHost == "::1"
+	hostname := strings.ToLower(u.Hostname())
+	ip := net.ParseIP(hostname)
+	if !localBind && (u.Scheme != "https" || hostname == "localhost" || strings.HasSuffix(hostname, ".localhost") ||
+		(ip != nil && (ip.IsLoopback() || ip.IsPrivate() || ip.IsUnspecified()))) {
+		return errors.New("hosted FRONTEND_ORIGIN must be a public HTTPS origin")
+	}
+	return nil
 }

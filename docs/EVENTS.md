@@ -39,7 +39,9 @@ Every saved CRM event, including one created before attendance was added, has a
 stable URL at `/attendance/<event-id>`. The staff event detail shows its branded
 QR code and offers **Copy QR image**, PNG/SVG downloads, and a transparent or
 white background. The URL uses the Go API's configured `FRONTEND_ORIGIN`, so
-hosted deployments must set that value to the public website origin. Event edits
+hosted deployments must set that value to the public HTTPS website origin. The
+API refuses to start on a nonlocal bind address with a localhost or private
+frontend origin. Event edits
 and Google Calendar failures do not change the URL. The QR contains only this
 URL; it contains no user details or credentials.
 
