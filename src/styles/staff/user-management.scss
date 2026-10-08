@@ -1,3 +1,5 @@
+@import "../helpers/account-tokens";
+
 .csc-staff-users {
   .csc-staff-search {
     display: grid;
@@ -12,14 +14,14 @@
     width: 100%;
     margin-top: 0.5rem;
     padding: 0.75rem;
-    border: 1px solid #66758c;
+    border: 1px solid $acc-border;
     border-radius: 0.5rem;
     background: white;
     font-size: 1rem;
   }
   .csc-staff-summary {
     font-size: 0.9rem;
-    color: #4a5a72;
+    color: $acc-muted;
   }
   .csc-staff-members {
     list-style: none;
@@ -32,7 +34,7 @@
     align-items: flex-start;
     gap: 0.5rem;
     padding: 1rem 0;
-    border-top: 1px solid #d7dfeb;
+    border-top: 1px solid $acc-hairline;
   }
   .csc-staff-member-info {
     display: flex;
@@ -42,7 +44,7 @@
   }
   .csc-staff-member-info span {
     font-size: 0.875rem;
-    color: #4a5a72;
+    color: $acc-muted;
   }
   .csc-staff-roles {
     display: flex;
@@ -76,10 +78,10 @@
     width: 1.1rem;
     height: 1.1rem;
     margin: 0;
-    accent-color: #003594;
+    accent-color: $acc-navy;
   }
   .csc-staff-role:has(input:disabled) {
-    color: #66758c;
+    color: $acc-border;
     cursor: not-allowed;
   }
   .csc-staff-confirm,
@@ -90,7 +92,7 @@
   .csc-staff-confirm {
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-    background: #edf1f8;
+    background: $acc-navy-soft;
   }
   .csc-staff-confirm p {
     margin: 0;

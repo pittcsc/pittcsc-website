@@ -8,6 +8,7 @@
 
 $acc-navy: #213f9d;
 $acc-navy-dark: #182f78;
+$acc-navy-soft: #eef1fa;
 $acc-ink: #1b2a4a;
 $acc-body: #3d4a66;
 $acc-muted: #4a5875;
@@ -85,7 +86,7 @@ $acc-radius-control: 12px;
   color: $acc-navy;
 
   &:hover:not(:disabled) {
-    background: #eef1fa;
+    background: $acc-navy-soft;
   }
   &:disabled {
     background: #fff;

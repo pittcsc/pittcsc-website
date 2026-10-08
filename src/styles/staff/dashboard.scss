@@ -1,3 +1,5 @@
+@import "../helpers/account-tokens";
+
 // Shared staff layout and the staff home's tool cards. Each tool keeps its own
 // stylesheet next to the others in this folder.
 .csc-auth:has(.csc-staff) .csc-auth-card {
@@ -15,7 +17,7 @@
 .csc-staff-home {
   .csc-staff-eyebrow {
     margin: 1.5rem 0 0;
-    color: #003594;
+    color: $acc-navy;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -38,17 +40,17 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 1.5rem;
-    border: 1px solid #d7dfeb;
+    border: 1px solid $acc-hairline;
     border-radius: 0.75rem;
-    background: #f9fafc;
+    background: $acc-mist;
     transition:
       border-color 150ms,
       box-shadow 150ms;
 
     &:hover,
     &:focus-within {
-      border-color: #003594;
-      box-shadow: 0 8px 16px #182b4914;
+      border-color: $acc-navy;
+      box-shadow: 0 8px 16px #1b2a4a1f;
     }
   }
   .csc-staff-tool-icon {
@@ -57,10 +59,10 @@
     justify-content: center;
     width: 3rem;
     height: 3rem;
-    border: 2px solid #003594;
+    border: 2px solid $acc-navy;
     border-radius: 0.6rem;
-    background: #edf1f8;
-    color: #003594;
+    background: $acc-navy-soft;
+    color: $acc-navy;
     font-size: 1.25rem;
   }
   h2 {
@@ -86,12 +88,12 @@
     }
   }
   .csc-staff-tool:has(a:focus-visible) {
-    outline: 3px solid #996b00;
+    outline: 3px solid $acc-gold;
     outline-offset: 3px;
   }
   .csc-staff-tool p {
     margin: 0.5rem 0 0;
-    color: #4a5a72;
+    color: $acc-muted;
     font-size: 0.95rem;
   }
 }
