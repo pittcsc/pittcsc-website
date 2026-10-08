@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 )
 
 type memoryCalendar struct {
@@ -218,8 +219,48 @@ func TestStoreIntegration(t *testing.T) {
 	if err != nil || e3.SyncStatus != "disabled" {
 		t.Fatal("disabled mode prevents saving")
 	}
+	state, err := disabled.CheckInStatus(ctx, member, e3.ID)
+	if err != nil || state.CheckedInAt != nil || state.Title != e3.Title {
+		t.Fatal("attendance GET must only read the current user's state")
+	}
+	for range 8 {
+		wg.Go(func() {
+			if _, err := disabled.CheckIn(ctx, member, e3.ID); err != nil {
+				t.Errorf("concurrent check-in: %v", err)
+			}
+		})
+	}
+	wg.Wait()
+	roster, err := disabled.Attendance(ctx, e3.ID, 1)
+	if err != nil || roster.Count != 1 || len(roster.Attendees) != 1 || roster.Attendees[0].Email == "" {
+		t.Fatal("duplicate check-in or private roster lookup failed")
+	}
+	state, err = disabled.CheckInStatus(ctx, member, e3.ID)
+	if err != nil || state.CheckedInAt == nil {
+		t.Fatal("check-in state was not persisted")
+	}
+	if _, err := disabled.CheckIn(ctx, fixtureID(), e3.ID); !errors.Is(err, profile.ErrSuspended) {
+		t.Fatal("unknown account checked in")
+	}
+	if _, err := pool.Exec(ctx, `update csc.profiles set account_status='suspended' where auth_user_id=$1::uuid`, member); err != nil {
+		t.Fatal(err)
+	}
+	defer pool.Exec(context.Background(), `update csc.profiles set account_status='active' where auth_user_id=$1::uuid`, member)
+	if _, err := disabled.CheckIn(ctx, member, e3.ID); !errors.Is(err, profile.ErrSuspended) {
+		t.Fatal("suspended account checked in")
+	}
+	if _, err := pool.Exec(ctx, `update csc.profiles set account_status='active' where auth_user_id=$1::uuid`, member); err != nil {
+		t.Fatal(err)
+	}
 	e3, err = disabled.Cancel(ctx, actor, e3.ID, e3.Version)
 	if err != nil || !strings.Contains(e3.SyncError, "publicly visible") {
 		t.Fatal("disabled cancellation must warn that Google removal is unconfirmed")
+	}
+	if _, err := disabled.CheckIn(ctx, other, e3.ID); !errors.Is(err, ErrCancelled) {
+		t.Fatal("cancelled event accepted check-in")
+	}
+	roster, err = disabled.Attendance(ctx, e3.ID, 1)
+	if err != nil || roster.Count != 1 {
+		t.Fatal("cancellation lost existing attendance")
 	}
 }

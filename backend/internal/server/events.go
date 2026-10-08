@@ -8,6 +8,7 @@ import (
 	"mime"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
@@ -22,6 +23,12 @@ type eventStore interface {
 	Save(context.Context, string, string, events.Input) (events.Event, error)
 	Cancel(context.Context, string, string, int) (events.Event, error)
 	Sync(context.Context, string, string) (events.Event, error)
+}
+
+type attendanceStore interface {
+	CheckInStatus(context.Context, string, string) (events.CheckInStatus, error)
+	CheckIn(context.Context, string, string) (events.CheckInStatus, error)
+	Attendance(context.Context, string, int) (events.AttendancePage, error)
 }
 
 func writeEventError(w http.ResponseWriter, err error) {
@@ -63,7 +70,12 @@ func decodeEventBody(w http.ResponseWriter, r *http.Request, value any) bool {
 	return true
 }
 
-func registerEventRoutes(mux *http.ServeMux, authentication authenticator, profiles profileStore, store eventStore) {
+func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authentication authenticator, profiles profileStore, store eventStore) {
+	attendance, _ := store.(attendanceStore)
+	withAttendanceURL := func(e events.Event) events.Event {
+		e.AttendanceURL = strings.TrimRight(frontendOrigin, "/") + "/attendance/" + e.ID
+		return e
+	}
 	guard := func(next func(http.ResponseWriter, *http.Request, auth.Identity)) http.HandlerFunc {
 		return withStaffTimeout(authentication, profiles, 24*time.Second, func(w http.ResponseWriter, r *http.Request, actor auth.Identity, _ profile.Record) {
 			if store == nil {
@@ -92,7 +104,24 @@ func registerEventRoutes(mux *http.ServeMux, authentication authenticator, profi
 			writeEventError(w, err)
 			return
 		}
-		writeJSON(w, e)
+		writeJSON(w, withAttendanceURL(e))
+	}))
+	mux.HandleFunc("GET /staff/events/{id}/attendance", guard(func(w http.ResponseWriter, r *http.Request, _ auth.Identity) {
+		if attendance == nil {
+			writeEventError(w, auth.ErrUnavailable)
+			return
+		}
+		page, err := events.ParsePage(r.URL.Query().Get("page"))
+		if err != nil {
+			writeEventError(w, err)
+			return
+		}
+		result, err := attendance.Attendance(r.Context(), r.PathValue("id"), page)
+		if err != nil {
+			writeEventError(w, err)
+			return
+		}
+		writeJSON(w, result)
 	}))
 	mux.HandleFunc("GET /staff/events/{id}/history", guard(func(w http.ResponseWriter, r *http.Request, _ auth.Identity) {
 		var before int64
@@ -129,7 +158,7 @@ func registerEventRoutes(mux *http.ServeMux, authentication authenticator, profi
 			writeEventError(w, err)
 			return
 		}
-		writeJSON(w, e)
+		writeJSON(w, withAttendanceURL(e))
 	}))
 	mux.HandleFunc("POST /staff/events/{id}/cancel", guard(func(w http.ResponseWriter, r *http.Request, actor auth.Identity) {
 		var input *struct {
@@ -147,7 +176,7 @@ func registerEventRoutes(mux *http.ServeMux, authentication authenticator, profi
 			writeEventError(w, err)
 			return
 		}
-		writeJSON(w, e)
+		writeJSON(w, withAttendanceURL(e))
 	}))
 	mux.HandleFunc("POST /staff/events/{id}/sync", guard(func(w http.ResponseWriter, r *http.Request, actor auth.Identity) {
 		e, err := store.Sync(r.Context(), actor.ID, r.PathValue("id"))
@@ -155,9 +184,36 @@ func registerEventRoutes(mux *http.ServeMux, authentication authenticator, profi
 			writeEventError(w, err)
 			return
 		}
-		writeJSON(w, e)
+		writeJSON(w, withAttendanceURL(e))
 	}))
-	for _, path := range []string{"/staff/events", "/staff/events/{id}", "/staff/events/{id}/history", "/staff/events/{id}/cancel", "/staff/events/{id}/sync"} {
+	if attendance != nil {
+		member := func(next func(http.ResponseWriter, *http.Request, auth.Identity)) http.HandlerFunc {
+			return withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+				next(w, r, identity)
+			})
+		}
+		mux.HandleFunc("GET /attendance/{id}", member(func(w http.ResponseWriter, r *http.Request, identity auth.Identity) {
+			result, err := attendance.CheckInStatus(r.Context(), identity.ID, r.PathValue("id"))
+			if err != nil {
+				writeEventError(w, err)
+				return
+			}
+			writeJSON(w, result)
+		}))
+		mux.HandleFunc("POST /attendance/{id}", member(func(w http.ResponseWriter, r *http.Request, identity auth.Identity) {
+			result, err := attendance.CheckIn(r.Context(), identity.ID, r.PathValue("id"))
+			if errors.Is(err, events.ErrCancelled) {
+				writeJSONError(w, http.StatusConflict, "Check-in is closed for this cancelled event.")
+				return
+			}
+			if err != nil {
+				writeEventError(w, err)
+				return
+			}
+			writeJSON(w, result)
+		}))
+	}
+	for _, path := range []string{"/staff/events", "/staff/events/{id}", "/staff/events/{id}/history", "/staff/events/{id}/attendance", "/staff/events/{id}/cancel", "/staff/events/{id}/sync", "/attendance/{id}"} {
 		mux.HandleFunc("OPTIONS "+path, func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	}
 }
