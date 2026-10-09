@@ -3,7 +3,8 @@
 Issue [#158](https://github.com/pittcsc/pittcsc-website/issues/158) implements local
 Pitt email OTP authentication. Supabase owns identities, codes, and sessions; Go
 verifies identities. [Profiles](PROFILES.md) (#159) add private My Account editing
-and files. Roles, contact emails, and the full dashboard follow separately.
+and files. The member home shows [CRM events](EVENTS.md#member-dashboard); other
+account and role features have separate scopes.
 
 ## Local Supabase configuration
 
@@ -94,12 +95,12 @@ active. Staff-triggered global logout is outside this issue.
 
 `/login` offers email entry, code entry, loading, invalid/expired-code feedback,
 resend countdown, retries, and change-email. New and returning users follow the
-same path. A verified session reaches the `/dashboard` landing page,
-which displays the verified login email. Logout and **Back to Website** appear
+same path. A verified session reaches the `/dashboard` member home.
+Logout and **Back to Website** appear
 only on My Account. Signed-in app screens have a
 shared header with a top-right **My Account** button. The private
 editor at `/dashboard/account` accepts partial saves without a completion gate.
-The full dashboard remains separate work. `/dashboard/*` has a Gatsby client-only
+`/dashboard/*` has a Gatsby client-only
 match and a scoped Netlify fallback, preserving existing public/API routes.
 
 The public auth link reads **Sign in / Create account** or **Dashboard**. Public
