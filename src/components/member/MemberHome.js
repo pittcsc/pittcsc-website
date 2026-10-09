@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import {
@@ -12,6 +13,9 @@ export default function MemberHome({ identity, revalidate }) {
   const [events, setEvents] = useState(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
+  const [profileComplete, setProfileComplete] = useState(null);
+  const [profileError, setProfileError] = useState("");
+  const [profileAttempt, setProfileAttempt] = useState(0);
   const request = useMemo(
     () =>
       createAccountClient({
@@ -59,6 +63,42 @@ export default function MemberHome({ identity, revalidate }) {
     };
   }, [identity.id, request, revalidate, attempt]);
 
+  useEffect(() => {
+    let pending;
+    const load = () => {
+      pending?.abort();
+      const controller = new AbortController();
+      pending = controller;
+      setProfileComplete(null);
+      setProfileError("");
+      request("/profile", { userID: identity.id, signal: controller.signal })
+        .then((result) => {
+          if (controller.signal.aborted) return;
+          if (typeof result.complete !== "boolean") {
+            throw new Error("Profile status is temporarily unavailable.");
+          }
+          setProfileComplete(result.complete);
+        })
+        .catch((failure) => {
+          if (controller.signal.aborted) return;
+          setProfileError(failure.message);
+          if (failure.status === 401 || failure.status === 403)
+            void revalidate();
+        });
+    };
+    const visible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    load();
+    window.addEventListener("focus", load);
+    document.addEventListener("visibilitychange", visible);
+    return () => {
+      pending?.abort();
+      window.removeEventListener("focus", load);
+      document.removeEventListener("visibilitychange", visible);
+    };
+  }, [identity.id, request, revalidate, profileAttempt]);
+
   return (
     <section className="csc-member-home" aria-labelledby="member-events-title">
       <div className="csc-member-heading">
@@ -66,6 +106,22 @@ export default function MemberHome({ identity, revalidate }) {
           <p className="csc-member-eyebrow">Your dashboard</p>
           <h1 id="member-events-title">Upcoming events</h1>
         </div>
+        {profileComplete === false && (
+          <Link className="csc-member-profile-prompt" to="/dashboard/account">
+            Complete your profile <span aria-hidden="true">→</span>
+          </Link>
+        )}
+        {profileError && (
+          <div className="csc-member-profile-error" role="alert">
+            <span>Could not check profile status.</span>
+            <button
+              className="csc-auth-secondary"
+              onClick={() => setProfileAttempt((value) => value + 1)}
+            >
+              Retry
+            </button>
+          </div>
+        )}
       </div>
       {error ? (
         <div className="csc-member-state" role="alert">
