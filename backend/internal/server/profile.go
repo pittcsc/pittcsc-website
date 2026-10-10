@@ -37,9 +37,9 @@ func writeProfileError(w http.ResponseWriter, err error) {
 	case errors.Is(err, profile.ErrNotFound):
 		writeJSONError(w, http.StatusNotFound, "This file has not been uploaded.")
 	case errors.Is(err, profile.ErrFileTooLarge):
-		writeJSONError(w, http.StatusRequestEntityTooLarge, "Choose a PDF resume up to 10 MB.")
+		writeJSONError(w, http.StatusRequestEntityTooLarge, "Choose an avatar up to 5 MB or a resume up to 10 MB.")
 	case errors.Is(err, profile.ErrInvalidFile):
-		writeJSONError(w, http.StatusBadRequest, "Choose a valid PDF resume.")
+		writeJSONError(w, http.StatusBadRequest, "Choose a valid PDF resume or a JPEG, PNG, or WebP avatar. Avatars must be at most 4096 pixels per side and 16 megapixels.")
 	default:
 		writeJSONError(w, http.StatusServiceUnavailable, "Your account is temporarily unavailable. Try again.")
 	}
