@@ -1,8 +1,10 @@
+@import "../helpers/account-tokens";
+
 .csc-staff-events {
   .csc-event-attendance {
     margin: 2rem 0;
     padding: 1.25rem;
-    border: 1px solid #d8dce8;
+    border: 1px solid $acc-hairline;
     border-radius: 0.75rem;
   }
   .csc-event-attendance h2 {
@@ -19,7 +21,7 @@
   .csc-event-qr-preview {
     width: min(100%, 300px);
     padding: 0.75rem;
-    border: 1px solid #d8dce8;
+    border: 1px solid $acc-hairline;
     border-radius: 0.5rem;
     background: white;
   }
@@ -32,7 +34,7 @@
   }
   .csc-event-attendance-link a {
     display: block;
-    color: #003594;
+    color: $acc-navy;
     text-decoration: underline;
     overflow-wrap: anywhere;
   }
@@ -77,7 +79,7 @@
       margin-bottom: 0;
     }
     p {
-      color: #4a5a72;
+      color: $acc-muted;
     }
     button {
       flex-shrink: 0;
@@ -88,7 +90,7 @@
   }
   .csc-events-note,
   .csc-events-optional {
-    color: #4a5a72;
+    color: $acc-muted;
     font-size: 0.875rem;
   }
   .csc-events-filters {
@@ -101,7 +103,7 @@
     margin: 0;
   }
   .csc-events-filters button[aria-pressed="true"] {
-    background: #003594;
+    background: $acc-navy;
     color: white;
   }
   .csc-events-list {
@@ -110,7 +112,7 @@
     margin: 0;
   }
   .csc-events-list li {
-    border-top: 1px solid #d7dfeb;
+    border-top: 1px solid $acc-hairline;
     padding: 1.25rem 0;
     overflow-wrap: anywhere;
   }
@@ -127,7 +129,7 @@
     margin: 0;
     padding: 0;
     background: none;
-    color: #003594;
+    color: $acc-navy;
     text-align: left;
     text-decoration: underline;
   }
@@ -137,7 +139,7 @@
   .csc-events-badge {
     font-size: 0.8rem;
     border-radius: 1rem;
-    background: #e8ebf0;
+    background: $acc-hairline;
     padding: 0.2rem 0.6rem;
   }
   .csc-events-sync {
@@ -156,10 +158,10 @@
   }
   .csc-events-delivery {
     padding: 1rem;
-    border: 1px solid #d7dfeb;
+    border: 1px solid $acc-hairline;
     border-radius: 0.5rem;
     margin: 1rem 0;
-    background: #f9fafc;
+    background: $acc-mist;
   }
   .csc-events-delivery p {
     margin: 0.5rem 0;
@@ -168,7 +170,7 @@
     display: inline-block;
     margin-top: 0.5rem;
     text-decoration: underline;
-    color: #003594;
+    color: $acc-navy;
   }
   .csc-events-fields {
     padding: 0;
@@ -192,7 +194,7 @@
     width: 100%;
     margin-top: 0.5rem;
     padding: 0.75rem;
-    border: 1px solid #66758c;
+    border: 1px solid $acc-border;
     border-radius: 0.5rem;
     font: inherit;
     resize: vertical;
@@ -207,12 +209,12 @@
     flex-wrap: wrap;
   }
   textarea:focus-visible {
-    outline: 3px solid #996b00;
+    outline: 3px solid $acc-gold;
     outline-offset: 3px;
   }
   button.csc-events-danger {
-    color: #9b1c1c;
-    border-color: #9b1c1c;
+    color: $acc-error;
+    border-color: $acc-error;
   }
   .csc-events-confirm {
     padding: 1rem;
@@ -222,7 +224,7 @@
   }
   .csc-events-history {
     margin-top: 2rem;
-    border-top: 1px solid #d7dfeb;
+    border-top: 1px solid $acc-hairline;
   }
   .csc-events-history h2 {
     font-size: 1.2rem;
@@ -235,12 +237,12 @@
   }
   .csc-events-history li {
     padding: 1rem 0;
-    border-bottom: 1px solid #e8ebf0;
+    border-bottom: 1px solid $acc-hairline;
     overflow-wrap: anywhere;
   }
   .csc-events-history span {
     display: block;
-    color: #4a5a72;
+    color: $acc-muted;
     font-size: 0.875rem;
   }
   .csc-events-history details {
@@ -249,7 +251,7 @@
   }
   .csc-events-history summary {
     cursor: pointer;
-    color: #003594;
+    color: $acc-navy;
   }
   .csc-events-description {
     white-space: pre-wrap;

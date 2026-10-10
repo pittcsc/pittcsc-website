@@ -1,0 +1,103 @@
+// Design tokens for the signed-in surfaces: /login, /dashboard and
+// /dashboard/account. Taken from the "Components & states" board of the
+// sign-up design canvas so the three pages read as one product.
+//
+// These are deliberately separate from helpers/_variables.scss, which holds
+// the older public-site palette ($pittBlue et al). Don't mix the two in one
+// component.
+
+$acc-navy: #213f9d;
+$acc-navy-dark: #182f78;
+$acc-navy-soft: #eef1fa;
+$acc-ink: #1b2a4a;
+$acc-body: #3d4a66;
+$acc-muted: #4a5875;
+$acc-gold: #f5b82e;
+$acc-cream: #f8e3b4;
+$acc-cream-soft: #fbf3df;
+$acc-mist: #f4f5f9;
+$acc-line: #c9cfdc;
+$acc-hairline: #e3e6ee;
+$acc-border: #8a94ab;
+$acc-error: #b42318;
+$acc-error-bg: #fdecea;
+$acc-error-ink: #7a1a12;
+
+$acc-radius-card: 24px;
+$acc-radius-control: 12px;
+
+// A text input / select as the States board draws it.
+@mixin acc-field {
+  width: 100%;
+  height: 52px;
+  padding: 0 1rem;
+  border: 1.5px solid $acc-border;
+  border-radius: $acc-radius-control;
+  background: #fff;
+  font: inherit;
+  font-size: 1rem;
+  color: $acc-ink;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $acc-navy;
+    outline: none;
+    // Overrides the @tailwindcss/forms ring, which is a box-shadow and would
+    // otherwise sit under this one in a different blue.
+    box-shadow: 0 0 0 4px #213f9d33;
+  }
+  &[aria-invalid="true"] {
+    border-color: $acc-error;
+  }
+  &:disabled {
+    background: $acc-mist;
+    border-color: $acc-hairline;
+    color: #5c6680;
+    cursor: not-allowed;
+  }
+}
+
+@mixin acc-button-primary {
+  min-height: 52px;
+  padding: 0 1.25rem;
+  border: 0;
+  border-radius: $acc-radius-control;
+  background: $acc-navy;
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $acc-navy-dark;
+  }
+  &:disabled {
+    background: $acc-line;
+    color: $acc-body;
+    cursor: not-allowed;
+  }
+}
+
+@mixin acc-button-secondary {
+  @include acc-button-primary;
+  background: #fff;
+  border: 2px solid $acc-navy;
+  color: $acc-navy;
+
+  &:hover:not(:disabled) {
+    background: $acc-navy-soft;
+  }
+  &:disabled {
+    background: #fff;
+    border-color: $acc-line;
+    color: $acc-muted;
+  }
+}
+
+@mixin acc-label {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $acc-ink;
+}

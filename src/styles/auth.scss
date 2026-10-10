@@ -1,20 +1,23 @@
+// Shell for the signed-in pages (/dashboard, /dashboard/account). Shares its
+// tokens with the sign-in screen so the three read as one product; see
+// helpers/_account-tokens.scss. Only AuthFrame imports this.
+
+@import "./helpers/account-tokens";
+
 .csc-auth-layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f4f6fa;
-  color: #182b49;
+  background: $acc-mist;
+  color: $acc-ink;
 
-  .csc-auth-brand {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #003594;
-  }
-  :is(a, button, input):focus-visible {
-    outline: 3px solid #996b00;
-    outline-offset: 3px;
+  :is(a, button, input, select):focus-visible {
+    outline: 3px solid $acc-gold;
+    outline-offset: 2px;
   }
 }
+
+/* --------------------------------------------------------------- header --- */
 
 .csc-auth-header {
   display: flex;
@@ -22,12 +25,18 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem clamp(1rem, 4vw, 3rem);
-  background: white;
-  border-bottom: 1px solid #d7dfeb;
+  background: #fff;
+  border-bottom: 1px solid $acc-hairline;
 
   .csc-auth-logo {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     flex-shrink: 0;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: $acc-ink;
+    text-decoration: none;
   }
 
   nav {
@@ -58,9 +67,9 @@
   }
   .csc-auth-logo img {
     display: block;
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
+    width: 44px;
+    height: auto;
+    border-radius: 8px;
   }
 
   .csc-auth-account {
@@ -68,94 +77,226 @@
     align-items: center;
     justify-content: center;
     min-height: 44px;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.25rem;
     border-radius: 9999px;
-    background: #003594;
-    color: white;
+    background: $acc-navy;
+    color: #fff;
     font-weight: 700;
     white-space: nowrap;
-    box-shadow: 0 4px 6px #182b4926;
-    transition: box-shadow 150ms;
+    text-decoration: none;
+    transition: background 150ms;
 
     &:hover {
-      box-shadow: 0 8px 16px #182b4933;
+      background: $acc-navy-dark;
     }
   }
 }
 
+/* ----------------------------------------------------------------- card --- */
+
 .csc-auth {
   flex: 1;
-  padding: 3rem 1rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  padding: 3.5rem 1rem 4rem;
 
-  .csc-auth-card {
+  // Offset cream slab behind the card, as on the sign-in screen.
+  .csc-auth-cardwrap {
+    position: relative;
     width: 100%;
     max-width: 30rem;
-    padding: 2rem;
-    border-radius: 1rem;
-    background: white;
-    box-shadow: 0 8px 32px #182b4910;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: -24px;
+      top: 24px;
+      right: 24px;
+      bottom: -24px;
+      border-radius: 28px;
+      background: $acc-cream;
+    }
   }
+
+  .csc-auth-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    padding: 2.75rem;
+    border-radius: $acc-radius-card;
+    background: #fff;
+    box-shadow: 0 16px 48px #1b2a4a1f;
+    box-sizing: border-box;
+  }
+
   h1 {
-    font-size: 1.75rem;
+    margin: 0;
+    font-size: 2.125rem;
+    line-height: 1.15;
+    font-weight: 800;
+  }
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
     font-weight: 700;
-    margin: 1.5rem 0 1rem;
   }
   p {
-    margin: 1rem 0;
+    margin: 0;
+    font-size: 1rem;
     line-height: 1.6;
+    color: $acc-body;
     overflow-wrap: anywhere;
   }
+
   label {
-    display: block;
-    font-weight: 600;
-    margin-top: 1.5rem;
+    @include acc-label;
+    margin: 0;
   }
-  input {
-    display: block;
-    width: 100%;
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select {
+    @include acc-field;
     margin-top: 0.5rem;
-    padding: 0.75rem;
-    border: 1px solid #66758c;
-    border-radius: 0.5rem;
-    font-size: 1rem;
   }
   button {
-    display: block;
+    @include acc-button-primary;
     width: 100%;
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    background: #003594;
-    color: white;
-    font-weight: 600;
-    min-height: 44px;
-  }
-  button:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
   }
   .csc-auth-secondary {
-    background: #edf1f8;
-    color: #003594;
+    @include acc-button-secondary;
   }
-  .csc-auth-website {
-    display: inline-block;
-    margin-top: 2rem;
-    text-decoration: underline;
+
+  .csc-auth-brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: $acc-navy;
+    text-decoration: none;
   }
+
   [role="alert"] {
-    color: #9c2222;
+    display: block;
+    padding: 0.875rem 1rem;
+    border-radius: $acc-radius-control;
+    background: $acc-error-bg;
+    color: $acc-error-ink;
+    font-size: 0.875rem;
+    font-weight: 500;
   }
+  [role="alert"]:empty,
+  [role="status"]:empty {
+    display: none;
+  }
+  [role="status"] {
+    font-size: 0.9375rem;
+    color: $acc-muted;
+  }
+
   .csc-auth-actions {
     display: flex;
     gap: 0.75rem;
   }
-  @media (max-width: 380px) {
-    .csc-auth-card {
-      padding: 1.25rem;
+
+  @media (max-width: 600px) {
+    padding: 2rem 1rem 3rem;
+
+    .csc-auth-cardwrap::before {
+      display: none;
     }
+    .csc-auth-card {
+      padding: 1.75rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+    }
+  }
+}
+
+/* ------------------------------------------------- signed-in landing ------ */
+
+.csc-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  .csc-dashboard-tick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $acc-cream;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .csc-dashboard-next {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 1rem 1.125rem;
+      border-radius: 14px;
+      background: $acc-cream-soft;
+      color: $acc-ink;
+      text-decoration: none;
+
+      &:hover {
+        background: #f7e9c8;
+      }
+      > svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+    }
+  }
+  .csc-dashboard-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: $acc-navy;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .csc-dashboard-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+
+    strong {
+      font-size: 0.9375rem;
+      font-weight: 600;
+    }
+    span {
+      font-size: 0.8125rem;
+      color: $acc-muted;
+    }
+  }
+
+  .csc-dashboard-cta {
+    @include acc-button-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
   }
 }

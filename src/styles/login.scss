@@ -1,27 +1,17 @@
-// Sign-in screen. Scoped to .csc-login-* so the shared AuthFrame styles in
-// auth.scss (still used by /dashboard) are untouched.
+// Sign-in screen. Scoped to .csc-login-*; the signed-in pages use AuthFrame
+// and auth.scss. All three share helpers/_account-tokens.scss.
 
-$navy: #213f9d;
-$navy-dark: #182f78;
-$ink: #1b2a4a;
-$body: #3d4a66;
-$muted: #4a5875;
-$gold: #f5b82e;
-$cream: #f8e3b4;
-$mist: #f4f5f9;
-$line: #c9cfdc;
-$border: #8a94ab;
-$error: #b42318;
+@import "./helpers/account-tokens";
 
 .csc-login {
   min-height: 100vh;
   display: flex;
   flex-wrap: wrap;
-  background: $mist;
-  color: $ink;
+  background: $acc-mist;
+  color: $acc-ink;
 
   :is(a, button, input, select):focus-visible {
-    outline: 3px solid $gold;
+    outline: 3px solid $acc-gold;
     outline-offset: 2px;
   }
 }
@@ -38,7 +28,7 @@ $error: #b42318;
   justify-content: space-between;
   gap: 3rem;
   padding: 3.5rem clamp(2rem, 4vw, 4rem);
-  background: $navy;
+  background: $acc-navy;
   color: #fff;
 
   // Dot field, drawn in CSS so there is no extra request for pure ornament.
@@ -49,7 +39,7 @@ $error: #b42318;
     top: -40px;
     width: 340px;
     height: 300px;
-    background-image: radial-gradient($gold 1.6px, transparent 2px);
+    background-image: radial-gradient($acc-gold 1.6px, transparent 2px);
     background-size: 22px 22px;
     opacity: 0.85;
     pointer-events: none;
@@ -72,7 +62,7 @@ $error: #b42318;
 
   path {
     fill: none;
-    stroke: $gold;
+    stroke: $acc-gold;
     stroke-width: 5;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -141,7 +131,7 @@ $error: #b42318;
   }
   path {
     fill: none;
-    stroke: $gold;
+    stroke: $acc-gold;
     stroke-width: 5;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -176,7 +166,7 @@ $error: #b42318;
     right: 28px;
     bottom: -28px;
     border-radius: 28px;
-    background: $cream;
+    background: $acc-cream;
   }
 }
 
@@ -200,7 +190,7 @@ $error: #b42318;
     margin: 0;
     font-size: 1rem;
     line-height: 1.6;
-    color: $body;
+    color: $acc-body;
   }
 }
 
@@ -220,12 +210,12 @@ $error: #b42318;
     background: #e3e6ee;
   }
   span.done {
-    background: $navy;
+    background: $acc-navy;
   }
   p {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: $muted;
+    color: $acc-muted;
   }
 }
 
@@ -253,23 +243,23 @@ $error: #b42318;
   input[type="email"] {
     height: 56px;
     padding: 0 1.125rem;
-    border: 1.5px solid $border;
+    border: 1.5px solid $acc-border;
     border-radius: 12px;
     font: inherit;
     font-size: 1.0625rem;
-    color: $ink;
+    color: $acc-ink;
     background: #fff;
 
     &:focus {
-      border-color: $navy;
+      border-color: $acc-navy;
       outline: none;
       box-shadow: 0 0 0 4px #213f9d33;
     }
     &[aria-invalid="true"] {
-      border-color: $error;
+      border-color: $acc-error;
     }
     &:disabled {
-      background: $mist;
+      background: $acc-mist;
       border-color: #e3e6ee;
       color: #5c6680;
     }
@@ -294,14 +284,14 @@ $error: #b42318;
     align-items: center;
     justify-content: center;
     height: 64px;
-    border: 2px solid $line;
+    border: 2px solid $acc-line;
     border-radius: 12px;
     background: #f7f8fb;
     font-size: 1.625rem;
     font-weight: 700;
   }
   span.filled {
-    border-color: $ink;
+    border-color: $acc-ink;
     background: #fff;
   }
   input {
@@ -328,11 +318,11 @@ $error: #b42318;
   }
   // Light up the next empty box while the hidden input has focus.
   input:focus ~ .csc-login-code-boxes span.next {
-    border-color: $navy;
+    border-color: $acc-navy;
     box-shadow: 0 0 0 3px #213f9d33;
   }
   &[data-invalid="true"] span {
-    border-color: $error;
+    border-color: $acc-error;
   }
 }
 
@@ -340,7 +330,7 @@ $error: #b42318;
   height: 56px;
   border: 0;
   border-radius: 12px;
-  background: $navy;
+  background: $acc-navy;
   color: #fff;
   font: inherit;
   font-size: 1.0625rem;
@@ -348,11 +338,11 @@ $error: #b42318;
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    background: $navy-dark;
+    background: $acc-navy-dark;
   }
   &:disabled {
-    background: $line;
-    color: $body;
+    background: $acc-line;
+    color: $acc-body;
     cursor: not-allowed;
   }
 }
@@ -370,12 +360,12 @@ $error: #b42318;
     background: none;
     font: inherit;
     font-weight: 500;
-    color: $ink;
+    color: $acc-ink;
     text-decoration: underline;
     cursor: pointer;
 
     &:disabled {
-      color: $muted;
+      color: $acc-muted;
       text-decoration: none;
       cursor: not-allowed;
     }
@@ -400,7 +390,7 @@ $error: #b42318;
     color: #7a1a12;
   }
   &.notice {
-    background: $ink;
+    background: $acc-ink;
     color: #fff;
     font-weight: 500;
   }
@@ -422,7 +412,7 @@ $error: #b42318;
   gap: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: $error;
+  color: $acc-error;
 }
 
 /* ----------------------------------------------------------- responsive --- */
