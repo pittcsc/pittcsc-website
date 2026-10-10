@@ -1,5 +1,5 @@
-.csc-auth:has(.csc-member-home) .csc-auth-card {
-  max-width: 64rem;
+.csc-auth:has(.csc-member-home) .csc-auth-cardwrap {
+  max-width: 72rem;
 }
 
 .csc-member-home {
@@ -129,7 +129,13 @@
     width: auto;
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 1050px) {
+    .csc-member-events {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
     .csc-member-heading {
       flex-direction: column;
     }
