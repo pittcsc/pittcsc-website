@@ -19,6 +19,15 @@ description = "Start the Go API with local Supabase ready"
 depends = ["db:start"]
 run = "npm run dev:api"
 
+[tasks.demo]
+description = "Start the local stack and keep a member and a staff demo account ready"
+run = "node scripts/demo.mjs start"
+
+[tasks."demo:code"]
+description = "Print the latest local sign-in code for a demo address"
+usage = 'arg "<email>" help="Demo address to read the latest local sign-in code for"'
+run = 'node scripts/demo.mjs code "$usage_email"'
+
 [tasks."db:start"]
 description = "Start local Supabase and create missing env files; never reset data"
 run = "node scripts/local-dev.mjs start"

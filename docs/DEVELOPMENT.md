@@ -62,6 +62,8 @@ development.
 | `mise run setup` | Reinstall locked dependencies after cloning or dependency changes |
 | `mise run db:start` | Start only Supabase and create any missing env files |
 | `mise run db:stop` | Stop Supabase, preserving local data |
+| `mise run demo` | Start the local stack with a member and a staff demo account ready |
+| `mise run demo:code <email>` | Print the latest local sign-in code for a demo address |
 | `mise run check` | Run JavaScript tests and Go tests, vet, and build; no Docker needed |
 | `mise run build` | Production Gatsby build |
 | `mise run test:auth` | Real local Supabase/Mailpit/Go auth checks (API must be running) |
@@ -174,6 +176,41 @@ Press Ctrl+C in `mise run dev` to stop both application servers and Supabase.
 The API drains requests and closes its database pool on shutdown. If running
 the servers in separate terminals, stop each one with Ctrl+C, then run
 `mise run db:stop`; no reset is needed for normal development.
+
+## Demo the signed-in site
+
+To compare the member and the staff dashboard without assembling accounts by
+hand:
+
+```sh
+mise run demo
+```
+
+It reuses or starts local Supabase, Gatsby, and the API, makes sure
+`csc-demo-member@pitt.edu` and `csc-demo-staff@pitt.edu` exist, and prints the
+local addresses with each account's roles. Reruns reuse the same two accounts
+and the servers already running, so nothing is duplicated and no env file or
+database data is rewritten. Accounts are created through Auth, and the staff
+role through the audited `grant-staff` command; neither managed Auth tables nor
+`csc` tables are edited directly. The command refuses any service that is not a
+loopback address, so it cannot reach a hosted project.
+
+Gatsby takes the first free port in 8000-8019, which is often not 8000, so the
+API started here receives the matching `FRONTEND_ORIGIN` through its environment
+rather than an edit to `backend/.env`. An API that is already running has to
+allow that origin already; the command stops and says so when it does not.
+
+To open one of the views, go to `/login` in a new private window, enter the
+address, click "Send code", then read the code from Mailpit:
+
+```sh
+mise run demo:code csc-demo-member@pitt.edu
+```
+
+The member view has `/dashboard` and `/dashboard/account`. The staff view adds
+the Staff link to `/dashboard/staff` with its User Management and Events tools.
+Auth sends at most one code per minute per address, so use one private window
+per view, or sign out from My Account, rather than switching back and forth.
 
 ## Backend checks
 
