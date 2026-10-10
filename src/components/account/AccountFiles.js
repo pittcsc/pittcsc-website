@@ -1,26 +1,106 @@
 import React, { useEffect, useRef, useState } from "react";
+import { initials } from "../../lib/account/form.mjs";
 
-export default function AccountFiles({ profile, userID, request, onChanged }) {
+// `only` renders a single section, so the guided flow can ask for the resume
+// and the optional picture as separate questions. Omitted, both are shown.
+export default function AccountFiles({
+  profile,
+  userID,
+  request,
+  onChanged,
+  only,
+}) {
+  const [avatarURL, setAvatarURL] = useState("");
+  const [previewError, setPreviewError] = useState("");
+  const [previewAttempt, setPreviewAttempt] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    let url;
+    setAvatarURL("");
+    setPreviewError("");
+    if (profile.hasAvatar) {
+      request("/profile/avatar", {
+        userID,
+        signal: controller.signal,
+        responseType: "blob",
+      })
+        .then((blob) => {
+          if (controller.signal.aborted) return;
+          url = URL.createObjectURL(blob);
+          setAvatarURL(url);
+        })
+        .catch((error) => {
+          if (!controller.signal.aborted) setPreviewError(error.message);
+        });
+    }
+    return () => {
+      controller.abort();
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [profile.hasAvatar, profile.updatedAt, userID, request, previewAttempt]);
+
+  const showAvatar = only !== "resume";
+  const showResume = only !== "avatar";
+
   return (
     <section className="csc-account-files" aria-label="Profile files">
-      <h2>Resume</h2>
-      <p>
-        {profile.hasResume
-          ? "Your resume is saved."
-          : "No resume uploaded yet."}{" "}
-        Visible only to you.
-      </p>
-      <ResumeEditor
-        exists={profile.hasResume}
-        userID={userID}
-        request={request}
-        onChanged={onChanged}
-      />
+      {showAvatar && (
+        <>
+          <h2>Profile picture</h2>
+          <div className="csc-account-avatar">
+            {avatarURL ? (
+              <img src={avatarURL} alt="Your profile avatar" />
+            ) : (
+              <span aria-label="Default profile avatar">
+                {initials(profile)}
+              </span>
+            )}
+          </div>
+          {previewError && (
+            <>
+              <p role="alert">{previewError}</p>
+              <button
+                className="csc-auth-secondary"
+                onClick={() => setPreviewAttempt((value) => value + 1)}
+              >
+                Retry picture
+              </button>
+            </>
+          )}
+          <FileEditor
+            kind="avatar"
+            label="Avatar"
+            exists={profile.hasAvatar}
+            userID={userID}
+            request={request}
+            onChanged={onChanged}
+          />
+        </>
+      )}
+      {showResume && (
+        <>
+          <h2>Resume</h2>
+          <p>
+            {profile.hasResume
+              ? "Your resume is saved."
+              : "No resume uploaded yet."}{" "}
+            Visible only to you.
+          </p>
+          <FileEditor
+            kind="resume"
+            label="Resume PDF"
+            exists={profile.hasResume}
+            userID={userID}
+            request={request}
+            onChanged={onChanged}
+          />
+        </>
+      )}
     </section>
   );
 }
 
-function ResumeEditor({ exists, userID, request, onChanged }) {
+function FileEditor({ kind, label, exists, userID, request, onChanged }) {
   const [selected, setSelected] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -31,6 +111,7 @@ function ResumeEditor({ exists, userID, request, onChanged }) {
     controller.current = new AbortController();
     return () => controller.current.abort();
   }, []);
+  const isResume = kind === "resume";
 
   async function act(action) {
     if (busy) return;
@@ -41,9 +122,9 @@ function ResumeEditor({ exists, userID, request, onChanged }) {
     try {
       if (action === "upload") {
         if (!selected) throw new Error("Choose a file first.");
-        if (selected.size > 10 * 1024 * 1024)
-          throw new Error("Choose a PDF up to 10 MB.");
-        await request("/profile/resume", {
+        if (selected.size > (isResume ? 10 : 5) * 1024 * 1024)
+          throw new Error(`Choose a file up to ${isResume ? 10 : 5} MB.`);
+        await request(`/profile/${kind}`, {
           userID,
           signal,
           method: "PUT",
@@ -52,7 +133,7 @@ function ResumeEditor({ exists, userID, request, onChanged }) {
           responseType: "empty",
         });
       } else if (action === "remove") {
-        await request("/profile/resume", {
+        await request(`/profile/${kind}`, {
           userID,
           signal,
           method: "DELETE",
@@ -83,9 +164,7 @@ function ResumeEditor({ exists, userID, request, onChanged }) {
       if (signal.aborted) return;
       setSelected(null);
       input.current.value = "";
-      setNotice(
-        action === "remove" ? "Resume PDF removed." : "Resume PDF saved.",
-      );
+      setNotice(action === "remove" ? `${label} removed.` : `${label} saved.`);
     } catch (failure) {
       if (!signal.aborted) setError(failure.message);
     } finally {
@@ -95,18 +174,24 @@ function ResumeEditor({ exists, userID, request, onChanged }) {
 
   return (
     <div className="csc-account-file">
-      <label htmlFor="resume-file">
-        {exists ? "Replace" : "Upload"} resume PDF
+      <label htmlFor={`${kind}-file`}>
+        {exists ? "Replace" : "Upload"} {isResume ? "resume PDF" : "avatar"}
       </label>
-      <p id="resume-help" className="csc-account-file-help">
-        PDF, up to 10 MB.
+      <p id={`${kind}-help`} className="csc-account-file-help">
+        {isResume
+          ? "PDF, up to 10 MB."
+          : "JPEG, PNG, or WebP, up to 5 MB. Visible only to you."}
       </p>
       <input
         ref={input}
-        id="resume-file"
+        id={`${kind}-file`}
         type="file"
-        accept=".pdf,application/pdf"
-        aria-describedby="resume-help"
+        accept={
+          isResume
+            ? ".pdf,application/pdf"
+            : ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+        }
+        aria-describedby={`${kind}-help`}
         disabled={busy}
         onChange={(event) => {
           setSelected(event.target.files[0] || null);
@@ -119,7 +204,9 @@ function ResumeEditor({ exists, userID, request, onChanged }) {
       {busy && <p role="status">Working…</p>}
       <div className="csc-account-file-actions">
         <button disabled={busy || !selected} onClick={() => void act("upload")}>
-          {exists ? "Save replacement" : "Save resume"}
+          {exists
+            ? "Save replacement"
+            : `Save ${isResume ? "resume" : "avatar"}`}
         </button>
         {exists && (
           <button
@@ -127,10 +214,10 @@ function ResumeEditor({ exists, userID, request, onChanged }) {
             className="csc-auth-secondary"
             onClick={() => void act("remove")}
           >
-            Remove resume
+            Remove {isResume ? "resume" : "avatar"}
           </button>
         )}
-        {exists && (
+        {exists && isResume && (
           <button
             disabled={busy}
             className="csc-auth-secondary"

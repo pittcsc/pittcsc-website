@@ -155,7 +155,12 @@
     @include acc-label;
     margin: 0;
   }
-  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  // .csc-field-bare opts an input out: it sits inside a wrapper that already
+  // draws the box (the handle fields), and this rule would otherwise win on
+  // specificity and draw a second box inside the first.
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(
+      .csc-field-bare
+    ),
   select {
     @include acc-field;
     margin-top: 0.5rem;

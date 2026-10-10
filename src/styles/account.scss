@@ -57,6 +57,44 @@
     flex-direction: column;
     gap: 1.25rem;
   }
+
+  // Guided flow: one question per step, same indicator as the sign-in screen.
+  .csc-account-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+
+    div {
+      display: flex;
+      gap: 0.5rem;
+    }
+    span {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: $acc-hairline;
+    }
+    span.done {
+      background: $acc-navy;
+    }
+    p {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: $acc-muted;
+    }
+  }
+  .csc-account-hint {
+    font-size: 0.875rem;
+    color: $acc-muted;
+  }
+  .csc-account-nav {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+    }
+  }
   fieldset {
     min-width: 0;
     margin: 0;
@@ -103,6 +141,59 @@
     }
   }
 
+  .csc-account-handles {
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
+  }
+  .csc-account-handle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  // The domain sits inside the field as a static prefix, so it reads as a URL
+  // while the member only ever types (and the API only ever stores) the handle.
+  .csc-account-handle-input {
+    display: flex;
+    align-items: stretch;
+    height: 52px;
+    border: 1.5px solid $acc-border;
+    border-radius: $acc-radius-control;
+    background: #fff;
+    overflow: hidden;
+
+    &:focus-within {
+      border-color: $acc-navy;
+      box-shadow: 0 0 0 4px #213f9d33;
+    }
+    span {
+      display: flex;
+      align-items: center;
+      padding: 0 0.25rem 0 1rem;
+      color: $acc-muted;
+      font-size: 0.9375rem;
+      white-space: nowrap;
+      user-select: none;
+    }
+    input {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      margin: 0;
+      padding: 0 1rem 0 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      font-size: 1rem;
+
+      &:focus {
+        border: 0;
+        box-shadow: none;
+        outline: none;
+      }
+    }
+  }
+
   .csc-account-files {
     margin-top: 1.75rem;
     padding-top: 1.75rem;
@@ -117,6 +208,29 @@
       font-weight: 700;
     }
   }
+  // Optional profile picture. Falls back to the member's initials, so the
+  // circle is never empty and nothing depends on an upload existing.
+  .csc-account-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 6rem;
+    height: 6rem;
+    margin-top: 0.25rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: $acc-cream;
+    color: $acc-navy;
+    font-size: 1.75rem;
+    font-weight: 800;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
   .csc-account-file-help {
     font-size: 0.875rem;
     color: $acc-muted;
