@@ -12,13 +12,20 @@ test("member event times stay in New York across daylight saving time", () => {
     endsAt: "2026-07-10T23:00:00Z",
   });
   assert.match(range, /Jul 10, 2026, 6:00 PM EDT/);
-  assert.match(range, /Jul 10, 2026, 7:00 PM EDT/);
+  assert.match(range, /6:00 PM EDT – 7:00 PM EDT/);
   assert.match(
     formatEventRange({
       startsAt: "2027-01-10T22:00:00Z",
       endsAt: "2027-01-10T23:00:00Z",
     }),
     /5:00 PM EST.*6:00 PM EST/,
+  );
+  assert.match(
+    formatEventRange({
+      startsAt: "2027-01-11T04:00:00Z",
+      endsAt: "2027-01-11T06:00:00Z",
+    }),
+    /Jan 10, 2027.*Jan 11, 2027/,
   );
 });
 

@@ -9,9 +9,23 @@ const dateTime = new Intl.DateTimeFormat("en-US", {
   minute: "2-digit",
   timeZoneName: "short",
 });
+const dateOnly = new Intl.DateTimeFormat("en-US", {
+  timeZone: EVENT_TIMEZONE,
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+});
+const timeOnly = new Intl.DateTimeFormat("en-US", {
+  timeZone: EVENT_TIMEZONE,
+  hour: "numeric",
+  minute: "2-digit",
+  timeZoneName: "short",
+});
 
 export function formatEventRange(event) {
-  return `${dateTime.format(new Date(event.startsAt))} – ${dateTime.format(new Date(event.endsAt))}`;
+  const start = new Date(event.startsAt);
+  const end = new Date(event.endsAt);
+  return `${dateTime.format(start)} – ${dateOnly.format(start) === dateOnly.format(end) ? timeOnly.format(end) : dateTime.format(end)}`;
 }
 
 export function isInProgress(event, now = Date.now()) {
