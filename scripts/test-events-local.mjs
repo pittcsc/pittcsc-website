@@ -154,6 +154,12 @@ async function main() {
     (await json(await api(a, "/staff/events"))).calendarEnabled === false,
     "The running API must have calendar delivery disabled before fixture writes",
   );
+  stage = "member event list authorization and response fields";
+  check((await api(null, "/events/upcoming")).status === 401, "Anonymous event list read");
+  const memberEvents = await json(await api(member, "/events/upcoming"));
+  check(Array.isArray(memberEvents.events) && memberEvents.events.length <= 3, "Invalid member event list");
+  for (const listed of memberEvents.events)
+    check(Object.keys(listed).every((key) => ["id", "title", "location", "description", "startsAt", "endsAt"].includes(key)), "Member event list exposed staff fields");
   const id = randomUUID();
   const path = `/staff/events/${id}`;
   const input = {
@@ -216,7 +222,7 @@ async function main() {
       "-race",
       "./internal/events",
       "-run",
-      "TestStoreIntegration",
+      "Test(StoreIntegration|MemberUpcomingIntegration)",
       "-count=1",
     ],
     {

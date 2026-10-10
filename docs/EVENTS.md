@@ -27,11 +27,33 @@ and [#164](https://github.com/pittcsc/pittcsc-website/issues/164):
   are overwritten by a subsequent save/sync.
 - Cancellation removes the Google entry and retains the cancelled CRM record
   and history. Cancelled events are read-only and available in the Cancelled list.
-- The member dashboard event list and a link back from Google to a member event
-  page are deferred. The public Notion event cards and existing calendar embeds
-  keep their current implementation. New CRM events appear only on the calendar.
+- The member dashboard now lists up to three active CRM events that have not
+  ended. A member event detail page and a link back from Google remain deferred.
+  The public Notion event cards and existing calendar embeds keep their current
+  implementation.
 - Recurring/all-day events, invitations, Drive/Slides, and importing existing
   Google events are outside this release. Attendance is described below.
+
+## Member dashboard
+
+`/dashboard` is the common home for active signed-in accounts, including staff.
+Its first navigation link returns here from My Account or Staff. The home fetches
+`GET /events/upcoming` at runtime from Go. The endpoint verifies the Supabase
+session and current active profile, then returns at most three active CRM events
+whose end is in the future. Events already in progress come first, followed by
+future events in start-time order. Calendar sync status does not affect inclusion:
+the CRM record is authoritative. The response contains only event ID, title,
+location, description, start, and end; creator, audit, and calendar delivery
+details remain staff-only. Responses are uncached.
+
+Cards show the title, Eastern Time range, location, and a truncated description.
+An event in progress has a label. Cards are informational and do not open the
+attendance route or record check-in. When fewer than three events qualify, the
+home shows those available; with none it shows an empty message. Loading and
+API failures have separate states, with a retry action for failures. The page
+also fetches `/profile` at runtime and shows a red link to My Account in its
+upper-right corner only while the profile is incomplete. The reminder does not
+gate access. Both lists refresh when the page regains focus.
 
 ## QR attendance
 
@@ -121,10 +143,12 @@ attempt. Removal treats an already absent/deleted entry as success.
 ## API
 
 The staff event routes below require active staff and return uncached private
-responses. Member attendance routes are described above.
+responses. The member list and attendance routes require an active signed-in
+account.
 
 | Request | Purpose |
 | --- | --- |
+| `GET /events/upcoming` | Three upcoming or in-progress CRM events for the member home |
 | `GET /staff/events?filter=upcoming&page=1` | List 25 events; filters: upcoming, past, cancelled, all |
 | `GET /staff/events/{id}` | Saved event and delivery status |
 | `PUT /staff/events/{id}` | Create or edit, then attempt calendar sync |

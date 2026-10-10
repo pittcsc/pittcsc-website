@@ -7,6 +7,8 @@ signed-in page at `/dashboard`, with a private profile editor at
 `/dashboard/account`. See [authentication](AUTH.md) and [profiles](PROFILES.md) for
 behavior and local testing. Staff access, member search, and role editing are
 implemented; see [staff setup](STAFF.md) for roles, provisioning, and checks.
+The member home shows the next three CRM events and an incomplete-profile
+reminder; see [events](EVENTS.md#member-dashboard).
 
 ## Quick start
 

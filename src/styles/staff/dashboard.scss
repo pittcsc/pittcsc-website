@@ -2,8 +2,8 @@
 
 // Shared staff layout and the staff home's tool cards. Each tool keeps its own
 // stylesheet next to the others in this folder.
-.csc-auth:has(.csc-staff) .csc-auth-card {
-  max-width: 56rem;
+.csc-auth:has(.csc-staff) .csc-auth-cardwrap {
+  max-width: 72rem;
 }
 
 .csc-staff {
