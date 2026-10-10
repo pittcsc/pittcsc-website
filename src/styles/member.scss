@@ -1,3 +1,5 @@
+@import "./helpers/account-tokens";
+
 .csc-auth:has(.csc-member-home) .csc-auth-cardwrap {
   max-width: 72rem;
 }
@@ -13,7 +15,7 @@
 
   .csc-member-eyebrow {
     margin: 0;
-    color: #526481;
+    color: $acc-muted;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -71,14 +73,14 @@
   .csc-member-event {
     min-width: 0;
     padding: 1.25rem;
-    border: 1px solid #d7dfeb;
+    border: 1px solid $acc-hairline;
     border-radius: 0.85rem;
-    background: #f8faff;
+    background: $acc-mist;
   }
 
   h2 {
     margin: 0 0 0.75rem;
-    color: #003594;
+    color: $acc-navy;
     font-size: 1.2rem;
     line-height: 1.3;
     overflow-wrap: anywhere;
@@ -95,7 +97,7 @@
   }
 
   .csc-member-event-description {
-    color: #40516c;
+    color: $acc-body;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -116,9 +118,9 @@
 
   .csc-member-state {
     padding: 1.25rem;
-    border: 1px solid #d7dfeb;
+    border: 1px solid $acc-hairline;
     border-radius: 0.85rem;
-    background: #f8faff;
+    background: $acc-mist;
   }
 
   .csc-member-state p {
