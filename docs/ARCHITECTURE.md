@@ -37,6 +37,8 @@ The public website remains accessible to everyone, including signed-in users. Si
 - Signed out: the public navbar shows **Sign in / Create account**.
 - Signed in: that button becomes **Dashboard**.
 - The dashboard has its own layout, navigation, account menu, and logout action.
+- **Dashboard** is the first link in its navbar. The home shows three upcoming
+  or in-progress CRM events and a profile reminder when completion is pending.
 - Only its navbar displays **Staff**, and only for active users with the staff role.
   The staff page has an API-verified access check, member search, and role editing.
 - On My Account, a **Back to Website** link returns to the public site without
@@ -49,7 +51,7 @@ Initial route structure:
 | --- | --- | --- |
 | `/` and existing public routes | Current website | Everyone |
 | `/login` | Sign in or create a CSC account | Everyone |
-| `/dashboard` | Member home or staff overview | Signed-in CSC members and staff |
+| `/dashboard` | Member home with CRM events | Signed-in CSC members and staff |
 | `/dashboard/account` | Own profile editor and files (implemented) | Signed-in account owner |
 | `/dashboard/staff` | Staff tool cards (implemented) | Active staff |
 | `/dashboard/staff/user-management` | Member search and role editing (implemented) | Active staff |
@@ -104,10 +106,10 @@ The normal request flow is:
 Client-side route guards control navigation and presentation. The Go API independently enforces authentication, roles, record access, and editable fields on every protected operation. A role supplied by the browser is never authoritative.
 
 Use a JSON REST API. Implemented operations include the current profile, staff
-member/role management, and staff event management. Event save publishes
-immediately; there is no draft/publish workflow. Event APIs currently require
-staff, with member event viewing deferred. Members must not receive staff-only
-records or audit history.
+member/role management, staff event management, and a restricted member event
+list. Event save publishes immediately; there is no draft/publish workflow.
+Members receive only display fields for active events. Staff-only delivery,
+creator, and audit fields stay private.
 
 All future CRM data access goes through Go. The browser communicates directly
 with Supabase Auth for authentication only. Keep privileged credentials
@@ -167,13 +169,13 @@ with external service IDs or links attached to them.
 
 ## Implementation sequence
 
-The current event release delivers **staff saves an event and it appears on the
-public CSC Google Calendar**, once the server integration is configured. Member
-dashboard event viewing is a later phase.
+The event flow delivers **staff saves an event and it appears on the member
+dashboard**, plus the public CSC Google Calendar once server integration is
+configured. The public Notion event cards remain independent.
 
 1. Set up CSC Supabase Auth, provision CSC profiles, and implement access-token verification, the current-user API, logout, and role checks.
 2. Add the dashboard layout, routes, and authentication-aware public navbar.
-3. Implement staff event creation, editing, cancellation, and Google Calendar sync (implemented); add member event viewing later.
+3. Implement staff event creation, editing, cancellation, Google Calendar sync, and member dashboard event viewing (implemented).
 4. Add member search, account status management, and audited role changes.
 5. Add QR attendance (implemented), then Drive integration and additional CRM features.
 

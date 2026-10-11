@@ -22,6 +22,15 @@ export default function AuthFrame({
             Pitt CSC
           </Link>
           <nav aria-label="Account navigation">
+            {dashboard && (
+              <Link
+                className="csc-auth-nav-link"
+                to="/dashboard"
+                activeClassName="is-current"
+              >
+                Dashboard
+              </Link>
+            )}
             {dashboard && hasStaffRole(identity) && (
               <Link
                 className="csc-auth-nav-link"

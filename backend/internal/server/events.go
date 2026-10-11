@@ -18,6 +18,7 @@ import (
 
 type eventStore interface {
 	List(context.Context, string, int) (events.Page, error)
+	ListUpcoming(context.Context) (events.MemberEvents, error)
 	Get(context.Context, string) (events.Event, error)
 	History(context.Context, string, int64) (events.History, error)
 	Save(context.Context, string, string, events.Input) (events.Event, error)
@@ -85,6 +86,18 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 			next(w, r, actor)
 		})
 	}
+	mux.HandleFunc("GET /events/upcoming", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, _ auth.Identity, _ profile.Record) {
+		if store == nil {
+			writeEventError(w, auth.ErrUnavailable)
+			return
+		}
+		result, err := store.ListUpcoming(r.Context())
+		if err != nil {
+			writeEventError(w, err)
+			return
+		}
+		writeJSON(w, result)
+	}))
 	mux.HandleFunc("GET /staff/events", guard(func(w http.ResponseWriter, r *http.Request, _ auth.Identity) {
 		page, err := events.ParsePage(r.URL.Query().Get("page"))
 		if err != nil {
@@ -213,7 +226,7 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 			writeJSON(w, result)
 		}))
 	}
-	for _, path := range []string{"/staff/events", "/staff/events/{id}", "/staff/events/{id}/history", "/staff/events/{id}/attendance", "/staff/events/{id}/cancel", "/staff/events/{id}/sync", "/attendance/{id}"} {
+	for _, path := range []string{"/events/upcoming", "/staff/events", "/staff/events/{id}", "/staff/events/{id}/history", "/staff/events/{id}/attendance", "/staff/events/{id}/cancel", "/staff/events/{id}/sync", "/attendance/{id}"} {
 		mux.HandleFunc("OPTIONS "+path, func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	}
 }

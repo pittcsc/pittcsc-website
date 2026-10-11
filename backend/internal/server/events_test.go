@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/pittcsc/pittcsc-website/backend/internal/events"
 	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
@@ -18,11 +19,16 @@ type eventsStub struct {
 	input           events.Input
 	err             error
 	attendanceCalls int
+	memberEvents    events.MemberEvents
 }
 
 func (s *eventsStub) List(context.Context, string, int) (events.Page, error) {
 	s.calls++
 	return events.Page{Events: []events.Event{}}, s.err
+}
+func (s *eventsStub) ListUpcoming(context.Context) (events.MemberEvents, error) {
+	s.calls++
+	return s.memberEvents, s.err
 }
 func (s *eventsStub) Get(context.Context, string) (events.Event, error) {
 	s.calls++
@@ -112,6 +118,53 @@ func TestEventsAuthorizeEveryOperation(t *testing.T) {
 				t.Fatal("unauthorized event operation reached storage")
 			}
 		}
+	}
+}
+
+func TestMemberUpcomingEventsAccessAndFields(t *testing.T) {
+	start := time.Date(2026, 11, 2, 18, 0, 0, 0, time.UTC)
+	for mask := 0; mask < 16; mask++ {
+		assigned := []string{}
+		for i, role := range []string{"member", "foundry", "staff", "alumni"} {
+			if mask&(1<<i) != 0 {
+				assigned = append(assigned, role)
+			}
+		}
+		s := &eventsStub{memberEvents: events.MemberEvents{Events: []events.MemberEvent{{
+			ID: "event-id", Title: "Workshop", Location: "Room 101", Description: "Bring a laptop",
+			StartsAt: start, EndsAt: start.Add(time.Hour),
+		}}}}
+		w := eventRequest(&profilesStub{roles: assigned}, s, "GET", "/events/upcoming?role=staff&userId=attacker", "", "valid")
+		if w.Code != 200 || s.calls != 1 || w.Header().Get("Cache-Control") != "no-store" {
+			t.Fatalf("active role combination %v could not read events: %d", assigned, w.Code)
+		}
+		var result map[string]any
+		if err := json.Unmarshal(w.Body.Bytes(), &result); err != nil || len(result["events"].([]any)) != 1 {
+			t.Fatal("member event response malformed")
+		}
+		for _, private := range []string{"createdBy", "calendarId", "calendarEventId", "syncStatus", "syncError", "attendanceUrl", "version"} {
+			if strings.Contains(w.Body.String(), private) {
+				t.Fatalf("private field %s leaked to members", private)
+			}
+		}
+	}
+	for _, tc := range []struct {
+		token string
+		err   error
+		code  int
+	}{
+		{"", nil, 401}, {"invalid", nil, 401}, {"valid", profile.ErrSuspended, 403},
+	} {
+		s := &eventsStub{}
+		w := eventRequest(&profilesStub{roles: []string{"member"}, err: tc.err}, s, "GET", "/events/upcoming", "", tc.token)
+		if w.Code != tc.code || s.calls != 0 {
+			t.Fatal("unauthorized member event request reached storage")
+		}
+	}
+	s := &eventsStub{err: errors.New("secret database detail")}
+	w := eventRequest(&profilesStub{roles: []string{"member"}}, s, "GET", "/events/upcoming", "", "valid")
+	if w.Code != 503 || strings.Contains(w.Body.String(), "secret") {
+		t.Fatal("member event failure exposed storage detail")
 	}
 }
 
