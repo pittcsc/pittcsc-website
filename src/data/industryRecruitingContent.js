@@ -12,6 +12,6 @@ export const industryRecruitingContent = {
       "CSC x Character.AI Event",
       "CSC x CGI Code Competition",
     ],
-  mainImageTitle: "CSC x Character.AI Event",
+  mainImageTitle: "CSC x Roblox Event",
   mainImage: IRC1,
 };
