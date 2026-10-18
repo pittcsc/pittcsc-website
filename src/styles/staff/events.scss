@@ -1,15 +1,143 @@
 @import "../helpers/account-tokens";
 
 .csc-staff-events {
-  .csc-event-attendance {
+  .csc-event-attendance,
+  .csc-event-expenses {
     margin: 2rem 0;
     padding: 1.25rem;
     border: 1px solid $acc-hairline;
     border-radius: 0.75rem;
   }
-  .csc-event-attendance h2 {
+  .csc-event-attendance h2,
+  .csc-event-expenses h2 {
     font-size: 1rem;
     font-weight: 600;
+  }
+  // The budget export sits in the card's top-right corner, wrapping below
+  // the title on narrow screens.
+  .csc-event-expenses-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    h2,
+    p {
+      margin-top: 0;
+    }
+    button {
+      flex: none;
+    }
+  }
+  .csc-event-expenses h3 {
+    margin-top: 1.5rem;
+  }
+  .csc-event-expense-total {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin: 1rem 0;
+    strong {
+      font-size: 1.75rem;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  .csc-event-expense-input {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: 12rem;
+    input {
+      min-width: 0;
+      margin: 0;
+    }
+  }
+  .csc-event-receipts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+    li {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    a {
+      display: block;
+    }
+    img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      border: 1px solid $acc-hairline;
+      border-radius: 0.5rem;
+      background: white;
+    }
+  }
+  .csc-event-receipt-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    label {
+      margin: 0;
+    }
+  }
+  .csc-event-receipts .csc-auth-actions {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    button {
+      margin: 0;
+    }
+  }
+  .csc-event-receipt-meta {
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
+  }
+  .csc-event-receipts-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    h3 {
+      margin: 0;
+    }
+  }
+  .csc-event-receipt-dialog {
+    width: min(28rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    // Padding lives on the form so a click on the dialog element itself is
+    // always a backdrop click.
+    padding: 0;
+    border: 0;
+    border-radius: $acc-radius-control;
+    box-shadow: 0 20px 50px rgba(27, 42, 74, 0.25);
+    color: $acc-ink;
+    &::backdrop {
+      background: rgba(27, 42, 74, 0.45);
+    }
+    form {
+      padding: 1.5rem;
+    }
+    h3 {
+      margin-top: 0;
+    }
+    .csc-auth-actions {
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+  }
+  .csc-event-receipt-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 14rem;
+    margin: 0.5rem 0 1rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.5rem;
   }
   .csc-event-qr {
     display: flex;

@@ -20,6 +20,12 @@ type eventsStub struct {
 	err             error
 	attendanceCalls int
 	memberEvents    events.MemberEvents
+	expenseCalls    int
+	amount          int64
+	previous        int64
+	receipt         string
+	receiptMedia    string
+	receiptBytes    []byte
 }
 
 func (s *eventsStub) List(context.Context, string, int) (events.Page, error) {

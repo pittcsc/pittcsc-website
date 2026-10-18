@@ -43,6 +43,15 @@ func PrepareAsset(kind string, data []byte) (string, []byte, error) {
 		}
 		return "application/pdf", data, nil
 	}
+	return ReencodeImage(data, AvatarLimit)
+}
+
+// ReencodeImage accepts JPEG, PNG, or WebP content up to 4096 pixels per side,
+// and returns a freshly encoded JPEG or PNG without metadata or trailing bytes.
+func ReencodeImage(data []byte, limit int) (string, []byte, error) {
+	if len(data) > limit {
+		return "", nil, ErrFileTooLarge
+	}
 	media := http.DetectContentType(data)
 	if media != "image/jpeg" && media != "image/png" && media != "image/webp" {
 		return "", nil, ErrInvalidFile
@@ -65,7 +74,7 @@ func PrepareAsset(kind string, data []byte) (string, []byte, error) {
 	if err != nil {
 		return "", nil, ErrInvalidFile
 	}
-	if output.Len() > AvatarLimit {
+	if output.Len() > limit {
 		return "", nil, ErrFileTooLarge
 	}
 	return media, output.Bytes(), nil
