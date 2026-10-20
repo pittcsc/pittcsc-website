@@ -86,6 +86,7 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 			next(w, r, actor)
 		})
 	}
+	registerExpenseRoutes(mux, guard, store)
 	mux.HandleFunc("GET /events/upcoming", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, _ auth.Identity, _ profile.Record) {
 		if store == nil {
 			writeEventError(w, auth.ErrUnavailable)

@@ -155,7 +155,11 @@ func (s Store) lock(ctx context.Context, id string) (*pgxpool.Conn, func(), erro
 	return conn, release, nil
 }
 
-func authorize(ctx context.Context, conn *pgxpool.Conn, actor string) error {
+type rowQuerier interface {
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
+
+func authorize(ctx context.Context, conn rowQuerier, actor string) error {
 	var allowed bool
 	err := conn.QueryRow(ctx, `select exists (
 		select 1 from csc.profiles p join csc.user_roles r on r.auth_user_id = p.auth_user_id

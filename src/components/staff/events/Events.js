@@ -13,6 +13,7 @@ import {
 } from "../../../lib/staff/events.mjs";
 import "../../../styles/staff/events.scss";
 import EventAttendance from "./EventAttendance";
+import EventExpenses from "./EventExpenses";
 
 export default function Events({ identity, request, revalidate }) {
   const [filter, setFilter] = useState("upcoming");
@@ -455,6 +456,12 @@ function EventEditor({ selected, identity, request, denied, onBack }) {
           {record && (
             <>
               <EventAttendance
+                record={record}
+                identity={identity}
+                request={request}
+                denied={denied}
+              />
+              <EventExpenses
                 record={record}
                 identity={identity}
                 request={request}

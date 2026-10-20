@@ -214,6 +214,90 @@ async function main() {
       "Invalid event accepted",
     );
 
+  stage = "staff-only event spending and receipts";
+  const spendingID = randomUUID();
+  const spendingPath = `/staff/events/${spendingID}`;
+  await json(await api(a, spendingPath, "PUT", input));
+  const receiptRoute = `${spendingPath}/receipts/${randomUUID()}`;
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+    "base64",
+  );
+  const putReceipt = (user, amount = "4250", body = png) =>
+    fetch(`${apiURL}${receiptRoute}?amountCents=${amount}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "image/png",
+        ...(user && { Authorization: `Bearer ${user.token}` }),
+      },
+      body,
+    });
+  for (const [user, code] of [[null, 401], [member, 403]]) {
+    check(
+      (await api(user, `${spendingPath}/expenses`)).status === code &&
+        (await putReceipt(user)).status === code &&
+        (await api(user, receiptRoute)).status === code &&
+        (await api(user, receiptRoute, "DELETE")).status === code,
+      "Non-staff spending access",
+    );
+  }
+  check(
+    (await putReceipt(a, "-1")).status === 400 &&
+      (await putReceipt(a, "12.50")).status === 400 &&
+      (await putReceipt(a, "4250", Buffer.from("<svg/>"))).status === 400,
+    "Invalid receipt accepted",
+  );
+  check(
+    (await api(a, `${spendingPath}/expenses`, "PUT", { totalCents: 1 })).status === 405,
+    "Spending total is writable",
+  );
+  for (let n = 0; n < 2; n++)
+    check((await putReceipt(a)).status === 204, "Receipt upload failed");
+  check((await putReceipt(b, "1")).status === 409, "Receipt amount changed by ID reuse");
+  const withReceipt = await json(await api(b, `${spendingPath}/expenses`));
+  check(
+    withReceipt.receipts.length === 1 &&
+      withReceipt.receipts[0].amountCents === 4250 &&
+      withReceipt.totalCents === 4250,
+    "Retried receipt duplicated or total not derived from receipts",
+  );
+  for (const [user, code] of [[null, 401], [member, 403]])
+    check(
+      (await api(user, `${receiptRoute}/amount`, "PUT", { amountCents: 1, previousAmountCents: 4250 })).status === code &&
+        (await api(user, `${spendingPath}/budget-package`)).status === code,
+      "Non-staff receipt edit or budget export",
+    );
+  const edited = await json(
+    await api(b, `${receiptRoute}/amount`, "PUT", { amountCents: 5000, previousAmountCents: 4250 }),
+  );
+  check(edited.totalCents === 5000 && edited.receipts[0].amountCents === 5000, "Receipt edit not reflected in total");
+  check(
+    (await api(a, `${receiptRoute}/amount`, "PUT", { amountCents: 1, previousAmountCents: 4250 })).status === 409,
+    "Stale receipt edit accepted",
+  );
+  await json(await api(member, `/attendance/${spendingID}`, "POST"));
+  const budget = await api(a, `${spendingPath}/budget-package`);
+  const pdf = Buffer.from(await budget.arrayBuffer());
+  check(
+    budget.status === 200 &&
+      budget.headers.get("content-type") === "application/pdf" &&
+      pdf.subarray(0, 5).toString() === "%PDF-" &&
+      pdf.includes("/Subtype /Image"),
+    "Budget package missing or without receipt image",
+  );
+  const image = await api(b, receiptRoute);
+  check(
+    image.status === 200 && image.headers.get("content-type") === "image/png",
+    "Receipt image not returned",
+  );
+  for (let n = 0; n < 2; n++)
+    check((await api(b, receiptRoute, "DELETE")).status === 204, "Receipt removal failed");
+  check((await api(a, receiptRoute)).status === 404, "Removed receipt still readable");
+  check(
+    (await json(await api(a, `${spendingPath}/expenses`))).totalCents === 0,
+    "Removed receipt still counted",
+  );
+
   stage = "real Postgres with simulated Google failure, retry, and concurrency";
   execFileSync(
     "go",
@@ -222,7 +306,7 @@ async function main() {
       "-race",
       "./internal/events",
       "-run",
-      "Test(StoreIntegration|MemberUpcomingIntegration)",
+      "Test(StoreIntegration|MemberUpcomingIntegration|ExpensesIntegration)",
       "-count=1",
     ],
     {
@@ -418,7 +502,7 @@ async function main() {
     "Logged-out session accepted",
   );
   console.log(
-    "PASS: event and attendance authorization, stable QR destinations, explicit and concurrent check-in, private roster, staff edits, cancellation, fixtures, disabled mode, simulated Google retries, revocation, suspension, and logout",
+    "PASS: event and attendance authorization, staff-only spending, receipts, and budget export, stable QR destinations, explicit and concurrent check-in, private roster, staff edits, cancellation, fixtures, disabled mode, simulated Google retries, revocation, suspension, and logout",
   );
 }
 
