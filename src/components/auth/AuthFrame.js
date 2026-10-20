@@ -31,6 +31,15 @@ export default function AuthFrame({
                 Dashboard
               </Link>
             )}
+            {dashboard && (
+              <Link
+                className="csc-auth-nav-link"
+                to="/dashboard/points"
+                activeClassName="is-current"
+              >
+                Points
+              </Link>
+            )}
             {dashboard && hasStaffRole(identity) && (
               <Link
                 className="csc-auth-nav-link"

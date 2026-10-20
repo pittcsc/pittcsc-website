@@ -8,6 +8,7 @@ import {
   HANDLES,
 } from "../../lib/account/form.mjs";
 import AccountFiles from "./AccountFiles";
+import PointsProfile from "../points/PointsProfile";
 import "../../styles/account.scss";
 
 /* The field groups are shared: the guided flow shows one per step, the editor
@@ -422,6 +423,7 @@ export default function MyAccount({ identity }) {
             Signed in as <strong>{profile.email}</strong>
           </p>
           {guided ? renderGuided() : renderEditor()}
+          <PointsProfile identity={identity} />
         </>
       )}
     </div>
