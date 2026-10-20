@@ -19,7 +19,7 @@ type authenticator interface {
 }
 
 // NewHandler serves public readiness and private, authenticated account routes.
-func NewHandler(db databasePinger, frontendOrigin string, authentication authenticator, profiles profileStore, roleChanges roleStore, eventRecords eventStore) http.Handler {
+func NewHandler(db databasePinger, frontendOrigin string, authentication authenticator, profiles profileStore, roleChanges roleStore, eventRecords eventStore, pointRecords ...pointStore) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
@@ -83,6 +83,11 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 	registerAssetRoutes(mux, authentication, profiles)
 	registerStaffRoutes(mux, authentication, profiles, roleChanges)
 	registerEventRoutes(mux, frontendOrigin, authentication, profiles, eventRecords)
+	var pointRecord pointStore
+	if len(pointRecords) > 0 {
+		pointRecord = pointRecords[0]
+	}
+	registerPointRoutes(mux, authentication, profiles, pointRecord)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")
