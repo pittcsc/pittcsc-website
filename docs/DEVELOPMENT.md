@@ -9,6 +9,9 @@ behavior and local testing. Staff access, member search, and role editing are
 implemented; see [staff setup](STAFF.md) for roles, provisioning, and checks.
 The member home shows the next three CRM events and an incomplete-profile
 reminder; see [events](EVENTS.md#member-dashboard).
+Members can submit activity links for points on My Account and see all-time
+and rolling 30-day top-10 leaderboards at `/dashboard/points`. Staff can review
+and reverse claims at `/dashboard/staff/point-claims`; see [points](POINTS.md).
 
 ## Quick start
 
@@ -73,6 +76,7 @@ package export. Google delivery defaults to disabled for local development.
 | `mise run test:profiles` | Real local profile/upload checks with synthetic accounts (API must be running) |
 | `mise run test:staff` | Real local roles, staff access, provisioning, and role-management checks (API must be running) |
 | `mise run test:events` | Local event, attendance, and spending API/database checks with synthetic accounts and simulated Google Calendar failures (API must be running with calendar disabled) |
+| `mise run test:points` | Local points, leaderboard, and staff moderation checks with synthetic accounts (API must be running) |
 | `mise exec -- npm run clean` | Clear Gatsby's generated cache/output |
 
 Ctrl+C in `mise run dev` stops Gatsby, Go, and the local Supabase containers.

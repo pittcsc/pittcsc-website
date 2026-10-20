@@ -1,0 +1,77 @@
+@import "../helpers/account-tokens";
+
+.csc-staff-points {
+  > h1 {
+    margin-top: 0.5rem;
+  }
+  > p {
+    max-width: 55rem;
+  }
+  .csc-staff-points-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .csc-staff-points-list > li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.85rem;
+    background: $acc-mist;
+  }
+  .csc-staff-points-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+  }
+  .csc-staff-points-row h2 {
+    color: $acc-navy;
+  }
+  .csc-staff-points-list a {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .csc-staff-points-status {
+    align-self: flex-start;
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+    background: $acc-cream;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+  }
+  .csc-staff-points-status.is-awarded {
+    background: $acc-navy-soft;
+    color: $acc-navy;
+  }
+  .csc-staff-points-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+  .csc-staff-points-actions button,
+  .csc-staff-points-more {
+    width: auto;
+  }
+  .csc-staff-points-list form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    width: min(100%, 34rem);
+    padding-top: 1rem;
+    border-top: 1px solid $acc-hairline;
+  }
+  .csc-staff-points-list form h3 {
+    margin: 0;
+  }
+  .csc-staff-points-more {
+    margin-top: 1.5rem;
+  }
+}
