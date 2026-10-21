@@ -71,7 +71,6 @@ export default function PointsLeaderboard({ identity }) {
 
   return (
     <div className="csc-points-leaderboards">
-      <p className="csc-points-eyebrow">Member activity</p>
       <h1>Points</h1>
       <PointsProfile
         identity={identity}
@@ -83,10 +82,6 @@ export default function PointsLeaderboard({ identity }) {
         aria-labelledby="leaderboards-title"
       >
         <h2 id="leaderboards-title">Leaderboards</h2>
-        <p>
-          Top 10 active accounts. Your submitted links remain visible only to
-          you and staff.
-        </p>
         {error && (
           <div role="alert">
             <p>{error}</p>

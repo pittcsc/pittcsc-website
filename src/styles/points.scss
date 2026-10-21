@@ -150,18 +150,8 @@
   max-width: 72rem;
 }
 .csc-points-leaderboards {
-  .csc-points-eyebrow {
-    color: $acc-navy;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
   h1 {
-    margin: 0.3rem 0 0;
-  }
-  > p {
-    margin-top: 0.5rem;
+    margin: 0;
   }
   .csc-points-leaderboard-section {
     margin-top: 2rem;
@@ -170,9 +160,6 @@
   }
   .csc-points-leaderboard-section > h2 {
     color: $acc-navy;
-  }
-  .csc-points-leaderboard-section > p {
-    margin-top: 0.35rem;
   }
   .csc-points-boards {
     display: grid;
