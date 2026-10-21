@@ -222,9 +222,9 @@ export default function PointsProfile({
                 is mine, and the link is public where required.
               </label>
               <p className="csc-points-hint">
-                Use a public LeetCode solution, a link to the paper you read, or
-                a public GitHub PR or standalone commit. A PR and its commits
-                count as one contribution.
+                Use a LeetCode solution or submission link, a link to the paper
+                you read, or a public GitHub PR or standalone commit. A PR and
+                its commits count as one contribution.
               </p>
               <button type="submit" disabled={busy || !category}>
                 {busy ? "Saving…" : "Submit link"}

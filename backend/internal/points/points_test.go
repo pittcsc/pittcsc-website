@@ -10,6 +10,7 @@ func TestNormalizeURL(t *testing.T) {
 		category, raw, want string
 	}{
 		{"leetcode", "https://www.leetcode.com/problems/two-sum/solutions/12345/explanation/?utm_source=email#answer", "https://leetcode.com/problems/two-sum/solutions/12345"},
+		{"leetcode", "https://leetcode.com/problems/matchsticks-to-square/submissions/12345/?utm_source=email#code", "https://leetcode.com/problems/matchsticks-to-square/submissions/12345"},
 		{"project", "https://www.github.com/Club/Repo/pull/42/files?diff=split#L1", "https://github.com/club/repo/pull/42"},
 		{"project", "https://github.com/Club/Repo/commit/ABCDEF1234567/", "https://github.com/club/repo/commit/abcdef1234567"},
 		{"paper", "https://EXAMPLE.org/paper/?b=2&utm_source=mail&a=1#section", "https://example.org/paper?a=1&b=2"},
@@ -28,6 +29,8 @@ func TestNormalizeURLRejectsInvalidAndUnsupportedClaims(t *testing.T) {
 	cases := []struct{ category, raw string }{
 		{"leetcode", "https://leetcode.com/problems/two-sum/"},
 		{"leetcode", "https://leetcode.com/problems/two-sum/solutions/"},
+		{"leetcode", "https://leetcode.com/problems/two-sum/submissions/"},
+		{"leetcode", "https://leetcode.com/problems/two-sum/submissions/not-an-id"},
 		{"leetcode", "https://leetcode.com.evil.test/problems/two-sum/solutions/123"},
 		{"project", "https://github.com/club/repo"},
 		{"project", "https://github.com/club/repo/issues/1"},
@@ -70,6 +73,7 @@ func TestNormalizationDoesNotDependOnChosenCategory(t *testing.T) {
 	for _, raw := range []string{
 		"https://www.github.com/Club/Repo/pull/42/files?utm_source=mail",
 		"https://www.leetcode.com/problems/two-sum/solutions/12345/extra?utm_source=mail",
+		"https://www.leetcode.com/problems/two-sum/submissions/12345/?utm_source=mail",
 	} {
 		category := "project"
 		if strings.Contains(raw, "leetcode") {

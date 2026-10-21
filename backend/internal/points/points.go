@@ -21,7 +21,7 @@ var (
 const PageSize = 20
 
 var (
-	leetcodePath = regexp.MustCompile(`^/problems/[a-z0-9-]+/solutions/[0-9]+(?:/.*)?$`)
+	leetcodePath = regexp.MustCompile(`^/problems/[a-z0-9-]+/(?:solutions|submissions)/[0-9]+(?:/.*)?$`)
 	githubPull   = regexp.MustCompile(`^/[^/]+/[^/]+/pull/[0-9]+(?:/.*)?$`)
 	githubCommit = regexp.MustCompile(`^/[^/]+/[^/]+/commit/[0-9a-fA-F]{7,40}(?:/.*)?$`)
 )

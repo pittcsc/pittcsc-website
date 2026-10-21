@@ -2,9 +2,9 @@
 
 Active accounts can submit a category, an HTTPS link, and an affirmation on
 **Points** (`/dashboard/points`). Each accepted link awards 10 points
-immediately. Current categories are a public LeetCode solution, a research
-paper read, and a public GitHub PR or standalone commit. A PR and its included
-commits count as one contribution. There is no earning cap.
+immediately. Current categories are a LeetCode solution or submission, a
+research paper read, and a public GitHub PR or standalone commit. A PR and its
+included commits count as one contribution. There is no earning cap.
 
 This first release uses the honor system for authorship, reading, PR/commit
 overlap, and public reachability. The API checks URL format and supported hosts
@@ -55,8 +55,9 @@ access. The public Gatsby build contains no point or claim data.
 | `POST /staff/points/claims/{id}/restore` | Staff | Restore with `{reason}` |
 | `PUT /staff/points/claims/{id}` | Staff | Correct with `{category,url,reason}` |
 
-The current URL rules accept `leetcode.com/problems/.../solutions/{id}` for
-LeetCode, `github.com/{owner}/{repo}/pull/{number}` or
+The current URL rules accept `leetcode.com/problems/.../solutions/{id}` and
+`leetcode.com/problems/.../submissions/{id}` for LeetCode,
+`github.com/{owner}/{repo}/pull/{number}` or
 `github.com/{owner}/{repo}/commit/{hash}` for project contributions, and any
 HTTPS URL for a paper. Simple variants such as fragments, trailing slashes,
 tracking parameters, and GitHub URL subpages normalize to one link. Paper

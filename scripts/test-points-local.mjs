@@ -313,6 +313,29 @@ async function main() {
       ).status === 409,
       "Withdrawn link reused",
     );
+    stage = "LeetCode submission links";
+    const submission =
+      "https://leetcode.com/problems/matchsticks-to-square/submissions/12345/";
+    check(
+      (
+        await api(member, "/points/claims", "POST", {
+          category: "leetcode",
+          url: submission,
+          affirmed: true,
+        })
+      ).status === 201,
+      "LeetCode submission link was rejected",
+    );
+    check(
+      (
+        await api(member, "/points/claims", "POST", {
+          category: "leetcode",
+          url: `${submission}?utm_source=retry`,
+          affirmed: true,
+        })
+      ).status === 409,
+      "Normalized LeetCode submission earned points twice",
+    );
     console.log("Local points API checks passed");
   } finally {
     for (const id of userIDs) {
