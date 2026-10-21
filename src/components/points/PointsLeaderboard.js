@@ -7,7 +7,7 @@ import "../../styles/points.scss";
 function Board({ title, board }) {
   return (
     <section className="csc-points-board" aria-label={title}>
-      <h2>{title}</h2>
+      <h3>{title}</h3>
       {board.entries.length === 0 ? (
         <p>No points earned in this period yet.</p>
       ) : (
@@ -72,34 +72,40 @@ export default function PointsLeaderboard({ identity }) {
   return (
     <div className="csc-points-leaderboards">
       <p className="csc-points-eyebrow">Member activity</p>
-      <h1>Points leaderboard</h1>
-      <p>
-        Top 10 active accounts. Your submitted links remain visible only to you
-        and staff.
-      </p>
+      <h1>Points</h1>
       <PointsProfile
         identity={identity}
         variant="points"
         onChanged={() => setAttempt((value) => value + 1)}
       />
-      {error && (
-        <div role="alert">
-          <p>{error}</p>
-          <button
-            type="button"
-            onClick={() => setAttempt((value) => value + 1)}
-          >
-            Retry
-          </button>
-        </div>
-      )}
-      {!boards && !error && <p role="status">Loading leaderboards…</p>}
-      {boards && (
-        <div className="csc-points-boards">
-          <Board title="All time" board={boards[0]} />
-          <Board title="Last 30 days" board={boards[1]} />
-        </div>
-      )}
+      <section
+        className="csc-points-leaderboard-section"
+        aria-labelledby="leaderboards-title"
+      >
+        <h2 id="leaderboards-title">Leaderboards</h2>
+        <p>
+          Top 10 active accounts. Your submitted links remain visible only to
+          you and staff.
+        </p>
+        {error && (
+          <div role="alert">
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={() => setAttempt((value) => value + 1)}
+            >
+              Retry
+            </button>
+          </div>
+        )}
+        {!boards && !error && <p role="status">Loading leaderboards…</p>}
+        {boards && (
+          <div className="csc-points-boards">
+            <Board title="All time" board={boards[0]} />
+            <Board title="Last 30 days" board={boards[1]} />
+          </div>
+        )}
+      </section>
     </div>
   );
 }

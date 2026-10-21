@@ -163,11 +163,22 @@
   > p {
     margin-top: 0.5rem;
   }
+  .csc-points-leaderboard-section {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
+  }
+  .csc-points-leaderboard-section > h2 {
+    color: $acc-navy;
+  }
+  .csc-points-leaderboard-section > p {
+    margin-top: 0.35rem;
+  }
   .csc-points-boards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
-    margin-top: 1.75rem;
+    margin-top: 1.25rem;
   }
   .csc-points-board {
     min-width: 0;
@@ -176,7 +187,7 @@
     border-radius: 0.85rem;
     background: $acc-mist;
   }
-  .csc-points-board h2 {
+  .csc-points-board h3 {
     margin-bottom: 1rem;
     color: $acc-navy;
   }
