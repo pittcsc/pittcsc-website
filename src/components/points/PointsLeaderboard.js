@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
+import PointsProfile from "./PointsProfile";
 import "../../styles/points.scss";
 
 function Board({ title, board }) {
@@ -76,6 +77,11 @@ export default function PointsLeaderboard({ identity }) {
         Top 10 active accounts. Your submitted links remain visible only to you
         and staff.
       </p>
+      <PointsProfile
+        identity={identity}
+        showForm
+        onChanged={() => setAttempt((value) => value + 1)}
+      />
       {error && (
         <div role="alert">
           <p>{error}</p>

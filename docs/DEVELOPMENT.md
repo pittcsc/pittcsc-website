@@ -9,9 +9,10 @@ behavior and local testing. Staff access, member search, and role editing are
 implemented; see [staff setup](STAFF.md) for roles, provisioning, and checks.
 The member home shows the next three CRM events and an incomplete-profile
 reminder; see [events](EVENTS.md#member-dashboard).
-Members can submit activity links for points on My Account and see all-time
-and rolling 30-day top-10 leaderboards at `/dashboard/points`. Staff can review
-and reverse claims at `/dashboard/staff/point-claims`; see [points](POINTS.md).
+Members can submit activity links and see all-time and rolling 30-day top-10
+leaderboards at `/dashboard/points`. My Account shows their scores and claim
+history. Staff can review and reverse claims at
+`/dashboard/staff/point-claims`; see [points](POINTS.md).
 
 ## Quick start
 

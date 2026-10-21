@@ -1,10 +1,10 @@
 # CRM points
 
 Active accounts can submit a category, an HTTPS link, and an affirmation on
-**My Account**. Each accepted link awards 10 points immediately. Current
-categories are a public LeetCode solution, a research paper read, and a public
-GitHub PR or standalone commit. A PR and its included commits count as one
-contribution. There is no earning cap.
+**Points** (`/dashboard/points`). Each accepted link awards 10 points
+immediately. Current categories are a public LeetCode solution, a research
+paper read, and a public GitHub PR or standalone commit. A PR and its included
+commits count as one contribution. There is no earning cap.
 
 This first release uses the honor system for authorship, reading, PR/commit
 overlap, and public reachability. The API checks URL format and supported hosts
@@ -13,9 +13,9 @@ decision before they become a Foundry role requirement.
 
 ## Scores and visibility
 
-- My Account shows the owner's all-time and rolling 30-day scores, claim links,
-  dates, and statuses. Staff can inspect claims in their moderation tool. Other
-  members cannot see links or private profiles.
+- Points and My Account show the owner's all-time and rolling 30-day scores,
+  claim links, dates, and statuses. Staff can inspect claims in their
+  moderation tool. Other members cannot see links or private profiles.
 - Signed-in users see the top 10 active accounts with points on each leaderboard,
   plus their own rank if outside the top 10. Only names and scores are shown.
 - The rolling period is the preceding 30 days measured from the original award

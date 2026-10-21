@@ -9,7 +9,11 @@ const dateLabel = (value) =>
     new Date(value),
   );
 
-export default function PointsProfile({ identity }) {
+export default function PointsProfile({
+  identity,
+  showForm = false,
+  onChanged,
+}) {
   const request = useMemo(
     () =>
       createAccountClient({
@@ -72,6 +76,7 @@ export default function PointsProfile({ identity }) {
         `${claim.points} points awarded. Your claim is on your profile.`,
       );
       setAttempt((value) => value + 1);
+      onChanged?.();
     } catch (failure) {
       setError(failure.message);
     } finally {
@@ -91,6 +96,7 @@ export default function PointsProfile({ identity }) {
       });
       setNotice("Claim withdrawn. Its points have been removed.");
       setAttempt((value) => value + 1);
+      onChanged?.();
     } catch (failure) {
       setError(failure.message);
     } finally {
@@ -131,9 +137,17 @@ export default function PointsProfile({ identity }) {
       <div className="csc-points-heading">
         <div>
           <h2 id="points-title">Your points</h2>
-          <p>Share what you completed. Each link earns 10 points once.</p>
+          <p>
+            {showForm
+              ? "Share what you completed. Each link earns 10 points once."
+              : "Your scores and submitted links."}
+          </p>
         </div>
-        <Link to="/dashboard/points">View leaderboard →</Link>
+        {!showForm && (
+          <Link to="/dashboard/points">
+            Submit points and view leaderboard →
+          </Link>
+        )}
       </div>
       {data ? (
         <div className="csc-points-totals">
@@ -165,56 +179,58 @@ export default function PointsProfile({ identity }) {
       {notice && <p role="status">{notice}</p>}
       {categories && data && (
         <>
-          <form onSubmit={submit}>
-            <div className="csc-points-form-row">
-              <div>
-                <label htmlFor="point-category">Activity</label>
-                <select
-                  id="point-category"
-                  value={category}
-                  onChange={(event) => setCategory(event.target.value)}
-                  required
-                >
-                  {categories.map((item) => (
-                    <option key={item.code} value={item.code}>
-                      {item.label} · {item.points} points
-                    </option>
-                  ))}
-                </select>
+          {showForm && (
+            <form onSubmit={submit}>
+              <div className="csc-points-form-row">
+                <div>
+                  <label htmlFor="point-category">Activity</label>
+                  <select
+                    id="point-category"
+                    value={category}
+                    onChange={(event) => setCategory(event.target.value)}
+                    required
+                  >
+                    {categories.map((item) => (
+                      <option key={item.code} value={item.code}>
+                        {item.label} · {item.points} points
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="point-url">Link to your work or paper</label>
+                  <input
+                    id="point-url"
+                    type="url"
+                    inputMode="url"
+                    placeholder="https://…"
+                    maxLength={2048}
+                    value={url}
+                    onChange={(event) => setURL(event.target.value)}
+                    required
+                  />
+                </div>
               </div>
-              <div>
-                <label htmlFor="point-url">Link to your work or paper</label>
+              <label className="csc-points-affirm">
                 <input
-                  id="point-url"
-                  type="url"
-                  inputMode="url"
-                  placeholder="https://…"
-                  maxLength={2048}
-                  value={url}
-                  onChange={(event) => setURL(event.target.value)}
+                  type="checkbox"
+                  checked={affirmed}
+                  onChange={(event) => setAffirmed(event.target.checked)}
                   required
                 />
-              </div>
-            </div>
-            <label className="csc-points-affirm">
-              <input
-                type="checkbox"
-                checked={affirmed}
-                onChange={(event) => setAffirmed(event.target.checked)}
-                required
-              />
-              I completed this activity. The linked solution or contribution is
-              mine, and the link is public where required.
-            </label>
-            <p className="csc-points-hint">
-              Use a public LeetCode solution, a link to the paper you read, or a
-              public GitHub PR or standalone commit. A PR and its commits count
-              as one contribution.
-            </p>
-            <button type="submit" disabled={busy || !category}>
-              {busy ? "Saving…" : "Submit link"}
-            </button>
-          </form>
+                I completed this activity. The linked solution or contribution
+                is mine, and the link is public where required.
+              </label>
+              <p className="csc-points-hint">
+                Use a public LeetCode solution, a link to the paper you read, or
+                a public GitHub PR or standalone commit. A PR and its commits
+                count as one contribution.
+              </p>
+              <button type="submit" disabled={busy || !category}>
+                {busy ? "Saving…" : "Submit link"}
+              </button>
+            </form>
+          )}
           <div className="csc-points-history">
             <h3>Your submissions</h3>
             {data.claims.length === 0 ? (
