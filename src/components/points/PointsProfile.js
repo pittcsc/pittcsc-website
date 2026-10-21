@@ -229,21 +229,26 @@ export default function PointsProfile({
                     placeholder="https://…"
                     maxLength={2048}
                     value={url}
-                    onChange={(event) => setURL(event.target.value)}
+                    onChange={(event) => {
+                      setURL(event.target.value);
+                      setAffirmed(false);
+                    }}
                     required
                   />
                 </div>
               </div>
-              <label className="csc-points-affirm">
-                <input
-                  type="checkbox"
-                  checked={affirmed}
-                  onChange={(event) => setAffirmed(event.target.checked)}
-                  required
-                />
-                I completed this activity. The linked solution or contribution
-                is mine, and the link is public where required.
-              </label>
+              {url.trim().length > 0 && (
+                <label className="csc-points-affirm">
+                  <input
+                    type="checkbox"
+                    checked={affirmed}
+                    onChange={(event) => setAffirmed(event.target.checked)}
+                    required
+                  />
+                  I completed this activity. The linked solution or contribution
+                  is mine, and the link is public where required.
+                </label>
+              )}
               <p className="csc-points-hint">
                 Use a LeetCode solution or submission link, a link to the paper
                 you read, or a public GitHub PR or standalone commit. A PR and
