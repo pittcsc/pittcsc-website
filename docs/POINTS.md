@@ -13,9 +13,10 @@ decision before they become a Foundry role requirement.
 
 ## Scores and visibility
 
-- Points and My Account show the owner's all-time and rolling 30-day scores,
-  claim links, dates, and statuses. Staff can inspect claims in their
-  moderation tool. Other members cannot see links or private profiles.
+- Points and My Account show the owner's all-time and rolling 30-day scores.
+  My Account also shows claim links, dates, and statuses; the full history has
+  its own page linked from Points. Staff can inspect claims in their moderation
+  tool. Other members cannot see links or private profiles.
 - Signed-in users see the top 10 active accounts with points on each leaderboard,
   plus their own rank if outside the top 10. Only names and scores are shown.
 - The rolling period is the preceding 30 days measured from the original award

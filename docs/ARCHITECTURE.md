@@ -54,6 +54,7 @@ Initial route structure:
 | `/dashboard` | Member home with CRM events | Signed-in CSC members and staff |
 | `/dashboard/account` | Own profile editor and files (implemented) | Signed-in account owner |
 | `/dashboard/points` | Submit activity links and view all-time and rolling 30-day point leaderboards (implemented) | Signed-in active accounts |
+| `/dashboard/points/submissions` | Own submitted links and claim history (implemented) | Signed-in account owner |
 | `/dashboard/staff` | Staff tool cards (implemented) | Active staff |
 | `/dashboard/staff/point-claims` | Point claim review and moderation (implemented) | Active staff |
 | `/dashboard/staff/user-management` | Member search and role editing (implemented) | Active staff |

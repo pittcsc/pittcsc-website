@@ -11,9 +11,11 @@ const dateLabel = (value) =>
 
 export default function PointsProfile({
   identity,
-  showForm = false,
+  variant = "account",
   onChanged,
 }) {
+  const showForm = variant === "points";
+  const submissionsPage = variant === "submissions";
   const request = useMemo(
     () =>
       createAccountClient({
@@ -133,35 +135,56 @@ export default function PointsProfile({
   );
 
   return (
-    <section className="csc-points-profile" aria-labelledby="points-title">
-      <div className="csc-points-heading">
-        <div>
-          <h2 id="points-title">Your points</h2>
-          <p>
+    <section
+      className={`csc-points-profile${submissionsPage ? " csc-points-submissions" : ""}`}
+      aria-labelledby={submissionsPage ? "submissions-title" : "points-title"}
+    >
+      {submissionsPage ? (
+        <div className="csc-points-submissions-heading">
+          <Link to="/dashboard/points">← Points</Link>
+          <h1 id="submissions-title">Your submissions</h1>
+          <p>Your submitted links, newest first.</p>
+        </div>
+      ) : (
+        <div className="csc-points-heading">
+          <div>
+            <h2 id="points-title">Your points</h2>
+            <p>
+              {showForm
+                ? "Share what you completed. Each link earns 10 points once."
+                : "Your scores and submitted links."}
+            </p>
+          </div>
+          <Link
+            to={
+              showForm ? "/dashboard/points/submissions" : "/dashboard/points"
+            }
+          >
             {showForm
-              ? "Share what you completed. Each link earns 10 points once."
-              : "Your scores and submitted links."}
-          </p>
-        </div>
-        {!showForm && (
-          <Link to="/dashboard/points">
-            Submit points and view leaderboard →
+              ? "View your submissions →"
+              : "Submit points and view leaderboard →"}
           </Link>
-        )}
-      </div>
-      {data ? (
-        <div className="csc-points-totals">
-          <div>
-            <strong>{data.allTime}</strong>
-            <span>All time</span>
-          </div>
-          <div>
-            <strong>{data.last30Days}</strong>
-            <span>Last 30 days</span>
-          </div>
         </div>
+      )}
+      {data ? (
+        !submissionsPage && (
+          <div className="csc-points-totals">
+            <div>
+              <strong>{data.allTime}</strong>
+              <span>All time</span>
+            </div>
+            <div>
+              <strong>{data.last30Days}</strong>
+              <span>Last 30 days</span>
+            </div>
+          </div>
+        )
       ) : !error ? (
-        <p role="status">Loading your points…</p>
+        <p role="status">
+          {submissionsPage
+            ? "Loading your submissions…"
+            : "Loading your points…"}
+        </p>
       ) : null}
       {error && (
         <div className="csc-points-error" role="alert">
@@ -231,60 +254,62 @@ export default function PointsProfile({
               </button>
             </form>
           )}
-          <div className="csc-points-history">
-            <h3>Your submissions</h3>
-            {data.claims.length === 0 ? (
-              <p>No links submitted yet.</p>
-            ) : (
-              <ul>
-                {data.claims.map((claim) => (
-                  <li key={claim.id}>
-                    <div>
-                      <strong>
-                        {labels[claim.category] || claim.category}
-                      </strong>
-                      <span>
-                        {dateLabel(claim.awardedAt)} ·{" "}
-                        {claim.status === "awarded"
-                          ? `+${claim.points} points`
-                          : claim.status}
-                      </span>
-                    </div>
-                    <a
-                      href={claim.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {claim.url}
-                    </a>
-                    {claim.status === "revoked" && claim.statusReason && (
-                      <p>Staff reason: {claim.statusReason}</p>
-                    )}
-                    {claim.status === "awarded" && (
-                      <button
-                        type="button"
-                        className="csc-auth-secondary"
-                        disabled={busy}
-                        onClick={() => void withdraw(claim)}
+          {!showForm && (
+            <div className="csc-points-history">
+              {!submissionsPage && <h3>Your submissions</h3>}
+              {data.claims.length === 0 ? (
+                <p>No links submitted yet.</p>
+              ) : (
+                <ul>
+                  {data.claims.map((claim) => (
+                    <li key={claim.id}>
+                      <div>
+                        <strong>
+                          {labels[claim.category] || claim.category}
+                        </strong>
+                        <span>
+                          {dateLabel(claim.awardedAt)} ·{" "}
+                          {claim.status === "awarded"
+                            ? `+${claim.points} points`
+                            : claim.status}
+                        </span>
+                      </div>
+                      <a
+                        href={claim.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        Withdraw claim
-                      </button>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-            {data.hasMore && (
-              <button
-                type="button"
-                className="csc-auth-secondary"
-                disabled={loadingMore}
-                onClick={() => void more()}
-              >
-                {loadingMore ? "Loading…" : "Load more submissions"}
-              </button>
-            )}
-          </div>
+                        {claim.url}
+                      </a>
+                      {claim.status === "revoked" && claim.statusReason && (
+                        <p>Staff reason: {claim.statusReason}</p>
+                      )}
+                      {claim.status === "awarded" && (
+                        <button
+                          type="button"
+                          className="csc-auth-secondary"
+                          disabled={busy}
+                          onClick={() => void withdraw(claim)}
+                        >
+                          Withdraw claim
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {data.hasMore && (
+                <button
+                  type="button"
+                  className="csc-auth-secondary"
+                  disabled={loadingMore}
+                  onClick={() => void more()}
+                >
+                  {loadingMore ? "Loading…" : "Load more submissions"}
+                </button>
+              )}
+            </div>
+          )}
         </>
       )}
     </section>

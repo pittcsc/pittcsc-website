@@ -126,6 +126,26 @@
   }
 }
 
+.csc-auth:has(.csc-points-submissions) .csc-auth-cardwrap {
+  max-width: 72rem;
+}
+.csc-points-submissions {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+
+  .csc-points-submissions-heading a {
+    font-weight: 700;
+    color: $acc-navy;
+  }
+  .csc-points-submissions-heading h1 {
+    margin: 1rem 0 0;
+  }
+  .csc-points-submissions-heading p {
+    margin-top: 0.35rem;
+  }
+}
+
 .csc-auth:has(.csc-points-leaderboards) .csc-auth-cardwrap {
   max-width: 72rem;
 }

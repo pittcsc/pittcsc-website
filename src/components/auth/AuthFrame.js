@@ -36,6 +36,7 @@ export default function AuthFrame({
                 className="csc-auth-nav-link"
                 to="/dashboard/points"
                 activeClassName="is-current"
+                partiallyActive
               >
                 Points
               </Link>

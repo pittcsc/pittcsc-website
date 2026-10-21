@@ -79,7 +79,7 @@ export default function PointsLeaderboard({ identity }) {
       </p>
       <PointsProfile
         identity={identity}
-        showForm
+        variant="points"
         onChanged={() => setAttempt((value) => value + 1)}
       />
       {error && (

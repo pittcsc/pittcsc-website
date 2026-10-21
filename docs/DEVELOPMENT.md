@@ -11,7 +11,8 @@ The member home shows the next three CRM events and an incomplete-profile
 reminder; see [events](EVENTS.md#member-dashboard).
 Members can submit activity links and see all-time and rolling 30-day top-10
 leaderboards at `/dashboard/points`. My Account shows their scores and claim
-history. Staff can review and reverse claims at
+history. The full history also has a page linked from Points at
+`/dashboard/points/submissions`. Staff can review and reverse claims at
 `/dashboard/staff/point-claims`; see [points](POINTS.md).
 
 ## Quick start
