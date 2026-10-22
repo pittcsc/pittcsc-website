@@ -1,7 +1,5 @@
-.csc-member-directory,
-.csc-member-profile {
-  max-width: 760px;
-  margin: 0 auto;
+.csc-auth:has(.csc-member-directory, .csc-member-profile) .csc-auth-cardwrap {
+  max-width: 72rem;
 }
 .csc-directory-search {
   margin: 1.5rem 0;
