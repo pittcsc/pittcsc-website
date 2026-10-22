@@ -50,10 +50,9 @@ Cards show the title, Eastern Time range, location, and a truncated description.
 An event in progress has a label. Cards are informational and do not open the
 attendance route or record check-in. When fewer than three events qualify, the
 home shows those available; with none it shows an empty message. Loading and
-API failures have separate states, with a retry action for failures. The page
-also fetches `/profile` at runtime and shows a red link to My Account in its
-upper-right corner only while the profile is incomplete. The reminder does not
-gate access. Both lists refresh when the page regains focus.
+API failures have separate states, with a retry action for failures. Incomplete
+accounts are sent to My Account before this page can load. Both lists refresh
+when the page regains focus.
 
 ## QR attendance
 
@@ -68,11 +67,11 @@ frontend origin. Event edits
 and Google Calendar failures do not change the URL. The QR contains only this
 URL; it contains no user details or credentials.
 
-A signed-out visitor goes directly to Pitt email OTP sign-in and returns to the
-same attendance page. The page shows the event title and signed-in email. The
+A signed-out visitor goes to Pitt email OTP sign-in. An incomplete account then
+finishes profile setup and returns to the same attendance page. The page shows the event title and signed-in email. The
 visitor must explicitly click **I'm Here!** to check in. Scanning, page loads,
-and login completion never record attendance. Any active CSC account can check
-in, including accounts with incomplete profiles and any additive role mix.
+and login completion never record attendance. Any active, completed CSC account
+can check in, with any additive role mix.
 Check-in stays open after event creation, even after its scheduled end, until
 staff cancel the event. A cancelled event closes check-in but retains its roster.
 A static QR can be shared, so this workflow does not prove physical presence.

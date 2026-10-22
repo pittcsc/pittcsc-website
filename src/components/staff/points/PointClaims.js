@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "gatsby";
 import { staffToolPath } from "../../../lib/staff/tools.mjs";
+import MemberLink from "../../member/MemberLink";
 import "../../../styles/staff/points.scss";
 
 const dateLabel = (value) =>
@@ -153,7 +154,11 @@ export default function PointClaims({ identity, request }) {
               <li key={claim.id}>
                 <div className="csc-staff-points-row">
                   <div>
-                    <h2>{claim.memberName}</h2>
+                    <h2>
+                      <MemberLink id={claim.memberID}>
+                        {claim.memberName}
+                      </MemberLink>
+                    </h2>
                     <p>
                       {labels[claim.category] || claim.category} ·{" "}
                       {dateLabel(claim.awardedAt)} · {claim.points} points

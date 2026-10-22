@@ -7,8 +7,11 @@ signed-in page at `/dashboard`, with a private profile editor at
 `/dashboard/account`. See [authentication](AUTH.md) and [profiles](PROFILES.md) for
 behavior and local testing. Staff access, member search, and role editing are
 implemented; see [staff setup](STAFF.md) for roles, provisioning, and checks.
-The member home shows the next three CRM events and an incomplete-profile
-reminder; see [events](EVENTS.md#member-dashboard).
+The member home shows the next three CRM events; see
+[events](EVENTS.md#member-dashboard). Incomplete accounts are sent to
+My Account until they save first and last name, graduation year, and a major.
+The Members directory at `/dashboard/members` searches active, completed
+profiles by name; member names in CRM screens link to their profiles.
 Members can submit activity links and see all-time and rolling 30-day top-10
 leaderboards at `/dashboard/points`. My Account shows their scores and claim
 history. The full history also has a page linked from Points at

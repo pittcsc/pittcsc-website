@@ -1,7 +1,8 @@
 # Member profiles
 
-Issue #159 adds **My Account** at `/dashboard/account`. Each signed-in user can
-read and edit only their own profile. Signed-in app screens share a top-right
+**My Account** at `/dashboard/account` lets each signed-in user edit only their
+own profile. **Members** at `/dashboard/members` lists active, completed
+profiles for other signed-in, completed accounts. Signed-in app screens share a top-right
 **My Account** button in the header that links to the editor and a top-left CSC
 logo linking to the public website; direct
 visits and refreshes use the existing Gatsby client route and Netlify fallback.
@@ -15,22 +16,25 @@ insert make provisioning safe to retry and run concurrently. Email comes from th
 current Auth identity and is read-only. The OTP/login workflow is unchanged.
 
 Partial saves are allowed. Completion requires first name, last name, graduation
-year, one major, all three of the GitHub, LeetCode and LinkedIn usernames,
-and a resume. A profile picture is optional.
-The incomplete-profile prompt does not gate dashboard access.
+year, and one major. Verified email is supplied by Auth. External usernames,
+resume, and picture are optional. Incomplete accounts can use My Account and
+file uploads but cannot use dashboard, points, event, attendance, or staff
+features. The same gate applies to all roles and is rechecked by Go on every
+protected request. Removing a required field revokes access until it is restored.
 
 | Field | Rule |
 | --- | --- |
 | First, last, preferred name | Trimmed text, up to 100 characters each; preferred name is optional for completion |
 | Graduation year | One integer from 1900 through 2100, or blank while incomplete |
 | Majors | Up to eight free-text entries of 120 characters each; duplicates ignoring case are rejected |
-| GitHub, LeetCode, LinkedIn | Bare usernames, never URLs; a pasted profile URL is reduced to its handle in the browser. All three are required for completion |
-| Profile picture | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels; never affects completion |
-| Resume | One PDF, at most 10 MiB; required for completion |
+| GitHub, LeetCode, LinkedIn | Optional bare usernames, never URLs; a pasted profile URL is reduced to its handle in the browser |
+| Profile picture | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels |
+| Resume | Optional PDF, at most 10 MiB |
 
-An incomplete profile is filled in one question at a time, and each **Next**
+An incomplete profile is filled in three questions, and each **Next**
 saves, so leaving mid-flow keeps what was answered and returns to the first
-unanswered question. Once complete, My Account becomes a single page where
+unanswered question. After completion, the original profile or attendance link
+resumes. Once complete, My Account becomes a single page where
 names, year, majors, and the three usernames save together with **Save
 profile**. The last successful
 save wins if multiple tabs edit the same profile. Failures preserve edits for
@@ -72,9 +76,16 @@ file references. Ownership always comes from the verified identity. Responses us
 | `GET /profile/avatar`, `GET /profile/resume` | Retrieve own file; missing files return 404 |
 | `PUT /profile/avatar`, `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
 | `DELETE /profile/avatar`, `DELETE /profile/resume` | Remove own file; repeated removal succeeds |
+| `GET /members?q=&page=1` | Paginated active, completed directory; name search matches first and preferred names |
+| `GET /members/{id}` | Member profile with name, majors, year, optional handles, alumni label, all-time points, and 30-day rank |
+| `GET /members/{id}/avatar` | Authenticated avatar bytes for an eligible profile |
 
-Role schema/assignment, staff access, discovery, secondary email, and shared
-avatar access remain later work, including #160.
+These member endpoints require the viewer's completed active account. Staff can
+open an active incomplete profile by ID from User Management, but incomplete
+accounts do not appear in the directory or member leaderboards. The response
+never includes email, resume, or point claim links. Browser roles have no direct
+database access. Existing eligible profiles become visible as soon as this
+feature launches; there is no opt-in setting.
 
 ## Local verification and hosted handoff
 
