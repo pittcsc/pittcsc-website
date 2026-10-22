@@ -137,12 +137,10 @@ func (input *Input) Validate() error {
 	return nil
 }
 
-// A resume counts towards completion; a profile picture does not.
+// Membership requires only the fields needed to identify a member in the directory.
 func complete(record Record) bool {
 	return record.FirstName != nil && record.LastName != nil &&
-		record.GraduationYear != nil && len(record.Majors) > 0 &&
-		record.GitHubUsername != nil && record.LeetCodeUsername != nil &&
-		record.LinkedInUsername != nil && record.HasResume
+		record.GraduationYear != nil && len(record.Majors) > 0
 }
 
 type Store struct{ DB *pgxpool.Pool }

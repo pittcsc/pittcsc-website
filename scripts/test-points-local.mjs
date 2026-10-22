@@ -137,13 +137,22 @@ async function main() {
       (
         await api(member, "/profile", "PUT", {
           firstName: "PointsFixtureMember",
+          lastName: "Fixture",
+          graduationYear: 2028,
+          majors: ["Computer Science"],
         })
       ).status === 200,
       "Member name setup failed",
     );
     check(
-      (await api(staff, "/profile", "PUT", { firstName: "PointsFixtureStaff" }))
-        .status === 200,
+      (
+        await api(staff, "/profile", "PUT", {
+          firstName: "PointsFixtureStaff",
+          lastName: "Fixture",
+          graduationYear: 2028,
+          majors: ["Computer Science"],
+        })
+      ).status === 200,
       "Staff name setup failed",
     );
     execFileSync(
@@ -229,8 +238,20 @@ async function main() {
       await api(member, "/points/leaderboard?period=30d")
     ).json();
     check(
-      board.entries.some((entry) => entry.isYou && entry.points === 10),
+      board.entries.some(
+        (entry) => entry.isYou && entry.id === member.id && entry.points === 10,
+      ),
       "Leaderboard omitted award",
+    );
+    const memberProfile = await (
+      await api(staff, `/members/${member.id}`)
+    ).json();
+    check(
+      memberProfile.allTimePoints === own.allTime &&
+        memberProfile.rank30Days ===
+          board.entries.find((entry) => entry.id === member.id)?.rank &&
+        !("claims" in memberProfile),
+      "Public points or rank disagreed with leaderboard",
     );
     check(
       (await api(member, "/staff/points/claims")).status === 403,

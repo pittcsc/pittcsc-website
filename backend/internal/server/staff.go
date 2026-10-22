@@ -26,7 +26,7 @@ func withStaff(authentication authenticator, profiles profileStore, next func(ht
 }
 
 func withStaffTimeout(authentication authenticator, profiles profileStore, timeout time.Duration, next func(http.ResponseWriter, *http.Request, auth.Identity, profile.Record)) http.HandlerFunc {
-	return withProfile(authentication, profiles, timeout, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, record profile.Record) {
+	return withCompleteProfile(authentication, profiles, timeout, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, record profile.Record) {
 		if !slices.Contains(record.Roles, "staff") {
 			writeJSONError(w, http.StatusForbidden, "Access restricted. Staff access is required.")
 			return

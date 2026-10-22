@@ -74,6 +74,18 @@ func withProfile(authentication authenticator, profiles profileStore, timeout ti
 	}
 }
 
+// The account editor and its uploads remain available during setup. All other
+// CRM routes use this guard so clearing a required field revokes access at once.
+func withCompleteProfile(authentication authenticator, profiles profileStore, timeout time.Duration, next func(http.ResponseWriter, *http.Request, auth.Identity, profile.Record)) http.HandlerFunc {
+	return withProfile(authentication, profiles, timeout, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, record profile.Record) {
+		if !record.Complete {
+			writeJSONError(w, http.StatusForbidden, "Complete your name, graduation year, and major in My Account first.")
+			return
+		}
+		next(w, r, identity, record)
+	})
+}
+
 func writeProfile(w http.ResponseWriter, record profile.Record, identity auth.Identity) {
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(struct {

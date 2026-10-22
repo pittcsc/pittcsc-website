@@ -65,6 +65,7 @@ type Mine struct {
 }
 
 type Standing struct {
+	ID     string `json:"id"`
 	Rank   int    `json:"rank"`
 	Name   string `json:"name"`
 	Points int    `json:"points"`

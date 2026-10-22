@@ -120,7 +120,13 @@ func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderbo
 		    coalesce(nullif(btrim(concat_ws(' ', coalesce(p.preferred_name, p.first_name), p.last_name)), ''), 'CSC member') as name,
 		    sum(c.points_awarded)::integer as points
 		  from csc.point_claims c join csc.profiles p on p.auth_user_id = c.auth_user_id
-		  where p.account_status = 'active' and c.status = 'awarded'
+		  join auth.users u on u.id = c.auth_user_id
+		  where p.account_status = 'active' and u.email_confirmed_at is not null
+		    and u.deleted_at is null and not u.is_anonymous
+		    and (u.banned_until is null or u.banned_until <= now())
+		    and p.first_name is not null and p.last_name is not null
+		    and p.graduation_year is not null and cardinality(p.majors) > 0
+		    and c.status = 'awarded'
 		    and ($2 = 'all' or c.awarded_at >= now() - interval '30 days')
 		  group by p.auth_user_id, p.preferred_name, p.first_name, p.last_name
 		), ranked as (
@@ -128,7 +134,7 @@ func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderbo
 		    row_number() over (order by points desc, name, auth_user_id)::integer as place
 		  from totals
 		)
-		select auth_user_id = $1::uuid, name, points, rank, place from ranked
+		select auth_user_id::text, auth_user_id = $1::uuid, name, points, rank, place from ranked
 		where place <= 10 or auth_user_id = $1::uuid order by place
 	`, userID, period)
 	if err != nil {
@@ -138,7 +144,7 @@ func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderbo
 	for rows.Next() {
 		var item Standing
 		var place int
-		if err := rows.Scan(&item.IsYou, &item.Name, &item.Points, &item.Rank, &place); err != nil {
+		if err := rows.Scan(&item.ID, &item.IsYou, &item.Name, &item.Points, &item.Rank, &place); err != nil {
 			return Leaderboard{}, err
 		}
 		if place <= 10 {

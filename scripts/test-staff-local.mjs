@@ -156,6 +156,22 @@ async function main() {
   const initial = await uses[0].json();
   check(JSON.stringify(initial.roles) === '["member"]', "Wrong default roles");
   check(
+    (
+      await api(
+        user,
+        "/profile",
+        "PUT",
+        JSON.stringify({
+          firstName: "StaffFixture",
+          lastName: "Member",
+          graduationYear: 2028,
+          majors: ["Computer Science"],
+        }),
+      )
+    ).status === 200,
+    "Member setup failed",
+  );
+  check(
     sql(
       `select count(*) from csc.user_roles where auth_user_id = '${user.id}'`,
     ) === "1",
@@ -262,6 +278,22 @@ async function roleManagement({ fixture, api, grant }) {
   );
   for (const account of [a, b, c])
     await json(await api(account, "/auth/session"), 200, "Session failed");
+  for (const [index, account] of [a, b, c].entries())
+    await json(
+      await api(
+        account,
+        "/profile",
+        "PUT",
+        JSON.stringify({
+          firstName: "StaffFixture",
+          lastName: `Member${index}`,
+          graduationYear: 2028,
+          majors: ["Computer Science"],
+        }),
+      ),
+      200,
+      "Profile setup failed",
+    );
   await grant(a.email);
   await grant(b.email);
   const marker = c.email.split("@")[0].slice(-12);
@@ -270,10 +302,34 @@ async function roleManagement({ fixture, api, grant }) {
       c,
       "/profile",
       "PUT",
-      JSON.stringify({ firstName: "Ada", lastName: `Fixture${marker}` }),
+      JSON.stringify({
+        firstName: "Ada",
+        lastName: `Fixture${marker}`,
+        graduationYear: 2028,
+        majors: ["Computer Science"],
+      }),
     ),
     200,
     "Fixture profile not saved",
+  );
+  const partial = await fixture("partial");
+  await json(
+    await api(partial, "/auth/session"),
+    200,
+    "Partial session failed",
+  );
+  const staffPartial = await json(
+    await api(a, `/members/${partial.id}`),
+    200,
+    "Staff partial profile denied",
+  );
+  check(
+    staffPartial.complete === false && !("email" in staffPartial),
+    "Staff partial profile exposed private fields",
+  );
+  check(
+    (await api(c, `/members/${partial.id}`)).status === 404,
+    "Member opened incomplete profile",
   );
 
   stage = "role management denies non-staff";

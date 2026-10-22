@@ -63,6 +63,7 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 			return
 		}
 		roles := []string{}
+		complete := false
 		if profiles != nil {
 			record, err := profiles.GetOrCreate(ctx, identity.ID)
 			if err != nil {
@@ -72,15 +73,18 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 			if record.Roles != nil {
 				roles = record.Roles
 			}
+			complete = record.Complete
 		}
 		_ = json.NewEncoder(w).Encode(struct {
 			auth.Identity
-			Roles []string `json:"roles"`
-		}{identity, roles})
+			Roles    []string `json:"roles"`
+			Complete bool     `json:"complete"`
+		}{identity, roles, complete})
 	})
 	mux.HandleFunc("OPTIONS /auth/session", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	registerProfileRoutes(mux, authentication, profiles)
 	registerAssetRoutes(mux, authentication, profiles)
+	registerDirectoryRoutes(mux, authentication, profiles)
 	registerStaffRoutes(mux, authentication, profiles, roleChanges)
 	registerEventRoutes(mux, frontendOrigin, authentication, profiles, eventRecords)
 	var pointRecord pointStore

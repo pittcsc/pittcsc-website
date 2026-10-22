@@ -70,7 +70,7 @@ async function main() {
     readFileSync(new URL("../.env.development", import.meta.url)),
   );
   const authURL = localURL(config.GATSBY_SUPABASE_URL);
-  const apiURL = localURL(config.GATSBY_API_URL);
+  const apiURL = localURL(process.env.TEST_API_URL || config.GATSBY_API_URL);
   const mailURL = "http://127.0.0.1:54324";
   const key = config.GATSBY_SUPABASE_PUBLISHABLE_KEY;
   check(key, "Public key missing");
@@ -141,8 +141,13 @@ async function main() {
     );
 
   stage = "unauthenticated requests";
-  for (const path of ["/profile", "/profile/avatar", "/profile/resume"])
-    check((await api(null, path)).status === 401, "Missing token accepted");
+  for (const path of ["/profile", "/profile/avatar", "/profile/resume"]) {
+    const response = await api(null, path);
+    check(
+      response.status === 401,
+      `Missing token accepted at ${path} (${response.status})`,
+    );
+  }
   stage = "synthetic Auth fixtures";
   const owner = await fixture("owner");
   const other = await fixture("other");
@@ -177,7 +182,7 @@ async function main() {
   );
   const complete = {
     firstName: "Fixture",
-    lastName: "Member",
+    lastName: `Member${suffix.slice(0, 8)}`,
     preferredName: "Test",
     graduationYear: 2028,
     majors: ["Computer Science", "Mathematics"],
@@ -221,6 +226,57 @@ async function main() {
   check(
     (await api(other, `/profile/${owner.id}`)).status === 404,
     "Other-profile route available",
+  );
+
+  stage = "member directory and profile visibility";
+  check(
+    (await api(null, "/members")).status === 401,
+    "Anonymous directory access accepted",
+  );
+  check(
+    (await api(other, "/members")).status === 403,
+    "Incomplete member reached directory",
+  );
+  check(
+    (await api(other, `/members/${owner.id}`)).status === 403,
+    "Incomplete member read a profile",
+  );
+  check(
+    (
+      await put(other, {
+        firstName: "Directory",
+        lastName: `Viewer${suffix.slice(0, 8)}`,
+        graduationYear: 2028,
+        majors: ["Mathematics"],
+      })
+    ).status === 200,
+    "Directory viewer setup failed",
+  );
+  for (const name of [
+    `Fixture Member${suffix.slice(0, 8)}`,
+    `Test Member${suffix.slice(0, 8)}`,
+  ]) {
+    const directory = await (
+      await api(other, `/members?q=${encodeURIComponent(name)}`)
+    ).json();
+    check(
+      directory.members.some((member) => member.id === owner.id),
+      "First or preferred name search missed a member",
+    );
+  }
+  const privateSearch = await (
+    await api(other, `/members?q=${encodeURIComponent(owner.email)}`)
+  ).json();
+  check(privateSearch.total === 0, "Email leaked into member search");
+  const publicProfile = await (await api(other, `/members/${owner.id}`)).json();
+  check(
+    publicProfile.id === owner.id &&
+      publicProfile.name === `Test Member${suffix.slice(0, 8)}` &&
+      publicProfile.allTimePoints === 0 &&
+      publicProfile.rank30Days === null &&
+      !("email" in publicProfile) &&
+      !("hasResume" in publicProfile),
+    "Public profile exposed private fields or wrong points",
   );
 
   stage = "resume uploads and concurrent replacement";
@@ -287,6 +343,12 @@ async function main() {
     (await api(other, "/profile/avatar")).status === 404,
     "Another member received the avatar",
   );
+  const sharedAvatar = await api(other, `/members/${owner.id}/avatar`);
+  check(
+    sharedAvatar.status === 200 &&
+      sharedAvatar.headers.get("content-type") === "image/png",
+    "Member avatar unavailable",
+  );
   for (const [path, data, media, status] of [
     ["avatar", "<svg/>", "image/svg+xml", 415],
     ["avatar", "not an image", "image/png", 400],
@@ -309,6 +371,10 @@ async function main() {
     `update csc.profiles set account_status = 'suspended' where auth_user_id = '${owner.id}'::uuid;`,
   );
   try {
+    check(
+      (await api(other, `/members/${owner.id}`)).status === 404,
+      "Suspended member remained public",
+    );
     for (const [path, method] of [
       ["/auth/session", "GET"],
       ["/profile", "GET"],
@@ -347,6 +413,26 @@ async function main() {
       count("profile_assets", owner.id) === 0,
     "File references or bytes remained",
   );
+  stage = "completion revocation";
+  const incompleteAgain = await (
+    await put(owner, { ...complete, majors: [] })
+  ).json();
+  check(
+    !incompleteAgain.complete,
+    "Clearing a required field kept membership complete",
+  );
+  check(
+    (await api(owner, "/points/categories")).status === 403,
+    "Incomplete account retained points access",
+  );
+  check(
+    (await api(other, `/members/${owner.id}`)).status === 404,
+    "Incomplete account remained public",
+  );
+  check(
+    (await put(owner, complete)).status === 200,
+    "Completion recovery failed",
+  );
   stage = "immediate logout rejection";
   check(
     !(await owner.client.auth.signOut({ scope: "local" })).error,
@@ -365,7 +451,7 @@ async function main() {
     "Generated Data API remains available",
   );
   console.log(
-    "PASS: concurrent provisioning, partial saves, completion, protected fields, ownership, files, limits, replacements, deletion, suspension, revocation, and Data API isolation",
+    "PASS: provisioning, completion gate, member directory and profile visibility, private fields, files, suspension, revocation, and Data API isolation",
   );
 }
 
