@@ -38,7 +38,7 @@ The public website remains accessible to everyone, including signed-in users. Si
 - Signed in: that button becomes **Dashboard**.
 - The dashboard has its own layout, navigation, account menu, and logout action.
 - **Dashboard** is the first link in its navbar. The home shows three upcoming
-  or in-progress CRM events and a profile reminder when completion is pending.
+  or in-progress CRM events. Incomplete accounts are directed to profile setup.
 - Only its navbar displays **Staff**, and only for active users with the staff role.
   The staff page has an API-verified access check, member search, and role editing.
 - On My Account, a **Back to Website** link returns to the public site without
@@ -53,6 +53,7 @@ Initial route structure:
 | `/login` | Sign in or create a CSC account | Everyone |
 | `/dashboard` | Member home with CRM events | Signed-in CSC members and staff |
 | `/dashboard/account` | Own profile editor and files (implemented) | Signed-in account owner |
+| `/dashboard/members` and `/dashboard/members/{id}` | Search and view member profiles (implemented) | Active, completed accounts; staff may inspect active incomplete profiles by ID |
 | `/dashboard/points` | Submit activity links and view all-time and rolling 30-day point leaderboards (implemented) | Signed-in active accounts |
 | `/dashboard/points/submissions` | Own submitted links and claim history (implemented) | Signed-in account owner |
 | `/dashboard/staff` | Staff tool cards (implemented) | Active staff |

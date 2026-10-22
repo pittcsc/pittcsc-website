@@ -14,16 +14,17 @@ import (
 )
 
 type profilesStub struct {
-	roles  []string
-	userID string
-	input  profile.Input
-	err    error
-	writes int
+	roles      []string
+	incomplete bool
+	userID     string
+	input      profile.Input
+	err        error
+	writes     int
 }
 
 func (s *profilesStub) GetOrCreate(ctx context.Context, id string) (profile.Record, error) {
 	s.userID = id
-	return profile.Record{Majors: []string{}, Roles: s.roles}, s.err
+	return profile.Record{Majors: []string{}, Roles: s.roles, Complete: !s.incomplete}, s.err
 }
 func (s *profilesStub) Update(ctx context.Context, id string, input profile.Input) (profile.Record, error) {
 	s.userID, s.input = id, input

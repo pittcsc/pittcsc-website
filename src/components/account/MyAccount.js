@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "gatsby";
+import { Link, navigate } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import {
@@ -146,25 +146,12 @@ function HandleFields({ form, change }) {
   ));
 }
 
-// One question per step. The last one holds the optional uploads, which save
-// through their own endpoints rather than with the rest of the form.
+// Membership setup asks only for the required fields. Optional links and files
+// remain in the editor after setup.
 const STEPS = [
   { id: "name", title: "What’s your name?", Fields: NameFields },
   { id: "year", title: "When do you graduate?", Fields: YearField },
   { id: "majors", title: "What are you studying?", Fields: MajorFields },
-  {
-    id: "handles",
-    title: "Where can we find you?",
-    hint: "Your usernames, not the full links — pasting a profile URL works too.",
-    Fields: HandleFields,
-  },
-  { id: "resume", title: "Add your resume", files: "resume" },
-  {
-    id: "photo",
-    title: "Add a photo",
-    files: "avatar",
-    optional: true,
-  },
 ];
 
 // Each Next saves, so someone who leaves mid-flow should come back to the
@@ -175,16 +162,12 @@ function firstUnanswered(profile) {
     profile.firstName && profile.lastName,
     profile.graduationYear,
     profile.majors?.length,
-    profile.githubUsername &&
-      profile.leetcodeUsername &&
-      profile.linkedinUsername,
-    profile.hasResume,
   ];
   const index = answered.findIndex((value) => !value);
   return index === -1 ? STEPS.length - 1 : index;
 }
 
-export default function MyAccount({ identity }) {
+export default function MyAccount({ identity, onSaved, returnTo }) {
   const [profile, setProfile] = useState(null);
   const [form, setForm] = useState(null);
   const [error, setError] = useState("");
@@ -249,6 +232,10 @@ export default function MyAccount({ identity }) {
       if (signal.aborted) return null;
       setProfile(value);
       setForm(formFromProfile(value));
+      await onSaved?.();
+      if (!profile.complete && value.complete) {
+        void navigate(returnTo || "/dashboard", { replace: true });
+      }
       return value;
     } finally {
       if (!signal.aborted) setSaving(false);
@@ -273,8 +260,7 @@ export default function MyAccount({ identity }) {
     setError("");
     setNotice("");
     try {
-      // The upload steps write through their own endpoints, not this form.
-      if (!STEPS[step].files && !(await persist())) return;
+      if (!(await persist())) return;
       if (lifetime.current.signal.aborted) return;
       if (step < STEPS.length - 1) {
         setStep(step + 1);
@@ -325,7 +311,6 @@ export default function MyAccount({ identity }) {
           </div>
           <p>
             Step {step + 1} of {STEPS.length}
-            {current.optional ? " · optional" : ""}
           </p>
         </div>
         <form onSubmit={next}>
@@ -334,7 +319,6 @@ export default function MyAccount({ identity }) {
             {current.hint && <p className="csc-account-hint">{current.hint}</p>}
             {current.Fields && <current.Fields form={form} change={change} />}
           </fieldset>
-          {current.files && renderFiles(current.files)}
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}
           <div className="csc-account-nav">
@@ -413,9 +397,8 @@ export default function MyAccount({ identity }) {
             </strong>
             {!profile.complete && !guided && (
               <p>
-                Add your first and last name, graduation year, at least one
-                major, your GitHub, LeetCode and LinkedIn usernames, and your
-                resume. A profile picture is optional. You can finish later.
+                Add your first and last name, graduation year, and at least one
+                major before using the member dashboard.
               </p>
             )}
           </div>
@@ -423,7 +406,7 @@ export default function MyAccount({ identity }) {
             Signed in as <strong>{profile.email}</strong>
           </p>
           {guided ? renderGuided() : renderEditor()}
-          <PointsProfile identity={identity} />
+          {profile.complete && <PointsProfile identity={identity} />}
         </>
       )}
     </div>

@@ -11,6 +11,7 @@ import {
 } from "../../../lib/staff/user-management.mjs";
 import { STAFF_BASE } from "../../../lib/staff/tools.mjs";
 import "../../../styles/staff/user-management.scss";
+import MemberLink from "../../member/MemberLink";
 
 // Search members and edit roles. Toggles render from the server catalog; Go
 // enforces every change.
@@ -179,7 +180,9 @@ export default function UserManagement({ identity, request, revalidate }) {
           {results.users.map((member) => (
             <li key={member.id} className="csc-staff-member">
               <div className="csc-staff-member-info">
-                <strong>{displayName(member)}</strong>
+                <strong>
+                  <MemberLink id={member.id}>{displayName(member)}</MemberLink>
+                </strong>
                 <span>{member.email}</span>
                 {member.graduationYear && (
                   <span>Class of {member.graduationYear}</span>

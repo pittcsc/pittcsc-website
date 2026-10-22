@@ -87,7 +87,7 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 		})
 	}
 	registerExpenseRoutes(mux, guard, store)
-	mux.HandleFunc("GET /events/upcoming", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, _ auth.Identity, _ profile.Record) {
+	mux.HandleFunc("GET /events/upcoming", withCompleteProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, _ auth.Identity, _ profile.Record) {
 		if store == nil {
 			writeEventError(w, auth.ErrUnavailable)
 			return
@@ -202,7 +202,7 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 	}))
 	if attendance != nil {
 		member := func(next func(http.ResponseWriter, *http.Request, auth.Identity)) http.HandlerFunc {
-			return withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+			return withCompleteProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
 				next(w, r, identity)
 			})
 		}

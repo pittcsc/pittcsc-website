@@ -16,9 +16,11 @@ decision before they become a Foundry role requirement.
 - Points and My Account show the owner's all-time and rolling 30-day scores.
   My Account also shows claim links, dates, and statuses; the full history has
   its own page linked from Points. Staff can inspect claims in their moderation
-  tool. Other members cannot see links or private profiles.
-- Signed-in users see the top 10 active accounts with points on each leaderboard,
-  plus their own rank if outside the top 10. Only names and scores are shown.
+  tool. Other members cannot see claim links or history.
+- Completed signed-in users see the top 10 active, completed accounts with
+  points on each leaderboard, plus their own rank if outside the top 10. Names
+  link to member profiles. Each profile shows its all-time total and 30-day
+  rank, or Unranked when it has no award in that period.
 - The rolling period is the preceding 30 days measured from the original award
   time. Submitting old work today awards points today. Restoring a claim keeps
   the original award time. Suspended accounts retain claims but leave the boards.
@@ -39,18 +41,19 @@ link. `csc.point_claim_audit` records status and correction changes. Database
 uniqueness makes concurrent submissions safe.
 
 All four tables are in the private `csc` schema with RLS enabled and no browser
-role grants. The Go API verifies the bearer token and current account status on
+role grants. The Go API verifies the bearer token, current account status, and
+profile completion on
 every request, derives ownership from the verified identity, and checks the
 current staff role for moderation. Neither submitted roles nor user IDs grant
 access. The public Gatsby build contains no point or claim data.
 
 | Endpoint | Access | Behavior |
 | --- | --- | --- |
-| `GET /points/categories` | Active account | Current activity choices and values |
+| `GET /points/categories` | Active, completed account | Current activity choices and values |
 | `GET /points/me?page=1` | Owner | Scores and 20 newest claims per page |
-| `POST /points/claims` | Active account | Submit `{category,url,affirmed:true}` |
+| `POST /points/claims` | Active, completed account | Submit `{category,url,affirmed:true}` |
 | `DELETE /points/claims/{id}` | Owner | Withdraw an awarded claim |
-| `GET /points/leaderboard?period=all\|30d` | Active account | Top 10 and own rank |
+| `GET /points/leaderboard?period=all\|30d` | Active, completed account | Top 10 and own rank |
 | `GET /staff/points/claims?page=1` | Staff | 20 newest claims per page |
 | `POST /staff/points/claims/{id}/revoke` | Staff | Revoke with `{reason}` |
 | `POST /staff/points/claims/{id}/restore` | Staff | Restore with `{reason}` |

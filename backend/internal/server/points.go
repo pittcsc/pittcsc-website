@@ -65,7 +65,7 @@ func decodePointBody(w http.ResponseWriter, r *http.Request, value any) bool {
 
 func registerPointRoutes(mux *http.ServeMux, authentication authenticator, profiles profileStore, store pointStore) {
 	member := func(next func(http.ResponseWriter, *http.Request, auth.Identity)) http.HandlerFunc {
-		return withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		return withCompleteProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
 			if store == nil {
 				writePointError(w, auth.ErrUnavailable)
 				return

@@ -5,12 +5,14 @@ import SessionStatus, {
   logoutToWebsite,
 } from "../components/auth/SessionStatus";
 import { useAuth } from "../components/auth/AuthProvider";
-import { loginURL } from "../lib/auth/policy.mjs";
+import { loginURL, safeReturnTo } from "../lib/auth/policy.mjs";
 import MyAccount from "../components/account/MyAccount";
 import StaffDashboard from "../components/staff/StaffDashboard";
 import MemberHome from "../components/member/MemberHome";
 import PointsLeaderboard from "../components/points/PointsLeaderboard";
 import PointsProfile from "../components/points/PointsProfile";
+import MemberDirectory from "../components/member/MemberDirectory";
+import MemberProfile from "../components/member/MemberProfile";
 
 export default function Dashboard({ location }) {
   const auth = useAuth();
@@ -41,11 +43,38 @@ export default function Dashboard({ location }) {
   const authenticated = auth.status === "authenticated";
   const account = /^\/dashboard\/account\/?$/.test(location.pathname);
 
+  useEffect(() => {
+    if (authenticated && !auth.identity.complete && !account) {
+      const returnTo = safeReturnTo(
+        location.pathname + location.search + location.hash,
+      );
+      void navigate(`/dashboard/account?${new URLSearchParams({ returnTo })}`, {
+        replace: true,
+      });
+    }
+  }, [
+    authenticated,
+    auth.identity?.complete,
+    account,
+    location.pathname,
+    location.search,
+    location.hash,
+  ]);
+
+  const returnTo = safeReturnTo(
+    new URLSearchParams(location.search).get("returnTo"),
+  );
+  const memberID = /^\/dashboard\/members\/([0-9a-fA-F-]{36})\/?$/.exec(
+    location.pathname,
+  )?.[1];
+
   // Only My Account offers logout and the website link; status screens keep
   // the website link so users are never stuck.
   return (
     <AuthFrame dashboard websiteLink={!authenticated || account}>
-      {authenticated ? (
+      {authenticated && !auth.identity.complete && !account ? (
+        <p role="status">Taking you to profile setup…</p>
+      ) : authenticated ? (
         <>
           {/^\/dashboard\/staff(?:\/|$)/.test(location.pathname) ? (
             <StaffDashboard
@@ -55,7 +84,20 @@ export default function Dashboard({ location }) {
               pathname={location.pathname}
             />
           ) : account ? (
-            <MyAccount key={auth.identity.id} identity={auth.identity} />
+            <MyAccount
+              key={auth.identity.id}
+              identity={auth.identity}
+              onSaved={auth.revalidate}
+              returnTo={returnTo}
+            />
+          ) : memberID ? (
+            <MemberProfile
+              key={memberID}
+              identity={auth.identity}
+              memberID={memberID}
+            />
+          ) : /^\/dashboard\/members\/?$/.test(location.pathname) ? (
+            <MemberDirectory key={auth.identity.id} identity={auth.identity} />
           ) : /^\/dashboard\/points\/submissions\/?$/.test(
               location.pathname,
             ) ? (

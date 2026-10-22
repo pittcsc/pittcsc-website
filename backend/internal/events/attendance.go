@@ -17,6 +17,7 @@ type CheckInStatus struct {
 }
 
 type Attendee struct {
+	ID          string    `json:"id"`
 	Name        string    `json:"name"`
 	Email       string    `json:"email"`
 	CheckedInAt time.Time `json:"checkedInAt"`
@@ -111,7 +112,8 @@ func (s Store) Attendance(ctx context.Context, eventID string, page int) (Attend
 	if err != nil {
 		return AttendancePage{}, err
 	}
-	rows, err := s.DB.Query(ctx, `select coalesce(nullif(concat_ws(' ', coalesce(p.preferred_name, p.first_name), p.last_name), ''), ''),
+	rows, err := s.DB.Query(ctx, `select a.auth_user_id::text,
+		coalesce(nullif(concat_ws(' ', coalesce(p.preferred_name, p.first_name), p.last_name), ''), ''),
 		coalesce(u.email, ''), a.checked_in_at from csc.attendance a
 		join csc.profiles p on p.auth_user_id = a.auth_user_id
 		join auth.users u on u.id = a.auth_user_id
@@ -124,7 +126,7 @@ func (s Store) Attendance(ctx context.Context, eventID string, page int) (Attend
 	defer rows.Close()
 	for rows.Next() {
 		var attendee Attendee
-		if err := rows.Scan(&attendee.Name, &attendee.Email, &attendee.CheckedInAt); err != nil {
+		if err := rows.Scan(&attendee.ID, &attendee.Name, &attendee.Email, &attendee.CheckedInAt); err != nil {
 			return AttendancePage{}, err
 		}
 		result.Attendees = append(result.Attendees, attendee)

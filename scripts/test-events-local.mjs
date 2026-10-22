@@ -84,7 +84,10 @@ async function main() {
     );
     clients.push(client);
     const sent = await client.auth.signInWithOtp({ email });
-    check(!sent.error, `OTP request failed (${sent.error?.code || sent.error?.status || "unknown"})`);
+    check(
+      !sent.error,
+      `OTP request failed (${sent.error?.code || sent.error?.status || "unknown"})`,
+    );
     let code;
     for (let n = 0; n < 30 && !code; n++) {
       const result = await (
@@ -132,6 +135,15 @@ async function main() {
   const [a, b, member] = await Promise.all(["a", "b", "member"].map(fixture));
   for (const account of [a, b, member])
     await json(await api(account, "/auth/session"));
+  for (const [index, account] of [a, b, member].entries())
+    await json(
+      await api(account, "/profile", "PUT", {
+        firstName: "EventsFixture",
+        lastName: `Member${index}`,
+        graduationYear: 2028,
+        majors: ["Computer Science"],
+      }),
+    );
   for (const account of [a, b]) {
     execFileSync(
       "go",
@@ -155,11 +167,29 @@ async function main() {
     "The running API must have calendar delivery disabled before fixture writes",
   );
   stage = "member event list authorization and response fields";
-  check((await api(null, "/events/upcoming")).status === 401, "Anonymous event list read");
+  check(
+    (await api(null, "/events/upcoming")).status === 401,
+    "Anonymous event list read",
+  );
   const memberEvents = await json(await api(member, "/events/upcoming"));
-  check(Array.isArray(memberEvents.events) && memberEvents.events.length <= 3, "Invalid member event list");
+  check(
+    Array.isArray(memberEvents.events) && memberEvents.events.length <= 3,
+    "Invalid member event list",
+  );
   for (const listed of memberEvents.events)
-    check(Object.keys(listed).every((key) => ["id", "title", "location", "description", "startsAt", "endsAt"].includes(key)), "Member event list exposed staff fields");
+    check(
+      Object.keys(listed).every((key) =>
+        [
+          "id",
+          "title",
+          "location",
+          "description",
+          "startsAt",
+          "endsAt",
+        ].includes(key),
+      ),
+      "Member event list exposed staff fields",
+    );
   const id = randomUUID();
   const path = `/staff/events/${id}`;
   const input = {
@@ -232,7 +262,10 @@ async function main() {
       },
       body,
     });
-  for (const [user, code] of [[null, 401], [member, 403]]) {
+  for (const [user, code] of [
+    [null, 401],
+    [member, 403],
+  ]) {
     check(
       (await api(user, `${spendingPath}/expenses`)).status === code &&
         (await putReceipt(user)).status === code &&
@@ -248,12 +281,16 @@ async function main() {
     "Invalid receipt accepted",
   );
   check(
-    (await api(a, `${spendingPath}/expenses`, "PUT", { totalCents: 1 })).status === 405,
+    (await api(a, `${spendingPath}/expenses`, "PUT", { totalCents: 1 }))
+      .status === 405,
     "Spending total is writable",
   );
   for (let n = 0; n < 2; n++)
     check((await putReceipt(a)).status === 204, "Receipt upload failed");
-  check((await putReceipt(b, "1")).status === 409, "Receipt amount changed by ID reuse");
+  check(
+    (await putReceipt(b, "1")).status === 409,
+    "Receipt amount changed by ID reuse",
+  );
   const withReceipt = await json(await api(b, `${spendingPath}/expenses`));
   check(
     withReceipt.receipts.length === 1 &&
@@ -261,18 +298,37 @@ async function main() {
       withReceipt.totalCents === 4250,
     "Retried receipt duplicated or total not derived from receipts",
   );
-  for (const [user, code] of [[null, 401], [member, 403]])
+  for (const [user, code] of [
+    [null, 401],
+    [member, 403],
+  ])
     check(
-      (await api(user, `${receiptRoute}/amount`, "PUT", { amountCents: 1, previousAmountCents: 4250 })).status === code &&
+      (
+        await api(user, `${receiptRoute}/amount`, "PUT", {
+          amountCents: 1,
+          previousAmountCents: 4250,
+        })
+      ).status === code &&
         (await api(user, `${spendingPath}/budget-package`)).status === code,
       "Non-staff receipt edit or budget export",
     );
   const edited = await json(
-    await api(b, `${receiptRoute}/amount`, "PUT", { amountCents: 5000, previousAmountCents: 4250 }),
+    await api(b, `${receiptRoute}/amount`, "PUT", {
+      amountCents: 5000,
+      previousAmountCents: 4250,
+    }),
   );
-  check(edited.totalCents === 5000 && edited.receipts[0].amountCents === 5000, "Receipt edit not reflected in total");
   check(
-    (await api(a, `${receiptRoute}/amount`, "PUT", { amountCents: 1, previousAmountCents: 4250 })).status === 409,
+    edited.totalCents === 5000 && edited.receipts[0].amountCents === 5000,
+    "Receipt edit not reflected in total",
+  );
+  check(
+    (
+      await api(a, `${receiptRoute}/amount`, "PUT", {
+        amountCents: 1,
+        previousAmountCents: 4250,
+      })
+    ).status === 409,
     "Stale receipt edit accepted",
   );
   await json(await api(member, `/attendance/${spendingID}`, "POST"));
@@ -291,8 +347,14 @@ async function main() {
     "Receipt image not returned",
   );
   for (let n = 0; n < 2; n++)
-    check((await api(b, receiptRoute, "DELETE")).status === 204, "Receipt removal failed");
-  check((await api(a, receiptRoute)).status === 404, "Removed receipt still readable");
+    check(
+      (await api(b, receiptRoute, "DELETE")).status === 204,
+      "Receipt removal failed",
+    );
+  check(
+    (await api(a, receiptRoute)).status === 404,
+    "Removed receipt still readable",
+  );
   check(
     (await json(await api(a, `${spendingPath}/expenses`))).totalCents === 0,
     "Removed receipt still counted",
@@ -353,15 +415,29 @@ async function main() {
       `${localURL(backend.FRONTEND_ORIGIN || "http://localhost:8000")}${attendancePath}`,
     "Attendance QR destination must use the configured frontend origin",
   );
-  check((await api(null, attendancePath)).status === 401, "Anonymous attendance read");
-  check((await api(null, attendancePath, "POST")).status === 401, "Anonymous check-in");
+  check(
+    (await api(null, attendancePath)).status === 401,
+    "Anonymous attendance read",
+  );
+  check(
+    (await api(null, attendancePath, "POST")).status === 401,
+    "Anonymous check-in",
+  );
   const initial = await json(await api(member, attendancePath));
-  check(initial.title === event.title && !initial.checkedInAt, "GET recorded attendance");
+  check(
+    initial.title === event.title && !initial.checkedInAt,
+    "GET recorded attendance",
+  );
   const submissions = await Promise.all(
     Array.from({ length: 6 }, () => api(member, attendancePath, "POST")),
   );
-  check(submissions.every((response) => response.status === 200), "Concurrent check-ins failed");
-  const submitted = await Promise.all(submissions.map((response) => response.json()));
+  check(
+    submissions.every((response) => response.status === 200),
+    "Concurrent check-ins failed",
+  );
+  const submitted = await Promise.all(
+    submissions.map((response) => response.json()),
+  );
   check(
     submitted.every((value) => value.checkedInAt === submitted[0].checkedInAt),
     "Retry changed the original check-in time",
@@ -372,7 +448,8 @@ async function main() {
   );
   const roster = await json(await api(a, `${path}/attendance`));
   check(
-    roster.count === 1 && roster.attendees.length === 1 &&
+    roster.count === 1 &&
+      roster.attendees.length === 1 &&
       roster.attendees[0].email === member.email,
     "Roster lost or duplicated attendance",
   );

@@ -22,7 +22,7 @@ export default function AuthFrame({
             Pitt CSC
           </Link>
           <nav aria-label="Account navigation">
-            {dashboard && (
+            {dashboard && identity.complete && (
               <Link
                 className="csc-auth-nav-link"
                 to="/dashboard"
@@ -31,7 +31,7 @@ export default function AuthFrame({
                 Dashboard
               </Link>
             )}
-            {dashboard && (
+            {dashboard && identity.complete && (
               <Link
                 className="csc-auth-nav-link"
                 to="/dashboard/points"
@@ -41,7 +41,17 @@ export default function AuthFrame({
                 Points
               </Link>
             )}
-            {dashboard && hasStaffRole(identity) && (
+            {dashboard && identity.complete && (
+              <Link
+                className="csc-auth-nav-link"
+                to="/dashboard/members"
+                activeClassName="is-current"
+                partiallyActive
+              >
+                Members
+              </Link>
+            )}
+            {dashboard && identity.complete && hasStaffRole(identity) && (
               <Link
                 className="csc-auth-nav-link"
                 to="/dashboard/staff"

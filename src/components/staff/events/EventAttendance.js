@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import MemberLink from "../../member/MemberLink";
 import { eventPath } from "../../../lib/staff/events.mjs";
 import {
   EXPORT_SIZE,
@@ -37,7 +38,8 @@ export default function EventAttendance({ record, identity, request, denied }) {
         }
       })
       .catch(() => {
-        if (active) setQrError("QR preview is unavailable. Try reloading the page.");
+        if (active)
+          setQrError("QR preview is unavailable. Try reloading the page.");
       });
     return () => {
       active = false;
@@ -75,7 +77,10 @@ export default function EventAttendance({ record, identity, request, denied }) {
     setQrError("");
     try {
       const code = await makeCode(url, EXPORT_SIZE, white);
-      await code.download({ name: `pittcsc-attendance-${record.id}`, extension });
+      await code.download({
+        name: `pittcsc-attendance-${record.id}`,
+        extension,
+      });
     } catch {
       setQrError("Could not download the QR code. Try again.");
     }
@@ -88,7 +93,9 @@ export default function EventAttendance({ record, identity, request, denied }) {
       if (!navigator.clipboard?.write || !window.ClipboardItem) {
         throw new Error("Clipboard image support is unavailable.");
       }
-      const image = makeCode(url, EXPORT_SIZE, white).then((code) => code.getRawData("png"));
+      const image = makeCode(url, EXPORT_SIZE, white).then((code) =>
+        code.getRawData("png"),
+      );
       await navigator.clipboard.write([
         new window.ClipboardItem({ "image/png": image }),
       ]);
@@ -106,20 +113,44 @@ export default function EventAttendance({ record, identity, request, denied }) {
       )}
       {url && (
         <div className="csc-event-qr">
-          <div ref={previewRef} className="csc-event-qr-preview" aria-label="Attendance QR code" />
+          <div
+            ref={previewRef}
+            className="csc-event-qr-preview"
+            aria-label="Attendance QR code"
+          />
           <div className="csc-event-qr-controls">
             <label className="csc-event-qr-background">
-              <input type="checkbox" checked={white} onChange={(e) => setWhite(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={white}
+                onChange={(e) => setWhite(e.target.checked)}
+              />
               White background
             </label>
             <div className="csc-auth-actions">
-              <button type="button" onClick={() => void copyImage()}>Copy QR image</button>
-              <button type="button" className="csc-auth-secondary" onClick={() => void download("png")}>Download PNG</button>
-              <button type="button" className="csc-auth-secondary" onClick={() => void download("svg")}>Download SVG</button>
+              <button type="button" onClick={() => void copyImage()}>
+                Copy QR image
+              </button>
+              <button
+                type="button"
+                className="csc-auth-secondary"
+                onClick={() => void download("png")}
+              >
+                Download PNG
+              </button>
+              <button
+                type="button"
+                className="csc-auth-secondary"
+                onClick={() => void download("svg")}
+              >
+                Download SVG
+              </button>
             </div>
             <p className="csc-event-attendance-link">
               <strong>Sign-in and check-in link</strong>
-              <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                {url}
+              </a>
             </p>
           </div>
         </div>
@@ -128,7 +159,11 @@ export default function EventAttendance({ record, identity, request, denied }) {
       {qrNotice && <p role="status">{qrNotice}</p>}
       <div className="csc-event-roster-heading">
         <h3>Checked in {roster ? `(${roster.count})` : ""}</h3>
-        <button type="button" className="csc-auth-secondary" onClick={() => setRetry((n) => n + 1)}>
+        <button
+          type="button"
+          className="csc-auth-secondary"
+          onClick={() => setRetry((n) => n + 1)}
+        >
           Refresh attendance
         </button>
       </div>
@@ -136,7 +171,9 @@ export default function EventAttendance({ record, identity, request, denied }) {
       {rosterError && (
         <div role="alert">
           <p>{rosterError}</p>
-          <button type="button" onClick={() => setRetry((n) => n + 1)}>Retry attendance</button>
+          <button type="button" onClick={() => setRetry((n) => n + 1)}>
+            Retry attendance
+          </button>
         </div>
       )}
       {!loading && !rosterError && roster && (
@@ -147,7 +184,11 @@ export default function EventAttendance({ record, identity, request, denied }) {
             <ol className="csc-event-roster">
               {roster.attendees.map((attendee) => (
                 <li key={`${attendee.email}-${attendee.checkedInAt}`}>
-                  <strong>{attendee.name || attendee.email}</strong>
+                  <strong>
+                    <MemberLink id={attendee.id}>
+                      {attendee.name || attendee.email}
+                    </MemberLink>
+                  </strong>
                   {attendee.name && <span>{attendee.email}</span>}
                   <time dateTime={attendee.checkedInAt}>
                     {new Date(attendee.checkedInAt).toLocaleString()}
@@ -158,9 +199,21 @@ export default function EventAttendance({ record, identity, request, denied }) {
           )}
           {(page > 1 || roster.hasMore) && (
             <nav className="csc-auth-actions" aria-label="Attendance pages">
-              <button type="button" disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
+              <button
+                type="button"
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+              >
+                Previous
+              </button>
               <span>Page {page}</span>
-              <button type="button" disabled={!roster.hasMore} onClick={() => setPage(page + 1)}>Next</button>
+              <button
+                type="button"
+                disabled={!roster.hasMore}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </button>
             </nav>
           )}
         </>

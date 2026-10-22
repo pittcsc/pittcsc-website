@@ -43,7 +43,8 @@ The fixtures are synthetic hook payloads, not seeded member accounts.
 ## Go identity verification
 
 `GET /auth/session` accepts `Authorization: Bearer <access token>` and returns
-the verified user's `id`, current login `email`, and current database `roles`,
+the verified user's `id`, current login `email`, current database `roles`, and
+profile `complete` flag,
 after provisioning and checking their application profile. Suspended accounts
 return 403. Missing/invalid/revoked sessions return 401; dependency outages return a retryable 503. All responses
 use `Cache-Control: no-store`. CORS allows the configured frontend origin.
@@ -66,7 +67,7 @@ deletion, and session expiry. These reads are not cached. Supabase alone mutates
 these managed records. Removing a session through Auth logout rejects its old
 JWT on subsequent API requests immediately, even before the JWT expires.
 
-This endpoint returns verified identity and current database roles, and also
+This endpoint returns verified identity, roles, and completion, and also
 enforces current profile status. Profile endpoints enforce ownership and allowed
 fields. `/staff/access` requires current staff membership; future staff endpoints
 must reuse that server guard. See [STAFF.md](STAFF.md).

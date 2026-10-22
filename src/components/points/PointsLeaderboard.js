@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import PointsProfile from "./PointsProfile";
+import MemberLink from "../member/MemberLink";
 import "../../styles/points.scss";
 
 function Board({ title, board }) {
@@ -19,7 +20,7 @@ function Board({ title, board }) {
             >
               <span className="csc-points-rank">#{entry.rank}</span>
               <span>
-                {entry.name}
+                <MemberLink id={entry.id}>{entry.name}</MemberLink>
                 {entry.isYou ? " (you)" : ""}
               </span>
               <strong>{entry.points}</strong>

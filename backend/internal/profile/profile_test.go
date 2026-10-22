@@ -22,11 +22,9 @@ func TestPartialProfilesAndCompletion(t *testing.T) {
 	full := Record{
 		FirstName: ptr("Test"), LastName: ptr("Member"),
 		GraduationYear: ptr(2028), Majors: []string{"Computer Science"},
-		GitHubUsername: ptr("octocat"), LeetCodeUsername: ptr("octocat"),
-		LinkedInUsername: ptr("test-member"), HasResume: true,
 	}
 	if !complete(full) {
-		t.Fatal("complete profile must not require a preferred name or a picture")
+		t.Fatal("membership fields should complete the profile")
 	}
 
 	// A profile picture is optional and must not affect completion.
@@ -38,15 +36,28 @@ func TestPartialProfilesAndCompletion(t *testing.T) {
 		t.Fatal("a profile picture must not change completion")
 	}
 
+	// Optional links and files must not gate membership.
+	full.GitHubUsername = ptr("octocat")
+	full.LeetCodeUsername = ptr("octocat")
+	full.LinkedInUsername = ptr("test-member")
+	full.HasResume = true
+	for _, optional := range []Record{
+		{FirstName: full.FirstName, LastName: full.LastName, GraduationYear: full.GraduationYear, Majors: full.Majors},
+		full,
+	} {
+		if !complete(optional) {
+			t.Fatal("optional fields affected completion")
+		}
+	}
 	// Every required field, dropped one at a time.
 	for _, drop := range []struct {
 		name  string
 		apply func(*Record)
 	}{
-		{"github", func(r *Record) { r.GitHubUsername = nil }},
-		{"leetcode", func(r *Record) { r.LeetCodeUsername = nil }},
-		{"linkedin", func(r *Record) { r.LinkedInUsername = nil }},
-		{"resume", func(r *Record) { r.HasResume = false }},
+		{"first name", func(r *Record) { r.FirstName = nil }},
+		{"last name", func(r *Record) { r.LastName = nil }},
+		{"graduation year", func(r *Record) { r.GraduationYear = nil }},
+		{"major", func(r *Record) { r.Majors = nil }},
 	} {
 		record := full
 		drop.apply(&record)

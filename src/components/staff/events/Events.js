@@ -14,6 +14,7 @@ import {
 import "../../../styles/staff/events.scss";
 import EventAttendance from "./EventAttendance";
 import EventExpenses from "./EventExpenses";
+import MemberLink from "../../member/MemberLink";
 
 export default function Events({ identity, request, revalidate }) {
   const [filter, setFilter] = useState("upcoming");
@@ -541,7 +542,10 @@ function EventEditor({ selected, identity, request, denied, onBack }) {
                         {auditLabels[entry.action] || entry.action}
                       </strong>
                       <span>
-                        {entry.actorName} · {formatEventTime(entry.createdAt)}
+                        <MemberLink id={entry.actorID}>
+                          {entry.actorName}
+                        </MemberLink>{" "}
+                        · {formatEventTime(entry.createdAt)}
                       </span>
                       <details>
                         <summary>View recorded details</summary>
