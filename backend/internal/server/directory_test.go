@@ -13,17 +13,16 @@ const fixtureMemberID = "11111111-1111-4111-8111-111111111111"
 
 type directoryStub struct {
 	profilesStub
-	query    string
-	page     int
+	search   profile.DirectorySearch
 	targetID string
 	staff    bool
 	reads    int
 }
 
-func (s *directoryStub) Directory(_ context.Context, query string, page int) (profile.DirectoryPage, error) {
-	s.query, s.page = query, page
+func (s *directoryStub) Directory(_ context.Context, search profile.DirectorySearch) (profile.DirectoryPage, error) {
+	s.search = search
 	s.reads++
-	return profile.DirectoryPage{Members: []profile.DirectoryMember{}, Page: page}, nil
+	return profile.DirectoryPage{Members: []profile.DirectoryMember{}, Page: search.Page}, nil
 }
 func (s *directoryStub) PublicMember(_ context.Context, targetID string, staff bool) (profile.PublicMember, error) {
 	s.targetID, s.staff = targetID, staff
@@ -58,11 +57,13 @@ func TestDirectoryRequiresCompletedVerifiedAccount(t *testing.T) {
 		}
 	}
 	store := &directoryStub{}
-	if w := directoryRequest(store, "/members?q=+Ada++Lovelace+&page=2", "valid"); w.Code != 200 || store.query != "Ada Lovelace" || store.page != 2 {
-		t.Fatalf("directory search failed: %d, %q, %d", w.Code, store.query, store.page)
+	if w := directoryRequest(store, "/members?q=+Ada++Lovelace+&company=pNc&alumni=1&page=2", "valid"); w.Code != 200 || store.search.Name != "Ada Lovelace" || store.search.Company != "pNc" || !store.search.Alumni || store.search.Page != 2 {
+		t.Fatalf("directory search failed: %d, %+v", w.Code, store.search)
 	}
-	if w := directoryRequest(store, "/members?page=wrong", "valid"); w.Code != 400 {
-		t.Fatalf("invalid page accepted: %d", w.Code)
+	for _, path := range []string{"/members?page=wrong", "/members?alumni=staff", "/members?company=" + strings.Repeat("x", 161)} {
+		if w := directoryRequest(store, path, "valid"); w.Code != 400 {
+			t.Fatalf("invalid filter accepted: %s %d", path, w.Code)
+		}
 	}
 }
 

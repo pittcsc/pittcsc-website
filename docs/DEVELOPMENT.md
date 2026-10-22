@@ -11,7 +11,9 @@ The member home shows the next three CRM events; see
 [events](EVENTS.md#member-dashboard). Incomplete accounts are sent to
 My Account until they save first and last name, graduation year, and a major.
 The Members directory at `/dashboard/members` searches active, completed
-profiles by name; member names in CRM screens link to their profiles.
+profiles by name, current company, and alumni status; member names in CRM
+screens link to their profiles. My Account includes optional career details,
+help offers, and self-reported Pitt alumni status. See [profiles](PROFILES.md).
 Members can submit activity links and see all-time and rolling 30-day top-10
 leaderboards at `/dashboard/points`. My Account shows their scores and claim
 history. The full history also has a page linked from Points at

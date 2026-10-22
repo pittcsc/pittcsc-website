@@ -16,6 +16,10 @@ export default function MemberDirectory({ identity }) {
   );
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
+  const [companyInput, setCompanyInput] = useState("");
+  const [company, setCompany] = useState("");
+  const [alumniInput, setAlumniInput] = useState(false);
+  const [alumni, setAlumni] = useState(false);
   const [page, setPage] = useState(1);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +32,8 @@ export default function MemberDirectory({ identity }) {
     setError("");
     const params = new URLSearchParams({ page: String(page) });
     if (query) params.set("q", query);
+    if (company) params.set("company", company);
+    if (alumni) params.set("alumni", "1");
     request(`/members?${params}`, {
       userID: identity.id,
       signal: controller.signal,
@@ -42,30 +48,36 @@ export default function MemberDirectory({ identity }) {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [identity.id, request, query, page, retry]);
+  }, [identity.id, request, query, company, alumni, page, retry]);
 
   function search(event) {
     event.preventDefault();
     setPage(1);
     setQuery(input.trim().replace(/\s+/g, " "));
+    setCompany(companyInput.trim().replace(/\s+/g, " "));
+    setAlumni(alumniInput);
   }
 
   return (
     <section className="csc-member-directory">
       <h1>Members</h1>
-      <p>Find a CSC member by name.</p>
+      <p>Find CSC members by name, current company, or alumni status.</p>
       <form role="search" onSubmit={search} className="csc-directory-search">
-        <label htmlFor="member-search">Name</label>
-        <div>
-          <input
-            id="member-search"
-            type="search"
-            value={input}
-            maxLength={100}
-            onChange={(event) => setInput(event.target.value)}
-          />
-          <button type="submit">Search</button>
+        <div className="csc-directory-filters">
+          <div>
+            <label htmlFor="member-search">Name</label>
+            <input id="member-search" type="search" value={input} maxLength={100} onChange={(event) => setInput(event.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="company-search">Current company</label>
+            <input id="company-search" type="search" value={companyInput} maxLength={160} onChange={(event) => setCompanyInput(event.target.value)} />
+          </div>
         </div>
+        <label className="csc-directory-alumni-filter">
+          <input type="checkbox" checked={alumniInput} onChange={(event) => setAlumniInput(event.target.checked)} />
+          Alumni only
+        </label>
+        <button type="submit">Search</button>
       </form>
       {error && (
         <div role="alert">
@@ -105,6 +117,9 @@ export default function MemberDirectory({ identity }) {
                             ? ` · Class of ${member.graduationYear}`
                             : ""}
                         </small>
+                        {(member.jobTitle || member.currentCompany) && (
+                          <small>{[member.jobTitle, member.currentCompany].filter(Boolean).join(" · ")}</small>
+                        )}
                         {member.isAlumni && (
                           <small className="csc-directory-badge">Alumni</small>
                         )}

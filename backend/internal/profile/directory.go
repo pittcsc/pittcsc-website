@@ -34,16 +34,25 @@ type DirectoryMember struct {
 	Majors         []string `json:"majors"`
 	HasAvatar      bool     `json:"hasAvatar"`
 	IsAlumni       bool     `json:"isAlumni"`
+	CurrentCompany *string  `json:"currentCompany"`
+	JobTitle       *string  `json:"jobTitle"`
 }
 
 type PublicMember struct {
 	DirectoryMember
-	GitHubUsername   *string `json:"githubUsername"`
-	LeetCodeUsername *string `json:"leetcodeUsername"`
-	LinkedInUsername *string `json:"linkedinUsername"`
-	AllTimePoints    int     `json:"allTimePoints"`
-	Rank30Days       *int    `json:"rank30Days"`
-	Complete         bool    `json:"complete"`
+	GitHubUsername     *string `json:"githubUsername"`
+	LeetCodeUsername   *string `json:"leetcodeUsername"`
+	LinkedInUsername   *string `json:"linkedinUsername"`
+	Location           *string `json:"location"`
+	Bio                *string `json:"bio"`
+	PersonalWebsite    *string `json:"personalWebsite"`
+	OffersCoffee       bool    `json:"offersCoffee"`
+	OffersMentorship   bool    `json:"offersMentorship"`
+	OffersReferrals    bool    `json:"offersReferrals"`
+	OffersResumeReview bool    `json:"offersResumeReview"`
+	AllTimePoints      int     `json:"allTimePoints"`
+	Rank30Days         *int    `json:"rank30Days"`
+	Complete           bool    `json:"complete"`
 }
 
 type DirectoryPage struct {
@@ -53,37 +62,56 @@ type DirectoryPage struct {
 	PageSize int               `json:"pageSize"`
 }
 
-func ParseDirectorySearch(query, rawPage string) (string, int, error) {
-	query = strings.Join(strings.Fields(query), " ")
-	if !utf8.ValidString(query) || utf8.RuneCountInString(query) > 100 || strings.ContainsFunc(query, unicode.IsControl) {
-		return "", 0, ErrInvalidSearch
+type DirectorySearch struct {
+	Name    string
+	Company string
+	Alumni  bool
+	Page    int
+}
+
+func ParseDirectorySearch(query, company, alumni, rawPage string) (DirectorySearch, error) {
+	unsafe := func(value string) bool {
+		return !utf8.ValidString(value) || strings.ContainsFunc(value, func(character rune) bool {
+			return unicode.IsControl(character) && character != '\t'
+		})
 	}
-	page := 1
+	if unsafe(query) || unsafe(company) {
+		return DirectorySearch{}, ErrInvalidSearch
+	}
+	search := DirectorySearch{Name: strings.Join(strings.Fields(query), " "), Company: strings.Join(strings.Fields(company), " "), Alumni: alumni == "1", Page: 1}
+	if utf8.RuneCountInString(search.Name) > 100 || utf8.RuneCountInString(search.Company) > 160 ||
+		(alumni != "" && alumni != "1") {
+		return DirectorySearch{}, ErrInvalidSearch
+	}
 	if rawPage != "" {
 		value, err := strconv.Atoi(rawPage)
 		if err != nil || value < 1 || value > 10000 {
-			return "", 0, ErrInvalidSearch
+			return DirectorySearch{}, ErrInvalidSearch
 		}
-		page = value
+		search.Page = value
 	}
-	return query, page, nil
+	return search, nil
 }
 
-func (s Store) Directory(ctx context.Context, query string, page int) (DirectoryPage, error) {
-	result := DirectoryPage{Members: []DirectoryMember{}, Page: page, PageSize: DirectoryPageSize}
+func (s Store) Directory(ctx context.Context, search DirectorySearch) (DirectoryPage, error) {
+	result := DirectoryPage{Members: []DirectoryMember{}, Page: search.Page, PageSize: DirectoryPageSize}
 	where := activeMemberSQL + ` and ` + completeMemberSQL + ` and
 		($1 = '' or strpos(lower(concat_ws(' ', p.first_name, p.last_name)), lower($1)) > 0
-		or strpos(lower(concat_ws(' ', p.preferred_name, p.last_name)), lower($1)) > 0)`
+		or strpos(lower(concat_ws(' ', p.preferred_name, p.last_name)), lower($1)) > 0)
+		and ($2 = '' or strpos(lower(coalesce(p.current_company, '')), lower($2)) > 0)
+		and (not $3 or exists(select 1 from csc.user_roles r
+			where r.auth_user_id = p.auth_user_id and r.role = 'alumni'))`
 	if err := s.DB.QueryRow(ctx, `select count(*) from csc.profiles p join auth.users u
-		on u.id = p.auth_user_id where `+where, query).Scan(&result.Total); err != nil {
+		on u.id = p.auth_user_id where `+where, search.Name, search.Company, search.Alumni).Scan(&result.Total); err != nil {
 		return DirectoryPage{}, err
 	}
 	rows, err := s.DB.Query(ctx, `select p.auth_user_id::text, `+displayNameSQL+`,
 		p.graduation_year, p.majors, p.avatar_asset_id is not null,
 		exists(select 1 from csc.user_roles r where r.auth_user_id = p.auth_user_id and r.role = 'alumni')
+		, p.current_company, p.job_title
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
 		where `+where+` order by lower(`+displayNameSQL+`), p.auth_user_id
-		limit $2 offset $3`, query, DirectoryPageSize, (page-1)*DirectoryPageSize)
+		limit $4 offset $5`, search.Name, search.Company, search.Alumni, DirectoryPageSize, (search.Page-1)*DirectoryPageSize)
 	if err != nil {
 		return DirectoryPage{}, err
 	}
@@ -91,7 +119,7 @@ func (s Store) Directory(ctx context.Context, query string, page int) (Directory
 	for rows.Next() {
 		var member DirectoryMember
 		if err := rows.Scan(&member.ID, &member.Name, &member.GraduationYear,
-			&member.Majors, &member.HasAvatar, &member.IsAlumni); err != nil {
+			&member.Majors, &member.HasAvatar, &member.IsAlumni, &member.CurrentCompany, &member.JobTitle); err != nil {
 			return DirectoryPage{}, err
 		}
 		result.Members = append(result.Members, member)
@@ -105,14 +133,20 @@ func (s Store) PublicMember(ctx context.Context, memberID string, staff bool) (P
 	err := s.DB.QueryRow(ctx, `select p.auth_user_id::text, `+displayNameSQL+`,
 		p.graduation_year, p.majors, p.avatar_asset_id is not null,
 		exists(select 1 from csc.user_roles r where r.auth_user_id = p.auth_user_id and r.role = 'alumni'),
+		p.current_company, p.job_title,
 		p.github_username, p.leetcode_username, p.linkedin_username,
+		p.location, p.bio, p.personal_website,
+		p.offers_coffee, p.offers_mentorship, p.offers_referrals, p.offers_resume_review,
 		(`+completeMemberSQL+`)
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
 		where p.auth_user_id = $1::uuid and `+activeMemberSQL+`
 		and ($2 or (`+completeMemberSQL+`))`, memberID, staff).
 		Scan(&result.ID, &result.Name, &result.GraduationYear, &result.Majors,
-			&result.HasAvatar, &result.IsAlumni, &result.GitHubUsername,
-			&result.LeetCodeUsername, &result.LinkedInUsername, &result.Complete)
+			&result.HasAvatar, &result.IsAlumni, &result.CurrentCompany, &result.JobTitle,
+			&result.GitHubUsername, &result.LeetCodeUsername, &result.LinkedInUsername,
+			&result.Location, &result.Bio, &result.PersonalWebsite,
+			&result.OffersCoffee, &result.OffersMentorship, &result.OffersReferrals, &result.OffersResumeReview,
+			&result.Complete)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return PublicMember{}, ErrMemberNotFound
 	}

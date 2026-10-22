@@ -9,16 +9,31 @@
   margin-bottom: 0.4rem;
   font-weight: 600;
 }
-.csc-directory-search > div {
+.csc-directory-filters {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.6rem;
+}
+.csc-directory-search .csc-directory-alumni-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  font-weight: 500;
+}
+.csc-directory-alumni-filter input {
+  width: auto;
+  height: auto;
+  margin: 0;
 }
 .csc-directory-search input {
   min-width: 0;
 }
 .csc-auth .csc-directory-search button {
   width: auto;
+}
+@media (max-width: 540px) {
+  .csc-directory-filters { grid-template-columns: 1fr; }
 }
 .csc-directory-list {
   list-style: none;
@@ -104,3 +119,4 @@
 .csc-profile-points {
   margin: 2rem 0;
 }
+.csc-member-profile .csc-profile-bio { white-space: pre-wrap; }

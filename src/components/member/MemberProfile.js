@@ -84,9 +84,35 @@ export default function MemberProfile({ identity, memberID }) {
                 <strong>Graduation year:</strong> {member.graduationYear}
               </p>
             )}
+            {(member.jobTitle || member.currentCompany || member.location) && (
+              <section aria-label="Career details">
+                <h2>Career</h2>
+                {member.jobTitle && <p><strong>Job title:</strong> {member.jobTitle}</p>}
+                {member.currentCompany && <p><strong>Current company:</strong> {member.currentCompany}</p>}
+                {member.location && <p><strong>Location:</strong> {member.location}</p>}
+              </section>
+            )}
+            {member.bio && (
+              <section aria-label="About">
+                <h2>About</h2>
+                <p className="csc-profile-bio">{member.bio}</p>
+              </section>
+            )}
+            {(member.offersCoffee || member.offersMentorship || member.offersReferrals || member.offersResumeReview) && (
+              <section aria-label="Help offered">
+                <h2>Happy to help with</h2>
+                <ul>
+                  {member.offersCoffee && <li>Coffee chats</li>}
+                  {member.offersMentorship && <li>Mentorship</li>}
+                  {member.offersReferrals && <li>Referrals</li>}
+                  {member.offersResumeReview && <li>Résumé reviews</li>}
+                </ul>
+              </section>
+            )}
             {(member.githubUsername ||
               member.leetcodeUsername ||
-              member.linkedinUsername) && (
+              member.linkedinUsername ||
+              member.personalWebsite?.startsWith("https://")) && (
               <section aria-label="External profiles">
                 <h2>Profiles</h2>
                 <ul className="csc-profile-links">
@@ -121,6 +147,11 @@ export default function MemberProfile({ identity, memberID }) {
                       >
                         LinkedIn
                       </a>
+                    </li>
+                  )}
+                  {member.personalWebsite?.startsWith("https://") && (
+                    <li>
+                      <a href={member.personalWebsite} target="_blank" rel="noopener noreferrer">Personal website</a>
                     </li>
                   )}
                 </ul>

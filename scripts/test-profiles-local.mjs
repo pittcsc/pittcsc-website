@@ -197,6 +197,24 @@ async function main() {
       count("profiles", owner.id) === 1,
     "Retry duplicated profile",
   );
+  const career = {
+    ...complete,
+    currentCompany: "PNC Bank",
+    jobTitle: "Software Engineer",
+    location: "Pittsburgh",
+    bio: "Happy to meet CSC members.",
+    personalWebsite: "https://example.com/about",
+    offersCoffee: true,
+    offersMentorship: true,
+  };
+  check(
+    (await put(owner, career)).status === 200,
+    "Optional career details could not be saved",
+  );
+  check(
+    (await put(owner, { ...career, personalWebsite: "javascript:alert(1)" })).status === 400,
+    "Unsafe website accepted",
+  );
   check(
     (await api(owner, "/profile")).headers.get("cache-control") === "no-store",
     "Private cache policy missing",
@@ -264,6 +282,37 @@ async function main() {
       "First or preferred name search missed a member",
     );
   }
+  const companyMatches = await (
+    await api(other, "/members?company=pnC&alumni=1")
+  ).json();
+  check(companyMatches.total === 0, "Alumni filter included an unclaimed member");
+  const claims = await Promise.all(
+    Array.from({ length: 8 }, () => api(owner, "/profile/alumni", "PUT")),
+  );
+  check(claims.every((response) => response.status === 200), "Concurrent alumni claims failed");
+  check(
+    sql(`select count(*) from csc.role_audit where target_user_id = '${owner.id}' and role = 'alumni' and action = 'grant'`) === "1",
+    "Alumni claim was not idempotently audited",
+  );
+  const claimedSession = await (await api(owner, "/auth/session")).json();
+  check(
+    claimedSession.roles.includes("member") &&
+      claimedSession.roles.includes("alumni") &&
+      !claimedSession.roles.includes("staff") &&
+      (await api(owner, "/profile/alumni", "PUT", JSON.stringify({ role: "staff" }))).status === 400,
+    "Alumni self-service changed another role or accepted role fields",
+  );
+  const alumniMatches = await (
+    await api(other, `/members?q=Test&company=pnC&alumni=1`)
+  ).json();
+  check(
+    alumniMatches.members.some((member) => member.id === owner.id && member.currentCompany === "PNC Bank" && member.jobTitle === "Software Engineer" && member.isAlumni),
+    "Combined alumni and partial company filter missed the member",
+  );
+  check(
+    (await (await api(other, "/members?company=google&alumni=1")).json()).total === 0,
+    "Company filter included a different employer",
+  );
   const privateSearch = await (
     await api(other, `/members?q=${encodeURIComponent(owner.email)}`)
   ).json();
@@ -274,6 +323,9 @@ async function main() {
       publicProfile.name === `Test Member${suffix.slice(0, 8)}` &&
       publicProfile.allTimePoints === 0 &&
       publicProfile.rank30Days === null &&
+      publicProfile.currentCompany === "PNC Bank" &&
+      publicProfile.location === "Pittsburgh" &&
+      publicProfile.offersMentorship === true &&
       !("email" in publicProfile) &&
       !("hasResume" in publicProfile),
     "Public profile exposed private fields or wrong points",
@@ -451,7 +503,7 @@ async function main() {
     "Generated Data API remains available",
   );
   console.log(
-    "PASS: provisioning, completion gate, member directory and profile visibility, private fields, files, suspension, revocation, and Data API isolation",
+    "PASS: provisioning, completion gate, alumni claims, career filters and visibility, private fields, files, suspension, revocation, and Data API isolation",
   );
 }
 

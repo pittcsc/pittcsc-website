@@ -17,7 +17,7 @@ current Auth identity and is read-only. The OTP/login workflow is unchanged.
 
 Partial saves are allowed. Completion requires first name, last name, graduation
 year, and one major. Verified email is supplied by Auth. External usernames,
-resume, and picture are optional. Incomplete accounts can use My Account and
+resume, picture, and career/community details are optional. Incomplete accounts can use My Account and
 file uploads but cannot use dashboard, points, event, attendance, or staff
 features. The same gate applies to all roles and is rechecked by Go on every
 protected request. Removing a required field revokes access until it is restored.
@@ -30,16 +30,26 @@ protected request. Removing a required field revokes access until it is restored
 | GitHub, LeetCode, LinkedIn | Optional bare usernames, never URLs; a pasted profile URL is reduced to its handle in the browser |
 | Profile picture | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels |
 | Resume | Optional PDF, at most 10 MiB |
+| Current company, job title, location | Optional free text, up to 160 characters each |
+| Bio | Optional, up to 2000 characters |
+| Personal website | Optional full HTTPS URL, up to 500 characters |
+| Coffee chats, mentorship, referrals, résumé reviews | Optional yes/no offers, defaulting to no |
 
 An incomplete profile is filled in three questions, and each **Next**
 saves, so leaving mid-flow keeps what was answered and returns to the first
 unanswered question. After completion, the original profile or attendance link
 resumes. Once complete, My Account becomes a single page where
-names, year, majors, and the three usernames save together with **Save
+names, year, majors, the three usernames, and optional career/community details save together with **Save
 profile**. The last successful
 save wins if multiple tabs edit the same profile. Failures preserve edits for
 retry. Routine token refresh preserves the editor; logout, account changes, and
 failed identity verification hide private state and cancel requests.
+All members can add these details. They appear to eligible signed-in directory
+viewers on save, without a separate visibility switch. The editor warns about
+this before saving; email and résumé remain private. Members who have graduated
+from Pitt can use **Mark me as alumni** in My Account. It self-assigns the
+existing alumni role immediately, without verification or extra permissions.
+The action is idempotent and audited; alumni-role removal is not offered here.
 
 Files have separate save, replace, and remove actions. Avatars are decoded and
 re-encoded to strip metadata and trailing bytes; WebP is stored as PNG. The default
@@ -72,18 +82,20 @@ file references. Ownership always comes from the verified identity. Responses us
 | --- | --- |
 | `GET /auth/session` | Provision/check profile, return current verified Auth identity |
 | `GET /profile` | Own fields, completion, email, file flags, and update timestamp |
-| `PUT /profile` | Replace editable text/year/major fields; omitted or blank fields are cleared |
+| `PUT /profile` | Replace editable profile fields; omitted or blank fields are cleared; role fields are rejected |
+| `PUT /profile/alumni` | Self-assign alumni to the verified caller; empty body; repeat calls are safe |
 | `GET /profile/avatar`, `GET /profile/resume` | Retrieve own file; missing files return 404 |
 | `PUT /profile/avatar`, `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
 | `DELETE /profile/avatar`, `DELETE /profile/resume` | Remove own file; repeated removal succeeds |
-| `GET /members?q=&page=1` | Paginated active, completed directory; name search matches first and preferred names |
-| `GET /members/{id}` | Member profile with name, majors, year, optional handles, alumni label, all-time points, and 30-day rank |
+| `GET /members?q=&company=&alumni=1&page=1` | Paginated active, completed directory; optional name, case-insensitive partial current-company, and alumni filters combine with AND |
+| `GET /members/{id}` | Member profile with name, majors, year, optional handles/career details/help offers, alumni label, all-time points, and 30-day rank |
 | `GET /members/{id}/avatar` | Authenticated avatar bytes for an eligible profile |
 
 These member endpoints require the viewer's completed active account. Staff can
 open an active incomplete profile by ID from User Management, but incomplete
 accounts do not appear in the directory or member leaderboards. The response
-never includes email, resume, or point claim links. Browser roles have no direct
+never includes email, resume, or point claim links. Directory cards show company
+and job title; the full profile shows the other optional fields. Browser roles have no direct
 database access. Existing eligible profiles become visible as soon as this
 feature launches; there is no opt-in setting.
 
