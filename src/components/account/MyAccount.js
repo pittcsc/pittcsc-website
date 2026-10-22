@@ -146,6 +146,53 @@ function HandleFields({ form, change }) {
   ));
 }
 
+const HELP_OFFERS = [
+  ["offersCoffee", "Coffee chats"],
+  ["offersMentorship", "Mentorship"],
+  ["offersReferrals", "Referrals"],
+  ["offersResumeReview", "Résumé reviews"],
+];
+
+function CareerFields({ form, change }) {
+  return (
+    <fieldset className="csc-account-career">
+      <legend>Career and community</legend>
+      <p>These optional details appear in the member directory as soon as you save them. Your email and résumé remain private.</p>
+      <div className="csc-account-name-grid">
+        <div>
+          <label htmlFor="current-company">Current company</label>
+          <input id="current-company" autoComplete="organization" maxLength={160} value={form.currentCompany} onChange={(event) => change("currentCompany", event.target.value)} />
+        </div>
+        <div>
+          <label htmlFor="job-title">Job title</label>
+          <input id="job-title" autoComplete="organization-title" maxLength={160} value={form.jobTitle} onChange={(event) => change("jobTitle", event.target.value)} />
+        </div>
+      </div>
+      <div>
+        <label htmlFor="profile-location">Location</label>
+        <input id="profile-location" autoComplete="address-level2" maxLength={160} value={form.location} onChange={(event) => change("location", event.target.value)} />
+      </div>
+      <div>
+        <label htmlFor="personal-website">Personal website</label>
+        <input id="personal-website" type="url" placeholder="https://example.com" maxLength={500} value={form.personalWebsite} onChange={(event) => change("personalWebsite", event.target.value)} />
+      </div>
+      <div>
+        <label htmlFor="profile-bio">Bio</label>
+        <textarea id="profile-bio" maxLength={2000} rows={5} value={form.bio} onChange={(event) => change("bio", event.target.value)} />
+      </div>
+      <fieldset className="csc-account-offers">
+        <legend>I can help with</legend>
+        {HELP_OFFERS.map(([key, label]) => (
+          <label key={key} className="csc-account-checkbox">
+            <input type="checkbox" checked={form[key]} onChange={(event) => change(key, event.target.checked)} />
+            {label}
+          </label>
+        ))}
+      </fieldset>
+    </fieldset>
+  );
+}
+
 // Membership setup asks only for the required fields. Optional links and files
 // remain in the editor after setup.
 const STEPS = [
@@ -361,6 +408,7 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
               <legend>Profiles</legend>
               <HandleFields form={form} change={change} />
             </fieldset>
+            <CareerFields form={form} change={change} />
           </fieldset>
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}

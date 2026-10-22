@@ -3,7 +3,9 @@ package profile
 import (
 	"context"
 	"errors"
+	"net/url"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -19,30 +21,49 @@ var (
 )
 
 type Record struct {
-	Roles            []string  `json:"-"`
-	FirstName        *string   `json:"firstName"`
-	LastName         *string   `json:"lastName"`
-	PreferredName    *string   `json:"preferredName"`
-	GraduationYear   *int      `json:"graduationYear"`
-	Majors           []string  `json:"majors"`
-	GitHubUsername   *string   `json:"githubUsername"`
-	LeetCodeUsername *string   `json:"leetcodeUsername"`
-	LinkedInUsername *string   `json:"linkedinUsername"`
-	Complete         bool      `json:"complete"`
-	HasAvatar        bool      `json:"hasAvatar"`
-	HasResume        bool      `json:"hasResume"`
-	UpdatedAt        time.Time `json:"updatedAt"`
+	Roles              []string  `json:"-"`
+	IsAlumni           bool      `json:"isAlumni"`
+	FirstName          *string   `json:"firstName"`
+	LastName           *string   `json:"lastName"`
+	PreferredName      *string   `json:"preferredName"`
+	GraduationYear     *int      `json:"graduationYear"`
+	Majors             []string  `json:"majors"`
+	GitHubUsername     *string   `json:"githubUsername"`
+	LeetCodeUsername   *string   `json:"leetcodeUsername"`
+	LinkedInUsername   *string   `json:"linkedinUsername"`
+	CurrentCompany     *string   `json:"currentCompany"`
+	JobTitle           *string   `json:"jobTitle"`
+	Location           *string   `json:"location"`
+	Bio                *string   `json:"bio"`
+	PersonalWebsite    *string   `json:"personalWebsite"`
+	OffersCoffee       bool      `json:"offersCoffee"`
+	OffersMentorship   bool      `json:"offersMentorship"`
+	OffersReferrals    bool      `json:"offersReferrals"`
+	OffersResumeReview bool      `json:"offersResumeReview"`
+	Complete           bool      `json:"complete"`
+	HasAvatar          bool      `json:"hasAvatar"`
+	HasResume          bool      `json:"hasResume"`
+	UpdatedAt          time.Time `json:"updatedAt"`
 }
 
 type Input struct {
-	FirstName        *string  `json:"firstName"`
-	LastName         *string  `json:"lastName"`
-	PreferredName    *string  `json:"preferredName"`
-	GraduationYear   *int     `json:"graduationYear"`
-	Majors           []string `json:"majors"`
-	GitHubUsername   *string  `json:"githubUsername"`
-	LeetCodeUsername *string  `json:"leetcodeUsername"`
-	LinkedInUsername *string  `json:"linkedinUsername"`
+	FirstName          *string  `json:"firstName"`
+	LastName           *string  `json:"lastName"`
+	PreferredName      *string  `json:"preferredName"`
+	GraduationYear     *int     `json:"graduationYear"`
+	Majors             []string `json:"majors"`
+	GitHubUsername     *string  `json:"githubUsername"`
+	LeetCodeUsername   *string  `json:"leetcodeUsername"`
+	LinkedInUsername   *string  `json:"linkedinUsername"`
+	CurrentCompany     *string  `json:"currentCompany"`
+	JobTitle           *string  `json:"jobTitle"`
+	Location           *string  `json:"location"`
+	Bio                *string  `json:"bio"`
+	PersonalWebsite    *string  `json:"personalWebsite"`
+	OffersCoffee       bool     `json:"offersCoffee"`
+	OffersMentorship   bool     `json:"offersMentorship"`
+	OffersReferrals    bool     `json:"offersReferrals"`
+	OffersResumeReview bool     `json:"offersResumeReview"`
 }
 
 // Handles are stored as bare usernames so nothing can put an arbitrary link in
@@ -97,6 +118,38 @@ func normalizeName(value **string) error {
 	return nil
 }
 
+func normalizeOptionalText(value **string, limit int, multiline bool) error {
+	if *value == nil {
+		return nil
+	}
+	trimmed := strings.TrimSpace(**value)
+	if trimmed == "" {
+		*value = nil
+		return nil
+	}
+	if !utf8.ValidString(trimmed) || utf8.RuneCountInString(trimmed) > limit || strings.ContainsRune(trimmed, 0) {
+		return ErrInvalid
+	}
+	for _, character := range trimmed {
+		if character < 32 && !(multiline && (character == '\n' || character == '\t')) {
+			return ErrInvalid
+		}
+	}
+	*value = &trimmed
+	return nil
+}
+
+func normalizeWebsite(value **string) error {
+	if err := normalizeOptionalText(value, 500, false); err != nil || *value == nil {
+		return err
+	}
+	parsed, err := url.Parse(**value)
+	if err != nil || parsed.Scheme != "https" || parsed.Hostname() == "" || parsed.User != nil || parsed.Opaque != "" || parsed.Fragment != "" {
+		return ErrInvalid
+	}
+	return nil
+}
+
 func (input *Input) Validate() error {
 	if err := normalizeName(&input.FirstName); err != nil {
 		return err
@@ -134,6 +187,17 @@ func (input *Input) Validate() error {
 	if err := normalizeHandle(&input.LinkedInUsername, linkedinUsername); err != nil {
 		return err
 	}
+	for _, field := range []**string{&input.CurrentCompany, &input.JobTitle, &input.Location} {
+		if err := normalizeOptionalText(field, 160, false); err != nil {
+			return err
+		}
+	}
+	if err := normalizeOptionalText(&input.Bio, 2000, true); err != nil {
+		return err
+	}
+	if err := normalizeWebsite(&input.PersonalWebsite); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -159,12 +223,16 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 	err := s.DB.QueryRow(ctx, `
 		select first_name, last_name, preferred_name, graduation_year, majors,
 		  github_username, leetcode_username, linkedin_username,
+		  current_company, job_title, location, bio, personal_website,
+		  offers_coffee, offers_mentorship, offers_referrals, offers_resume_review,
 		  account_status, avatar_asset_id is not null, resume_asset_id is not null, updated_at,
 		  array(select role from csc.user_roles where auth_user_id = $1::uuid order by role)
 		from csc.profiles where auth_user_id = $1::uuid
 	`, authUserID).Scan(&record.FirstName, &record.LastName, &record.PreferredName,
 		&record.GraduationYear, &record.Majors,
 		&record.GitHubUsername, &record.LeetCodeUsername, &record.LinkedInUsername,
+		&record.CurrentCompany, &record.JobTitle, &record.Location, &record.Bio, &record.PersonalWebsite,
+		&record.OffersCoffee, &record.OffersMentorship, &record.OffersReferrals, &record.OffersResumeReview,
 		&status, &record.HasAvatar, &record.HasResume, &record.UpdatedAt, &record.Roles)
 	if err != nil {
 		return Record{}, err
@@ -173,6 +241,7 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 		return Record{}, ErrSuspended
 	}
 	record.Complete = complete(record)
+	record.IsAlumni = slices.Contains(record.Roles, "alumni")
 	return record, nil
 }
 
@@ -184,12 +253,17 @@ func (s Store) Update(ctx context.Context, authUserID string, input Input) (Reco
 	err := s.DB.QueryRow(ctx, `
 		update csc.profiles set first_name = $2, last_name = $3, preferred_name = $4,
 		  graduation_year = $5, majors = $6, github_username = $7,
-		  leetcode_username = $8, linkedin_username = $9, updated_at = now()
+		  leetcode_username = $8, linkedin_username = $9,
+		  current_company = $10, job_title = $11, location = $12, bio = $13,
+		  personal_website = $14, offers_coffee = $15, offers_mentorship = $16,
+		  offers_referrals = $17, offers_resume_review = $18, updated_at = now()
 		where auth_user_id = $1::uuid and account_status = 'active'
 		returning account_status
 	`, authUserID, input.FirstName, input.LastName, input.PreferredName,
 		input.GraduationYear, input.Majors, input.GitHubUsername,
-		input.LeetCodeUsername, input.LinkedInUsername).Scan(&status)
+		input.LeetCodeUsername, input.LinkedInUsername,
+		input.CurrentCompany, input.JobTitle, input.Location, input.Bio, input.PersonalWebsite,
+		input.OffersCoffee, input.OffersMentorship, input.OffersReferrals, input.OffersResumeReview).Scan(&status)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Record{}, ErrSuspended
 	}

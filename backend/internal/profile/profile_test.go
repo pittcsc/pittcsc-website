@@ -141,3 +141,25 @@ func TestInputValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestOptionalCareerFields(t *testing.T) {
+	valid := Input{CurrentCompany: ptr("  PNC  "), JobTitle: ptr("Engineer"), Location: ptr("Pittsburgh"), Bio: ptr("  Hello\nCSC  "), PersonalWebsite: ptr("https://example.com/about"), OffersMentorship: true}
+	if err := valid.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	if *valid.CurrentCompany != "PNC" || *valid.Bio != "Hello\nCSC" || !valid.OffersMentorship {
+		t.Fatal("career fields were not normalized")
+	}
+	for _, input := range []Input{
+		{CurrentCompany: ptr(strings.Repeat("x", 161))},
+		{JobTitle: ptr("bad\nvalue")},
+		{Bio: ptr(strings.Repeat("x", 2001))},
+		{PersonalWebsite: ptr("javascript:alert(1)")},
+		{PersonalWebsite: ptr("http://example.com")},
+		{PersonalWebsite: ptr("https://user:pass@example.com")},
+	} {
+		if input.Validate() != ErrInvalid {
+			t.Fatalf("accepted invalid optional field: %+v", input)
+		}
+	}
+}

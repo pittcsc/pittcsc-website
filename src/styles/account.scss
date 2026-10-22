@@ -146,6 +146,40 @@
     padding-top: 1.75rem;
     border-top: 1px solid $acc-hairline;
   }
+  .csc-account-career {
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
+
+    > p { margin: 0; color: $acc-muted; line-height: 1.5; }
+    textarea {
+      @include acc-field;
+      height: auto;
+      min-height: 7rem;
+      margin-top: 0.5rem;
+      padding: 0.75rem 1rem;
+      resize: vertical;
+    }
+  }
+  .csc-account-alumni {
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
+    h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+    p { margin: 0 0 1rem; color: $acc-muted; line-height: 1.5; }
+    button { width: auto; }
+  }
+  .csc-account-offers {
+    margin-top: 0.5rem;
+    legend { margin-bottom: 0.75rem; font-size: 1rem; }
+  }
+  .csc-account-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: fit-content;
+    input { width: auto; height: auto; margin: 0; }
+  }
   .csc-account-handle {
     display: flex;
     flex-direction: column;

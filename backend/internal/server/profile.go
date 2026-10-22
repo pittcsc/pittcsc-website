@@ -33,7 +33,7 @@ func writeProfileError(w http.ResponseWriter, err error) {
 	case errors.Is(err, profile.ErrSuspended):
 		writeJSONError(w, http.StatusForbidden, "Your account is suspended. Contact Pitt CSC staff.")
 	case errors.Is(err, profile.ErrInvalid):
-		writeJSONError(w, http.StatusBadRequest, "Check your profile fields. Names can have up to 100 characters, graduation year must be 1900–2100, and you can add up to eight distinct majors of 120 characters each.")
+		writeJSONError(w, http.StatusBadRequest, "Check your profile fields. Names can have up to 100 characters, career fields up to 160, bio up to 2000, and the website must be an HTTPS URL. Graduation year must be 1900–2100, with up to eight distinct majors of 120 characters each.")
 	case errors.Is(err, profile.ErrNotFound):
 		writeJSONError(w, http.StatusNotFound, "This file has not been uploaded.")
 	case errors.Is(err, profile.ErrFileTooLarge):
