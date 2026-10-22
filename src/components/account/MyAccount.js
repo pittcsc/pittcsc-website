@@ -221,6 +221,7 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [claimingAlumni, setClaimingAlumni] = useState(false);
   const [attempt, setAttempt] = useState(0);
   // Fixed when the profile first loads, so finishing a step mid-flow cannot
   // flip the page out from under someone the moment it becomes complete.
@@ -320,6 +321,29 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
     }
   }
 
+  async function claimAlumni() {
+    if (claimingAlumni) return;
+    setClaimingAlumni(true);
+    setError("");
+    setNotice("");
+    const signal = lifetime.current.signal;
+    try {
+      const value = await request("/profile/alumni", {
+        userID: identity.id,
+        signal,
+        method: "PUT",
+      });
+      if (signal.aborted) return;
+      setProfile(value);
+      setNotice("Your alumni status is saved.");
+      await onSaved?.();
+    } catch (failure) {
+      if (!signal.aborted) setError(failure.message);
+    } finally {
+      if (!signal.aborted) setClaimingAlumni(false);
+    }
+  }
+
   const change = (key, value) => {
     setForm((current) => ({ ...current, [key]: value }));
     setNotice("");
@@ -416,6 +440,17 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
             {saving ? "Saving…" : "Save profile"}
           </button>
         </form>
+        <section className="csc-account-alumni" aria-label="Alumni status">
+          <h2>Alumni status</h2>
+          <p>Graduated from Pitt? You can identify yourself as alumni. This badge appears to other signed-in members immediately.</p>
+          {profile.isAlumni ? (
+            <strong>You’re marked as alumni.</strong>
+          ) : (
+            <button type="button" className="csc-auth-secondary" disabled={claimingAlumni} onClick={claimAlumni}>
+              {claimingAlumni ? "Saving…" : "Mark me as alumni"}
+            </button>
+          )}
+        </section>
         {renderFiles()}
       </>
     );

@@ -16,6 +16,7 @@ import (
 type profileStore interface {
 	GetOrCreate(context.Context, string) (profile.Record, error)
 	Update(context.Context, string, profile.Input) (profile.Record, error)
+	ClaimAlumni(context.Context, string) (profile.Record, error)
 }
 
 func writeJSONError(w http.ResponseWriter, status int, message string) {
@@ -127,5 +128,18 @@ func registerProfileRoutes(mux *http.ServeMux, authentication authenticator, pro
 		}
 		writeProfile(w, record, identity)
 	}))
+	mux.HandleFunc("PUT /profile/alumni", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		if r.ContentLength != 0 {
+			writeJSONError(w, http.StatusBadRequest, "This action does not accept profile fields.")
+			return
+		}
+		record, err := profiles.ClaimAlumni(r.Context(), identity.ID)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		writeProfile(w, record, identity)
+	}))
 	mux.HandleFunc("OPTIONS /profile", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
+	mux.HandleFunc("OPTIONS /profile/alumni", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 }

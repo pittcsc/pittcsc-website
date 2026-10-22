@@ -20,6 +20,7 @@ type profilesStub struct {
 	input      profile.Input
 	err        error
 	writes     int
+	claims     int
 }
 
 func (s *profilesStub) GetOrCreate(ctx context.Context, id string) (profile.Record, error) {
@@ -30,6 +31,11 @@ func (s *profilesStub) Update(ctx context.Context, id string, input profile.Inpu
 	s.userID, s.input = id, input
 	s.writes++
 	return profile.Record{FirstName: input.FirstName, Majors: input.Majors}, s.err
+}
+func (s *profilesStub) ClaimAlumni(_ context.Context, id string) (profile.Record, error) {
+	s.userID = id
+	s.claims++
+	return profile.Record{IsAlumni: true, Majors: []string{}}, s.err
 }
 func verifiedAuth() authenticator {
 	return authenticateFunc(func(ctx context.Context, header string) (auth.Identity, error) {
@@ -109,6 +115,24 @@ func TestProfileEditableFields(t *testing.T) {
 	}
 	if body["email"] != "fixture@pitt.edu" {
 		t.Fatal("email must come from current Auth identity")
+	}
+}
+
+func TestSelfClaimAlumniUsesVerifiedIdentityOnly(t *testing.T) {
+	store := &profilesStub{}
+	if w := profileRequest(t, store, "PUT", "/profile/alumni", "", ""); w.Code != 401 || store.claims != 0 {
+		t.Fatalf("anonymous claim accepted: %d", w.Code)
+	}
+	if w := profileRequest(t, store, "PUT", "/profile/alumni", `{"role":"staff"}`, "valid"); w.Code != 400 || store.claims != 0 {
+		t.Fatalf("role payload accepted: %d", w.Code)
+	}
+	w := profileRequest(t, store, "PUT", "/profile/alumni", "", "valid")
+	if w.Code != 200 || store.claims != 1 || store.userID != "verified-owner" || !strings.Contains(w.Body.String(), `"isAlumni":true`) {
+		t.Fatalf("self claim failed: %d %s", w.Code, w.Body.String())
+	}
+	store.err = profile.ErrSuspended
+	if w := profileRequest(t, store, "PUT", "/profile/alumni", "", "valid"); w.Code != 403 || store.claims != 1 {
+		t.Fatalf("suspended claim reached store: %d", w.Code)
 	}
 }
 

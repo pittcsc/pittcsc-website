@@ -21,7 +21,9 @@ current database authorization. Account drafts survive successful rechecks.
 
 Application roles are additive: `member`, `foundry`, `staff`, and `alumni`.
 The private `csc.roles` / `csc.user_roles` tables own assignments; Auth metadata
-and browser input cannot assign roles. A migration gives existing profiles
+and generic profile payloads cannot assign roles. The dedicated authenticated
+`PUT /profile/alumni` action lets a Pitt graduate self-report alumni status;
+staff can still grant or revoke it in User Management. A migration gives existing profiles
 `member`; a profile-insert trigger assigns it atomically to new profiles.
 Subsequent profile reads do not restore intentionally removed roles.
 
@@ -31,6 +33,8 @@ accounts, 401 for invalid/revoked sessions, and 503 on dependency failure. Both
 responses are private and uncached. The staff guard uses the existing verified
 Auth session and current database profile/status/roles on every request.
 Foundry and alumni confer no additional privileges.
+Because alumni is self-reported without verification, future permissions must
+not treat that role as proof of graduation or staff approval.
 
 ## Add a staff tool
 
@@ -79,7 +83,8 @@ Who may change what is a policy table in `backend/internal/roles/policy.go`:
 Role changes are serialized with a transaction-level advisory lock, and the actor's
 active staff status is rechecked under that lock. If two staff revoke each other
 at the same time, exactly one succeeds. Each change and its audit row (target,
-role, action, `actor_user_id`, time) commit together. Operator grants record an
+role, action, `actor_user_id`, time) commit together. Self-reported alumni grants
+use the same lock and audit the member as both actor and target. Operator grants record an
 `operator` label instead; each audit row has exactly one of the two.
 
 To add a role: add a migration that inserts it into `csc.roles` with a label and
