@@ -53,7 +53,10 @@ Initial route structure:
 | `/login` | Sign in or create a CSC account | Everyone |
 | `/dashboard` | Member home with CRM events | Signed-in CSC members and staff |
 | `/dashboard/account` | Own profile editor and files (implemented) | Signed-in account owner |
+| `/dashboard/points` | Submit activity links and view all-time and rolling 30-day point leaderboards (implemented) | Signed-in active accounts |
+| `/dashboard/points/submissions` | Own submitted links and claim history (implemented) | Signed-in account owner |
 | `/dashboard/staff` | Staff tool cards (implemented) | Active staff |
+| `/dashboard/staff/point-claims` | Point claim review and moderation (implemented) | Active staff |
 | `/dashboard/staff/user-management` | Member search and role editing (implemented) | Active staff |
 | `/dashboard/events` | Upcoming published events (planned) | Members and staff |
 | `/dashboard/staff/events` | Create, edit, cancel, and sync events; audit history (implemented) | Active staff |
@@ -132,6 +135,7 @@ Manage the Postgres schema with versioned SQL migrations.
 | `csc.role_audit` | Implemented: transactional grant/revoke audit with target, role, action, staff actor or operator label, database actor, and time |
 | `csc.events` | Implemented: stable ID, title, description, location, start/end times, fixed New York timezone, active/cancelled status, version, creator/timestamps, and calendar identity/delivery status |
 | `csc.event_audit` | Implemented: event mutations and sync results with staff actor, snapshot, and time |
+| `csc.point_categories`, `csc.point_claims`, `csc.point_claim_links`, `csc.point_claim_audit` | Implemented: extensible values, historical awards, lifetime link uniqueness, and moderation history; see [POINTS.md](POINTS.md) |
 
 The application-owned `csc.profiles` table references Supabase's managed `auth.users` identities. Credentials remain in Supabase Auth. Private file access goes through Go; bounded files are stored transactionally in Postgres for this initial release. See [PROFILES.md](PROFILES.md) for limits and ownership enforcement.
 

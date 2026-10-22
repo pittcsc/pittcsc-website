@@ -9,6 +9,8 @@ import { loginURL } from "../lib/auth/policy.mjs";
 import MyAccount from "../components/account/MyAccount";
 import StaffDashboard from "../components/staff/StaffDashboard";
 import MemberHome from "../components/member/MemberHome";
+import PointsLeaderboard from "../components/points/PointsLeaderboard";
+import PointsProfile from "../components/points/PointsProfile";
 
 export default function Dashboard({ location }) {
   const auth = useAuth();
@@ -54,6 +56,19 @@ export default function Dashboard({ location }) {
             />
           ) : account ? (
             <MyAccount key={auth.identity.id} identity={auth.identity} />
+          ) : /^\/dashboard\/points\/submissions\/?$/.test(
+              location.pathname,
+            ) ? (
+            <PointsProfile
+              key={auth.identity.id}
+              identity={auth.identity}
+              variant="submissions"
+            />
+          ) : /^\/dashboard\/points\/?$/.test(location.pathname) ? (
+            <PointsLeaderboard
+              key={auth.identity.id}
+              identity={auth.identity}
+            />
           ) : (
             <MemberHome
               key={auth.identity.id}

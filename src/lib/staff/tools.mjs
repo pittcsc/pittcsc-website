@@ -14,7 +14,13 @@ export const staffTools = [
   {
     slug: "events",
     title: "Events",
-    description: "Create and manage club events and sync them to Google Calendar.",
+    description:
+      "Create and manage club events and sync them to Google Calendar.",
+  },
+  {
+    slug: "point-claims",
+    title: "Point claims",
+    description: "Review links and revoke, restore, or correct point awards.",
   },
 ];
 

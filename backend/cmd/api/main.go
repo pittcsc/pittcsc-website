@@ -19,6 +19,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
 	"github.com/pittcsc/pittcsc-website/backend/internal/events"
+	"github.com/pittcsc/pittcsc-website/backend/internal/points"
 	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 	"github.com/pittcsc/pittcsc-website/backend/internal/roles"
 	"github.com/pittcsc/pittcsc-website/backend/internal/server"
@@ -88,7 +89,7 @@ func run() error {
 	defer stop()
 	api := &http.Server{
 		Addr:              net.JoinHostPort(host, port),
-		Handler:           server.NewHandler(pool, frontendOrigin, verifier, profile.Store{DB: pool}, roles.Store{DB: pool}, eventStore),
+		Handler:           server.NewHandler(pool, frontendOrigin, verifier, profile.Store{DB: pool}, roles.Store{DB: pool}, eventStore, points.Store{DB: pool}),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      30 * time.Second,
