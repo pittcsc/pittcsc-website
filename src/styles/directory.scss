@@ -10,12 +10,15 @@
   font-weight: 600;
 }
 .csc-directory-search > div {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.6rem;
 }
 .csc-directory-search input {
-  flex: 1;
   min-width: 0;
+}
+.csc-auth .csc-directory-search button {
+  width: auto;
 }
 .csc-directory-list {
   list-style: none;
