@@ -182,12 +182,19 @@ function CareerFields({ form, change }) {
       </div>
       <fieldset className="csc-account-offers">
         <legend>I can help with</legend>
-        {HELP_OFFERS.map(([key, label]) => (
-          <label key={key} className="csc-account-checkbox">
-            <input type="checkbox" checked={form[key]} onChange={(event) => change(key, event.target.checked)} />
-            {label}
-          </label>
-        ))}
+        <div className="csc-account-offer-grid">
+          {HELP_OFFERS.map(([key, label]) => (
+            <label key={key} className="csc-account-checkbox">
+              <input
+                type="checkbox"
+                checked={form[key]}
+                onChange={(event) => change(key, event.target.checked)}
+              />
+              <span className="csc-account-checkbox-mark" aria-hidden="true" />
+              {label}
+            </label>
+          ))}
+        </div>
       </fieldset>
     </fieldset>
   );

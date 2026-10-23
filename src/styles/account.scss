@@ -173,12 +173,63 @@
     margin-top: 0.5rem;
     legend { margin-bottom: 0.75rem; font-size: 1rem; }
   }
+  .csc-account-offer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
   .csc-account-checkbox {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 0.65rem;
-    width: fit-content;
-    input { width: auto; height: auto; margin: 0; }
+    gap: 0.75rem;
+    min-height: 52px;
+    padding: 0.75rem;
+    border: 1.5px solid $acc-line;
+    border-radius: $acc-radius-control;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    &:has(input:checked) {
+      border-color: $acc-navy;
+      background: $acc-navy-soft;
+    }
+    input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    input:checked + .csc-account-checkbox-mark {
+      border-color: $acc-navy;
+      background: $acc-navy;
+    }
+    input:checked + .csc-account-checkbox-mark::after {
+      opacity: 1;
+    }
+    input:focus-visible + .csc-account-checkbox-mark {
+      outline: 3px solid $acc-gold;
+      outline-offset: 2px;
+    }
+  }
+  .csc-account-checkbox-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 1.4rem;
+    height: 1.4rem;
+    border: 2px solid $acc-border;
+    border-radius: 0.35rem;
+    background: #fff;
+    color: #fff;
+
+    &::after {
+      content: "✓";
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1;
+      opacity: 0;
+    }
   }
   .csc-account-handle {
     display: flex;
@@ -304,6 +355,9 @@
   }
 
   @media (max-width: 480px) {
+    .csc-account-offer-grid {
+      grid-template-columns: 1fr;
+    }
     .csc-account-name-grid {
       grid-template-columns: 1fr;
       gap: 1.125rem;
