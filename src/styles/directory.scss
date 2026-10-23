@@ -1,3 +1,5 @@
+@import "./helpers/account-tokens";
+
 .csc-auth:has(.csc-member-directory, .csc-member-profile) .csc-auth-cardwrap {
   max-width: 72rem;
 }
@@ -9,31 +11,155 @@
   margin-bottom: 0.4rem;
   font-weight: 600;
 }
-.csc-directory-filters {
+.csc-directory-search-row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: 0.75rem;
+}
+.csc-directory-name-field {
+  min-width: 0;
+}
+.csc-directory-filter-menu {
+  position: relative;
+}
+.csc-auth .csc-directory-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 52px;
+  border: 1.5px solid $acc-border;
+  background: #fff;
+  color: $acc-ink;
+}
+.csc-auth .csc-directory-filter-toggle:hover,
+.csc-auth .csc-directory-filter-toggle[aria-expanded="true"] {
+  border-color: $acc-navy;
+  background: $acc-navy-soft;
+  color: $acc-ink;
+}
+.csc-directory-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.2rem;
+  border-radius: 999px;
+  background: $acc-navy;
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.csc-directory-filter-chevron {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.15rem) rotate(45deg);
+}
+.csc-directory-filter-toggle[aria-expanded="true"] .csc-directory-filter-chevron {
+  transform: translateY(0.15rem) rotate(225deg);
+}
+.csc-directory-filter-panel {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: min(21rem, calc(100vw - 3rem));
+  padding: 1rem;
+  border: 1px solid $acc-line;
+  border-radius: $acc-radius-control;
+  background: #fff;
+  box-shadow: 0 16px 36px #1b2a4a26;
+  box-sizing: border-box;
 }
 .csc-directory-search .csc-directory-alumni-filter {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 0.75rem 0;
-  font-weight: 500;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0.75rem;
+  border: 1px solid $acc-line;
+  border-radius: $acc-radius-control;
+  cursor: pointer;
 }
 .csc-directory-alumni-filter input {
-  width: auto;
-  height: auto;
-  margin: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.csc-directory-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1.4rem;
+  height: 1.4rem;
+  border: 2px solid $acc-border;
+  border-radius: 0.35rem;
+  background: #fff;
+  color: #fff;
+}
+.csc-directory-checkbox::after {
+  content: "✓";
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0;
+}
+.csc-directory-alumni-filter input:checked + .csc-directory-checkbox {
+  border-color: $acc-navy;
+  background: $acc-navy;
+}
+.csc-directory-alumni-filter input:checked + .csc-directory-checkbox::after {
+  opacity: 1;
+}
+.csc-directory-alumni-filter input:focus-visible + .csc-directory-checkbox {
+  outline: 3px solid $acc-gold;
+  outline-offset: 2px;
+}
+.csc-directory-alumni-filter:has(input:checked) {
+  border-color: $acc-navy;
+  background: $acc-navy-soft;
 }
 .csc-directory-search input {
   min-width: 0;
+}
+.csc-directory-filter-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.csc-auth .csc-directory-filter-clear {
+  background: #fff;
+  color: $acc-navy;
+  border: 1.5px solid $acc-navy;
+}
+.csc-auth .csc-directory-filter-clear:hover {
+  background: $acc-navy-soft;
+  color: $acc-navy;
 }
 .csc-auth .csc-directory-search button {
   width: auto;
 }
 @media (max-width: 540px) {
-  .csc-directory-filters { grid-template-columns: 1fr; }
+  .csc-directory-search-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .csc-directory-name-field {
+    grid-column: 1 / -1;
+  }
+  .csc-auth .csc-directory-search .csc-directory-filter-toggle,
+  .csc-auth .csc-directory-search .csc-directory-search-submit {
+    width: 100%;
+  }
+  .csc-directory-filter-panel {
+    right: auto;
+    left: 0;
+  }
 }
 .csc-directory-list {
   list-style: none;
