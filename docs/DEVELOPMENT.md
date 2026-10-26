@@ -269,3 +269,9 @@ Data API access is disabled while Auth remains enabled. After changing
 `supabase/config.toml`, stop and restart local Supabase to load settings. See
 [AUTH.md](AUTH.md) and [PROFILES.md](PROFILES.md) for fixtures, checks, and the
 separate hosted rollout requirements.
+
+## AlumniDB integration
+
+The shared profile now supports explicit self-service AlumniDB publication and
+protected directory browsing at `/dashboard/alumni`. See [ALUMNI.md](ALUMNI.md)
+for fields, eligibility, privacy, migration and verification.

@@ -19,6 +19,10 @@ var (
 )
 
 type Record struct {
+	AlumniFields
+	AlumniPublished  bool      `json:"alumniPublished"`
+	AlumniUpdatedAt  time.Time `json:"alumniUpdatedAt"`
+	AlumniMissing    []string  `json:"alumniMissing"`
 	Roles            []string  `json:"-"`
 	FirstName        *string   `json:"firstName"`
 	LastName         *string   `json:"lastName"`
@@ -35,6 +39,7 @@ type Record struct {
 }
 
 type Input struct {
+	*AlumniFields
 	FirstName        *string  `json:"firstName"`
 	LastName         *string  `json:"lastName"`
 	PreferredName    *string  `json:"preferredName"`
@@ -98,6 +103,11 @@ func normalizeName(value **string) error {
 }
 
 func (input *Input) Validate() error {
+	if input.AlumniFields != nil {
+		if err := input.AlumniFields.Validate(); err != nil {
+			return err
+		}
+	}
 	if err := normalizeName(&input.FirstName); err != nil {
 		return err
 	}
@@ -161,12 +171,18 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 	err := s.DB.QueryRow(ctx, `
 		select first_name, last_name, preferred_name, graduation_year, majors,
 		  github_username, leetcode_username, linkedin_username,
-		  account_status, avatar_asset_id is not null, resume_asset_id is not null, updated_at,
+		  location, bio, current_company, job_title, position_is_current, contact_email,
+          open_to_coffee_chats, open_to_mentorship, available_for_referrals, open_to_resume_review,
+          alumni_published, alumni_updated_at,
+          account_status, avatar_asset_id is not null, resume_asset_id is not null, updated_at,
 		  array(select role from csc.user_roles where auth_user_id = $1::uuid order by role)
 		from csc.profiles where auth_user_id = $1::uuid
 	`, authUserID).Scan(&record.FirstName, &record.LastName, &record.PreferredName,
 		&record.GraduationYear, &record.Majors,
 		&record.GitHubUsername, &record.LeetCodeUsername, &record.LinkedInUsername,
+		&record.Location, &record.Bio, &record.CurrentCompany, &record.CurrentRole, &record.PositionIsCurrent, &record.ContactEmail,
+		&record.OpenToCoffeeChats, &record.OpenToMentorship, &record.AvailableForReferrals, &record.OpenToResumeReview,
+		&record.AlumniPublished, &record.AlumniUpdatedAt,
 		&status, &record.HasAvatar, &record.HasResume, &record.UpdatedAt, &record.Roles)
 	if err != nil {
 		return Record{}, err
@@ -175,6 +191,7 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 		return Record{}, ErrSuspended
 	}
 	record.Complete = complete(record)
+	record.AlumniMissing = AlumniMissing(record, time.Now())
 	return record, nil
 }
 
@@ -182,16 +199,34 @@ func (s Store) Update(ctx context.Context, authUserID string, input Input) (Reco
 	if err := input.Validate(); err != nil {
 		return Record{}, err
 	}
+	// A missing AlumniFields object preserves directory values for older clients.
+	f := input.AlumniFields
+	updateAlumni := f != nil
+	if f == nil {
+		f = &AlumniFields{}
+	}
 	var status string
 	err := s.DB.QueryRow(ctx, `
-		update csc.profiles set first_name = $2, last_name = $3, preferred_name = $4,
+        update csc.profiles set first_name = $2, last_name = $3, preferred_name = $4,
 		  graduation_year = $5, majors = $6, github_username = $7,
-		  leetcode_username = $8, linkedin_username = $9, updated_at = now()
+		  leetcode_username = $8, linkedin_username = $9, updated_at = now(),
+          location = case when $10 then $11 else location end,
+          bio = case when $10 then $12 else bio end,
+          current_company = case when $10 then $13 else current_company end,
+          job_title = case when $10 then $14 else job_title end,
+          position_is_current = case when $10 then $15 else position_is_current end,
+          contact_email = case when $10 then $16 else contact_email end,
+          open_to_coffee_chats = case when $10 then $17 else open_to_coffee_chats end,
+          open_to_mentorship = case when $10 then $18 else open_to_mentorship end,
+          available_for_referrals = case when $10 then $19 else available_for_referrals end,
+          open_to_resume_review = case when $10 then $20 else open_to_resume_review end
 		where auth_user_id = $1::uuid and account_status = 'active'
 		returning account_status
 	`, authUserID, input.FirstName, input.LastName, input.PreferredName,
 		input.GraduationYear, input.Majors, input.GitHubUsername,
-		input.LeetCodeUsername, input.LinkedInUsername).Scan(&status)
+		input.LeetCodeUsername, input.LinkedInUsername, updateAlumni,
+		f.Location, f.Bio, f.CurrentCompany, f.CurrentRole, f.PositionIsCurrent, f.ContactEmail,
+		f.OpenToCoffeeChats, f.OpenToMentorship, f.AvailableForReferrals, f.OpenToResumeReview).Scan(&status)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Record{}, ErrSuspended
 	}

@@ -180,3 +180,9 @@ configured. The public Notion event cards remain independent.
 5. Add QR attendance (implemented), then Drive integration and additional CRM features.
 
 Before rollout, verify that CSC registration and sign-in work, invalid tokens are rejected, member requests cannot perform staff operations, role/status changes affect subsequent API requests, and nested dashboard URLs work on direct navigation. Use a non-production environment for development and testing, with deployment configuration and handoff documentation suitable for future club maintainers.
+
+## AlumniDB integration
+
+The shared profile now supports explicit self-service AlumniDB publication and
+protected directory browsing at `/dashboard/alumni`. See [ALUMNI.md](ALUMNI.md)
+for fields, eligibility, privacy, migration and verification.

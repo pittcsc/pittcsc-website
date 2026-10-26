@@ -132,75 +132,78 @@
     box-sizing: border-box;
   }
 
-  h1 {
-    margin: 0;
-    font-size: 2.125rem;
-    line-height: 1.15;
-    font-weight: 800;
-  }
-  h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-  p {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: $acc-body;
-    overflow-wrap: anywhere;
-  }
+  // AlumniDB retains its original Tailwind controls inside the shared shell.
+  &:not(.csc-auth-alumni) {
+    h1 {
+      margin: 0;
+      font-size: 2.125rem;
+      line-height: 1.15;
+      font-weight: 800;
+    }
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: $acc-body;
+      overflow-wrap: anywhere;
+    }
 
-  label {
-    @include acc-label;
-    margin: 0;
-  }
-  // .csc-field-bare opts an input out: it sits inside a wrapper that already
-  // draws the box (the handle fields), and this rule would otherwise win on
-  // specificity and draw a second box inside the first.
-  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(
-      .csc-field-bare
-    ),
-  select {
-    @include acc-field;
-    margin-top: 0.5rem;
-  }
-  button {
-    @include acc-button-primary;
-    width: 100%;
-  }
-  .csc-auth-secondary {
-    @include acc-button-secondary;
-  }
+    label {
+      @include acc-label;
+      margin: 0;
+    }
+    // .csc-field-bare opts an input out: it sits inside a wrapper that already
+    // draws the box (the handle fields), and this rule would otherwise win on
+    // specificity and draw a second box inside the first.
+    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(
+        .csc-field-bare
+      ),
+    select {
+      @include acc-field;
+      margin-top: 0.5rem;
+    }
+    button {
+      @include acc-button-primary;
+      width: 100%;
+    }
+    .csc-auth-secondary {
+      @include acc-button-secondary;
+    }
 
-  .csc-auth-brand {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: $acc-navy;
-    text-decoration: none;
-  }
+    .csc-auth-brand {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: $acc-navy;
+      text-decoration: none;
+    }
 
-  [role="alert"] {
-    display: block;
-    padding: 0.875rem 1rem;
-    border-radius: $acc-radius-control;
-    background: $acc-error-bg;
-    color: $acc-error-ink;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-  [role="alert"]:empty,
-  [role="status"]:empty {
-    display: none;
-  }
-  [role="status"] {
-    font-size: 0.9375rem;
-    color: $acc-muted;
-  }
+    [role="alert"] {
+      display: block;
+      padding: 0.875rem 1rem;
+      border-radius: $acc-radius-control;
+      background: $acc-error-bg;
+      color: $acc-error-ink;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    [role="alert"]:empty,
+    [role="status"]:empty {
+      display: none;
+    }
+    [role="status"] {
+      font-size: 0.9375rem;
+      color: $acc-muted;
+    }
 
-  .csc-auth-actions {
-    display: flex;
-    gap: 0.75rem;
+    .csc-auth-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
   }
 
   @media (max-width: 600px) {
@@ -212,7 +215,7 @@
     .csc-auth-card {
       padding: 1.75rem;
     }
-    h1 {
+    &:not(.csc-auth-alumni) h1 {
       font-size: 1.75rem;
     }
   }

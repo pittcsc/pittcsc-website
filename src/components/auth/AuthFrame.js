@@ -9,12 +9,13 @@ export default function AuthFrame({
   children,
   dashboard = false,
   websiteLink = true,
+  alumni = false,
 }) {
   const { status, identity } = useAuth();
   const authenticated = status === "authenticated";
 
   return (
-    <div className="csc-auth-layout">
+    <div className={`csc-auth-layout${alumni ? " csc-alumni-layout" : ""}`}>
       {authenticated && (
         <header className="csc-auth-header">
           <Link className="csc-auth-logo" to="/">
@@ -29,6 +30,16 @@ export default function AuthFrame({
                 activeClassName="is-current"
               >
                 Dashboard
+              </Link>
+            )}
+            {dashboard && (
+              <Link
+                className="csc-auth-nav-link"
+                to="/dashboard/alumni"
+                activeClassName="is-current"
+                partiallyActive
+              >
+                AlumniDB
               </Link>
             )}
             {dashboard && hasStaffRole(identity) && (
@@ -47,7 +58,7 @@ export default function AuthFrame({
           </nav>
         </header>
       )}
-      <main className="csc-auth">
+      <main className={`csc-auth${alumni ? " csc-auth-alumni" : ""}`}>
         <div className="csc-auth-cardwrap">
           <div className="csc-auth-card">
             {!authenticated && (

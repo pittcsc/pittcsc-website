@@ -5,6 +5,16 @@ import { formFromProfile, profileInput } from "../../src/lib/account/form.mjs";
 test("empty and partial profiles can be saved without invented data", () => {
   const form = formFromProfile({ majors: [] });
   assert.deepEqual(profileInput(form), {
+    location: null,
+    bio: null,
+    currentCompany: null,
+    currentRole: null,
+    contactEmail: null,
+    positionIsCurrent: true,
+    openToCoffeeChats: false,
+    openToMentorship: false,
+    availableForReferrals: false,
+    openToResumeReview: false,
     firstName: null,
     lastName: null,
     preferredName: null,

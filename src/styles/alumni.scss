@@ -1,0 +1,22 @@
+// The original AlumniDB Tailwind presentation lives inside the CRM auth shell.
+.csc-alumni-layout .csc-auth .csc-auth-cardwrap {
+  max-width: 78rem;
+}
+.csc-alumni-layout .csc-auth .csc-auth-card {
+  padding: clamp(1rem, 3vw, 2rem);
+}
+.csc-alumni {
+  width: 100%;
+}
+.csc-alumni img {
+  max-width: 100%;
+}
+.csc-alumni p {
+  overflow-wrap: anywhere;
+}
+.csc-alumni .text-gray-600 {
+  line-height: 1.6;
+}
+.csc-alumni .md\:w-2\/3 p {
+  white-space: pre-wrap;
+}

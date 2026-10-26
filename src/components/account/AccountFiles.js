@@ -180,7 +180,7 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
       <p id={`${kind}-help`} className="csc-account-file-help">
         {isResume
           ? "PDF, up to 10 MB."
-          : "JPEG, PNG, or WebP, up to 5 MB. Visible only to you."}
+          : "JPEG, PNG, or WebP, up to 5 MB. Shared with directory readers only when you publish to AlumniDB."}
       </p>
       <input
         ref={input}

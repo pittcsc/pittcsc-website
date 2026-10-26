@@ -8,6 +8,7 @@ import {
   HANDLES,
 } from "../../lib/account/form.mjs";
 import AccountFiles from "./AccountFiles";
+import AlumniFields from "./AlumniFields";
 import "../../styles/account.scss";
 
 /* The field groups are shared: the guided flow shows one per step, the editor
@@ -217,7 +218,13 @@ export default function MyAccount({ identity }) {
         setForm(formFromProfile(value));
         setGuided((current) => {
           if (current !== null) return current;
-          if (value.complete) return false;
+          if (
+            value.complete ||
+            value.alumniPublished ||
+            value.bio ||
+            value.contactEmail
+          )
+            return false;
           setStep(firstUnanswered(value));
           return true;
         });
@@ -260,7 +267,13 @@ export default function MyAccount({ identity }) {
     setError("");
     setNotice("");
     try {
-      if (await persist()) setNotice("Your profile has been saved.");
+      const value = await persist();
+      if (value)
+        setNotice(
+          profile.alumniPublished && !value.alumniPublished
+            ? "Your profile was saved and unpublished from AlumniDB because required information is missing. Complete the checklist below and publish again when ready."
+            : "Your profile has been saved.",
+        );
     } catch (failure) {
       if (!lifetime.current.signal.aborted) setError(failure.message);
     }
@@ -303,7 +316,13 @@ export default function MyAccount({ identity }) {
             userID: identity.id,
             signal,
           });
-          if (!signal.aborted) setProfile(value);
+          if (!signal.aborted) {
+            setProfile(value);
+            if (profile.alumniPublished && !value.alumniPublished)
+              setNotice(
+                "Your photo was removed, so your profile is now unpublished from AlumniDB. Add a photo and publish again when ready.",
+              );
+          }
         }}
       />
     );
@@ -376,6 +395,7 @@ export default function MyAccount({ identity }) {
               <legend>Profiles</legend>
               <HandleFields form={form} change={change} />
             </fieldset>
+            <AlumniFields form={form} change={change} />
           </fieldset>
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}
@@ -421,7 +441,93 @@ export default function MyAccount({ identity }) {
           <p className="csc-account-email">
             Signed in as <strong>{profile.email}</strong>
           </p>
+          {guided && (
+            <button
+              className="csc-auth-secondary"
+              onClick={() => setGuided(false)}
+            >
+              Edit all fields / AlumniDB
+            </button>
+          )}
           {guided ? renderGuided() : renderEditor()}
+          {!guided && (
+            <section
+              className="csc-account-publication"
+              aria-labelledby="alumni-publication-title"
+            >
+              <h2 id="alumni-publication-title">Publish to AlumniDB</h2>
+              <p>
+                {profile.alumniPublished
+                  ? "Your shared profile is visible in AlumniDB."
+                  : "Your profile is not listed in AlumniDB."}
+              </p>
+              {profile.alumniMissing?.length > 0 && (
+                <>
+                  <p>Before publishing, add or update:</p>
+                  <ul>
+                    {profile.alumniMissing.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              <p>
+                Only graduation years up to the current year qualify. Valid
+                edits to a published profile appear immediately. Removing
+                required information automatically unpublishes it.
+              </p>
+              {JSON.stringify(form) !==
+                JSON.stringify(formFromProfile(profile)) && (
+                <p>Save your profile changes before publishing.</p>
+              )}
+              <button
+                disabled={
+                  saving ||
+                  (!profile.alumniPublished &&
+                    (profile.alumniMissing?.length > 0 ||
+                      JSON.stringify(form) !==
+                        JSON.stringify(formFromProfile(profile))))
+                }
+                onClick={async () => {
+                  if (saving) return;
+                  const signal = lifetime.current.signal;
+                  setSaving(true);
+                  setError("");
+                  setNotice("");
+                  try {
+                    const value = await request("/profile/alumni-publication", {
+                      userID: identity.id,
+                      signal,
+                      method: "PUT",
+                      contentType: "application/json",
+                      body: JSON.stringify({
+                        published: !profile.alumniPublished,
+                      }),
+                    });
+                    if (!signal.aborted) {
+                      setProfile(value);
+                      setNotice(
+                        value.alumniPublished
+                          ? "Your profile is published in AlumniDB."
+                          : "Your profile has been removed from AlumniDB. Your CRM information is saved.",
+                      );
+                    }
+                  } catch (failure) {
+                    if (!signal.aborted) setError(failure.message);
+                  } finally {
+                    if (!signal.aborted) setSaving(false);
+                  }
+                }}
+              >
+                {saving
+                  ? "Saving…"
+                  : profile.alumniPublished
+                    ? "Unpublish my AlumniDB profile"
+                    : "Publish my AlumniDB profile"}
+              </button>
+              <Link to="/dashboard/alumni">Browse AlumniDB</Link>
+            </section>
+          )}
         </>
       )}
     </div>

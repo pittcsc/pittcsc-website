@@ -140,3 +140,24 @@ func TestProfileRequestLimitsAndPreflight(t *testing.T) {
 		t.Fatal("large payload accepted")
 	}
 }
+
+func TestSharedAlumniFieldsDecodeWithoutPermittingPublication(t *testing.T) {
+	store := &profilesStub{}
+	w := profileRequest(t, store, "PUT", "/profile", `{"location":" Pittsburgh ","bio":"Happy to help","contactEmail":"work@example.org","openToMentorship":true,"positionIsCurrent":false}`, "valid")
+	if w.Code != 200 || store.input.AlumniFields == nil || store.input.Location == nil || *store.input.Location != "Pittsburgh" || !store.input.OpenToMentorship || store.input.PositionIsCurrent {
+		t.Fatalf("shared fields not decoded correctly: %d", w.Code)
+	}
+	for _, body := range []string{`{"alumniPublished":true}`, `{"alumniUpdatedAt":"2026-01-01"}`, `{"contactEmail":"student@pitt.edu"}`} {
+		s := &profilesStub{}
+		if w := profileRequest(t, s, "PUT", "/profile", body, "valid"); w.Code != 400 || s.writes != 0 {
+			t.Fatalf("invalid shared profile accepted: %s", body)
+		}
+	}
+	// 4,000 Unicode characters fit the documented bio limit even when JSON
+	// requires substantially more than the old 16 KB profile request budget.
+	s := &profilesStub{}
+	body := `{"bio":"` + strings.Repeat("😀", 4000) + `","location":"Pittsburgh"}`
+	if w := profileRequest(t, s, "PUT", "/profile", body, "valid"); w.Code != 200 {
+		t.Fatalf("valid unicode bio rejected: %d", w.Code)
+	}
+}

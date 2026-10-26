@@ -9,6 +9,7 @@ import { loginURL } from "../lib/auth/policy.mjs";
 import MyAccount from "../components/account/MyAccount";
 import StaffDashboard from "../components/staff/StaffDashboard";
 import MemberHome from "../components/member/MemberHome";
+import AlumniDirectory from "../components/alumni/AlumniDirectory";
 
 export default function Dashboard({ location }) {
   const auth = useAuth();
@@ -37,12 +38,17 @@ export default function Dashboard({ location }) {
   }, [auth.status, location.pathname, location.search, location.hash]);
 
   const authenticated = auth.status === "authenticated";
+  const alumni = /^\/dashboard\/alumni(?:\/|$)/.test(location.pathname);
   const account = /^\/dashboard\/account\/?$/.test(location.pathname);
 
   // Only My Account offers logout and the website link; status screens keep
   // the website link so users are never stuck.
   return (
-    <AuthFrame dashboard websiteLink={!authenticated || account}>
+    <AuthFrame
+      dashboard
+      alumni={authenticated && alumni}
+      websiteLink={!authenticated || account}
+    >
       {authenticated ? (
         <>
           {/^\/dashboard\/staff(?:\/|$)/.test(location.pathname) ? (
@@ -51,6 +57,13 @@ export default function Dashboard({ location }) {
               identity={auth.identity}
               revalidate={auth.revalidate}
               pathname={location.pathname}
+            />
+          ) : alumni ? (
+            <AlumniDirectory
+              key={auth.identity.id}
+              identity={auth.identity}
+              revalidate={auth.revalidate}
+              location={location}
             />
           ) : account ? (
             <MyAccount key={auth.identity.id} identity={auth.identity} />

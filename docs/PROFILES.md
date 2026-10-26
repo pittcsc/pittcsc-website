@@ -109,3 +109,9 @@ disable its generated Data API while retaining Auth, deploy Go and Gatsby, and
 repeat the walkthrough. The hosted Auth test deployment in [AUTH.md](AUTH.md)
 predates profiles. Do not copy local credentials or apply remote migrations
 without explicit authorization.
+
+## AlumniDB integration
+
+The shared profile now supports explicit self-service AlumniDB publication and
+protected directory browsing at `/dashboard/alumni`. See [ALUMNI.md](ALUMNI.md)
+for fields, eligibility, privacy, migration and verification.

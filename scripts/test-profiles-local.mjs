@@ -181,11 +181,14 @@ async function main() {
     preferredName: "Test",
     graduationYear: 2028,
     majors: ["Computer Science", "Mathematics"],
+    githubUsername: "profile-fixture",
+    leetcodeUsername: "profile.fixture",
+    linkedinUsername: "profile-fixture",
   };
   const saved = await put(owner, complete);
   check(
-    saved.status === 200 && (await saved.json()).complete,
-    "Complete save failed",
+    saved.status === 200 && !(await saved.json()).complete,
+    "Profile should remain incomplete until a resume is uploaded",
   );
   check(
     (await put(owner, complete)).status === 200 &&
@@ -304,6 +307,135 @@ async function main() {
       count("profile_assets", owner.id) === 2,
     "Rejected upload damaged saved files",
   );
+  stage = "AlumniDB shared profile and explicit publication";
+  const alumni = {
+    ...complete,
+    graduationYear: Number(
+      new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        timeZone: "America/New_York",
+      }).format(new Date()),
+    ),
+    location: "Synthetic City",
+    bio: "Synthetic fixture available for mentorship.",
+    currentCompany: `Alumni fixture ${suffix}`,
+    currentRole: "Engineer",
+    positionIsCurrent: false,
+    contactEmail: "alumni-fixture@example.org",
+    openToMentorship: true,
+    openToCoffeeChats: false,
+    availableForReferrals: false,
+    openToResumeReview: false,
+  };
+  const publish = (published) =>
+    api(
+      owner,
+      "/profile/alumni-publication",
+      "PUT",
+      JSON.stringify({ published }),
+    );
+  const readDirectory = () =>
+    api(other, `/alumni?company=${encodeURIComponent(alumni.currentCompany)}`);
+  check(
+    (await put(owner, alumni)).status === 200,
+    "Shared AlumniDB save failed",
+  );
+  let shared = await (await api(owner, "/profile")).json();
+  check(
+    !shared.alumniPublished &&
+      shared.alumniMissing.length === 0 &&
+      shared.complete,
+    "Eligible profile should remain unpublished, with existing CRM fields preserved",
+  );
+  for (let i = 0; i < 2; i++)
+    check((await publish(true)).status === 200, "Publication retry failed");
+  let listing = await (await readDirectory()).json();
+  check(
+    listing.count === 1 && listing.data.length === 1,
+    "Publication did not produce one directory entry",
+  );
+  const directoryID = listing.data[0].id;
+  const detail = await api(other, `/alumni/${directoryID}`);
+  const person = await detail.json();
+  check(
+    detail.status === 200 &&
+      person.contact_email === alumni.contactEmail &&
+      person.position_is_current === false,
+    "Another member could not read published details",
+  );
+  for (const key of [
+    "email",
+    "auth_user_id",
+    "roles",
+    "hasResume",
+    "githubUsername",
+    "majors",
+  ])
+    check(!(key in person), "Private profile field exposed in directory");
+  check(
+    (await api(other, `/alumni/${directoryID}/photo`)).status === 200,
+    "Published photo not available to directory readers",
+  );
+  for (const path of [
+    "/alumni",
+    `/alumni/${directoryID}`,
+    `/alumni/${directoryID}/photo`,
+  ])
+    check(
+      (await api(null, path)).status === 401,
+      "Directory accessible without authentication",
+    );
+  const stamp = person.updated_at;
+  check(
+    (await put(owner, { ...alumni, githubUsername: "private-change" }))
+      .status === 200,
+    "Private shared-profile edit failed",
+  );
+  check(
+    (await (await api(other, `/alumni/${directoryID}`)).json()).updated_at ===
+      stamp,
+    "Private field edit changed directory timestamp",
+  );
+  check(
+    (await put(owner, { ...alumni, location: null })).status === 200,
+    "Invalidating edit should still save",
+  );
+  shared = await (await api(owner, "/profile")).json();
+  check(
+    !shared.alumniPublished && shared.alumniMissing.includes("location"),
+    "Missing information did not unpublish",
+  );
+  check(
+    (await publish(true)).status === 409,
+    "Incomplete profile was allowed to publish",
+  );
+  check(
+    (await api(other, `/alumni/${directoryID}`)).status === 404 &&
+      (await api(other, `/alumni/${directoryID}/photo`)).status === 404,
+    "Unpublished details/photo remained visible",
+  );
+  listing = await (await readDirectory()).json();
+  check(
+    listing.count === 0 &&
+      !listing.options.companies.includes(alumni.currentCompany),
+    "Unpublished profile leaked through results or filter options",
+  );
+  check((await put(owner, alumni)).status === 200, "Repair failed");
+  check(
+    !(await (await api(owner, "/profile")).json()).alumniPublished,
+    "Repair automatically republished",
+  );
+  check((await publish(true)).status === 200, "Re-publication failed");
+  for (let i = 0; i < 2; i++)
+    check((await publish(false)).status === 200, "Unpublication retry failed");
+  check(
+    (await (await readDirectory()).json()).count === 0,
+    "Explicit unpublish did not remove profile",
+  );
+  check(
+    (await publish(true)).status === 200,
+    "Publication before suspension failed",
+  );
   stage = "current database account status";
   sql(
     `update csc.profiles set account_status = 'suspended' where auth_user_id = '${owner.id}'::uuid;`,
@@ -316,6 +448,8 @@ async function main() {
       ["/profile/resume", "GET"],
       ["/profile/avatar", "PUT"],
       ["/profile/resume", "DELETE"],
+      ["/alumni", "GET"],
+      ["/profile/alumni-publication", "PUT"],
     ]) {
       check(
         (await api(owner, path, method, method === "PUT" ? "{}" : undefined))
@@ -365,7 +499,7 @@ async function main() {
     "Generated Data API remains available",
   );
   console.log(
-    "PASS: concurrent provisioning, partial saves, completion, protected fields, ownership, files, limits, replacements, deletion, suspension, revocation, and Data API isolation",
+    "PASS: concurrent provisioning, shared-profile saves, explicit AlumniDB publication/unpublication, directory privacy, authenticated photos, eligibility, completion, protected fields, files, suspension, revocation, and Data API isolation",
   );
 }
 

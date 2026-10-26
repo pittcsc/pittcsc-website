@@ -1,3 +1,4 @@
+import { alumniForm, alumniInput } from "../alumni/profile.mjs";
 // Handles are stored as bare usernames, never URLs, so nothing can put an
 // arbitrary link in a field the UI renders as an anchor. The API accepts only
 // the username; these patterns mirror its own and the database's constraints.
@@ -50,6 +51,7 @@ export function handleFromPasted(value) {
 
 export function formFromProfile(profile) {
   return {
+    ...alumniForm(profile),
     firstName: profile.firstName || "",
     lastName: profile.lastName || "",
     preferredName: profile.preferredName || "",
@@ -101,6 +103,7 @@ export function profileInput(form) {
   }
 
   return {
+    ...alumniInput(form),
     firstName: name(form.firstName),
     lastName: name(form.lastName),
     preferredName: name(form.preferredName),

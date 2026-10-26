@@ -80,6 +80,7 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 	})
 	mux.HandleFunc("OPTIONS /auth/session", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	registerProfileRoutes(mux, authentication, profiles)
+	registerAlumniRoutes(mux, authentication, profiles)
 	registerAssetRoutes(mux, authentication, profiles)
 	registerStaffRoutes(mux, authentication, profiles, roleChanges)
 	registerEventRoutes(mux, frontendOrigin, authentication, profiles, eventRecords)
