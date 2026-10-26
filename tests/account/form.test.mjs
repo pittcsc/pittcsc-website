@@ -13,6 +13,16 @@ test("empty and partial profiles can be saved without invented data", () => {
     githubUsername: null,
     leetcodeUsername: null,
     linkedinUsername: null,
+    currentCompany: null,
+    jobTitle: null,
+    location: null,
+    bio: null,
+    personalWebsite: null,
+    contactEmail: null,
+    offersCoffee: false,
+    offersMentorship: false,
+    offersReferrals: false,
+    offersResumeReview: false,
   });
   assert.deepEqual(
     profileInput({
@@ -26,6 +36,32 @@ test("empty and partial profiles can be saved without invented data", () => {
     profileInput({ ...form, graduationYear: "2028" }).graduationYear,
     2028,
   );
+});
+
+test("optional career fields round-trip and reject unsafe links", () => {
+  const form = formFromProfile({
+    currentCompany: "PNC",
+    offersMentorship: true,
+    personalWebsite: "https://example.com/profile",
+  });
+  const input = profileInput({ ...form, bio: "  Hello CSC  " });
+  assert.equal(input.currentCompany, "PNC");
+  assert.equal(input.bio, "Hello CSC");
+  assert.equal(input.offersMentorship, true);
+  assert.equal(input.offersCoffee, false);
+  for (const personalWebsite of ["javascript:alert(1)", "http://example.com", "https://user:pass@example.com"]) {
+    assert.throws(() => profileInput({ ...form, personalWebsite }), /HTTPS/);
+  }
+  assert.throws(() => profileInput({ ...form, currentCompany: "a".repeat(161) }), /Company/);
+});
+
+test("contact email is optional, distinct from sign-in, and never a profile role", () => {
+  const form = formFromProfile({ contactEmail: " work@example.org " });
+  assert.equal(profileInput(form, "member@pitt.edu").contactEmail, "work@example.org");
+  assert.equal(profileInput({ ...form, contactEmail: "other@pitt.edu" }, "member@pitt.edu").contactEmail, "other@pitt.edu");
+  for (const contactEmail of ["member@PITT.EDU", "bad", "Name <work@example.org>", "work@example.org\nBcc:bad@example.org"]) {
+    assert.throws(() => profileInput({ ...form, contactEmail }, "member@pitt.edu"), /contact email/i);
+  }
 });
 
 test("invalid years, duplicate majors and overly long fields explain the problem", () => {

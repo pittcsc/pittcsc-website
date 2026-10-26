@@ -146,6 +146,65 @@ function HandleFields({ form, change }) {
   ));
 }
 
+const HELP_OFFERS = [
+  ["offersCoffee", "Coffee chats"],
+  ["offersMentorship", "Mentorship"],
+  ["offersReferrals", "Referrals"],
+  ["offersResumeReview", "Résumé reviews"],
+];
+
+function CareerFields({ form, change }) {
+  return (
+    <fieldset className="csc-account-career">
+      <legend>Career and community</legend>
+      <p>These optional details stay private until you choose Share my profile details. The Members directory never shows your Pitt sign-in email or résumé.</p>
+      <div className="csc-account-name-grid">
+        <div>
+          <label htmlFor="current-company">Current company</label>
+          <input id="current-company" autoComplete="organization" maxLength={160} value={form.currentCompany} onChange={(event) => change("currentCompany", event.target.value)} />
+        </div>
+        <div>
+          <label htmlFor="job-title">Job title</label>
+          <input id="job-title" autoComplete="organization-title" maxLength={160} value={form.jobTitle} onChange={(event) => change("jobTitle", event.target.value)} />
+        </div>
+      </div>
+      <div>
+        <label htmlFor="profile-location">Location</label>
+        <input id="profile-location" autoComplete="address-level2" maxLength={160} value={form.location} onChange={(event) => change("location", event.target.value)} />
+      </div>
+      <div>
+        <label htmlFor="personal-website">Personal website</label>
+        <input id="personal-website" type="url" placeholder="https://example.com" maxLength={500} value={form.personalWebsite} onChange={(event) => change("personalWebsite", event.target.value)} />
+      </div>
+      <div>
+        <label htmlFor="contact-email">Contact email</label>
+        <input id="contact-email" type="email" maxLength={254} value={form.contactEmail} onChange={(event) => change("contactEmail", event.target.value)} aria-describedby="contact-email-help" />
+        <p id="contact-email-help">Optional. Use an address other than your Pitt sign-in email. It appears on your member profile only while you share your details.</p>
+      </div>
+      <div>
+        <label htmlFor="profile-bio">Bio</label>
+        <textarea id="profile-bio" maxLength={2000} rows={5} value={form.bio} onChange={(event) => change("bio", event.target.value)} />
+      </div>
+      <fieldset className="csc-account-offers">
+        <legend>I can help with</legend>
+        <div className="csc-account-offer-grid">
+          {HELP_OFFERS.map(([key, label]) => (
+            <label key={key} className="csc-account-checkbox">
+              <input
+                type="checkbox"
+                checked={form[key]}
+                onChange={(event) => change(key, event.target.checked)}
+              />
+              <span className="csc-account-checkbox-mark" aria-hidden="true" />
+              {label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    </fieldset>
+  );
+}
+
 // Membership setup asks only for the required fields. Optional links and files
 // remain in the editor after setup.
 const STEPS = [
@@ -174,6 +233,8 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [claimingAlumni, setClaimingAlumni] = useState(false);
+  const [sharing, setSharingBusy] = useState(false);
   const [attempt, setAttempt] = useState(0);
   // Fixed when the profile first loads, so finishing a step mid-flow cannot
   // flip the page out from under someone the moment it becomes complete.
@@ -219,7 +280,7 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
   // a half-finished profile saves without inventing anything.
   async function persist() {
     const signal = lifetime.current.signal;
-    const input = profileInput(form);
+    const input = profileInput(form, profile.email);
     setSaving(true);
     try {
       const value = await request("/profile", {
@@ -248,7 +309,10 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
     setError("");
     setNotice("");
     try {
-      if (await persist()) setNotice("Your profile has been saved.");
+      const value = await persist();
+      if (value) setNotice(profile.detailsShared && !value.detailsShared
+        ? "Your profile was saved. Sharing was turned off because your profile is incomplete; choose Share again after completing it."
+        : "Your profile has been saved.");
     } catch (failure) {
       if (!lifetime.current.signal.aborted) setError(failure.message);
     }
@@ -270,6 +334,55 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
       }
     } catch (failure) {
       if (!lifetime.current.signal.aborted) setError(failure.message);
+    }
+  }
+
+  async function changeAlumniStatus() {
+    if (claimingAlumni) return;
+    setClaimingAlumni(true);
+    setError("");
+    setNotice("");
+    const signal = lifetime.current.signal;
+    try {
+      const value = await request("/profile/alumni", {
+        userID: identity.id,
+        signal,
+        method: profile.alumniClaimed ? "DELETE" : "PUT",
+      });
+      if (signal.aborted) return;
+      setProfile(value);
+      setNotice(value.alumniClaimed ? "You’re marked as alumni." : "Your alumni status has been removed.");
+      await onSaved?.();
+    } catch (failure) {
+      if (!signal.aborted) setError(failure.message);
+    } finally {
+      if (!signal.aborted) setClaimingAlumni(false);
+    }
+  }
+
+  async function changeSharing() {
+    if (sharing || saving) return;
+    const signal = lifetime.current.signal;
+    setSharingBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const value = await request("/profile/sharing", {
+        userID: identity.id,
+        signal,
+        method: "PUT",
+        contentType: "application/json",
+        body: JSON.stringify({ shared: !profile.detailsShared }),
+      });
+      if (signal.aborted) return;
+      setProfile(value);
+      setNotice(value.detailsShared
+        ? "Your optional profile details are now visible to signed-in members."
+        : "Your optional profile details are now hidden from other members.");
+    } catch (failure) {
+      if (!signal.aborted) setError(failure.message);
+    } finally {
+      if (!signal.aborted) setSharingBusy(false);
     }
   }
 
@@ -351,16 +464,21 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
         <form onSubmit={save}>
           <fieldset disabled={saving}>
             <legend>About you</legend>
-            <NameFields form={form} change={change} />
-            <YearField form={form} change={change} />
-            <fieldset className="csc-account-majors">
-              <legend>Majors</legend>
-              <MajorFields form={form} change={change} />
-            </fieldset>
-            <fieldset className="csc-account-handles">
-              <legend>Profiles</legend>
-              <HandleFields form={form} change={change} />
-            </fieldset>
+            <div className="csc-account-editor-fields">
+              <div className="csc-account-editor-primary">
+                <NameFields form={form} change={change} />
+                <YearField form={form} change={change} />
+                <fieldset className="csc-account-majors">
+                  <legend>Majors</legend>
+                  <MajorFields form={form} change={change} />
+                </fieldset>
+                <fieldset className="csc-account-handles">
+                  <legend>Profiles</legend>
+                  <HandleFields form={form} change={change} />
+                </fieldset>
+              </div>
+              <CareerFields form={form} change={change} />
+            </div>
           </fieldset>
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}
@@ -368,13 +486,42 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
             {saving ? "Saving…" : "Save profile"}
           </button>
         </form>
+        <section className="csc-account-sharing" aria-label="Profile sharing">
+          <h2>Profile sharing</h2>
+          <p>{profile.detailsShared
+            ? "Your optional profile details are visible to other signed-in members."
+            : "Your optional profile details are hidden from other members."}</p>
+          <p>Your basic member entry remains visible. Sharing includes your photo, profile links, career details, bio, website, help offers, and contact email if provided. The Members directory never shows your Pitt sign-in email or résumé.</p>
+          {JSON.stringify(form) !== JSON.stringify(formFromProfile(profile)) &&
+            <p>Save your profile changes before changing sharing.</p>}
+          <button type="button" className="csc-auth-secondary"
+            disabled={sharing || saving || !profile.complete ||
+              (!profile.detailsShared && JSON.stringify(form) !== JSON.stringify(formFromProfile(profile)))}
+            onClick={changeSharing}>
+            {sharing ? "Saving…" : profile.detailsShared
+              ? "Stop sharing my profile details"
+              : "Share my profile details"}
+          </button>
+        </section>
+        <section className="csc-account-alumni" aria-label="Alumni status">
+          <h2>Alumni status</h2>
+          <p>Graduated from Pitt? You can identify yourself as alumni once your graduation year is the current year or earlier. This badge appears to other signed-in members separately from your sharing choice.</p>
+          {profile.alumniClaimed && <p>{profile.isAlumni
+            ? "You’re marked as alumni."
+            : "Your alumni badge is hidden because your saved graduation year is in the future."}</p>}
+          <button type="button" className="csc-auth-secondary"
+            disabled={claimingAlumni || (!profile.alumniClaimed && (!profile.graduationYear || profile.graduationYear > Number(new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone: "America/New_York" }).format(new Date()))))}
+            onClick={changeAlumniStatus}>
+            {claimingAlumni ? "Saving…" : profile.alumniClaimed ? "Remove my alumni status" : "Mark me as alumni"}
+          </button>
+        </section>
         {renderFiles()}
       </>
     );
   }
 
   return (
-    <div className="csc-account">
+    <div className={`csc-account${guided === false ? " csc-account--editor" : ""}`}>
       <Link to="/dashboard" className="csc-account-back">
         ← Dashboard
       </Link>

@@ -11,7 +11,11 @@ The member home shows the next three CRM events; see
 [events](EVENTS.md#member-dashboard). Incomplete accounts are sent to
 My Account until they save first and last name, graduation year, and a major.
 The Members directory at `/dashboard/members` searches active, completed
-profiles by name; member names in CRM screens link to their profiles.
+profiles by name, current company, and alumni status; member names in CRM
+screens link to their profiles. My Account includes optional career details,
+help offers, a separate contact email, an explicit sharing choice, and
+self-reported Pitt alumni status. See [profiles](PROFILES.md). Optional details
+remain hidden from other members until their owner shares them.
 Members can submit activity links and see all-time and rolling 30-day top-10
 leaderboards at `/dashboard/points`. My Account shows their scores and claim
 history. The full history also has a page linked from Points at
@@ -37,7 +41,10 @@ mise run setup
 mise run dev
 ```
 
-Open http://localhost:8000. The first run requires internet access and can take
+Open http://localhost:8000. `mise run dev` refuses to start if port 8000 or
+8080 is already in use, so Gatsby cannot quietly move to another port while
+an older site stays at the documented address. Stop the existing server and
+rerun the task. The first run requires internet access and can take
 several minutes to download runtimes, dependencies, and Docker images.
 
 `mise trust` approves this checkout's task configuration; review it before trusting

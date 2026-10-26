@@ -58,10 +58,20 @@ export function formFromProfile(profile) {
     githubUsername: profile.githubUsername || "",
     leetcodeUsername: profile.leetcodeUsername || "",
     linkedinUsername: profile.linkedinUsername || "",
+    currentCompany: profile.currentCompany || "",
+    jobTitle: profile.jobTitle || "",
+    location: profile.location || "",
+    bio: profile.bio || "",
+    personalWebsite: profile.personalWebsite || "",
+    contactEmail: profile.contactEmail || "",
+    offersCoffee: !!profile.offersCoffee,
+    offersMentorship: !!profile.offersMentorship,
+    offersReferrals: !!profile.offersReferrals,
+    offersResumeReview: !!profile.offersResumeReview,
   };
 }
 
-export function profileInput(form) {
+export function profileInput(form, signInEmail) {
   const name = (value) => {
     const trimmed = value.trim();
     if ([...trimmed].length > 100 || /[\0\r\n]/.test(trimmed))
@@ -100,6 +110,32 @@ export function profileInput(form) {
     handles[field] = handle || null;
   }
 
+  const optionalText = (value, limit, label, multiline = false) => {
+    const trimmed = value.trim();
+    if ([...trimmed].length > limit || /[\0-\x08\x0b-\x1f]/.test(trimmed) || (!multiline && /[\r\n\t]/.test(trimmed))) {
+      throw new Error(`${label} must be at most ${limit} characters.`);
+    }
+    return trimmed || null;
+  };
+  const website = optionalText(form.personalWebsite, 500, "Personal website");
+  if (website) {
+    try {
+      const parsed = new URL(website);
+      if (parsed.protocol !== "https:" || !parsed.hostname || parsed.username || parsed.password || parsed.hash) throw new Error();
+    } catch {
+      throw new Error("Use a full HTTPS URL for your personal website.");
+    }
+  }
+
+  const contactEmail = optionalText(form.contactEmail, 254, "Contact email");
+  if (
+    contactEmail &&
+    (!/^[^@\s<>"(),;:]+@[^@\s<>]+\.[^@\s<>]+$/.test(contactEmail) ||
+      (signInEmail && contactEmail.toLowerCase() === signInEmail.toLowerCase()))
+  ) {
+    throw new Error("Use a valid contact email different from your Pitt sign-in address.");
+  }
+
   return {
     firstName: name(form.firstName),
     lastName: name(form.lastName),
@@ -107,6 +143,16 @@ export function profileInput(form) {
     graduationYear: year ? Number(year) : null,
     majors,
     ...handles,
+    currentCompany: optionalText(form.currentCompany, 160, "Company"),
+    jobTitle: optionalText(form.jobTitle, 160, "Job title"),
+    location: optionalText(form.location, 160, "Location"),
+    bio: optionalText(form.bio, 2000, "Bio", true),
+    personalWebsite: website,
+    contactEmail,
+    offersCoffee: !!form.offersCoffee,
+    offersMentorship: !!form.offersMentorship,
+    offersReferrals: !!form.offersReferrals,
+    offersResumeReview: !!form.offersResumeReview,
   };
 }
 

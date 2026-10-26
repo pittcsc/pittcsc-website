@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -20,6 +21,10 @@ type profilesStub struct {
 	input      profile.Input
 	err        error
 	writes     int
+	claims     int
+	unclaims   int
+	shares     int
+	shared     bool
 }
 
 func (s *profilesStub) GetOrCreate(ctx context.Context, id string) (profile.Record, error) {
@@ -30,6 +35,22 @@ func (s *profilesStub) Update(ctx context.Context, id string, input profile.Inpu
 	s.userID, s.input = id, input
 	s.writes++
 	return profile.Record{FirstName: input.FirstName, Majors: input.Majors}, s.err
+}
+func (s *profilesStub) ClaimAlumni(_ context.Context, id string) (profile.Record, error) {
+	s.userID = id
+	s.claims++
+	return profile.Record{IsAlumni: true, Majors: []string{}}, s.err
+}
+func (s *profilesStub) UnclaimAlumni(_ context.Context, id string) (profile.Record, error) {
+	s.userID = id
+	s.unclaims++
+	return profile.Record{Majors: []string{}}, s.err
+}
+func (s *profilesStub) SetDetailsShared(_ context.Context, id string, shared bool) (profile.Record, error) {
+	s.userID = id
+	s.shares++
+	s.shared = shared
+	return profile.Record{DetailsShared: shared, Majors: []string{}}, s.err
 }
 func verifiedAuth() authenticator {
 	return authenticateFunc(func(ctx context.Context, header string) (auth.Identity, error) {
@@ -82,6 +103,7 @@ func TestProfileEditableFields(t *testing.T) {
 	for _, body := range []string{
 		`{"roles":["staff"]}`, `{"auth_user_id":"someone-else"}`, `{"id":"someone-else"}`,
 		`{"account_status":"active"}`, `{"email":"new@pitt.edu"}`, `{"avatar_asset_id":"other-file"}`,
+		`{"detailsShared":true}`,
 		`{"graduationYear":2028.5}`, `{"graduationYear":"2028"}`, `{"majors":[""]}`,
 		`{"firstName":"` + strings.Repeat("x", 101) + `"}`, `null`, `{}`, // empty object is allowed below
 		`{} {}`, `{"firstName":`,
@@ -109,6 +131,76 @@ func TestProfileEditableFields(t *testing.T) {
 	}
 	if body["email"] != "fixture@pitt.edu" {
 		t.Fatal("email must come from current Auth identity")
+	}
+}
+
+func TestSharingRequiresVerifiedCompleteOwnerAndExactBoolean(t *testing.T) {
+	store := &profilesStub{}
+	if w := profileRequest(t, store, "PUT", "/profile/sharing", `{"shared":true}`, ""); w.Code != 401 || store.shares != 0 {
+		t.Fatal("anonymous request changed sharing")
+	}
+	store.incomplete = true
+	if w := profileRequest(t, store, "PUT", "/profile/sharing", `{"shared":true}`, "valid"); w.Code != 403 || store.shares != 0 {
+		t.Fatal("incomplete member changed sharing")
+	}
+	store.incomplete = false
+	for _, body := range []string{`{}`, `{"shared":null}`, `{"shared":1}`, `{"shared":true,"userId":"other"}`, `{"shared":true} {}`} {
+		if w := profileRequest(t, store, "PUT", "/profile/sharing", body, "valid"); w.Code != 400 || store.shares != 0 {
+			t.Fatalf("invalid sharing request accepted: %q", body)
+		}
+	}
+	for _, shared := range []bool{true, true, false, false} {
+		body := `{"shared":false}`
+		if shared {
+			body = `{"shared":true}`
+		}
+		w := profileRequest(t, store, "PUT", "/profile/sharing", body, "valid")
+		if w.Code != 200 || store.shared != shared || store.userID != "verified-owner" || !strings.Contains(w.Body.String(), `"detailsShared":`+strconv.FormatBool(shared)) {
+			t.Fatalf("sharing state not applied to verified owner: %d", w.Code)
+		}
+	}
+}
+
+func TestSelfClaimAlumniUsesVerifiedIdentityOnly(t *testing.T) {
+	store := &profilesStub{}
+	if w := profileRequest(t, store, "PUT", "/profile/alumni", "", ""); w.Code != 401 || store.claims != 0 {
+		t.Fatalf("anonymous claim accepted: %d", w.Code)
+	}
+	if w := profileRequest(t, store, "PUT", "/profile/alumni", `{"role":"staff"}`, "valid"); w.Code != 400 || store.claims != 0 {
+		t.Fatalf("role payload accepted: %d", w.Code)
+	}
+	w := profileRequest(t, store, "PUT", "/profile/alumni", "", "valid")
+	if w.Code != 200 || store.claims != 1 || store.userID != "verified-owner" || !strings.Contains(w.Body.String(), `"isAlumni":true`) {
+		t.Fatalf("self claim failed: %d %s", w.Code, w.Body.String())
+	}
+	store.err = profile.ErrSuspended
+	if w := profileRequest(t, store, "PUT", "/profile/alumni", "", "valid"); w.Code != 403 || store.claims != 1 {
+		t.Fatalf("suspended claim reached store: %d", w.Code)
+	}
+}
+
+func TestSelfUnclaimAlumniUsesVerifiedIdentityOnly(t *testing.T) {
+	store := &profilesStub{roles: []string{"member", "alumni", "staff"}}
+	if w := profileRequest(t, store, "DELETE", "/profile/alumni", "", ""); w.Code != 401 || store.unclaims != 0 {
+		t.Fatalf("anonymous removal accepted: %d", w.Code)
+	}
+	for _, body := range []string{`{"role":"staff"}`, `{"userId":"other"}`} {
+		if w := profileRequest(t, store, "DELETE", "/profile/alumni", body, "valid"); w.Code != 400 || store.unclaims != 0 {
+			t.Fatalf("removal payload accepted: %d", w.Code)
+		}
+	}
+	for range 2 {
+		w := profileRequest(t, store, "DELETE", "/profile/alumni", "", "valid")
+		if w.Code != 200 || store.userID != "verified-owner" || !strings.Contains(w.Body.String(), `"isAlumni":false`) {
+			t.Fatalf("self removal failed: %d %s", w.Code, w.Body.String())
+		}
+	}
+	if store.unclaims != 2 {
+		t.Fatal("removal retry was not sent to store")
+	}
+	store.err = profile.ErrSuspended
+	if w := profileRequest(t, store, "DELETE", "/profile/alumni", "", "valid"); w.Code != 403 || store.unclaims != 2 {
+		t.Fatalf("suspended removal reached store: %d", w.Code)
 	}
 }
 

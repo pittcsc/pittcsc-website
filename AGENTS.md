@@ -37,8 +37,10 @@
   status, ownership, and allowed fields on protected requests. UI guards are not
   security boundaries; browser-supplied roles/user IDs are not authoritative.
 - Roles are additive, not mutually exclusive. New accounts default to `member`;
-  users cannot self-assign `staff`, `foundry`, or `alumni`. Do not invent additional
-  privileges for foundry/alumni without an agreed requirement.
+  users cannot self-assign `staff` or `foundry`. Pitt graduates can self-report
+  `alumni` through the dedicated authenticated profile action; it grants no
+  additional privileges. Do not invent additional privileges for foundry/alumni
+  without an agreed requirement.
 - Fetch private dashboard data at runtime. Never include private records in Gatsby
   build-time data or generated public pages.
 - Commit every application schema/policy change as a Supabase migration. Add local

@@ -141,3 +141,40 @@ func TestInputValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestOptionalCareerFields(t *testing.T) {
+	valid := Input{CurrentCompany: ptr("  PNC  "), JobTitle: ptr("Engineer"), Location: ptr("Pittsburgh"), Bio: ptr("  Hello\nCSC  "), PersonalWebsite: ptr("https://example.com/about"), OffersMentorship: true}
+	if err := valid.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	if *valid.CurrentCompany != "PNC" || *valid.Bio != "Hello\nCSC" || !valid.OffersMentorship {
+		t.Fatal("career fields were not normalized")
+	}
+	for _, input := range []Input{
+		{CurrentCompany: ptr(strings.Repeat("x", 161))},
+		{JobTitle: ptr("bad\nvalue")},
+		{Bio: ptr(strings.Repeat("x", 2001))},
+		{PersonalWebsite: ptr("javascript:alert(1)")},
+		{PersonalWebsite: ptr("http://example.com")},
+		{PersonalWebsite: ptr("https://user:pass@example.com")},
+	} {
+		if input.Validate() != ErrInvalid {
+			t.Fatalf("accepted invalid optional field: %+v", input)
+		}
+	}
+}
+
+func TestContactEmailValidation(t *testing.T) {
+	for _, value := range []string{" work@example.org ", "other@pitt.edu"} {
+		input := Input{ContactEmail: ptr(value)}
+		if err := input.Validate(); err != nil || input.ContactEmail == nil || *input.ContactEmail != strings.TrimSpace(value) {
+			t.Fatalf("valid contact rejected: %q: %v", value, err)
+		}
+	}
+	for _, value := range []string{"bad", "Name <work@example.org>", "work@example.org\nBcc:bad@example.org", "work@localhost"} {
+		input := Input{ContactEmail: ptr(value)}
+		if err := input.Validate(); err != ErrInvalid {
+			t.Fatalf("invalid contact accepted: %q", value)
+		}
+	}
+}

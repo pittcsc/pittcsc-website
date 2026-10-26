@@ -17,7 +17,7 @@ current Auth identity and is read-only. The OTP/login workflow is unchanged.
 
 Partial saves are allowed. Completion requires first name, last name, graduation
 year, and one major. Verified email is supplied by Auth. External usernames,
-resume, and picture are optional. Incomplete accounts can use My Account and
+resume, picture, and career/community details are optional. Incomplete accounts can use My Account and
 file uploads but cannot use dashboard, points, event, attendance, or staff
 features. The same gate applies to all roles and is rechecked by Go on every
 protected request. Removing a required field revokes access until it is restored.
@@ -30,16 +30,38 @@ protected request. Removing a required field revokes access until it is restored
 | GitHub, LeetCode, LinkedIn | Optional bare usernames, never URLs; a pasted profile URL is reduced to its handle in the browser |
 | Profile picture | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels |
 | Resume | Optional PDF, at most 10 MiB |
+| Current company, job title, location | Optional free text, up to 160 characters each |
+| Bio | Optional, up to 2000 characters |
+| Personal website | Optional full HTTPS URL, up to 500 characters |
+| Contact email | Optional valid email, up to 254 characters; must differ from the current verified Pitt sign-in address |
+| Coffee chats, mentorship, referrals, résumé reviews | Optional yes/no offers, defaulting to no |
 
 An incomplete profile is filled in three questions, and each **Next**
 saves, so leaving mid-flow keeps what was answered and returns to the first
 unanswered question. After completion, the original profile or attendance link
 resumes. Once complete, My Account becomes a single page where
-names, year, majors, and the three usernames save together with **Save
+names, year, majors, the three usernames, and optional career/community details save together with **Save
 profile**. The last successful
 save wins if multiple tabs edit the same profile. Failures preserve edits for
 retry. Routine token refresh preserves the editor; logout, account changes, and
 failed identity verification hide private state and cancel requests.
+All members can save these details privately. **Share my profile details** is a
+separate, explicit choice available after profile completion; new and existing
+accounts start unshared. It exposes the photo, external handles, career details,
+bio, website, help offers, and contact email to other completed, signed-in
+members, including staff. The owner can stop sharing without deleting saved
+information. Removing a required completion field or suspending the account
+clears sharing in the same database update; completing or reinstating it requires
+a new Share action. The Members directory never includes the sign-in email or
+résumé. The contact email is displayed only on the member detail page and is not verified or
+used to sign in.
+
+Members whose saved graduation year is no later than the current New York year
+can use **Mark me as alumni** in My Account. It self-assigns the existing alumni
+role without extra permissions. **Remove my alumni status** revokes only that
+role, even if the saved graduation year later changes. Both actions are
+idempotent and audited. The alumni badge and filter require both the role
+and eligible year on each read. Sharing is a separate choice for all members.
 
 Files have separate save, replace, and remove actions. Avatars are decoded and
 re-encoded to strip metadata and trailing bytes; WebP is stored as PNG. The default
@@ -72,20 +94,27 @@ file references. Ownership always comes from the verified identity. Responses us
 | --- | --- |
 | `GET /auth/session` | Provision/check profile, return current verified Auth identity |
 | `GET /profile` | Own fields, completion, email, file flags, and update timestamp |
-| `PUT /profile` | Replace editable text/year/major fields; omitted or blank fields are cleared |
+| `PUT /profile` | Replace editable profile fields; omitted or blank fields are cleared; role fields are rejected |
+| `PUT /profile/alumni` | Self-assign alumni to the verified caller; empty body; repeat calls are safe |
+| `DELETE /profile/alumni` | Remove the verified caller's alumni role; empty body; repeat calls are safe |
+| `PUT /profile/sharing` | Set `{ "shared": true/false }` for the verified, completed owner; repeat calls are safe |
 | `GET /profile/avatar`, `GET /profile/resume` | Retrieve own file; missing files return 404 |
 | `PUT /profile/avatar`, `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
 | `DELETE /profile/avatar`, `DELETE /profile/resume` | Remove own file; repeated removal succeeds |
-| `GET /members?q=&page=1` | Paginated active, completed directory; name search matches first and preferred names |
-| `GET /members/{id}` | Member profile with name, majors, year, optional handles, alumni label, all-time points, and 30-day rank |
+| `GET /members?q=&company=&alumni=1&page=1` | Paginated active, completed directory; optional name, case-insensitive partial current-company, and alumni filters combine with AND |
+| `GET /members/{id}` | Member profile with name, majors, year, optional handles/career details/help offers, alumni label, all-time points, and 30-day rank |
 | `GET /members/{id}/avatar` | Authenticated avatar bytes for an eligible profile |
 
 These member endpoints require the viewer's completed active account. Staff can
 open an active incomplete profile by ID from User Management, but incomplete
 accounts do not appear in the directory or member leaderboards. The response
-never includes email, resume, or point claim links. Browser roles have no direct
-database access. Existing eligible profiles become visible as soon as this
-feature launches; there is no opt-in setting.
+never includes sign-in email, resume, or point claim links. Directory cards show company
+and job title only when shared; the full profile shows other optional fields
+only when shared. The avatar route also checks the owner's current sharing
+choice, including for staff. Basic name, majors, graduation year, eligible
+alumni label, and points remain visible regardless of sharing. Company search
+ignores unshared companies so hidden data cannot affect results. Browser roles
+have no direct database access.
 
 ## Local verification and hosted handoff
 
@@ -105,8 +134,10 @@ write the same cache/output directories.
 
 `test:profiles` refuses nonlocal URLs and creates real OTP/Mailpit fixtures named
 `csc-profile-test-*`. It checks concurrent first use, partial saves, completion,
-protected fields, ownership, file limits/replacement/removal, suspension, logout,
-and Data API isolation. It temporarily suspends only its synthetic application
+protected fields, ownership, contact-email validation, sharing and unsharing,
+hidden search and avatar access, alumni year eligibility, concurrent sharing and
+profile writes, file limits/replacement/removal, suspension, logout, and Data API
+isolation. It temporarily suspends only its synthetic application
 profile and restores it in `finally`; it never edits managed Auth tables.
 Synthetic accounts/profiles/mail remain for inspection, and sessions are signed
 out. The SQL check verifies browser-role isolation.

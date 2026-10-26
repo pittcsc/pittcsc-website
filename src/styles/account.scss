@@ -3,9 +3,13 @@
 
 @import "./helpers/account-tokens";
 
-// The profile form needs more room than the signed-in landing card.
+// Keep the short setup questions compact, then give the completed editor the
+// same room as the member dashboard.
 .csc-auth:has(.csc-account) .csc-auth-cardwrap {
   max-width: 44rem;
+}
+.csc-auth:has(.csc-account--editor) .csc-auth-cardwrap {
+  max-width: 72rem;
 }
 
 .csc-account {
@@ -121,6 +125,23 @@
     gap: 1.125rem;
   }
 
+  .csc-account-editor-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+  .csc-account-editor-primary {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+    min-width: 0;
+  }
+  &.csc-account--editor > form > button {
+    align-self: flex-start;
+    width: auto;
+    min-width: 11rem;
+  }
+
   .csc-account-majors {
     margin-top: 1.75rem;
     padding-top: 1.75rem;
@@ -145,6 +166,89 @@
     margin-top: 1.75rem;
     padding-top: 1.75rem;
     border-top: 1px solid $acc-hairline;
+  }
+  .csc-account-career {
+    min-width: 0;
+
+    > p { margin: 0; color: $acc-muted; line-height: 1.5; }
+    textarea {
+      @include acc-field;
+      height: auto;
+      min-height: 7rem;
+      margin-top: 0.5rem;
+      padding: 0.75rem 1rem;
+      resize: vertical;
+    }
+  }
+  .csc-account-alumni, .csc-account-sharing {
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
+    h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+    p { margin: 0 0 1rem; color: $acc-muted; line-height: 1.5; }
+    button { width: auto; }
+  }
+  .csc-account-offers {
+    margin-top: 0.5rem;
+    legend { margin-bottom: 0.75rem; font-size: 1rem; }
+  }
+  .csc-account-offer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .csc-account-checkbox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 52px;
+    padding: 0.75rem;
+    border: 1.5px solid $acc-line;
+    border-radius: $acc-radius-control;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    &:has(input:checked) {
+      border-color: $acc-navy;
+      background: $acc-navy-soft;
+    }
+    input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    input:checked + .csc-account-checkbox-mark {
+      border-color: $acc-navy;
+      background: $acc-navy;
+    }
+    input:checked + .csc-account-checkbox-mark::after {
+      opacity: 1;
+    }
+    input:focus-visible + .csc-account-checkbox-mark {
+      outline: 3px solid $acc-gold;
+      outline-offset: 2px;
+    }
+  }
+  .csc-account-checkbox-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 1.4rem;
+    height: 1.4rem;
+    border: 2px solid $acc-border;
+    border-radius: 0.35rem;
+    background: #fff;
+    color: #fff;
+
+    &::after {
+      content: "✓";
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1;
+      opacity: 0;
+    }
   }
   .csc-account-handle {
     display: flex;
@@ -195,17 +299,54 @@
   }
 
   .csc-account-files {
-    margin-top: 1.75rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid $acc-hairline;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
 
     h2 {
       margin: 0;
       font-size: 1.25rem;
       font-weight: 700;
+    }
+  }
+  .csc-account-file-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid $acc-hairline;
+    border-radius: $acc-radius-control;
+    background: $acc-mist;
+  }
+  .csc-account-file-heading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 6rem;
+
+    > div:last-child {
+      min-width: 0;
+    }
+    p {
+      margin-top: 0.35rem;
+      font-size: 0.875rem;
+      color: $acc-muted;
+    }
+  }
+  .csc-account-resume-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 6rem;
+    height: 6rem;
+    border-radius: $acc-radius-control;
+    background: $acc-cream;
+    color: $acc-navy;
+
+    svg {
+      width: 2.5rem;
+      height: 2.5rem;
     }
   }
   // Optional profile picture. Falls back to the member's initials, so the
@@ -214,9 +355,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 0 0 6rem;
     width: 6rem;
     height: 6rem;
-    margin-top: 0.25rem;
     border-radius: 50%;
     overflow: hidden;
     background: $acc-cream;
@@ -234,6 +375,19 @@
   .csc-account-file-help {
     font-size: 0.875rem;
     color: $acc-muted;
+  }
+  .csc-account-file {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    label {
+      margin: 0;
+    }
+  }
+  .csc-account-preview-error button {
+    width: auto;
+    margin-top: 0.75rem;
   }
   .csc-account-file input[type="file"] {
     width: 100%;
@@ -265,11 +419,27 @@
 
     button {
       width: auto;
-      flex: 1 1 10rem;
+    }
+    .csc-account-file-remove {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 850px) {
+    .csc-account-editor-fields,
+    .csc-account-files {
+      grid-template-columns: 1fr;
+    }
+    .csc-account-career {
+      padding-top: 1.75rem;
+      border-top: 1px solid $acc-hairline;
     }
   }
 
   @media (max-width: 480px) {
+    .csc-account-offer-grid {
+      grid-template-columns: 1fr;
+    }
     .csc-account-name-grid {
       grid-template-columns: 1fr;
       gap: 1.125rem;
@@ -281,6 +451,18 @@
       button {
         width: 100%;
       }
+    }
+    .csc-account-file-card {
+      padding: 1.125rem;
+    }
+    .csc-account-file-heading {
+      align-items: flex-start;
+    }
+    .csc-account-avatar,
+    .csc-account-resume-icon {
+      flex-basis: 4rem;
+      width: 4rem;
+      height: 4rem;
     }
   }
 }

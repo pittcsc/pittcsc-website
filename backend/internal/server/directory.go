@@ -13,7 +13,7 @@ import (
 )
 
 type directoryStore interface {
-	Directory(context.Context, string, int) (profile.DirectoryPage, error)
+	Directory(context.Context, profile.DirectorySearch) (profile.DirectoryPage, error)
 	PublicMember(context.Context, string, bool) (profile.PublicMember, error)
 	MemberAvatar(context.Context, string, bool) (profile.Asset, error)
 }
@@ -23,7 +23,7 @@ var memberIDPattern = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-f
 func writeDirectoryError(w http.ResponseWriter, err error) {
 	switch {
 	case errors.Is(err, profile.ErrInvalidSearch):
-		writeJSONError(w, http.StatusBadRequest, "Search names with up to 100 characters and a valid page.")
+		writeJSONError(w, http.StatusBadRequest, "Search names with up to 100 characters, companies with up to 160 characters, and a valid page.")
 	case errors.Is(err, profile.ErrMemberNotFound):
 		writeJSONError(w, http.StatusNotFound, "This member profile is unavailable.")
 	default:
@@ -43,12 +43,13 @@ func registerDirectoryRoutes(mux *http.ServeMux, authentication authenticator, p
 		})
 	}
 	mux.HandleFunc("GET /members", member(func(w http.ResponseWriter, r *http.Request, _ bool) {
-		query, page, err := profile.ParseDirectorySearch(r.URL.Query().Get("q"), r.URL.Query().Get("page"))
+		params := r.URL.Query()
+		search, err := profile.ParseDirectorySearch(params.Get("q"), params.Get("company"), params.Get("alumni"), params.Get("page"))
 		if err != nil {
 			writeDirectoryError(w, err)
 			return
 		}
-		result, err := store.Directory(r.Context(), query, page)
+		result, err := store.Directory(r.Context(), search)
 		if err != nil {
 			writeDirectoryError(w, err)
 			return

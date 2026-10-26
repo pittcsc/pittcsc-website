@@ -184,7 +184,9 @@ async function main() {
     firstName: "Fixture",
     lastName: `Member${suffix.slice(0, 8)}`,
     preferredName: "Test",
-    graduationYear: 2028,
+    graduationYear: Number(new Intl.DateTimeFormat("en-US", {
+      year: "numeric", timeZone: "America/New_York",
+    }).format(new Date())),
     majors: ["Computer Science", "Mathematics"],
   };
   const saved = await put(owner, complete);
@@ -196,6 +198,34 @@ async function main() {
     (await put(owner, complete)).status === 200 &&
       count("profiles", owner.id) === 1,
     "Retry duplicated profile",
+  );
+  const career = {
+    ...complete,
+    currentCompany: "PNC Bank",
+    jobTitle: "Software Engineer",
+    location: "Pittsburgh",
+    bio: "Happy to meet CSC members.",
+    personalWebsite: "https://example.com/about",
+    contactEmail: "fixture-contact@example.org",
+    offersCoffee: true,
+    offersMentorship: true,
+  };
+  check(
+    (await put(owner, career)).status === 200,
+    "Optional career details could not be saved",
+  );
+  check(
+    (await put(owner, { ...career, personalWebsite: "javascript:alert(1)" })).status === 400,
+    "Unsafe website accepted",
+  );
+  check(
+    (await put(owner, { ...career, contactEmail: owner.email.toUpperCase() })).status === 400,
+    "Sign-in email accepted as contact email",
+  );
+  check(
+    (await put(owner, { ...career, contactEmail: "alternate@pitt.edu" })).status === 200 &&
+      (await put(owner, career)).status === 200,
+    "An alternate Pitt contact address was rejected",
   );
   check(
     (await api(owner, "/profile")).headers.get("cache-control") === "no-store",
@@ -242,11 +272,15 @@ async function main() {
     "Incomplete member read a profile",
   );
   check(
+    (await api(other, "/profile/sharing", "PUT", JSON.stringify({ shared: true }))).status === 403,
+    "Incomplete member changed sharing",
+  );
+  check(
     (
       await put(other, {
         firstName: "Directory",
         lastName: `Viewer${suffix.slice(0, 8)}`,
-        graduationYear: 2028,
+        graduationYear: complete.graduationYear + 1,
         majors: ["Mathematics"],
       })
     ).status === 200,
@@ -264,6 +298,94 @@ async function main() {
       "First or preferred name search missed a member",
     );
   }
+  const companyMatches = await (
+    await api(other, "/members?company=pnC&alumni=1")
+  ).json();
+  check(companyMatches.total === 0, "Alumni filter included an unclaimed member");
+  check(
+    (await api(other, "/profile/alumni", "PUT")).status === 409,
+    "Future graduation year was allowed to claim alumni status",
+  );
+  check(
+    (await (await api(other, "/members?company=pnC")).json()).total === 0,
+    "Unshared company leaked through search",
+  );
+  const hidden = await (await api(other, `/members/${owner.id}`)).json();
+  check(
+    hidden.currentCompany === null && hidden.contactEmail === null &&
+      hidden.githubUsername === null && !hidden.offersMentorship && !hidden.hasAvatar,
+    "Optional member details were visible before sharing",
+  );
+  for (const body of [JSON.stringify({ shared: true, userId: other.id }), JSON.stringify({ shared: "yes" })]) {
+    check((await api(owner, "/profile/sharing", "PUT", body)).status === 400,
+      "Invalid sharing body was accepted");
+  }
+  const share = (shared) => api(owner, "/profile/sharing", "PUT", JSON.stringify({ shared }));
+  for (let i = 0; i < 2; i++) {
+    check((await share(true)).status === 200, "Sharing retry failed");
+  }
+  const claims = await Promise.all(
+    Array.from({ length: 8 }, () => api(owner, "/profile/alumni", "PUT")),
+  );
+  check(claims.every((response) => response.status === 200), "Concurrent alumni claims failed");
+  check(
+    sql(`select count(*) from csc.role_audit where target_user_id = '${owner.id}' and role = 'alumni' and action = 'grant'`) === "1",
+    "Alumni claim was not idempotently audited",
+  );
+  const claimedSession = await (await api(owner, "/auth/session")).json();
+  check(
+    claimedSession.roles.includes("member") &&
+      claimedSession.roles.includes("alumni") &&
+      !claimedSession.roles.includes("staff") &&
+      (await api(owner, "/profile/alumni", "PUT", JSON.stringify({ role: "staff" }))).status === 400,
+    "Alumni self-service changed another role or accepted role fields",
+  );
+  const alumniMatches = await (
+    await api(other, `/members?q=Test&company=pnC&alumni=1`)
+  ).json();
+  check(
+    alumniMatches.members.some((member) => member.id === owner.id && member.currentCompany === "PNC Bank" && member.jobTitle === "Software Engineer" && member.isAlumni),
+    "Combined alumni and partial company filter missed the member",
+  );
+  sql(`insert into csc.user_roles (auth_user_id, role) values ('${owner.id}', 'foundry')`);
+  check((await api(owner, "/profile/alumni", "DELETE", JSON.stringify({ userId: other.id }))).status === 400,
+    "Alumni removal accepted a target user");
+  const removals = await Promise.all(
+    Array.from({ length: 8 }, () => api(owner, "/profile/alumni", "DELETE")),
+  );
+  check(removals.every((response) => response.status === 200), "Concurrent alumni removals failed");
+  const unclaimed = await (await api(owner, "/profile")).json();
+  const unclaimedSession = await (await api(owner, "/auth/session")).json();
+  check(
+    !unclaimed.alumniClaimed && !unclaimed.isAlumni &&
+      unclaimedSession.roles.includes("member") && unclaimedSession.roles.includes("foundry") &&
+      !unclaimedSession.roles.includes("alumni") &&
+      !(await (await api(other, "/members?alumni=1")).json()).members.some((member) => member.id === owner.id) &&
+      sql(`select count(*) from csc.role_audit where target_user_id = '${owner.id}' and role = 'alumni' and action = 'revoke'`) === "1",
+    "Alumni removal did not clear only the label or was not idempotently audited",
+  );
+  check((await api(owner, "/profile/alumni", "PUT")).status === 200,
+    "Alumni reclaim after removal failed");
+  check((await put(owner, { ...career, graduationYear: complete.graduationYear + 1 })).status === 200,
+    "Future-year profile edit failed");
+  check(
+    (await (await api(owner, "/profile")).json()).alumniClaimed &&
+      !(await (await api(owner, "/profile")).json()).isAlumni &&
+      !(await (await api(other, "/members?alumni=1")).json()).members.some((member) => member.id === owner.id) &&
+      (await (await api(other, `/members/${owner.id}`)).json()).currentCompany === "PNC Bank",
+    "Future year kept alumni presentation or incorrectly hid shared member details",
+  );
+  check((await api(owner, "/profile/alumni", "DELETE")).status === 200 &&
+      !(await (await api(owner, "/profile")).json()).alumniClaimed,
+    "Future graduation year prevented alumni removal");
+  check((await put(owner, career)).status === 200,
+    "Eligible graduation year restore failed");
+  check((await api(owner, "/profile/alumni", "PUT")).status === 200,
+    "Alumni reclaim after graduation year restore failed");
+  check(
+    (await (await api(other, "/members?company=google&alumni=1")).json()).total === 0,
+    "Company filter included a different employer",
+  );
   const privateSearch = await (
     await api(other, `/members?q=${encodeURIComponent(owner.email)}`)
   ).json();
@@ -274,10 +396,21 @@ async function main() {
       publicProfile.name === `Test Member${suffix.slice(0, 8)}` &&
       publicProfile.allTimePoints === 0 &&
       publicProfile.rank30Days === null &&
+      publicProfile.currentCompany === "PNC Bank" &&
+      publicProfile.location === "Pittsburgh" &&
+      publicProfile.contactEmail === career.contactEmail &&
+      publicProfile.offersMentorship === true &&
       !("email" in publicProfile) &&
       !("hasResume" in publicProfile),
     "Public profile exposed private fields or wrong points",
   );
+  check((await share(false)).status === 200, "Unsharing failed");
+  check(
+    (await (await api(other, "/members?company=pnC")).json()).total === 0 &&
+      (await (await api(other, `/members/${owner.id}`)).json()).contactEmail === null,
+    "Unshared details leaked through search or profile",
+  );
+  check((await share(true)).status === 200, "Re-sharing failed");
 
   stage = "resume uploads and concurrent replacement";
   const pdf = fixturePDF("Synthetic CSC resume fixture");
@@ -334,6 +467,18 @@ async function main() {
       204,
     "Avatar upload failed",
   );
+  check(
+    (await api(other, `/members/${owner.id}/avatar`)).status === 200,
+    "Shared avatar was not available to members",
+  );
+  check((await share(false)).status === 200, "Unsharing photo failed");
+  check(
+    (await api(other, `/members/${owner.id}/avatar`)).status === 404 &&
+      !(await (await api(other, `/members/${owner.id}`)).json()).hasAvatar &&
+      (await api(owner, "/profile/avatar")).status === 200,
+    "Unshared avatar remained visible or owner lost access",
+  );
+  check((await share(true)).status === 200, "Re-sharing photo failed");
   const image = await api(owner, "/profile/avatar");
   check(
     image.status === 200 && image.headers.get("content-type") === "image/png",
@@ -394,6 +539,12 @@ async function main() {
       `update csc.profiles set account_status = 'active' where auth_user_id = '${owner.id}'::uuid;`,
     );
   }
+  check(
+    !(await (await api(owner, "/profile")).json()).detailsShared &&
+      (await (await api(other, `/members/${owner.id}`)).json()).contactEmail === null,
+    "Reinstatement restored sharing without consent",
+  );
+  check((await share(true)).status === 200, "Sharing after reinstatement failed");
   stage = "idempotent file removal";
   for (const kind of ["avatar", "resume"]) {
     for (let i = 0; i < 2; i++)
@@ -418,7 +569,7 @@ async function main() {
     await put(owner, { ...complete, majors: [] })
   ).json();
   check(
-    !incompleteAgain.complete,
+    !incompleteAgain.complete && !incompleteAgain.detailsShared,
     "Clearing a required field kept membership complete",
   );
   check(
@@ -433,6 +584,23 @@ async function main() {
     (await put(owner, complete)).status === 200,
     "Completion recovery failed",
   );
+  check(
+    !(await (await api(owner, "/profile")).json()).detailsShared,
+    "Completion restored sharing without consent",
+  );
+  check((await share(true)).status === 200, "Sharing after completion failed");
+  const race = await Promise.all([
+    share(true),
+    put(owner, { ...complete, majors: [] }),
+  ]);
+  check(race.every((response) => response.status === 200 || response.status === 403),
+    "Concurrent sharing/profile write failed unexpectedly");
+  check(
+    !(await (await api(owner, "/profile")).json()).detailsShared,
+    "Concurrent write left an incomplete profile shared",
+  );
+  check((await put(owner, complete)).status === 200,
+    "Recovery after concurrent write failed");
   stage = "immediate logout rejection";
   check(
     !(await owner.client.auth.signOut({ scope: "local" })).error,
@@ -451,7 +619,7 @@ async function main() {
     "Generated Data API remains available",
   );
   console.log(
-    "PASS: provisioning, completion gate, member directory and profile visibility, private fields, files, suspension, revocation, and Data API isolation",
+    "PASS: provisioning, completion gate, sharing consent and revocation, alumni claim/removal and year, contact email, hidden search/photo fields, files, suspension, revocation, and Data API isolation",
   );
 }
 

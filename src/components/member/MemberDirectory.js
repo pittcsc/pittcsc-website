@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import MemberLink from "./MemberLink";
@@ -16,11 +16,45 @@ export default function MemberDirectory({ identity }) {
   );
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
+  const [companyInput, setCompanyInput] = useState("");
+  const [company, setCompany] = useState("");
+  const [alumniInput, setAlumniInput] = useState(false);
+  const [alumni, setAlumni] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filtersRef = useRef(null);
+  const filterButtonRef = useRef(null);
   const [page, setPage] = useState(1);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
+  const activeFilterCount = Number(Boolean(company)) + Number(alumni);
+
+  useEffect(() => {
+    const refresh = () => setRetry((value) => value + 1);
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, []);
+
+  useEffect(() => {
+    if (!filtersOpen) return undefined;
+
+    function closeOnOutsideClick(event) {
+      if (!filtersRef.current?.contains(event.target)) setFiltersOpen(false);
+    }
+    function closeOnEscape(event) {
+      if (event.key !== "Escape") return;
+      setFiltersOpen(false);
+      filterButtonRef.current?.focus();
+    }
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [filtersOpen]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -28,6 +62,8 @@ export default function MemberDirectory({ identity }) {
     setError("");
     const params = new URLSearchParams({ page: String(page) });
     if (query) params.set("q", query);
+    if (company) params.set("company", company);
+    if (alumni) params.set("alumni", "1");
     request(`/members?${params}`, {
       userID: identity.id,
       signal: controller.signal,
@@ -42,29 +78,88 @@ export default function MemberDirectory({ identity }) {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [identity.id, request, query, page, retry]);
+  }, [identity.id, request, query, company, alumni, page, retry]);
 
   function search(event) {
     event.preventDefault();
     setPage(1);
     setQuery(input.trim().replace(/\s+/g, " "));
+    setCompany(companyInput.trim().replace(/\s+/g, " "));
+    setAlumni(alumniInput);
+    setFiltersOpen(false);
+  }
+
+  function clearFilters() {
+    setCompanyInput("");
+    setCompany("");
+    setAlumniInput(false);
+    setAlumni(false);
+    setPage(1);
+    setFiltersOpen(false);
   }
 
   return (
     <section className="csc-member-directory">
       <h1>Members</h1>
-      <p>Find a CSC member by name.</p>
+      <p>Find CSC members by name, current company, or alumni status.</p>
       <form role="search" onSubmit={search} className="csc-directory-search">
-        <label htmlFor="member-search">Name</label>
-        <div>
-          <input
-            id="member-search"
-            type="search"
-            value={input}
-            maxLength={100}
-            onChange={(event) => setInput(event.target.value)}
-          />
-          <button type="submit">Search</button>
+        <div className="csc-directory-search-row">
+          <div className="csc-directory-name-field">
+            <label htmlFor="member-search">Name</label>
+            <input id="member-search" type="search" value={input} maxLength={100} onChange={(event) => setInput(event.target.value)} />
+          </div>
+          <div className="csc-directory-filter-menu" ref={filtersRef}>
+            <button
+              ref={filterButtonRef}
+              type="button"
+              className="csc-directory-filter-toggle"
+              aria-expanded={filtersOpen}
+              aria-controls={filtersOpen ? "csc-directory-filter-panel" : undefined}
+              onClick={() => setFiltersOpen((open) => !open)}
+            >
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="csc-directory-filter-count">{activeFilterCount}</span>
+              )}
+              <span className="csc-directory-filter-chevron" aria-hidden="true" />
+            </button>
+            {filtersOpen && (
+              <div
+                id="csc-directory-filter-panel"
+                className="csc-directory-filter-panel"
+                role="group"
+                aria-label="Member filters"
+              >
+                <label className="csc-directory-alumni-filter">
+                  <input
+                    type="checkbox"
+                    checked={alumniInput}
+                    onChange={(event) => setAlumniInput(event.target.checked)}
+                  />
+                  <span className="csc-directory-checkbox" aria-hidden="true" />
+                  Alumni only
+                </label>
+                <label htmlFor="company-search">Current company</label>
+                <input
+                  id="company-search"
+                  type="search"
+                  value={companyInput}
+                  maxLength={160}
+                  placeholder="e.g. Google"
+                  onChange={(event) => setCompanyInput(event.target.value)}
+                />
+                <div className="csc-directory-filter-actions">
+                  <button type="button" className="csc-directory-filter-clear" onClick={clearFilters}>
+                    Clear filters
+                  </button>
+                  <button type="submit" className="csc-directory-filter-apply">
+                    Apply
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <button type="submit" className="csc-directory-search-submit">Search</button>
         </div>
       </form>
       {error && (
@@ -105,6 +200,9 @@ export default function MemberDirectory({ identity }) {
                             ? ` · Class of ${member.graduationYear}`
                             : ""}
                         </small>
+                        {(member.jobTitle || member.currentCompany) && (
+                          <small>{[member.jobTitle, member.currentCompany].filter(Boolean).join(" · ")}</small>
+                        )}
                         {member.isAlumni && (
                           <small className="csc-directory-badge">Alumni</small>
                         )}
