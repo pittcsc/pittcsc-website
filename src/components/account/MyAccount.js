@@ -337,7 +337,7 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
     }
   }
 
-  async function claimAlumni() {
+  async function changeAlumniStatus() {
     if (claimingAlumni) return;
     setClaimingAlumni(true);
     setError("");
@@ -347,11 +347,11 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
       const value = await request("/profile/alumni", {
         userID: identity.id,
         signal,
-        method: "PUT",
+        method: profile.alumniClaimed ? "DELETE" : "PUT",
       });
       if (signal.aborted) return;
       setProfile(value);
-      setNotice("Your alumni status is saved.");
+      setNotice(value.alumniClaimed ? "You’re marked as alumni." : "Your alumni status has been removed.");
       await onSaved?.();
     } catch (failure) {
       if (!signal.aborted) setError(failure.message);
@@ -506,13 +506,14 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
         <section className="csc-account-alumni" aria-label="Alumni status">
           <h2>Alumni status</h2>
           <p>Graduated from Pitt? You can identify yourself as alumni once your graduation year is the current year or earlier. This badge appears to other signed-in members separately from your sharing choice.</p>
-          {profile.isAlumni ? (
-            <strong>You’re marked as alumni.</strong>
-          ) : (
-            <button type="button" className="csc-auth-secondary" disabled={claimingAlumni || !profile.graduationYear || profile.graduationYear > Number(new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone: "America/New_York" }).format(new Date()))} onClick={claimAlumni}>
-              {claimingAlumni ? "Saving…" : "Mark me as alumni"}
-            </button>
-          )}
+          {profile.alumniClaimed && <p>{profile.isAlumni
+            ? "You’re marked as alumni."
+            : "Your alumni badge is hidden because your saved graduation year is in the future."}</p>}
+          <button type="button" className="csc-auth-secondary"
+            disabled={claimingAlumni || (!profile.alumniClaimed && (!profile.graduationYear || profile.graduationYear > Number(new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone: "America/New_York" }).format(new Date()))))}
+            onClick={changeAlumniStatus}>
+            {claimingAlumni ? "Saving…" : profile.alumniClaimed ? "Remove my alumni status" : "Mark me as alumni"}
+          </button>
         </section>
         {renderFiles()}
       </>

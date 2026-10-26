@@ -347,16 +347,41 @@ async function main() {
     alumniMatches.members.some((member) => member.id === owner.id && member.currentCompany === "PNC Bank" && member.jobTitle === "Software Engineer" && member.isAlumni),
     "Combined alumni and partial company filter missed the member",
   );
+  sql(`insert into csc.user_roles (auth_user_id, role) values ('${owner.id}', 'foundry')`);
+  check((await api(owner, "/profile/alumni", "DELETE", JSON.stringify({ userId: other.id }))).status === 400,
+    "Alumni removal accepted a target user");
+  const removals = await Promise.all(
+    Array.from({ length: 8 }, () => api(owner, "/profile/alumni", "DELETE")),
+  );
+  check(removals.every((response) => response.status === 200), "Concurrent alumni removals failed");
+  const unclaimed = await (await api(owner, "/profile")).json();
+  const unclaimedSession = await (await api(owner, "/auth/session")).json();
+  check(
+    !unclaimed.alumniClaimed && !unclaimed.isAlumni &&
+      unclaimedSession.roles.includes("member") && unclaimedSession.roles.includes("foundry") &&
+      !unclaimedSession.roles.includes("alumni") &&
+      !(await (await api(other, "/members?alumni=1")).json()).members.some((member) => member.id === owner.id) &&
+      sql(`select count(*) from csc.role_audit where target_user_id = '${owner.id}' and role = 'alumni' and action = 'revoke'`) === "1",
+    "Alumni removal did not clear only the label or was not idempotently audited",
+  );
+  check((await api(owner, "/profile/alumni", "PUT")).status === 200,
+    "Alumni reclaim after removal failed");
   check((await put(owner, { ...career, graduationYear: complete.graduationYear + 1 })).status === 200,
     "Future-year profile edit failed");
   check(
-    !(await (await api(owner, "/profile")).json()).isAlumni &&
+    (await (await api(owner, "/profile")).json()).alumniClaimed &&
+      !(await (await api(owner, "/profile")).json()).isAlumni &&
       !(await (await api(other, "/members?alumni=1")).json()).members.some((member) => member.id === owner.id) &&
       (await (await api(other, `/members/${owner.id}`)).json()).currentCompany === "PNC Bank",
     "Future year kept alumni presentation or incorrectly hid shared member details",
   );
+  check((await api(owner, "/profile/alumni", "DELETE")).status === 200 &&
+      !(await (await api(owner, "/profile")).json()).alumniClaimed,
+    "Future graduation year prevented alumni removal");
   check((await put(owner, career)).status === 200,
     "Eligible graduation year restore failed");
+  check((await api(owner, "/profile/alumni", "PUT")).status === 200,
+    "Alumni reclaim after graduation year restore failed");
   check(
     (await (await api(other, "/members?company=google&alumni=1")).json()).total === 0,
     "Company filter included a different employer",
@@ -594,7 +619,7 @@ async function main() {
     "Generated Data API remains available",
   );
   console.log(
-    "PASS: provisioning, completion gate, sharing consent and revocation, alumni year, contact email, hidden search/photo fields, files, suspension, revocation, and Data API isolation",
+    "PASS: provisioning, completion gate, sharing consent and revocation, alumni claim/removal and year, contact email, hidden search/photo fields, files, suspension, revocation, and Data API isolation",
   );
 }
 

@@ -22,6 +22,7 @@ type profilesStub struct {
 	err        error
 	writes     int
 	claims     int
+	unclaims   int
 	shares     int
 	shared     bool
 }
@@ -39,6 +40,11 @@ func (s *profilesStub) ClaimAlumni(_ context.Context, id string) (profile.Record
 	s.userID = id
 	s.claims++
 	return profile.Record{IsAlumni: true, Majors: []string{}}, s.err
+}
+func (s *profilesStub) UnclaimAlumni(_ context.Context, id string) (profile.Record, error) {
+	s.userID = id
+	s.unclaims++
+	return profile.Record{Majors: []string{}}, s.err
 }
 func (s *profilesStub) SetDetailsShared(_ context.Context, id string, shared bool) (profile.Record, error) {
 	s.userID = id
@@ -170,6 +176,31 @@ func TestSelfClaimAlumniUsesVerifiedIdentityOnly(t *testing.T) {
 	store.err = profile.ErrSuspended
 	if w := profileRequest(t, store, "PUT", "/profile/alumni", "", "valid"); w.Code != 403 || store.claims != 1 {
 		t.Fatalf("suspended claim reached store: %d", w.Code)
+	}
+}
+
+func TestSelfUnclaimAlumniUsesVerifiedIdentityOnly(t *testing.T) {
+	store := &profilesStub{roles: []string{"member", "alumni", "staff"}}
+	if w := profileRequest(t, store, "DELETE", "/profile/alumni", "", ""); w.Code != 401 || store.unclaims != 0 {
+		t.Fatalf("anonymous removal accepted: %d", w.Code)
+	}
+	for _, body := range []string{`{"role":"staff"}`, `{"userId":"other"}`} {
+		if w := profileRequest(t, store, "DELETE", "/profile/alumni", body, "valid"); w.Code != 400 || store.unclaims != 0 {
+			t.Fatalf("removal payload accepted: %d", w.Code)
+		}
+	}
+	for range 2 {
+		w := profileRequest(t, store, "DELETE", "/profile/alumni", "", "valid")
+		if w.Code != 200 || store.userID != "verified-owner" || !strings.Contains(w.Body.String(), `"isAlumni":false`) {
+			t.Fatalf("self removal failed: %d %s", w.Code, w.Body.String())
+		}
+	}
+	if store.unclaims != 2 {
+		t.Fatal("removal retry was not sent to store")
+	}
+	store.err = profile.ErrSuspended
+	if w := profileRequest(t, store, "DELETE", "/profile/alumni", "", "valid"); w.Code != 403 || store.unclaims != 2 {
+		t.Fatalf("suspended removal reached store: %d", w.Code)
 	}
 }
 

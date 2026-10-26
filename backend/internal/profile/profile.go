@@ -26,6 +26,7 @@ var (
 type Record struct {
 	Roles              []string  `json:"-"`
 	IsAlumni           bool      `json:"isAlumni"`
+	AlumniClaimed      bool      `json:"alumniClaimed"`
 	FirstName          *string   `json:"firstName"`
 	LastName           *string   `json:"lastName"`
 	PreferredName      *string   `json:"preferredName"`
@@ -274,7 +275,8 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 		return Record{}, ErrSuspended
 	}
 	record.Complete = complete(record)
-	record.IsAlumni = alumniYearEligible && slices.Contains(record.Roles, "alumni")
+	record.AlumniClaimed = slices.Contains(record.Roles, "alumni")
+	record.IsAlumni = alumniYearEligible && record.AlumniClaimed
 	return record, nil
 }
 

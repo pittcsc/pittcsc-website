@@ -17,6 +17,7 @@ type profileStore interface {
 	GetOrCreate(context.Context, string) (profile.Record, error)
 	Update(context.Context, string, profile.Input) (profile.Record, error)
 	ClaimAlumni(context.Context, string) (profile.Record, error)
+	UnclaimAlumni(context.Context, string) (profile.Record, error)
 	SetDetailsShared(context.Context, string, bool) (profile.Record, error)
 }
 
@@ -141,6 +142,18 @@ func registerProfileRoutes(mux *http.ServeMux, authentication authenticator, pro
 			return
 		}
 		record, err := profiles.ClaimAlumni(r.Context(), identity.ID)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		writeProfile(w, record, identity)
+	}))
+	mux.HandleFunc("DELETE /profile/alumni", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		if r.ContentLength != 0 {
+			writeJSONError(w, http.StatusBadRequest, "This action does not accept profile fields.")
+			return
+		}
+		record, err := profiles.UnclaimAlumni(r.Context(), identity.ID)
 		if err != nil {
 			writeProfileError(w, err)
 			return

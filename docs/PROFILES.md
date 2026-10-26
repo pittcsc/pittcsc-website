@@ -58,8 +58,9 @@ used to sign in.
 
 Members whose saved graduation year is no later than the current New York year
 can use **Mark me as alumni** in My Account. It self-assigns the existing alumni
-role without extra permissions. The action is idempotent and audited; alumni-role
-removal is not offered here. The alumni badge and filter require both the role
+role without extra permissions. **Remove my alumni status** revokes only that
+role, even if the saved graduation year later changes. Both actions are
+idempotent and audited. The alumni badge and filter require both the role
 and eligible year on each read. Sharing is a separate choice for all members.
 
 Files have separate save, replace, and remove actions. Avatars are decoded and
@@ -95,6 +96,7 @@ file references. Ownership always comes from the verified identity. Responses us
 | `GET /profile` | Own fields, completion, email, file flags, and update timestamp |
 | `PUT /profile` | Replace editable profile fields; omitted or blank fields are cleared; role fields are rejected |
 | `PUT /profile/alumni` | Self-assign alumni to the verified caller; empty body; repeat calls are safe |
+| `DELETE /profile/alumni` | Remove the verified caller's alumni role; empty body; repeat calls are safe |
 | `PUT /profile/sharing` | Set `{ "shared": true/false }` for the verified, completed owner; repeat calls are safe |
 | `GET /profile/avatar`, `GET /profile/resume` | Retrieve own file; missing files return 404 |
 | `PUT /profile/avatar`, `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
