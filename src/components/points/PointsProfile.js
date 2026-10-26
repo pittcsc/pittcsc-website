@@ -133,6 +133,11 @@ export default function PointsProfile({
   const labels = Object.fromEntries(
     (categories || []).map((item) => [item.code, item.label]),
   );
+  const visibleClaims = data
+    ? submissionsPage
+      ? data.claims
+      : data.claims.slice(0, 3)
+    : [];
 
   return (
     <section
@@ -261,12 +266,19 @@ export default function PointsProfile({
           )}
           {!showForm && (
             <div className="csc-points-history">
-              {!submissionsPage && <h3>Your submissions</h3>}
-              {data.claims.length === 0 ? (
+              {!submissionsPage && (
+                <div className="csc-points-history-heading">
+                  <h3>Recent submissions</h3>
+                  <Link to="/dashboard/points/submissions">
+                    View all submissions →
+                  </Link>
+                </div>
+              )}
+              {visibleClaims.length === 0 ? (
                 <p>No links submitted yet.</p>
               ) : (
                 <ul>
-                  {data.claims.map((claim) => (
+                  {visibleClaims.map((claim) => (
                     <li key={claim.id}>
                       <div>
                         <strong>
@@ -303,7 +315,7 @@ export default function PointsProfile({
                   ))}
                 </ul>
               )}
-              {data.hasMore && (
+              {submissionsPage && data.hasMore && (
                 <button
                   type="button"
                   className="csc-auth-secondary"
