@@ -46,6 +46,7 @@ type PublicMember struct {
 	Location           *string `json:"location"`
 	Bio                *string `json:"bio"`
 	PersonalWebsite    *string `json:"personalWebsite"`
+	ContactEmail       *string `json:"contactEmail"`
 	OffersCoffee       bool    `json:"offersCoffee"`
 	OffersMentorship   bool    `json:"offersMentorship"`
 	OffersReferrals    bool    `json:"offersReferrals"`
@@ -98,17 +99,20 @@ func (s Store) Directory(ctx context.Context, search DirectorySearch) (Directory
 	where := activeMemberSQL + ` and ` + completeMemberSQL + ` and
 		($1 = '' or strpos(lower(concat_ws(' ', p.first_name, p.last_name)), lower($1)) > 0
 		or strpos(lower(concat_ws(' ', p.preferred_name, p.last_name)), lower($1)) > 0)
-		and ($2 = '' or strpos(lower(coalesce(p.current_company, '')), lower($2)) > 0)
+		and ($2 = '' or (p.details_shared and strpos(lower(coalesce(p.current_company, '')), lower($2)) > 0))
 		and (not $3 or exists(select 1 from csc.user_roles r
-			where r.auth_user_id = p.auth_user_id and r.role = 'alumni'))`
+			where r.auth_user_id = p.auth_user_id and r.role = 'alumni')
+			and p.graduation_year <= extract(year from statement_timestamp() at time zone 'America/New_York')::integer)`
 	if err := s.DB.QueryRow(ctx, `select count(*) from csc.profiles p join auth.users u
 		on u.id = p.auth_user_id where `+where, search.Name, search.Company, search.Alumni).Scan(&result.Total); err != nil {
 		return DirectoryPage{}, err
 	}
 	rows, err := s.DB.Query(ctx, `select p.auth_user_id::text, `+displayNameSQL+`,
-		p.graduation_year, p.majors, p.avatar_asset_id is not null,
+		p.graduation_year, p.majors, p.details_shared and p.avatar_asset_id is not null,
 		exists(select 1 from csc.user_roles r where r.auth_user_id = p.auth_user_id and r.role = 'alumni')
-		, p.current_company, p.job_title
+		and p.graduation_year <= extract(year from statement_timestamp() at time zone 'America/New_York')::integer,
+		case when p.details_shared then p.current_company end,
+		case when p.details_shared then p.job_title end
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
 		where `+where+` order by lower(`+displayNameSQL+`), p.auth_user_id
 		limit $4 offset $5`, search.Name, search.Company, search.Alumni, DirectoryPageSize, (search.Page-1)*DirectoryPageSize)
@@ -131,12 +135,22 @@ func (s Store) Directory(ctx context.Context, search DirectorySearch) (Directory
 func (s Store) PublicMember(ctx context.Context, memberID string, staff bool) (PublicMember, error) {
 	var result PublicMember
 	err := s.DB.QueryRow(ctx, `select p.auth_user_id::text, `+displayNameSQL+`,
-		p.graduation_year, p.majors, p.avatar_asset_id is not null,
-		exists(select 1 from csc.user_roles r where r.auth_user_id = p.auth_user_id and r.role = 'alumni'),
-		p.current_company, p.job_title,
-		p.github_username, p.leetcode_username, p.linkedin_username,
-		p.location, p.bio, p.personal_website,
-		p.offers_coffee, p.offers_mentorship, p.offers_referrals, p.offers_resume_review,
+		p.graduation_year, p.majors, p.details_shared and p.avatar_asset_id is not null,
+		exists(select 1 from csc.user_roles r where r.auth_user_id = p.auth_user_id and r.role = 'alumni')
+		and p.graduation_year <= extract(year from statement_timestamp() at time zone 'America/New_York')::integer,
+		case when p.details_shared then p.current_company end,
+		case when p.details_shared then p.job_title end,
+		case when p.details_shared then p.github_username end,
+		case when p.details_shared then p.leetcode_username end,
+		case when p.details_shared then p.linkedin_username end,
+		case when p.details_shared then p.location end,
+		case when p.details_shared then p.bio end,
+		case when p.details_shared then p.personal_website end,
+		case when p.details_shared and lower(p.contact_email) is distinct from lower(u.email) then p.contact_email end,
+		p.details_shared and p.offers_coffee,
+		p.details_shared and p.offers_mentorship,
+		p.details_shared and p.offers_referrals,
+		p.details_shared and p.offers_resume_review,
 		(`+completeMemberSQL+`)
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
 		where p.auth_user_id = $1::uuid and `+activeMemberSQL+`
@@ -144,7 +158,7 @@ func (s Store) PublicMember(ctx context.Context, memberID string, staff bool) (P
 		Scan(&result.ID, &result.Name, &result.GraduationYear, &result.Majors,
 			&result.HasAvatar, &result.IsAlumni, &result.CurrentCompany, &result.JobTitle,
 			&result.GitHubUsername, &result.LeetCodeUsername, &result.LinkedInUsername,
-			&result.Location, &result.Bio, &result.PersonalWebsite,
+			&result.Location, &result.Bio, &result.PersonalWebsite, &result.ContactEmail,
 			&result.OffersCoffee, &result.OffersMentorship, &result.OffersReferrals, &result.OffersResumeReview,
 			&result.Complete)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -180,7 +194,7 @@ func (s Store) MemberAvatar(ctx context.Context, memberID string, staff bool) (A
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
 		join csc.profile_assets a on a.id = p.avatar_asset_id and a.auth_user_id = p.auth_user_id
 		where p.auth_user_id = $1::uuid and `+activeMemberSQL+`
-		and ($2 or (`+completeMemberSQL+`))`, memberID, staff).
+		and p.details_shared and ($2 or (`+completeMemberSQL+`))`, memberID, staff).
 		Scan(&asset.MediaType, &asset.Bytes, &asset.UpdatedAt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Asset{}, ErrMemberNotFound

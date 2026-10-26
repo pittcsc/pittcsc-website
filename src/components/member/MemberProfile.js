@@ -34,6 +34,12 @@ export default function MemberProfile({ identity, memberID }) {
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
+    const refresh = () => setRetry((value) => value + 1);
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, []);
+
+  useEffect(() => {
     const controller = new AbortController();
     setMember(null);
     setError("");
@@ -190,6 +196,12 @@ export default function MemberProfile({ identity, memberID }) {
               <section className="csc-profile-details" aria-label="About">
                 <h2 className="csc-profile-eyebrow">About</h2>
                 <p className="csc-profile-bio">{member.bio}</p>
+              </section>
+            )}
+            {member.contactEmail && (
+              <section className="csc-profile-details" aria-label="Contact">
+                <h2 className="csc-profile-eyebrow">Contact</h2>
+                <a href={`mailto:${member.contactEmail}`}>{member.contactEmail}</a>
               </section>
             )}
             {(member.offersCoffee ||

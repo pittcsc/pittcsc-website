@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -21,6 +22,8 @@ type profilesStub struct {
 	err        error
 	writes     int
 	claims     int
+	shares     int
+	shared     bool
 }
 
 func (s *profilesStub) GetOrCreate(ctx context.Context, id string) (profile.Record, error) {
@@ -36,6 +39,12 @@ func (s *profilesStub) ClaimAlumni(_ context.Context, id string) (profile.Record
 	s.userID = id
 	s.claims++
 	return profile.Record{IsAlumni: true, Majors: []string{}}, s.err
+}
+func (s *profilesStub) SetDetailsShared(_ context.Context, id string, shared bool) (profile.Record, error) {
+	s.userID = id
+	s.shares++
+	s.shared = shared
+	return profile.Record{DetailsShared: shared, Majors: []string{}}, s.err
 }
 func verifiedAuth() authenticator {
 	return authenticateFunc(func(ctx context.Context, header string) (auth.Identity, error) {
@@ -88,6 +97,7 @@ func TestProfileEditableFields(t *testing.T) {
 	for _, body := range []string{
 		`{"roles":["staff"]}`, `{"auth_user_id":"someone-else"}`, `{"id":"someone-else"}`,
 		`{"account_status":"active"}`, `{"email":"new@pitt.edu"}`, `{"avatar_asset_id":"other-file"}`,
+		`{"detailsShared":true}`,
 		`{"graduationYear":2028.5}`, `{"graduationYear":"2028"}`, `{"majors":[""]}`,
 		`{"firstName":"` + strings.Repeat("x", 101) + `"}`, `null`, `{}`, // empty object is allowed below
 		`{} {}`, `{"firstName":`,
@@ -115,6 +125,33 @@ func TestProfileEditableFields(t *testing.T) {
 	}
 	if body["email"] != "fixture@pitt.edu" {
 		t.Fatal("email must come from current Auth identity")
+	}
+}
+
+func TestSharingRequiresVerifiedCompleteOwnerAndExactBoolean(t *testing.T) {
+	store := &profilesStub{}
+	if w := profileRequest(t, store, "PUT", "/profile/sharing", `{"shared":true}`, ""); w.Code != 401 || store.shares != 0 {
+		t.Fatal("anonymous request changed sharing")
+	}
+	store.incomplete = true
+	if w := profileRequest(t, store, "PUT", "/profile/sharing", `{"shared":true}`, "valid"); w.Code != 403 || store.shares != 0 {
+		t.Fatal("incomplete member changed sharing")
+	}
+	store.incomplete = false
+	for _, body := range []string{`{}`, `{"shared":null}`, `{"shared":1}`, `{"shared":true,"userId":"other"}`, `{"shared":true} {}`} {
+		if w := profileRequest(t, store, "PUT", "/profile/sharing", body, "valid"); w.Code != 400 || store.shares != 0 {
+			t.Fatalf("invalid sharing request accepted: %q", body)
+		}
+	}
+	for _, shared := range []bool{true, true, false, false} {
+		body := `{"shared":false}`
+		if shared {
+			body = `{"shared":true}`
+		}
+		w := profileRequest(t, store, "PUT", "/profile/sharing", body, "valid")
+		if w.Code != 200 || store.shared != shared || store.userID != "verified-owner" || !strings.Contains(w.Body.String(), `"detailsShared":`+strconv.FormatBool(shared)) {
+			t.Fatalf("sharing state not applied to verified owner: %d", w.Code)
+		}
 	}
 }
 

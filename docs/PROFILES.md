@@ -33,6 +33,7 @@ protected request. Removing a required field revokes access until it is restored
 | Current company, job title, location | Optional free text, up to 160 characters each |
 | Bio | Optional, up to 2000 characters |
 | Personal website | Optional full HTTPS URL, up to 500 characters |
+| Contact email | Optional valid email, up to 254 characters; must differ from the current verified Pitt sign-in address |
 | Coffee chats, mentorship, referrals, résumé reviews | Optional yes/no offers, defaulting to no |
 
 An incomplete profile is filled in three questions, and each **Next**
@@ -44,12 +45,22 @@ profile**. The last successful
 save wins if multiple tabs edit the same profile. Failures preserve edits for
 retry. Routine token refresh preserves the editor; logout, account changes, and
 failed identity verification hide private state and cancel requests.
-All members can add these details. They appear to eligible signed-in directory
-viewers on save, without a separate visibility switch. The editor warns about
-this before saving; email and résumé remain private. Members who have graduated
-from Pitt can use **Mark me as alumni** in My Account. It self-assigns the
-existing alumni role immediately, without verification or extra permissions.
-The action is idempotent and audited; alumni-role removal is not offered here.
+All members can save these details privately. **Share my profile details** is a
+separate, explicit choice available after profile completion; new and existing
+accounts start unshared. It exposes the photo, external handles, career details,
+bio, website, help offers, and contact email to other completed, signed-in
+members, including staff. The owner can stop sharing without deleting saved
+information. Removing a required completion field or suspending the account
+clears sharing in the same database update; completing or reinstating it requires
+a new Share action. The Members directory never includes the sign-in email or
+résumé. The contact email is displayed only on the member detail page and is not verified or
+used to sign in.
+
+Members whose saved graduation year is no later than the current New York year
+can use **Mark me as alumni** in My Account. It self-assigns the existing alumni
+role without extra permissions. The action is idempotent and audited; alumni-role
+removal is not offered here. The alumni badge and filter require both the role
+and eligible year on each read. Sharing is a separate choice for all members.
 
 Files have separate save, replace, and remove actions. Avatars are decoded and
 re-encoded to strip metadata and trailing bytes; WebP is stored as PNG. The default
@@ -84,6 +95,7 @@ file references. Ownership always comes from the verified identity. Responses us
 | `GET /profile` | Own fields, completion, email, file flags, and update timestamp |
 | `PUT /profile` | Replace editable profile fields; omitted or blank fields are cleared; role fields are rejected |
 | `PUT /profile/alumni` | Self-assign alumni to the verified caller; empty body; repeat calls are safe |
+| `PUT /profile/sharing` | Set `{ "shared": true/false }` for the verified, completed owner; repeat calls are safe |
 | `GET /profile/avatar`, `GET /profile/resume` | Retrieve own file; missing files return 404 |
 | `PUT /profile/avatar`, `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
 | `DELETE /profile/avatar`, `DELETE /profile/resume` | Remove own file; repeated removal succeeds |
@@ -94,10 +106,13 @@ file references. Ownership always comes from the verified identity. Responses us
 These member endpoints require the viewer's completed active account. Staff can
 open an active incomplete profile by ID from User Management, but incomplete
 accounts do not appear in the directory or member leaderboards. The response
-never includes email, resume, or point claim links. Directory cards show company
-and job title; the full profile shows the other optional fields. Browser roles have no direct
-database access. Existing eligible profiles become visible as soon as this
-feature launches; there is no opt-in setting.
+never includes sign-in email, resume, or point claim links. Directory cards show company
+and job title only when shared; the full profile shows other optional fields
+only when shared. The avatar route also checks the owner's current sharing
+choice, including for staff. Basic name, majors, graduation year, eligible
+alumni label, and points remain visible regardless of sharing. Company search
+ignores unshared companies so hidden data cannot affect results. Browser roles
+have no direct database access.
 
 ## Local verification and hosted handoff
 
@@ -117,8 +132,10 @@ write the same cache/output directories.
 
 `test:profiles` refuses nonlocal URLs and creates real OTP/Mailpit fixtures named
 `csc-profile-test-*`. It checks concurrent first use, partial saves, completion,
-protected fields, ownership, file limits/replacement/removal, suspension, logout,
-and Data API isolation. It temporarily suspends only its synthetic application
+protected fields, ownership, contact-email validation, sharing and unsharing,
+hidden search and avatar access, alumni year eligibility, concurrent sharing and
+profile writes, file limits/replacement/removal, suspension, logout, and Data API
+isolation. It temporarily suspends only its synthetic application
 profile and restores it in `finally`; it never edits managed Auth tables.
 Synthetic accounts/profiles/mail remain for inspection, and sessions are signed
 out. The SQL check verifies browser-role isolation.

@@ -17,6 +17,7 @@ type profileStore interface {
 	GetOrCreate(context.Context, string) (profile.Record, error)
 	Update(context.Context, string, profile.Input) (profile.Record, error)
 	ClaimAlumni(context.Context, string) (profile.Record, error)
+	SetDetailsShared(context.Context, string, bool) (profile.Record, error)
 }
 
 func writeJSONError(w http.ResponseWriter, status int, message string) {
@@ -33,8 +34,14 @@ func writeProfileError(w http.ResponseWriter, err error) {
 		writeJSONError(w, http.StatusUnauthorized, "Please sign in again.")
 	case errors.Is(err, profile.ErrSuspended):
 		writeJSONError(w, http.StatusForbidden, "Your account is suspended. Contact Pitt CSC staff.")
+	case errors.Is(err, profile.ErrIncomplete):
+		writeJSONError(w, http.StatusForbidden, "Complete your name, graduation year, and major in My Account first.")
+	case errors.Is(err, profile.ErrAlumniYear):
+		writeJSONError(w, http.StatusConflict, "Your graduation year must be the current year or earlier to mark yourself as alumni.")
+	case errors.Is(err, profile.ErrContactMatchesLogin):
+		writeJSONError(w, http.StatusBadRequest, "Choose a contact email different from your Pitt sign-in address.")
 	case errors.Is(err, profile.ErrInvalid):
-		writeJSONError(w, http.StatusBadRequest, "Check your profile fields. Names can have up to 100 characters, career fields up to 160, bio up to 2000, and the website must be an HTTPS URL. Graduation year must be 1900–2100, with up to eight distinct majors of 120 characters each.")
+		writeJSONError(w, http.StatusBadRequest, "Check your profile fields. Names can have up to 100 characters, career fields up to 160, bio up to 2000, contact email must be valid, and the website must be an HTTPS URL. Graduation year must be 1900–2100, with up to eight distinct majors of 120 characters each.")
 	case errors.Is(err, profile.ErrNotFound):
 		writeJSONError(w, http.StatusNotFound, "This file has not been uploaded.")
 	case errors.Is(err, profile.ErrFileTooLarge):
@@ -140,6 +147,34 @@ func registerProfileRoutes(mux *http.ServeMux, authentication authenticator, pro
 		}
 		writeProfile(w, record, identity)
 	}))
+	mux.HandleFunc("PUT /profile/sharing", withCompleteProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+		if err != nil || mediaType != "application/json" {
+			writeJSONError(w, http.StatusUnsupportedMediaType, "Send sharing as JSON.")
+			return
+		}
+		r.Body = http.MaxBytesReader(w, r.Body, 1024)
+		decoder := json.NewDecoder(r.Body)
+		decoder.DisallowUnknownFields()
+		var input *struct {
+			Shared *bool `json:"shared"`
+		}
+		if err := decoder.Decode(&input); err != nil || input == nil || input.Shared == nil {
+			writeJSONError(w, http.StatusBadRequest, "Send a shared boolean.")
+			return
+		}
+		if err := decoder.Decode(new(any)); err != io.EOF {
+			writeJSONError(w, http.StatusBadRequest, "Send one sharing object.")
+			return
+		}
+		record, err := profiles.SetDetailsShared(r.Context(), identity.ID, *input.Shared)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		writeProfile(w, record, identity)
+	}))
 	mux.HandleFunc("OPTIONS /profile", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	mux.HandleFunc("OPTIONS /profile/alumni", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
+	mux.HandleFunc("OPTIONS /profile/sharing", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 }

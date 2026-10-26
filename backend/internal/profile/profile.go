@@ -3,6 +3,7 @@ package profile
 import (
 	"context"
 	"errors"
+	"net/mail"
 	"net/url"
 	"regexp"
 	"slices"
@@ -15,9 +16,11 @@ import (
 )
 
 var (
-	ErrSuspended = errors.New("account suspended")
-	ErrInvalid   = errors.New("invalid profile")
-	ErrNotFound  = errors.New("asset not found")
+	ErrSuspended           = errors.New("account suspended")
+	ErrInvalid             = errors.New("invalid profile")
+	ErrNotFound            = errors.New("asset not found")
+	ErrIncomplete          = errors.New("profile incomplete")
+	ErrContactMatchesLogin = errors.New("contact email matches sign-in email")
 )
 
 type Record struct {
@@ -40,6 +43,8 @@ type Record struct {
 	OffersMentorship   bool      `json:"offersMentorship"`
 	OffersReferrals    bool      `json:"offersReferrals"`
 	OffersResumeReview bool      `json:"offersResumeReview"`
+	ContactEmail       *string   `json:"contactEmail"`
+	DetailsShared      bool      `json:"detailsShared"`
 	Complete           bool      `json:"complete"`
 	HasAvatar          bool      `json:"hasAvatar"`
 	HasResume          bool      `json:"hasResume"`
@@ -64,6 +69,7 @@ type Input struct {
 	OffersMentorship   bool     `json:"offersMentorship"`
 	OffersReferrals    bool     `json:"offersReferrals"`
 	OffersResumeReview bool     `json:"offersResumeReview"`
+	ContactEmail       *string  `json:"contactEmail"`
 }
 
 // Handles are stored as bare usernames so nothing can put an arbitrary link in
@@ -150,6 +156,26 @@ func normalizeWebsite(value **string) error {
 	return nil
 }
 
+func normalizeContactEmail(value **string) error {
+	if *value == nil {
+		return nil
+	}
+	contact := strings.TrimSpace(**value)
+	if contact == "" {
+		*value = nil
+		return nil
+	}
+	address, err := mail.ParseAddress(contact)
+	parts := strings.Split(contact, "@")
+	if err != nil || address.Address != contact || len(parts) != 2 ||
+		utf8.RuneCountInString(contact) > 254 || !strings.Contains(parts[1], ".") ||
+		strings.ContainsAny(contact, "<>\" \r\n\t") {
+		return ErrInvalid
+	}
+	*value = &contact
+	return nil
+}
+
 func (input *Input) Validate() error {
 	if err := normalizeName(&input.FirstName); err != nil {
 		return err
@@ -198,6 +224,9 @@ func (input *Input) Validate() error {
 	if err := normalizeWebsite(&input.PersonalWebsite); err != nil {
 		return err
 	}
+	if err := normalizeContactEmail(&input.ContactEmail); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -220,12 +249,15 @@ func (s Store) GetOrCreate(ctx context.Context, authUserID string) (Record, erro
 func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 	var record Record
 	var status string
+	var alumniYearEligible bool
 	err := s.DB.QueryRow(ctx, `
 		select first_name, last_name, preferred_name, graduation_year, majors,
 		  github_username, leetcode_username, linkedin_username,
 		  current_company, job_title, location, bio, personal_website,
 		  offers_coffee, offers_mentorship, offers_referrals, offers_resume_review,
+		  contact_email, details_shared,
 		  account_status, avatar_asset_id is not null, resume_asset_id is not null, updated_at,
+		  coalesce(graduation_year <= extract(year from statement_timestamp() at time zone 'America/New_York')::integer, false),
 		  array(select role from csc.user_roles where auth_user_id = $1::uuid order by role)
 		from csc.profiles where auth_user_id = $1::uuid
 	`, authUserID).Scan(&record.FirstName, &record.LastName, &record.PreferredName,
@@ -233,7 +265,8 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 		&record.GitHubUsername, &record.LeetCodeUsername, &record.LinkedInUsername,
 		&record.CurrentCompany, &record.JobTitle, &record.Location, &record.Bio, &record.PersonalWebsite,
 		&record.OffersCoffee, &record.OffersMentorship, &record.OffersReferrals, &record.OffersResumeReview,
-		&status, &record.HasAvatar, &record.HasResume, &record.UpdatedAt, &record.Roles)
+		&record.ContactEmail, &record.DetailsShared,
+		&status, &record.HasAvatar, &record.HasResume, &record.UpdatedAt, &alumniYearEligible, &record.Roles)
 	if err != nil {
 		return Record{}, err
 	}
@@ -241,7 +274,7 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 		return Record{}, ErrSuspended
 	}
 	record.Complete = complete(record)
-	record.IsAlumni = slices.Contains(record.Roles, "alumni")
+	record.IsAlumni = alumniYearEligible && slices.Contains(record.Roles, "alumni")
 	return record, nil
 }
 
@@ -256,16 +289,22 @@ func (s Store) Update(ctx context.Context, authUserID string, input Input) (Reco
 		  leetcode_username = $8, linkedin_username = $9,
 		  current_company = $10, job_title = $11, location = $12, bio = $13,
 		  personal_website = $14, offers_coffee = $15, offers_mentorship = $16,
-		  offers_referrals = $17, offers_resume_review = $18, updated_at = now()
+		  offers_referrals = $17, offers_resume_review = $18,
+		  contact_email = $19, updated_at = now()
 		where auth_user_id = $1::uuid and account_status = 'active'
+		  and ($19::text is null or lower($19) <> (select lower(email) from auth.users where id = $1::uuid))
 		returning account_status
 	`, authUserID, input.FirstName, input.LastName, input.PreferredName,
 		input.GraduationYear, input.Majors, input.GitHubUsername,
 		input.LeetCodeUsername, input.LinkedInUsername,
 		input.CurrentCompany, input.JobTitle, input.Location, input.Bio, input.PersonalWebsite,
-		input.OffersCoffee, input.OffersMentorship, input.OffersReferrals, input.OffersResumeReview).Scan(&status)
+		input.OffersCoffee, input.OffersMentorship, input.OffersReferrals, input.OffersResumeReview,
+		input.ContactEmail).Scan(&status)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return Record{}, ErrSuspended
+		if _, lookupErr := s.Get(ctx, authUserID); lookupErr != nil {
+			return Record{}, lookupErr
+		}
+		return Record{}, ErrContactMatchesLogin
 	}
 	if err != nil {
 		return Record{}, err

@@ -31,6 +31,12 @@ export default function MemberDirectory({ identity }) {
   const activeFilterCount = Number(Boolean(company)) + Number(alumni);
 
   useEffect(() => {
+    const refresh = () => setRetry((value) => value + 1);
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, []);
+
+  useEffect(() => {
     if (!filtersOpen) return undefined;
 
     function closeOnOutsideClick(event) {

@@ -90,7 +90,8 @@ CSC manages its own application permissions:
 - CSC roles are additive: `member`, `foundry`, `staff`, and `alumni`, stored authoritatively in Postgres with multiple assignments per user.
 - New users default to `member`; users cannot self-assign `staff` or `foundry`.
   Alumni is a self-reported Pitt graduation label that users can add through a
-  dedicated authenticated action; it confers no additional permissions.
+  dedicated authenticated action once their graduation year is no later than
+  the current New York year; it confers no additional permissions.
 - Staff have member access and can search active members and grant or revoke `staff`, `foundry`, and `alumni`. `member` is permanent. All active staff can manage events; account status tools remain planned.
 - A trusted operator bootstraps the first staff account with the audited command in [STAFF.md](STAFF.md); dashboard changes are audited with the authenticated staff actor.
 - CSC account suspension is enforced through CSC profile status on API requests, including requests with an otherwise valid access token.

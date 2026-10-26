@@ -163,3 +163,18 @@ func TestOptionalCareerFields(t *testing.T) {
 		}
 	}
 }
+
+func TestContactEmailValidation(t *testing.T) {
+	for _, value := range []string{" work@example.org ", "other@pitt.edu"} {
+		input := Input{ContactEmail: ptr(value)}
+		if err := input.Validate(); err != nil || input.ContactEmail == nil || *input.ContactEmail != strings.TrimSpace(value) {
+			t.Fatalf("valid contact rejected: %q: %v", value, err)
+		}
+	}
+	for _, value := range []string{"bad", "Name <work@example.org>", "work@example.org\nBcc:bad@example.org", "work@localhost"} {
+		input := Input{ContactEmail: ptr(value)}
+		if err := input.Validate(); err != ErrInvalid {
+			t.Fatalf("invalid contact accepted: %q", value)
+		}
+	}
+}

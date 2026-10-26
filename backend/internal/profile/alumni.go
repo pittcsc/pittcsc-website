@@ -7,6 +7,8 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+var ErrAlumniYear = errors.New("graduation year is not eligible for alumni status")
+
 // ClaimAlumni is an idempotent self-attestation. The verified caller ID is the
 // only target; no general role assignment is exposed through the profile API.
 func (s Store) ClaimAlumni(ctx context.Context, authUserID string) (Record, error) {
@@ -20,17 +22,21 @@ func (s Store) ClaimAlumni(ctx context.Context, authUserID string) (Record, erro
 	if _, err := tx.Exec(ctx, `select pg_advisory_xact_lock(hashtext('csc.role_changes'))`); err != nil {
 		return Record{}, err
 	}
-	var active bool
+	var active, eligible bool
 	err = tx.QueryRow(ctx, `select p.account_status = 'active' and u.email_confirmed_at is not null
 		and u.deleted_at is null and not u.is_anonymous
-		and (u.banned_until is null or u.banned_until <= now())
+		and (u.banned_until is null or u.banned_until <= now()),
+		coalesce(p.graduation_year <= extract(year from statement_timestamp() at time zone 'America/New_York')::integer, false)
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
-		where p.auth_user_id = $1::uuid for update of p`, authUserID).Scan(&active)
+		where p.auth_user_id = $1::uuid for update of p`, authUserID).Scan(&active, &eligible)
 	if errors.Is(err, pgx.ErrNoRows) || (err == nil && !active) {
 		return Record{}, ErrSuspended
 	}
 	if err != nil {
 		return Record{}, err
+	}
+	if !eligible {
+		return Record{}, ErrAlumniYear
 	}
 	result, err := tx.Exec(ctx, `insert into csc.user_roles (auth_user_id, role)
 		values ($1::uuid, 'alumni') on conflict do nothing`, authUserID)

@@ -18,6 +18,7 @@ test("empty and partial profiles can be saved without invented data", () => {
     location: null,
     bio: null,
     personalWebsite: null,
+    contactEmail: null,
     offersCoffee: false,
     offersMentorship: false,
     offersReferrals: false,
@@ -52,6 +53,15 @@ test("optional career fields round-trip and reject unsafe links", () => {
     assert.throws(() => profileInput({ ...form, personalWebsite }), /HTTPS/);
   }
   assert.throws(() => profileInput({ ...form, currentCompany: "a".repeat(161) }), /Company/);
+});
+
+test("contact email is optional, distinct from sign-in, and never a profile role", () => {
+  const form = formFromProfile({ contactEmail: " work@example.org " });
+  assert.equal(profileInput(form, "member@pitt.edu").contactEmail, "work@example.org");
+  assert.equal(profileInput({ ...form, contactEmail: "other@pitt.edu" }, "member@pitt.edu").contactEmail, "other@pitt.edu");
+  for (const contactEmail of ["member@PITT.EDU", "bad", "Name <work@example.org>", "work@example.org\nBcc:bad@example.org"]) {
+    assert.throws(() => profileInput({ ...form, contactEmail }, "member@pitt.edu"), /contact email/i);
+  }
 });
 
 test("invalid years, duplicate majors and overly long fields explain the problem", () => {

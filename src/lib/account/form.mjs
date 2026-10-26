@@ -63,6 +63,7 @@ export function formFromProfile(profile) {
     location: profile.location || "",
     bio: profile.bio || "",
     personalWebsite: profile.personalWebsite || "",
+    contactEmail: profile.contactEmail || "",
     offersCoffee: !!profile.offersCoffee,
     offersMentorship: !!profile.offersMentorship,
     offersReferrals: !!profile.offersReferrals,
@@ -70,7 +71,7 @@ export function formFromProfile(profile) {
   };
 }
 
-export function profileInput(form) {
+export function profileInput(form, signInEmail) {
   const name = (value) => {
     const trimmed = value.trim();
     if ([...trimmed].length > 100 || /[\0\r\n]/.test(trimmed))
@@ -126,6 +127,15 @@ export function profileInput(form) {
     }
   }
 
+  const contactEmail = optionalText(form.contactEmail, 254, "Contact email");
+  if (
+    contactEmail &&
+    (!/^[^@\s<>"(),;:]+@[^@\s<>]+\.[^@\s<>]+$/.test(contactEmail) ||
+      (signInEmail && contactEmail.toLowerCase() === signInEmail.toLowerCase()))
+  ) {
+    throw new Error("Use a valid contact email different from your Pitt sign-in address.");
+  }
+
   return {
     firstName: name(form.firstName),
     lastName: name(form.lastName),
@@ -138,6 +148,7 @@ export function profileInput(form) {
     location: optionalText(form.location, 160, "Location"),
     bio: optionalText(form.bio, 2000, "Bio", true),
     personalWebsite: website,
+    contactEmail,
     offersCoffee: !!form.offersCoffee,
     offersMentorship: !!form.offersMentorship,
     offersReferrals: !!form.offersReferrals,
