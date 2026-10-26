@@ -2,6 +2,20 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowUpRightFromSquare,
+  faBriefcase,
+  faCode,
+  faGraduationCap,
+  faTerminal,
+  faTrophy,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendar,
+  faPenToSquare,
+  faStar,
+} from "@fortawesome/free-regular-svg-icons";
 import MemberAvatar from "./MemberAvatar";
 import "../../styles/directory.scss";
 
@@ -40,9 +54,36 @@ export default function MemberProfile({ identity, memberID }) {
     return () => controller.abort();
   }, [identity.id, memberID, request, retry]);
 
+  const links = member
+    ? [
+        member.githubUsername && {
+          label: "GitHub",
+          icon: faCode,
+          href: `https://github.com/${member.githubUsername}`,
+        },
+        member.leetcodeUsername && {
+          label: "LeetCode",
+          icon: faTerminal,
+          href: `https://leetcode.com/u/${member.leetcodeUsername}`,
+        },
+        member.linkedinUsername && {
+          label: "LinkedIn",
+          icon: faBriefcase,
+          href: `https://www.linkedin.com/in/${member.linkedinUsername}`,
+        },
+        member.personalWebsite?.startsWith("https://") && {
+          label: "Personal website",
+          icon: faArrowUpRightFromSquare,
+          href: member.personalWebsite,
+        },
+      ].filter(Boolean)
+    : [];
+
   return (
     <article className="csc-member-profile">
-      <Link to="/dashboard/members">← Members</Link>
+      <div className="csc-profile-banner">
+        <Link to="/dashboard/members">← Members</Link>
+      </div>
       {loading ? (
         <p role="status">Loading profile…</p>
       ) : error ? (
@@ -61,47 +102,103 @@ export default function MemberProfile({ identity, memberID }) {
                 request={request}
                 userID={identity.id}
               />
-              <div>
+              <div className="csc-profile-identity">
                 <h1>{member.name || "CSC member"}</h1>
-                {member.isAlumni && (
-                  <span className="csc-directory-badge">Alumni</span>
-                )}
-                {!member.complete && (
-                  <span className="csc-directory-badge">
-                    Profile incomplete · staff view
-                  </span>
-                )}
+                <ul className="csc-profile-tags">
+                  {member.majors.map((major) => (
+                    <li key={major}>
+                      <FontAwesomeIcon icon={faGraduationCap} />
+                      {major}
+                    </li>
+                  ))}
+                  {member.graduationYear && (
+                    <li>
+                      <FontAwesomeIcon icon={faCalendar} />
+                      Class of {member.graduationYear}
+                    </li>
+                  )}
+                  {member.isAlumni && <li>Alumni</li>}
+                  {!member.complete && (
+                    <li className="is-warning">
+                      Profile incomplete · staff view
+                    </li>
+                  )}
+                </ul>
               </div>
+              {member.id === identity.id && (
+                <Link className="csc-profile-edit" to="/dashboard/account">
+                  <FontAwesomeIcon icon={faPenToSquare} />
+                  Edit profile
+                </Link>
+              )}
             </header>
-            {member.majors.length > 0 && (
-              <p>
-                <strong>Major{member.majors.length > 1 ? "s" : ""}:</strong>{" "}
-                {member.majors.join(", ")}
-              </p>
-            )}
-            {member.graduationYear && (
-              <p>
-                <strong>Graduation year:</strong> {member.graduationYear}
-              </p>
-            )}
+            <section className="csc-profile-stats" aria-label="Points">
+              <div className="csc-profile-stat">
+                <span className="csc-profile-stat-icon">
+                  <FontAwesomeIcon icon={faStar} />
+                </span>
+                <div>
+                  <h2>Total points</h2>
+                  <p>
+                    <strong>{member.allTimePoints}</strong>
+                  </p>
+                </div>
+              </div>
+              <div className="csc-profile-stat is-gold">
+                <span className="csc-profile-stat-icon">
+                  <FontAwesomeIcon icon={faTrophy} />
+                </span>
+                <div>
+                  <h2>30-day leaderboard</h2>
+                  <p>
+                    <strong>
+                      {member.rank30Days ? `#${member.rank30Days}` : "—"}
+                    </strong>
+                    {member.rank30Days === 1
+                      ? "Top of the club"
+                      : !member.rank30Days && "Unranked"}
+                  </p>
+                </div>
+              </div>
+            </section>
             {(member.jobTitle || member.currentCompany || member.location) && (
-              <section aria-label="Career details">
-                <h2>Career</h2>
-                {member.jobTitle && <p><strong>Job title:</strong> {member.jobTitle}</p>}
-                {member.currentCompany && <p><strong>Current company:</strong> {member.currentCompany}</p>}
-                {member.location && <p><strong>Location:</strong> {member.location}</p>}
+              <section className="csc-profile-details" aria-label="Career details">
+                <h2 className="csc-profile-eyebrow">Career</h2>
+                <dl>
+                  {member.jobTitle && (
+                    <div>
+                      <dt>Job title</dt>
+                      <dd>{member.jobTitle}</dd>
+                    </div>
+                  )}
+                  {member.currentCompany && (
+                    <div>
+                      <dt>Current company</dt>
+                      <dd>{member.currentCompany}</dd>
+                    </div>
+                  )}
+                  {member.location && (
+                    <div>
+                      <dt>Location</dt>
+                      <dd>{member.location}</dd>
+                    </div>
+                  )}
+                </dl>
               </section>
             )}
             {member.bio && (
-              <section aria-label="About">
-                <h2>About</h2>
+              <section className="csc-profile-details" aria-label="About">
+                <h2 className="csc-profile-eyebrow">About</h2>
                 <p className="csc-profile-bio">{member.bio}</p>
               </section>
             )}
-            {(member.offersCoffee || member.offersMentorship || member.offersReferrals || member.offersResumeReview) && (
-              <section aria-label="Help offered">
-                <h2>Happy to help with</h2>
-                <ul>
+            {(member.offersCoffee ||
+              member.offersMentorship ||
+              member.offersReferrals ||
+              member.offersResumeReview) && (
+              <section className="csc-profile-details" aria-label="Help offered">
+                <h2 className="csc-profile-eyebrow">Happy to help with</h2>
+                <ul className="csc-profile-help">
                   {member.offersCoffee && <li>Coffee chats</li>}
                   {member.offersMentorship && <li>Mentorship</li>}
                   {member.offersReferrals && <li>Referrals</li>}
@@ -109,68 +206,34 @@ export default function MemberProfile({ identity, memberID }) {
                 </ul>
               </section>
             )}
-            {(member.githubUsername ||
-              member.leetcodeUsername ||
-              member.linkedinUsername ||
-              member.personalWebsite?.startsWith("https://")) && (
-              <section aria-label="External profiles">
-                <h2>Profiles</h2>
+            {links.length > 0 && (
+              <section aria-labelledby="csc-profile-links-heading">
+                <h2
+                  id="csc-profile-links-heading"
+                  className="csc-profile-eyebrow"
+                >
+                  Profiles
+                </h2>
                 <ul className="csc-profile-links">
-                  {member.githubUsername && (
-                    <li>
+                  {links.map((link) => (
+                    <li key={link.label}>
                       <a
-                        href={`https://github.com/${member.githubUsername}`}
+                        href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        GitHub
+                        <FontAwesomeIcon icon={link.icon} />
+                        {link.label}
+                        <FontAwesomeIcon
+                          className="csc-profile-link-arrow"
+                          icon={faArrowUpRightFromSquare}
+                        />
+                        <span className="sr-only"> (opens in new tab)</span>
                       </a>
                     </li>
-                  )}
-                  {member.leetcodeUsername && (
-                    <li>
-                      <a
-                        href={`https://leetcode.com/u/${member.leetcodeUsername}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        LeetCode
-                      </a>
-                    </li>
-                  )}
-                  {member.linkedinUsername && (
-                    <li>
-                      <a
-                        href={`https://www.linkedin.com/in/${member.linkedinUsername}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        LinkedIn
-                      </a>
-                    </li>
-                  )}
-                  {member.personalWebsite?.startsWith("https://") && (
-                    <li>
-                      <a href={member.personalWebsite} target="_blank" rel="noopener noreferrer">Personal website</a>
-                    </li>
-                  )}
+                  ))}
                 </ul>
               </section>
-            )}
-            <section className="csc-profile-points" aria-label="Points">
-              <h2>Points</h2>
-              <p>
-                <strong>{member.allTimePoints}</strong> total points
-              </p>
-              <p>
-                30-day leaderboard:{" "}
-                <strong>
-                  {member.rank30Days ? `#${member.rank30Days}` : "Unranked"}
-                </strong>
-              </p>
-            </section>
-            {member.id === identity.id && (
-              <Link to="/dashboard/account">Edit your profile</Link>
             )}
           </>
         )
