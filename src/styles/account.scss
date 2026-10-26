@@ -125,6 +125,23 @@
     gap: 1.125rem;
   }
 
+  .csc-account-editor-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+  .csc-account-editor-primary {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+    min-width: 0;
+  }
+  &.csc-account--editor > form > button {
+    align-self: flex-start;
+    width: auto;
+    min-width: 11rem;
+  }
+
   .csc-account-majors {
     margin-top: 1.75rem;
     padding-top: 1.75rem;
@@ -151,9 +168,7 @@
     border-top: 1px solid $acc-hairline;
   }
   .csc-account-career {
-    margin-top: 1.75rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid $acc-hairline;
+    min-width: 0;
 
     > p { margin: 0; color: $acc-muted; line-height: 1.5; }
     textarea {
@@ -284,17 +299,54 @@
   }
 
   .csc-account-files {
-    margin-top: 1.75rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid $acc-hairline;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
 
     h2 {
       margin: 0;
       font-size: 1.25rem;
       font-weight: 700;
+    }
+  }
+  .csc-account-file-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid $acc-hairline;
+    border-radius: $acc-radius-control;
+    background: $acc-mist;
+  }
+  .csc-account-file-heading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 6rem;
+
+    > div:last-child {
+      min-width: 0;
+    }
+    p {
+      margin-top: 0.35rem;
+      font-size: 0.875rem;
+      color: $acc-muted;
+    }
+  }
+  .csc-account-resume-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 6rem;
+    height: 6rem;
+    border-radius: $acc-radius-control;
+    background: $acc-cream;
+    color: $acc-navy;
+
+    svg {
+      width: 2.5rem;
+      height: 2.5rem;
     }
   }
   // Optional profile picture. Falls back to the member's initials, so the
@@ -303,9 +355,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 0 0 6rem;
     width: 6rem;
     height: 6rem;
-    margin-top: 0.25rem;
     border-radius: 50%;
     overflow: hidden;
     background: $acc-cream;
@@ -323,6 +375,19 @@
   .csc-account-file-help {
     font-size: 0.875rem;
     color: $acc-muted;
+  }
+  .csc-account-file {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    label {
+      margin: 0;
+    }
+  }
+  .csc-account-preview-error button {
+    width: auto;
+    margin-top: 0.75rem;
   }
   .csc-account-file input[type="file"] {
     width: 100%;
@@ -354,7 +419,20 @@
 
     button {
       width: auto;
-      flex: 1 1 10rem;
+    }
+    .csc-account-file-remove {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 850px) {
+    .csc-account-editor-fields,
+    .csc-account-files {
+      grid-template-columns: 1fr;
+    }
+    .csc-account-career {
+      padding-top: 1.75rem;
+      border-top: 1px solid $acc-hairline;
     }
   }
 
@@ -373,6 +451,18 @@
       button {
         width: 100%;
       }
+    }
+    .csc-account-file-card {
+      padding: 1.125rem;
+    }
+    .csc-account-file-heading {
+      align-items: flex-start;
+    }
+    .csc-account-avatar,
+    .csc-account-resume-icon {
+      flex-basis: 4rem;
+      width: 4rem;
+      height: 4rem;
     }
   }
 }

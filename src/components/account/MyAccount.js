@@ -429,17 +429,21 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
         <form onSubmit={save}>
           <fieldset disabled={saving}>
             <legend>About you</legend>
-            <NameFields form={form} change={change} />
-            <YearField form={form} change={change} />
-            <fieldset className="csc-account-majors">
-              <legend>Majors</legend>
-              <MajorFields form={form} change={change} />
-            </fieldset>
-            <fieldset className="csc-account-handles">
-              <legend>Profiles</legend>
-              <HandleFields form={form} change={change} />
-            </fieldset>
-            <CareerFields form={form} change={change} />
+            <div className="csc-account-editor-fields">
+              <div className="csc-account-editor-primary">
+                <NameFields form={form} change={change} />
+                <YearField form={form} change={change} />
+                <fieldset className="csc-account-majors">
+                  <legend>Majors</legend>
+                  <MajorFields form={form} change={change} />
+                </fieldset>
+                <fieldset className="csc-account-handles">
+                  <legend>Profiles</legend>
+                  <HandleFields form={form} change={change} />
+                </fieldset>
+              </div>
+              <CareerFields form={form} change={change} />
+            </div>
           </fieldset>
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}

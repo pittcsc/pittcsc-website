@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { initials } from "../../lib/account/form.mjs";
 
-// `only` renders a single section, so the guided flow can ask for the resume
-// and the optional picture as separate questions. Omitted, both are shown.
+// `only` can render either file section on its own. Omitted, both are shown.
 export default function AccountFiles({
   profile,
   userID,
@@ -45,27 +44,37 @@ export default function AccountFiles({
   return (
     <section className="csc-account-files" aria-label="Profile files">
       {showAvatar && (
-        <>
-          <h2>Profile picture</h2>
-          <div className="csc-account-avatar">
-            {avatarURL ? (
-              <img src={avatarURL} alt="Your profile avatar" />
-            ) : (
-              <span aria-label="Default profile avatar">
-                {initials(profile)}
-              </span>
-            )}
+        <div className="csc-account-file-card">
+          <div className="csc-account-file-heading">
+            <div className="csc-account-avatar">
+              {avatarURL ? (
+                <img src={avatarURL} alt="Your profile avatar" />
+              ) : (
+                <span aria-label="Default profile avatar">
+                  {initials(profile)}
+                </span>
+              )}
+            </div>
+            <div>
+              <h2>Profile picture</h2>
+              <p>
+                {profile.hasAvatar
+                  ? "Your picture is saved."
+                  : "Your initials appear until you add a picture."}
+              </p>
+            </div>
           </div>
           {previewError && (
-            <>
+            <div className="csc-account-preview-error">
               <p role="alert">{previewError}</p>
               <button
+                type="button"
                 className="csc-auth-secondary"
                 onClick={() => setPreviewAttempt((value) => value + 1)}
               >
                 Retry picture
               </button>
-            </>
+            </div>
           )}
           <FileEditor
             kind="avatar"
@@ -75,17 +84,38 @@ export default function AccountFiles({
             request={request}
             onChanged={onChanged}
           />
-        </>
+        </div>
       )}
       {showResume && (
-        <>
-          <h2>Resume</h2>
-          <p>
-            {profile.hasResume
-              ? "Your resume is saved."
-              : "No resume uploaded yet."}{" "}
-            Visible only to you.
-          </p>
+        <div className="csc-account-file-card">
+          <div className="csc-account-file-heading">
+            <div className="csc-account-resume-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6 2.5h8l4 4V21.5H6V2.5Z"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M14 2.5v4h4M9 11h6M9 14.5h6M9 18h4"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2>Resume</h2>
+              <p>
+                {profile.hasResume
+                  ? "Your PDF is saved."
+                  : "No resume uploaded yet."}{" "}
+                Only you can access it.
+              </p>
+            </div>
+          </div>
           <FileEditor
             kind="resume"
             label="Resume PDF"
@@ -94,7 +124,7 @@ export default function AccountFiles({
             request={request}
             onChanged={onChanged}
           />
-        </>
+        </div>
       )}
     </section>
   );
@@ -175,12 +205,14 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
   return (
     <div className="csc-account-file">
       <label htmlFor={`${kind}-file`}>
-        {exists ? "Replace" : "Upload"} {isResume ? "resume PDF" : "avatar"}
+        {exists
+          ? `Choose a replacement ${isResume ? "PDF" : "picture"}`
+          : `Choose a ${isResume ? "resume PDF" : "picture"}`}
       </label>
       <p id={`${kind}-help`} className="csc-account-file-help">
         {isResume
           ? "PDF, up to 10 MB."
-          : "JPEG, PNG, or WebP, up to 5 MB. Visible only to you."}
+          : "JPEG, PNG, or WebP, up to 5 MB. Visible to signed-in members."}
       </p>
       <input
         ref={input}
@@ -199,34 +231,44 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
           setNotice("");
         }}
       />
+      {(selected || exists) && (
+        <div className="csc-account-file-actions">
+          {selected && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void act("upload")}
+            >
+              {exists
+                ? "Save replacement"
+                : `Save ${isResume ? "resume" : "picture"}`}
+            </button>
+          )}
+          {exists && isResume && (
+            <button
+              type="button"
+              disabled={busy}
+              className="csc-auth-secondary"
+              onClick={() => void act("download")}
+            >
+              Download resume
+            </button>
+          )}
+          {exists && (
+            <button
+              type="button"
+              disabled={busy}
+              className="csc-auth-secondary csc-account-file-remove"
+              onClick={() => void act("remove")}
+            >
+              Remove {isResume ? "resume" : "picture"}
+            </button>
+          )}
+        </div>
+      )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
       {busy && <p role="status">Working…</p>}
-      <div className="csc-account-file-actions">
-        <button disabled={busy || !selected} onClick={() => void act("upload")}>
-          {exists
-            ? "Save replacement"
-            : `Save ${isResume ? "resume" : "avatar"}`}
-        </button>
-        {exists && (
-          <button
-            disabled={busy}
-            className="csc-auth-secondary"
-            onClick={() => void act("remove")}
-          >
-            Remove {isResume ? "resume" : "avatar"}
-          </button>
-        )}
-        {exists && isResume && (
-          <button
-            disabled={busy}
-            className="csc-auth-secondary"
-            onClick={() => void act("download")}
-          >
-            Download resume
-          </button>
-        )}
-      </div>
     </div>
   );
 }
