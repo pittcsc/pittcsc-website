@@ -3,9 +3,13 @@
 
 @import "./helpers/account-tokens";
 
-// The profile form needs more room than the signed-in landing card.
+// Keep the short setup questions compact, then give the completed editor the
+// same room as the member dashboard.
 .csc-auth:has(.csc-account) .csc-auth-cardwrap {
   max-width: 44rem;
+}
+.csc-auth:has(.csc-account--editor) .csc-auth-cardwrap {
+  max-width: 72rem;
 }
 
 .csc-account {

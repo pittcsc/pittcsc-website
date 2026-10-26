@@ -464,7 +464,7 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
   }
 
   return (
-    <div className="csc-account">
+    <div className={`csc-account${guided === false ? " csc-account--editor" : ""}`}>
       <Link to="/dashboard" className="csc-account-back">
         ← Dashboard
       </Link>
