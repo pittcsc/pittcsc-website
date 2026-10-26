@@ -39,7 +39,10 @@ mise run setup
 mise run dev
 ```
 
-Open http://localhost:8000. The first run requires internet access and can take
+Open http://localhost:8000. `mise run dev` refuses to start if port 8000 or
+8080 is already in use, so Gatsby cannot quietly move to another port while
+an older site stays at the documented address. Stop the existing server and
+rerun the task. The first run requires internet access and can take
 several minutes to download runtimes, dependencies, and Docker images.
 
 `mise trust` approves this checkout's task configuration; review it before trusting

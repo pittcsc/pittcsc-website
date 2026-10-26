@@ -1,8 +1,49 @@
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
+import { connect } from "node:net";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
+function connects(host, port) {
+  return new Promise((done) => {
+    const socket = connect({ host, port });
+    const settle = (value) => {
+      socket.destroy();
+      done(value);
+    };
+    socket.setTimeout(400);
+    socket.once("connect", () => settle(true));
+    socket.once("error", () => settle(false));
+    socket.once("timeout", () => settle(false));
+  });
+}
+
+export async function portIsListening(port) {
+  const results = await Promise.all(
+    ["127.0.0.1", "::1"].map((host) => connects(host, port)),
+  );
+  return results.some(Boolean);
+}
+
+// Gatsby offers to move to another port when 8000 is occupied. That can leave
+// an older site at the documented URL and break the API's single allowed origin.
+// Check before starting Supabase so a second `mise run dev` does not stop an
+// existing local stack on its way out.
+export async function ensureDevelopmentPortsAvailable(
+  isListening = portIsListening,
+) {
+  for (const [port, service] of [
+    [8000, "website"],
+    [8080, "API"],
+  ]) {
+    if (await isListening(port)) {
+      throw new Error(
+        `Port ${port} is already in use by a ${service} or another process. Stop it before running \`mise run dev\` so you do not open a stale site or use the wrong API.`,
+      );
+    }
+  }
+}
 
 function launch(command, args) {
   return spawn(command, args, { cwd: root, stdio: "inherit", detached: true });
@@ -41,6 +82,7 @@ async function waitAtMost(promises, milliseconds) {
 }
 
 export async function supervise({
+  verifyPorts = ensureDevelopmentPortsAvailable,
   startLocal = () =>
     launch(process.execPath, ["scripts/local-dev.mjs", "start"]),
   stopLocal = () =>
@@ -52,6 +94,7 @@ export async function supervise({
   signals = process,
   terminate = terminateGroup,
 } = {}) {
+  await verifyPorts();
   const children = [];
   let interrupted = false;
   let wakeUp;
@@ -119,6 +162,12 @@ if (
   process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
+  const branch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
+    cwd: root,
+    encoding: "utf8",
+  }).trim();
+  console.log(`Checkout: ${branch} at ${root}`);
+  console.log("Website: http://localhost:8000/");
   supervise()
     .then((code) => {
       process.exitCode = code;

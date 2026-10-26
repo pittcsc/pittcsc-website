@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
+import { createServer } from "node:net";
 import test from "node:test";
-import { supervise } from "../../scripts/dev.mjs";
+import {
+  ensureDevelopmentPortsAvailable,
+  portIsListening,
+  supervise,
+} from "../../scripts/dev.mjs";
 
 let nextPid = 1000;
 
@@ -26,6 +31,7 @@ test("Ctrl+C stops both servers and then Supabase", async () => {
   const stop = child();
   const events = [];
   const result = supervise({
+    verifyPorts: async () => {},
     signals,
     startLocal: () => {
       queueMicrotask(() => startup.finish());
@@ -61,6 +67,7 @@ test("an unexpected server exit also stops the other server and Supabase", async
   const stop = child();
   const events = [];
   const result = supervise({
+    verifyPorts: async () => {},
     signals: new EventEmitter(),
     startLocal: () => {
       queueMicrotask(() => startup.finish());
@@ -87,4 +94,38 @@ test("an unexpected server exit also stops the other server and Supabase", async
     `${api.pid}:SIGINT`,
     "stop-supabase",
   ]);
+});
+
+test("detects a listening loopback port", async () => {
+  const server = createServer();
+  await new Promise((resolveListen) => server.listen(0, "127.0.0.1", resolveListen));
+  const port = server.address().port;
+  try {
+    assert.equal(await portIsListening(port), true);
+  } finally {
+    await new Promise((resolveClose) => server.close(resolveClose));
+  }
+  assert.equal(await portIsListening(port), false);
+});
+
+test("a port conflict stops before local Supabase starts", async () => {
+  let started = false;
+  const verifyPorts = () =>
+    ensureDevelopmentPortsAvailable(async (port) => port === 8000);
+  await assert.rejects(
+    supervise({
+      verifyPorts,
+      startLocal: () => {
+        started = true;
+        return child();
+      },
+    }),
+    /Port 8000 is already in use/,
+  );
+  assert.equal(started, false);
+  await assert.rejects(
+    ensureDevelopmentPortsAvailable(async (port) => port === 8080),
+    /Port 8080 is already in use/,
+  );
+  await ensureDevelopmentPortsAvailable(async () => false);
 });
