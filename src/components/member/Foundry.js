@@ -42,7 +42,7 @@ export default function Foundry({ identity }) {
         <span className="csc-foundry-underline" aria-hidden="true" />
         <p className="csc-foundry-lede">
           Foundry is how CSC recognizes the members who keep showing up:
-          shipping code, solving problems, and reading deeply, week after week.
+          shipping code, solving problems, and growing.
         </p>
         <ol className="csc-foundry-rules">
           <li>
