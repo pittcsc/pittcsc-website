@@ -1,4 +1,4 @@
-// /dashboard/foundry: a dark panel inside the usual dashboard card, with a
+// /dashboard/foundry: a full-screen dark page with an inverted header and a
 // floating status card. Inactive cards stay fully grayscale; active cards get
 // the warm-to-violet "forge" palette. Motion is decorative and is removed for
 // prefers-reduced-motion.
@@ -11,13 +11,44 @@ $foundry-muted: #b4bacb;
 $foundry-ember: #f2802e;
 $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-.csc-auth:has(.csc-foundry) {
+// Take over the whole dashboard shell: dark background, inverted header, and
+// no floating white card or cream slab.
+.csc-auth-layout:has(.csc-foundry) {
+  background: $foundry-night;
+  color: $foundry-text;
+
+  .csc-auth-header {
+    background: $foundry-night;
+    border-bottom-color: #ffffff1a;
+
+    .csc-auth-logo {
+      color: $foundry-text;
+    }
+    .csc-auth-account {
+      background: $foundry-text;
+      color: $foundry-night;
+
+      &:hover {
+        background: #fff;
+      }
+    }
+  }
+
+  .csc-auth {
+    align-items: center;
+    padding: clamp(2rem, 6vh, 4rem) clamp(1rem, 5vw, 4rem);
+  }
   .csc-auth-cardwrap {
-    max-width: 66rem;
+    max-width: 72rem;
+
+    &::before {
+      display: none;
+    }
   }
   .csc-auth-card {
-    overflow: hidden;
-    background: $foundry-night;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
     color: $foundry-text;
   }
 }
@@ -27,14 +58,11 @@ $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   align-items: center;
-  gap: 3rem;
-  min-height: 26rem;
-  padding: 1rem 0.5rem;
+  gap: 4rem;
 
   @media (max-width: 820px) {
     grid-template-columns: minmax(0, 1fr);
     gap: 2.5rem;
-    padding: 0;
   }
 
   h1 {
@@ -69,6 +97,7 @@ $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   .csc-foundry-rules {
     display: flex;
+    max-width: 32rem;
     flex-direction: column;
     gap: 0.7rem;
     margin: 1.75rem 0 0;
