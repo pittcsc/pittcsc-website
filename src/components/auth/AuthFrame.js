@@ -51,6 +51,16 @@ export default function AuthFrame({
                 Members
               </Link>
             )}
+            {dashboard && identity.complete && (
+              <Link
+                className="csc-auth-nav-link"
+                to="/dashboard/foundry"
+                activeClassName="is-current"
+                partiallyActive
+              >
+                Foundry
+              </Link>
+            )}
             {dashboard && identity.complete && hasStaffRole(identity) && (
               <Link
                 className="csc-auth-nav-link"
