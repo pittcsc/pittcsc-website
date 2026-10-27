@@ -46,6 +46,16 @@ func TestStoreIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	baseFoundry, err := s.Foundry(ctx, userID, time.Now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	monthStart, _ := ClubMonth(time.Now())
+	previousMonth := monthStart.Add(-time.Second)
+	basePrevious, err := s.Foundry(ctx, userID, previousMonth)
+	if err != nil {
+		t.Fatal(err)
+	}
 	categories, err := s.Categories(ctx)
 	if err != nil || len(categories) < 3 {
 		t.Fatal("point categories missing")
@@ -98,6 +108,13 @@ func TestStoreIntegration(t *testing.T) {
 	if err != nil || mine.AllTime != base.AllTime+10 || mine.Last30Days != base.Last30Days+10 {
 		t.Fatalf("award not counted: %+v, %v", mine, err)
 	}
+	foundry, err := s.Foundry(ctx, userID, time.Now())
+	if err != nil || foundry.Points != baseFoundry.Points+10 || foundry.Name == "" {
+		t.Fatalf("award not counted toward Foundry month: %+v, %v", foundry, err)
+	}
+	if previous, err := s.Foundry(ctx, userID, previousMonth); err != nil || previous.Points != basePrevious.Points {
+		t.Fatalf("award counted toward previous Foundry month: %+v, %v", previous, err)
+	}
 	board, err := s.Leaderboard(ctx, userID, "30d")
 	if err != nil {
 		t.Fatal(err)
@@ -119,6 +136,9 @@ func TestStoreIntegration(t *testing.T) {
 	mine, err = s.Mine(ctx, userID, 1)
 	if err != nil || mine.AllTime != base.AllTime {
 		t.Fatal("withdraw did not deduct points")
+	}
+	if foundry, err := s.Foundry(ctx, userID, time.Now()); err != nil || foundry.Points != baseFoundry.Points {
+		t.Fatal("withdraw did not deduct Foundry points")
 	}
 	revoked, err := s.Moderate(ctx, userID, created.ID, "revoke", "Invalid claim")
 	if err != nil || revoked.Status != "revoked" || revoked.StatusReason == nil {

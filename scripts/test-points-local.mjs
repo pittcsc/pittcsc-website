@@ -116,6 +116,7 @@ async function main() {
     for (const path of [
       "/points/me",
       "/points/leaderboard",
+      "/points/foundry",
       "/staff/points/claims",
     ])
       check(
@@ -233,6 +234,14 @@ async function main() {
         own.last30Days === 10 &&
         own.claims[0].id === claim.id,
       "Owner points incorrect",
+    );
+    const foundry = await (await api(member, "/points/foundry")).json();
+    check(
+      foundry.points === 10 &&
+        foundry.threshold === 50 &&
+        foundry.active === false &&
+        /^\d{4}-\d{2}$/.test(foundry.month),
+      "Foundry status incorrect",
     );
     const board = await (
       await api(member, "/points/leaderboard?period=30d")
