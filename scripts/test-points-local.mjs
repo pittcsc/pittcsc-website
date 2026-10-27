@@ -237,10 +237,11 @@ async function main() {
     );
     const foundry = await (await api(member, "/points/foundry")).json();
     check(
-      foundry.points === 10 &&
+      foundry.points === own.last30Days &&
         foundry.threshold === 50 &&
+        foundry.windowDays === 30 &&
         foundry.active === false &&
-        /^\d{4}-\d{2}$/.test(foundry.month),
+        foundry.activeUntil === null,
       "Foundry status incorrect",
     );
     const board = await (

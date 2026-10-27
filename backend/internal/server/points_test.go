@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/pittcsc/pittcsc-website/backend/internal/points"
 	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
@@ -40,10 +39,9 @@ func (s *pointsStub) Leaderboard(_ context.Context, userID, period string) (poin
 	}
 	return points.Leaderboard{Period: period, Entries: []points.Standing{}}, nil
 }
-func (s *pointsStub) Foundry(_ context.Context, userID string, now time.Time) (points.FoundryStatus, error) {
+func (s *pointsStub) Foundry(_ context.Context, userID string) (points.FoundryStatus, error) {
 	s.userID = userID
-	start, _ := points.ClubMonth(now)
-	return points.NewFoundryStatus("Ada Lovelace", start, 20), nil
+	return points.NewFoundryStatus("Ada Lovelace", 20, nil), nil
 }
 func (s *pointsStub) Withdraw(_ context.Context, userID, claimID string) (points.Claim, error) {
 	s.userID, s.claimID = userID, claimID
@@ -161,7 +159,7 @@ func TestFoundryStatusUsesVerifiedOwner(t *testing.T) {
 		}
 	}
 	body := w.Body.String()
-	if !strings.Contains(body, `"points":20`) || !strings.Contains(body, `"threshold":50`) || !strings.Contains(body, `"active":false`) {
+	if !strings.Contains(body, `"points":20`) || !strings.Contains(body, `"threshold":50`) || !strings.Contains(body, `"active":false`) || !strings.Contains(body, `"windowDays":30`) {
 		t.Fatalf("unexpected Foundry status: %s", body)
 	}
 }

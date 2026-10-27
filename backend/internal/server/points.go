@@ -20,7 +20,7 @@ type pointStore interface {
 	Create(context.Context, string, points.Input) (points.Claim, error)
 	Mine(context.Context, string, int) (points.Mine, error)
 	Leaderboard(context.Context, string, string) (points.Leaderboard, error)
-	Foundry(context.Context, string, time.Time) (points.FoundryStatus, error)
+	Foundry(context.Context, string) (points.FoundryStatus, error)
 	Withdraw(context.Context, string, string) (points.Claim, error)
 	StaffList(context.Context, int) (points.StaffPage, error)
 	Moderate(context.Context, string, string, string, string) (points.Claim, error)
@@ -117,7 +117,7 @@ func registerPointRoutes(mux *http.ServeMux, authentication authenticator, profi
 		writeJSON(w, result)
 	}))
 	mux.HandleFunc("GET /points/foundry", member(func(w http.ResponseWriter, r *http.Request, identity auth.Identity) {
-		result, err := store.Foundry(r.Context(), identity.ID, time.Now())
+		result, err := store.Foundry(r.Context(), identity.ID)
 		if err != nil {
 			writePointError(w, err)
 			return

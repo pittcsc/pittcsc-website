@@ -110,27 +110,37 @@ func (s Store) Mine(ctx context.Context, userID string, page int) (Mine, error) 
 	return result, rows.Err()
 }
 
-// Foundry totals the owner's awarded points in the club month containing now.
-// Restored claims count toward the month of their original award.
-func (s Store) Foundry(ctx context.Context, userID string, now time.Time) (FoundryStatus, error) {
-	start, end := ClubMonth(now)
+// Foundry totals the owner's awarded points over the same rolling window as
+// the 30-day leaderboard. Restored claims keep their original award time.
+//
+// Walking claims newest first, the first one whose running total reaches the
+// threshold is the oldest claim the status depends on; it lapses once that
+// claim leaves the window.
+func (s Store) Foundry(ctx context.Context, userID string) (FoundryStatus, error) {
 	var name string
 	var total int
+	var activeUntil *time.Time
 	err := s.DB.QueryRow(ctx, `
+		with recent as (
+		  select awarded_at,
+		    sum(points_awarded) over (order by awarded_at desc, id desc) as running
+		  from csc.point_claims
+		  where auth_user_id = $1::uuid and status = 'awarded'
+		    and awarded_at >= now() - make_interval(days => $3)
+		)
 		select coalesce(nullif(btrim(concat_ws(' ', coalesce(p.preferred_name, p.first_name), p.last_name)), ''), 'CSC member'),
-		  coalesce(sum(c.points_awarded) filter (where c.awarded_at >= $2 and c.awarded_at < $3), 0)::integer
+		  (select coalesce(max(running), 0)::integer from recent),
+		  (select max(awarded_at) + make_interval(days => $3) from recent where running >= $2)
 		from csc.profiles p
-		left join csc.point_claims c on c.auth_user_id = p.auth_user_id and c.status = 'awarded'
 		where p.auth_user_id = $1::uuid
-		group by p.auth_user_id, p.preferred_name, p.first_name, p.last_name
-	`, userID, start, end).Scan(&name, &total)
+	`, userID, FoundryThreshold, FoundryWindowDays).Scan(&name, &total, &activeUntil)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return FoundryStatus{}, ErrNotFound
 	}
 	if err != nil {
 		return FoundryStatus{}, err
 	}
-	return NewFoundryStatus(name, start, total), nil
+	return NewFoundryStatus(name, total, activeUntil), nil
 }
 
 func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderboard, error) {
