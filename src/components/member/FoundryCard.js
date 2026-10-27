@@ -1,7 +1,6 @@
 import React from "react";
 import {
-  foundryMonthLabel,
-  foundryMonthName,
+  foundryLapseDate,
   foundryProgress,
   foundryRemaining,
 } from "../../lib/member/foundry.mjs";
@@ -41,7 +40,7 @@ function release(event) {
 }
 
 export default function FoundryCard({ status }) {
-  const month = foundryMonthLabel(status.month);
+  const period = `Last ${status.windowDays} days`;
   const label = status.active ? "Active" : "Inactive";
   const remaining = foundryRemaining(status);
 
@@ -66,7 +65,7 @@ export default function FoundryCard({ status }) {
         <p className="csc-foundry-card-name">{status.name}</p>
         <p className="csc-foundry-card-role">Pitt CSC member</p>
         <div className="csc-foundry-card-meta">
-          <span>{month}</span>
+          <span>{period}</span>
           <span>
             <strong>{status.points}</strong> / {status.threshold} pts
           </span>
@@ -74,7 +73,7 @@ export default function FoundryCard({ status }) {
         <div
           className="csc-foundry-card-meter"
           role="progressbar"
-          aria-label={`Foundry points for ${month}`}
+          aria-label={`Foundry points, ${period.toLowerCase()}`}
           aria-valuemin={0}
           aria-valuemax={status.threshold}
           aria-valuenow={Math.min(status.points, status.threshold)}
@@ -84,7 +83,7 @@ export default function FoundryCard({ status }) {
       </div>
       <figcaption className="csc-foundry-caption">
         {status.active
-          ? `You're active through the end of ${foundryMonthName(status.month)}.`
+          ? `Active through ${foundryLapseDate(status.activeUntil)}, even with no new points.`
           : `${remaining} more ${remaining === 1 ? "point" : "points"} to go active.`}
       </figcaption>
     </figure>

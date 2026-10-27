@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  foundryMonthLabel,
-  foundryMonthName,
+  foundryLapseDate,
   foundryProgress,
   foundryRemaining,
   parseFoundryStatus,
@@ -10,18 +9,23 @@ import {
 
 const status = {
   name: "Ada Lovelace",
-  month: "2026-10",
   points: 20,
   threshold: 50,
+  windowDays: 30,
   active: false,
+  activeUntil: null,
+};
+const active = {
+  ...status,
+  points: 62,
+  active: true,
+  activeUntil: "2026-11-06T18:00:00Z",
 };
 
-test("Foundry month labels never shift with the viewer's time zone", () => {
-  assert.equal(foundryMonthLabel("2026-10"), "OCT 2026");
-  assert.equal(foundryMonthLabel("2027-01"), "JAN 2027");
-  assert.equal(foundryMonthLabel("2026-12"), "DEC 2026");
-  assert.equal(foundryMonthName("2026-10"), "October");
-  assert.equal(foundryMonthName("2027-01"), "January");
+test("Foundry lapse dates use the club's New York calendar", () => {
+  assert.equal(foundryLapseDate(active.activeUntil), "Nov 6");
+  // 01:30 UTC on Nov 7 is still the evening of Nov 6 in New York.
+  assert.equal(foundryLapseDate("2026-11-07T01:30:00Z"), "Nov 6");
 });
 
 test("Foundry progress is capped and remaining points never go negative", () => {
@@ -29,22 +33,25 @@ test("Foundry progress is capped and remaining points never go negative", () => 
   assert.equal(foundryRemaining(status), 30);
   assert.equal(foundryProgress({ points: 0, threshold: 50 }), 0);
   assert.equal(foundryProgress({ points: 49, threshold: 50 }), 98);
-  assert.equal(foundryProgress({ points: 80, threshold: 50 }), 100);
-  assert.equal(foundryRemaining({ points: 80, threshold: 50 }), 0);
+  assert.equal(foundryProgress(active), 100);
+  assert.equal(foundryRemaining(active), 0);
 });
 
 test("malformed Foundry responses are rejected", () => {
   assert.deepEqual(parseFoundryStatus(status), status);
+  assert.deepEqual(parseFoundryStatus(active), active);
   for (const bad of [
     null,
     {},
-    { ...status, month: "2026-13" },
-    { ...status, month: "October" },
     { ...status, points: -1 },
     { ...status, points: "20" },
     { ...status, threshold: 0 },
+    { ...status, windowDays: 0 },
     { ...status, active: "false" },
     { ...status, name: undefined },
+    { ...status, activeUntil: "2026-11-06T18:00:00Z" },
+    { ...active, activeUntil: null },
+    { ...active, activeUntil: "soon" },
   ])
     assert.throws(() => parseFoundryStatus(bad), /temporarily unavailable/);
 });

@@ -42,26 +42,25 @@ export default function Foundry({ identity }) {
         <span className="csc-foundry-underline" aria-hidden="true" />
         <p className="csc-foundry-lede">
           Foundry is how CSC recognizes the members who keep showing up:
-          shipping code, solving problems, and reading deeply, every single
-          month.
+          shipping code, solving problems, and reading deeply, week after week.
         </p>
         <ol className="csc-foundry-rules">
           <li>
             <span>
-              Earn <strong>50 points</strong> within a calendar month to go
+              Earn <strong>50 points</strong> within any 30-day stretch to go
               active.
             </span>
           </li>
           <li>
             <span>
-              Totals reset at midnight Eastern on the 1st, so everyone starts
-              the month at zero.
+              Only the last 30 days count. Older points roll off one day at a
+              time, so there&rsquo;s no monthly reset.
             </span>
           </li>
           <li>
             <span>
-              Until you reach 50 again, your status stays inactive. Once you do,
-              it holds for the rest of that month.
+              If enough points roll off to drop you below 50, you go inactive
+              until you&rsquo;re back above it.
             </span>
           </li>
         </ol>
