@@ -29,6 +29,19 @@ decision before they become a Foundry role requirement.
   claim; staff can revoke, restore, or correct one with an audit reason. Revoked
   reasons are visible to the owner.
 
+## Foundry status
+
+**Foundry** (`/dashboard/foundry`) explains the monthly rules and shows the
+owner's status card. A member is active for a month once their awarded points
+earned in that month reach 50. Months follow New York time, so totals reset at
+midnight Eastern on the 1st and everyone starts each month inactive.
+Claims count toward the month of their original award time, including restored
+claims, and withdrawn or revoked claims count zero.
+
+This status is informational only. It does not grant or remove the `foundry`
+role and confers no privileges; tying points to that role still needs the
+separate verification decision noted above.
+
 ## Data and authorization
 
 `csc.point_categories` stores category labels and current values.
@@ -55,6 +68,7 @@ access. The public Gatsby build contains no point or claim data.
 | `POST /points/claims` | Active, completed account | Submit `{category,url,affirmed:true}` |
 | `DELETE /points/claims/{id}` | Owner | Withdraw an awarded claim |
 | `GET /points/leaderboard?period=all\|30d` | Active, completed account | Top 10 and own rank |
+| `GET /points/foundry` | Owner | Name, month (`YYYY-MM`), month points, threshold, and active flag |
 | `GET /staff/points/claims?page=1` | Staff | 20 newest claims per page |
 | `POST /staff/points/claims/{id}/revoke` | Staff | Revoke with `{reason}` |
 | `POST /staff/points/claims/{id}/restore` | Staff | Restore with `{reason}` |
@@ -81,8 +95,8 @@ docker exec -i supabase_db_pittcsc-website psql -U postgres -d postgres -v ON_ER
 ```
 
 `backend/internal/points/store_integration_test.go` exercises concurrent
-claims, duplicate links, score changes, moderation, audit entries, and
-corrections against a **synthetic active local** Auth/profile fixture when
+claims, duplicate links, score and Foundry month changes, moderation, audit
+entries, and corrections against a **synthetic active local** Auth/profile fixture when
 `POINTS_TEST_DATABASE_URL` and `POINTS_TEST_USER_ID` are set. It refuses a
 non-loopback database and skips in the regular check suite when no fixture is
 configured. The test removes its own claim afterward.
