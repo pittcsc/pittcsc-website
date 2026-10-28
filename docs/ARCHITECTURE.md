@@ -56,6 +56,7 @@ Initial route structure:
 | `/dashboard/members` and `/dashboard/members/{id}` | Search and view member profiles (implemented) | Active, completed accounts; staff may inspect active incomplete profiles by ID |
 | `/dashboard/points` | Submit activity links and view all-time and rolling 30-day point leaderboards (implemented) | Signed-in active accounts |
 | `/dashboard/points/submissions` | Own submitted links and claim history (implemented) | Signed-in account owner |
+| `/dashboard/foundry` | Foundry rules and own rolling 30-day Foundry status card (implemented) | Signed-in active, completed accounts |
 | `/dashboard/staff` | Staff tool cards (implemented) | Active staff |
 | `/dashboard/staff/point-claims` | Point claim review and moderation (implemented) | Active staff |
 | `/dashboard/staff/user-management` | Member search and role editing (implemented) | Active staff |

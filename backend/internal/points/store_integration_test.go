@@ -46,6 +46,10 @@ func TestStoreIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	baseFoundry, err := s.Foundry(ctx, userID)
+	if err != nil {
+		t.Fatal(err)
+	}
 	categories, err := s.Categories(ctx)
 	if err != nil || len(categories) < 3 {
 		t.Fatal("point categories missing")
@@ -98,6 +102,15 @@ func TestStoreIntegration(t *testing.T) {
 	if err != nil || mine.AllTime != base.AllTime+10 || mine.Last30Days != base.Last30Days+10 {
 		t.Fatalf("award not counted: %+v, %v", mine, err)
 	}
+	foundry, err := s.Foundry(ctx, userID)
+	if err != nil || foundry.Points != baseFoundry.Points+10 || foundry.Points != mine.Last30Days || foundry.Name == "" {
+		t.Fatalf("award not counted toward Foundry window: %+v, %v", foundry, err)
+	}
+	if baseFoundry.Points == 0 {
+		testFoundryWindow(ctx, t, pool, s, userID, firstURL)
+	} else {
+		t.Log("fixture already has recent points; skipping Foundry window dates")
+	}
 	board, err := s.Leaderboard(ctx, userID, "30d")
 	if err != nil {
 		t.Fatal(err)
@@ -119,6 +132,9 @@ func TestStoreIntegration(t *testing.T) {
 	mine, err = s.Mine(ctx, userID, 1)
 	if err != nil || mine.AllTime != base.AllTime {
 		t.Fatal("withdraw did not deduct points")
+	}
+	if foundry, err := s.Foundry(ctx, userID); err != nil || foundry.Points != baseFoundry.Points {
+		t.Fatal("withdraw did not deduct Foundry points")
 	}
 	revoked, err := s.Moderate(ctx, userID, created.ID, "revoke", "Invalid claim")
 	if err != nil || revoked.Status != "revoked" || revoked.StatusReason == nil {
@@ -149,5 +165,49 @@ func TestStoreIntegration(t *testing.T) {
 	var audits int
 	if err := pool.QueryRow(ctx, `select count(*) from csc.point_claim_audit where claim_id = $1::uuid`, created.ID).Scan(&audits); err != nil || audits != 4 {
 		t.Fatalf("audit count: %d, %v", audits, err)
+	}
+}
+
+// testFoundryWindow places claims at known ages. Newest first, the running
+// total reaches the threshold at the 20-day-old claim, so the status lapses
+// 10 days from now; the 40-day-old claim is outside the window entirely.
+func testFoundryWindow(ctx context.Context, t *testing.T, pool *pgxpool.Pool, s Store, userID, baseURL string) {
+	t.Helper()
+	var ids []string
+	remove := func(ctx context.Context) error {
+		_, err := pool.Exec(ctx, `delete from csc.point_claims where id = any($1::uuid[])`, ids)
+		return err
+	}
+	// Remove them before the caller's later score checks; the cleanup only
+	// covers an early failure.
+	t.Cleanup(func() {
+		cleanupCtx, stop := context.WithTimeout(context.Background(), 5*time.Second)
+		defer stop()
+		if err := remove(cleanupCtx); err != nil {
+			t.Errorf("clean synthetic Foundry claims: %v", err)
+		}
+	})
+	for i, claim := range []struct{ days, points int }{{5, 30}, {20, 20}, {25, 15}, {40, 100}} {
+		var id string
+		link := fmt.Sprintf("%s/foundry-%d", baseURL, i)
+		err := pool.QueryRow(ctx, `insert into csc.point_claims
+			(auth_user_id, category_code, url, normalized_url, points_awarded, awarded_at)
+			values ($1::uuid, 'paper', $2, $2, $3, now() - make_interval(days => $4)) returning id`,
+			userID, link, claim.points, claim.days).Scan(&id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, id)
+	}
+	// The concurrent-claim test's 10-point award from today is also in the window.
+	status, err := s.Foundry(ctx, userID)
+	if err != nil || !status.Active || status.Points != 75 || status.ActiveUntil == nil {
+		t.Fatalf("Foundry window status: %+v, %v", status, err)
+	}
+	if lapse := time.Until(*status.ActiveUntil); lapse < 9*24*time.Hour || lapse > 11*24*time.Hour {
+		t.Fatalf("Foundry status lapses in %v, want about 10 days", lapse)
+	}
+	if err := remove(ctx); err != nil {
+		t.Fatal(err)
 	}
 }

@@ -1,0 +1,383 @@
+// /dashboard/foundry: a full-screen dark page with an inverted header and a
+// floating status card. Inactive cards stay fully grayscale; active cards get
+// the warm-to-violet "forge" palette. Motion is decorative and is removed for
+// prefers-reduced-motion.
+
+@import "./helpers/account-tokens";
+
+$foundry-night: #0d1326;
+$foundry-text: #f3f4fa;
+$foundry-muted: #b4bacb;
+$foundry-ember: #f2802e;
+$foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+// Take over the whole dashboard shell: dark background, inverted header, and
+// no floating white card or cream slab.
+.csc-auth-layout:has(.csc-foundry) {
+  background: $foundry-night;
+  color: $foundry-text;
+
+  .csc-auth-header {
+    background: $foundry-night;
+    border-bottom-color: #ffffff1a;
+
+    .csc-auth-logo {
+      color: $foundry-text;
+    }
+    .csc-auth-account {
+      background: $foundry-text;
+      color: $foundry-night;
+
+      &:hover {
+        background: #fff;
+      }
+    }
+  }
+
+  .csc-auth {
+    align-items: center;
+    padding: clamp(2rem, 6vh, 4rem) clamp(1rem, 5vw, 4rem);
+  }
+  .csc-auth-cardwrap {
+    max-width: 72rem;
+
+    &::before {
+      display: none;
+    }
+  }
+  .csc-auth-card {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    color: $foundry-text;
+  }
+}
+
+// Nested so these beat the generic `.csc-auth h1` / `p` rules in auth.scss.
+.csc-auth .csc-foundry {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 4rem;
+
+  @media (max-width: 820px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+
+  h1 {
+    color: $foundry-text;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  p {
+    color: $foundry-muted;
+  }
+  [role="status"] {
+    color: $foundry-muted;
+    text-align: center;
+  }
+
+  .csc-foundry-underline {
+    display: block;
+    width: 3.5rem;
+    height: 4px;
+    margin: 1.5rem 0;
+    border-radius: 2px;
+    background: $foundry-ember;
+  }
+  .csc-foundry-lede {
+    max-width: 30rem;
+    color: #dfe2ec;
+    font-size: 1.0625rem;
+  }
+
+  .csc-foundry-rules {
+    display: flex;
+    max-width: 32rem;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: foundry-rule;
+  }
+  .csc-foundry-rules li {
+    display: flex;
+    gap: 0.9rem;
+    color: $foundry-text;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    counter-increment: foundry-rule;
+
+    &::before {
+      content: counter(foundry-rule, decimal-leading-zero);
+      flex: none;
+      padding-top: 0.15rem;
+      color: $foundry-ember;
+      font-family: $foundry-mono;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  }
+
+  .csc-foundry-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.75rem;
+    padding: 0 1.25rem;
+    border: 1.5px solid #ffffff3d;
+    border-radius: 9999px;
+    color: $foundry-text;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      border-color 150ms,
+      background 150ms;
+
+    &::after {
+      content: "→";
+      margin-left: 0.5rem;
+    }
+    &:hover {
+      border-color: $foundry-ember;
+      background: #f2802e1a;
+    }
+  }
+
+  .csc-foundry-error {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    p {
+      color: inherit;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- card --- */
+
+.csc-foundry-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 0;
+  perspective: 900px;
+}
+
+.csc-foundry-card {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --shine-x: 30%;
+  --shine-y: 0%;
+  --card-face: linear-gradient(160deg, #2a2c33 0%, #1a1b20 100%);
+  --card-edge: linear-gradient(160deg, #ffffff2e, #ffffff0a);
+  --card-accent: #9a9da6;
+  --card-meter: #7d808a;
+
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 21rem);
+  padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background:
+    var(--card-face) padding-box,
+    var(--card-edge) border-box;
+  background-size:
+    100% 100%,
+    300% 300%;
+  box-shadow:
+    inset 0 1px 0 #ffffff1f,
+    0 30px 60px -24px #000000b3;
+  color: #e6e7ea;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 500ms;
+  animation: csc-foundry-float 6s ease-in-out infinite;
+
+  &.is-tracking {
+    transition:
+      transform 90ms linear,
+      box-shadow 500ms;
+  }
+
+  &.is-active {
+    --card-face: linear-gradient(
+      150deg,
+      #2b1438 0%,
+      #321533 38%,
+      #3d1a22 70%,
+      #45210f 100%
+    );
+    --card-edge: linear-gradient(
+      120deg,
+      #ffb81c,
+      #f2802e,
+      #ec4899,
+      #8b5cf6,
+      #ffb81c
+    );
+    --card-accent: #ff9a4d;
+    --card-meter: linear-gradient(90deg, #ffb81c, #f2802e, #ec4899, #a855f7);
+
+    color: #fff;
+    box-shadow:
+      inset 0 1px 0 #ffffff33,
+      0 30px 60px -24px #000000b3,
+      0 0 48px -8px #ec489966,
+      0 0 90px -20px #f2802e66;
+    animation:
+      csc-foundry-float 6s ease-in-out infinite,
+      csc-foundry-edge 8s linear infinite;
+  }
+}
+
+// Specular highlight that follows the pointer, plus a fixed diagonal sheen.
+.csc-foundry-card-shine {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      circle at var(--shine-x) var(--shine-y),
+      #ffffff33,
+      transparent 55%
+    ),
+    linear-gradient(115deg, transparent 35%, #ffffff12 48%, transparent 62%);
+  pointer-events: none;
+}
+
+.csc-foundry-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.csc-foundry-card-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: $foundry-mono;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
+  svg {
+    color: var(--card-accent);
+  }
+}
+.csc-foundry-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid #ffffff1f;
+  border-radius: 9999px;
+  background: #00000040;
+  font-family: $foundry-mono;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.csc-foundry-card-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7d808a;
+
+  .is-active & {
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+  }
+}
+
+// Three classes so the card copy beats `.csc-auth .csc-foundry p`.
+.csc-foundry .csc-foundry-card .csc-foundry-card-name {
+  margin-top: 1.4rem;
+  color: inherit;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.csc-foundry .csc-foundry-card .csc-foundry-card-role {
+  margin-top: 0.2rem;
+  color: #ffffffa6;
+  font-size: 0.875rem;
+}
+.csc-foundry-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  color: #ffffffb3;
+  font-family: $foundry-mono;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  strong {
+    color: #fff;
+  }
+}
+.csc-foundry-card-meter {
+  height: 5px;
+  margin-top: 0.6rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: #ffffff1a;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--card-meter);
+    transition: width 600ms ease-out;
+  }
+}
+
+// Specific enough to beat `.csc-auth .csc-foundry p`.
+.csc-auth .csc-foundry .csc-foundry-caption {
+  color: $foundry-muted;
+  font-family: $foundry-mono;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+@keyframes csc-foundry-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+@keyframes csc-foundry-edge {
+  to {
+    background-position:
+      0 0,
+      300% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .csc-foundry-card,
+  .csc-foundry-card.is-active {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+}

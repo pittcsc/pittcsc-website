@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -107,6 +108,39 @@ func (s Store) Mine(ctx context.Context, userID string, page int) (Mine, error) 
 		result.Claims = append(result.Claims, claim)
 	}
 	return result, rows.Err()
+}
+
+// Foundry totals the owner's awarded points over the same rolling window as
+// the 30-day leaderboard. Restored claims keep their original award time.
+//
+// Walking claims newest first, the first one whose running total reaches the
+// threshold is the oldest claim the status depends on; it lapses once that
+// claim leaves the window.
+func (s Store) Foundry(ctx context.Context, userID string) (FoundryStatus, error) {
+	var name string
+	var total int
+	var activeUntil *time.Time
+	err := s.DB.QueryRow(ctx, `
+		with recent as (
+		  select awarded_at,
+		    sum(points_awarded) over (order by awarded_at desc, id desc) as running
+		  from csc.point_claims
+		  where auth_user_id = $1::uuid and status = 'awarded'
+		    and awarded_at >= now() - make_interval(days => $3)
+		)
+		select coalesce(nullif(btrim(concat_ws(' ', coalesce(p.preferred_name, p.first_name), p.last_name)), ''), 'CSC member'),
+		  (select coalesce(max(running), 0)::integer from recent),
+		  (select max(awarded_at) + make_interval(days => $3) from recent where running >= $2)
+		from csc.profiles p
+		where p.auth_user_id = $1::uuid
+	`, userID, FoundryThreshold, FoundryWindowDays).Scan(&name, &total, &activeUntil)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return FoundryStatus{}, ErrNotFound
+	}
+	if err != nil {
+		return FoundryStatus{}, err
+	}
+	return NewFoundryStatus(name, total, activeUntil), nil
 }
 
 func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderboard, error) {

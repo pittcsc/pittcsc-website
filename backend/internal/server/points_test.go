@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/pittcsc/pittcsc-website/backend/internal/points"
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 )
 
 const fixtureClaimID = "123e4567-e89b-12d3-a456-426614174000"
@@ -37,6 +38,10 @@ func (s *pointsStub) Leaderboard(_ context.Context, userID, period string) (poin
 		return points.Leaderboard{}, points.ErrInvalid
 	}
 	return points.Leaderboard{Period: period, Entries: []points.Standing{}}, nil
+}
+func (s *pointsStub) Foundry(_ context.Context, userID string) (points.FoundryStatus, error) {
+	s.userID = userID
+	return points.NewFoundryStatus("Ada Lovelace", 20, nil), nil
 }
 func (s *pointsStub) Withdraw(_ context.Context, userID, claimID string) (points.Claim, error) {
 	s.userID, s.claimID = userID, claimID
@@ -128,5 +133,33 @@ func TestLeaderboardAndModerationAuthorization(t *testing.T) {
 	NewHandler(nil, "http://localhost:8000", verifiedAuth(), &profilesStub{}, nil, nil, s).ServeHTTP(w, r)
 	if w.Code != http.StatusNoContent || !strings.Contains(w.Header().Get("Access-Control-Allow-Methods"), "POST") {
 		t.Fatal("points preflight failed")
+	}
+}
+
+func TestFoundryStatusUsesVerifiedOwner(t *testing.T) {
+	s := &pointsStub{}
+	if w := pointRequest(nil, s, "GET", "/points/foundry", "", ""); w.Code != 401 || s.userID != "" {
+		t.Fatal("anonymous Foundry status returned")
+	}
+	if w := pointRequest(nil, s, "GET", "/points/foundry?userID=someone-else", "", "invalid"); w.Code != 401 || s.userID != "" {
+		t.Fatal("unverified Foundry status returned")
+	}
+	w := pointRequest(nil, s, "GET", "/points/foundry?userID=someone-else", "", "valid")
+	if w.Code != 200 || s.userID != "verified-owner" || w.Header().Get("Cache-Control") != "no-store" {
+		t.Fatalf("Foundry status failed: %d", w.Code)
+	}
+	for _, profiles := range []*profilesStub{{err: profile.ErrSuspended}, {incomplete: true}} {
+		denied := &pointsStub{}
+		r := httptest.NewRequest("GET", "/points/foundry", nil)
+		r.Header.Set("Authorization", "Bearer valid")
+		recorder := httptest.NewRecorder()
+		NewHandler(nil, "http://localhost:8000", verifiedAuth(), profiles, nil, nil, denied).ServeHTTP(recorder, r)
+		if recorder.Code != 403 || denied.userID != "" {
+			t.Fatalf("inactive or incomplete account reached Foundry status: %d", recorder.Code)
+		}
+	}
+	body := w.Body.String()
+	if !strings.Contains(body, `"points":20`) || !strings.Contains(body, `"threshold":50`) || !strings.Contains(body, `"active":false`) || !strings.Contains(body, `"windowDays":30`) {
+		t.Fatalf("unexpected Foundry status: %s", body)
 	}
 }

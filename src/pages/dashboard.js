@@ -13,6 +13,7 @@ import PointsLeaderboard from "../components/points/PointsLeaderboard";
 import PointsProfile from "../components/points/PointsProfile";
 import MemberDirectory from "../components/member/MemberDirectory";
 import MemberProfile from "../components/member/MemberProfile";
+import Foundry from "../components/member/Foundry";
 
 export default function Dashboard({ location }) {
   const auth = useAuth();
@@ -98,6 +99,8 @@ export default function Dashboard({ location }) {
             />
           ) : /^\/dashboard\/members\/?$/.test(location.pathname) ? (
             <MemberDirectory key={auth.identity.id} identity={auth.identity} />
+          ) : /^\/dashboard\/foundry\/?$/.test(location.pathname) ? (
+            <Foundry key={auth.identity.id} identity={auth.identity} />
           ) : /^\/dashboard\/points\/submissions\/?$/.test(
               location.pathname,
             ) ? (
