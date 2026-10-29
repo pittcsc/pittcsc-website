@@ -115,9 +115,15 @@ export default function MeetRoom({ params, location }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetchMeeting(code)
+    // Nothing on screen yet, so this one needs a body, not a 304.
+    fetchMeeting(code, { fresh: true })
       .then(({ meeting: found }) => {
-        if (cancelled || !found) return;
+        if (cancelled) return;
+        // Falling through here leaves the skeleton up for good.
+        if (!found) {
+          setLoadError("We couldn't load that meeting. Try again.");
+          return;
+        }
         hydrate(found);
         rememberMeeting({ code, name: found.name });
       })

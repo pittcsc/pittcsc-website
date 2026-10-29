@@ -244,6 +244,45 @@ the database and `mise run test:auth` for real local OTP/session integration.
 The existing `/meet` HTTP integration tests skip when Gatsby is not running;
 the remaining JavaScript tests and Go tests run in `mise run check` and CI.
 
+## Public meeting tests
+
+The `/meet` scheduler remains accountless and separate from CRM attendance.
+Its HTTP tests write meeting data. Start Gatsby with isolated local storage and
+no hosted integration credentials before running them:
+
+```sh
+meet_test_storage=$(mktemp -d)
+MEET_DATA_DIR="$meet_test_storage" \
+  UPSTASH_REDIS_REST_URL= UPSTASH_REDIS_REST_TOKEN= \
+  GATSBY_NOTION_TOKEN= GATSBY_NOTION_DATABASE_ID= \
+  GATSBY_GOOGLE_CLIENT_ID= mise exec -- npm run develop
+```
+
+In a second terminal, run:
+
+```sh
+MEET_TEST_BASE=http://127.0.0.1:8000 mise exec -- node --test tests/meet/api.test.mjs
+```
+
+Confirm that all 16 HTTP tests executed; a skipped suite does not verify the
+meeting API. Stop only the server you started and remove only your temporary
+storage. See [public-tool invariants](PUBLIC_TOOLS.md) for meeting behavior.
+
+## Contributing
+
+For a bug report, include the affected route, reproduction steps, expected and
+actual behavior, and relevant browser/runtime versions. For a feature request,
+describe the use case and whether it concerns the public site or CRM. Discuss
+substantial changes before implementing them. Keep credentials, private member
+data, and raw calendars out of reports and screenshots.
+
+After the CRM merge, target `master` for new feature PRs. Keep each PR focused,
+describe what changed and why, link the relevant issue when available, and
+report checks, failures, skips, and limitations. Include screenshots for UI
+changes without exposing private data. Update the relevant docs when behavior
+or setup changes. See the [repository guide](REPOSITORY.md) for active content
+sources and public-tool boundaries.
+
 ## Runtime versions and CI
 
 `.tool-versions` is the shared Node/Go version list used by mise locally and in

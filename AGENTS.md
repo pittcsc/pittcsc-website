@@ -2,9 +2,11 @@
 
 ## Context and scope
 
-- Read [CONTRIBUTING.md](CONTRIBUTING.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
-  and the relevant issue before implementation. Inspect the code to distinguish
-  implemented behavior from planned features; do not assume an issue is complete.
+- Read [CONTRIBUTING.md](CONTRIBUTING.md),
+  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
+  [docs/REPOSITORY.md](docs/REPOSITORY.md), and the relevant issue before
+  implementation. Inspect the code to distinguish implemented behavior from
+  planned features; do not assume an issue is complete.
 - The public Gatsby site must retain its appearance and existing functionality.
   Build the CRM in separate dashboard routes; do not migrate frontend frameworks
   or replace existing Notion/meeting integrations without an explicit request.
@@ -25,7 +27,7 @@
 - Use npm and the existing `package-lock.json`; do not introduce another package
   manager or regenerate lockfiles as unrelated cleanup.
 - Keep changes scoped to the requested issue. Preserve unrelated worktree changes.
-  Feature PRs target `crm-expansion`; merging that branch into `master` is separate.
+  After the CRM merge, new feature PRs target `master`.
 - Commit, push, open/modify PRs or issues, deploy, or change hosted settings only
   when authorized. Discussion/review requests do not authorize implementation.
 
@@ -76,3 +78,16 @@
   requests, and login completion must not record attendance automatically.
 - External Calendar/Drive retries and attendance submissions must be idempotent;
   failures must not silently lose the underlying event or create duplicate records.
+
+## Public site and meeting tools
+
+- Officers and initiative leads come from `src/components/data.js`; sponsors are
+  defined in `src/pages/sponsors.js`. Inspect page consumers before changing
+  `content/` files; see [docs/REPOSITORY.md](docs/REPOSITORY.md).
+- Keep `/meet` accountless and separate from CRM identities. Preserve its
+  availability states, 30-minute slots, calendar imports, timezone behavior,
+  and server-side persistence; see [docs/PUBLIC_TOOLS.md](docs/PUBLIC_TOOLS.md).
+- Never point `/meet` HTTP tests at hosted data. Use the isolated local procedure
+  in [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#public-meeting-tests).
+- Legacy Notion variables have a `GATSBY_` prefix. Never import their credentials
+  into browser code or use that naming pattern for new privileged values.

@@ -2,8 +2,15 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  isoAddDays, isoWeekday, parseIso, rangeLabel, timeLabel,
-  tzOffsetMs, utcToZoned, zonedToUtcMs,
+  isoAddDays,
+  isoRange,
+  isoWeekday,
+  parseIso,
+  rangeLabel,
+  timeLabel,
+  tzOffsetMs,
+  utcToZoned,
+  zonedToUtcMs,
 } from "../../src/lib/meet/time.js";
 import { enumerateSlots } from "../../src/lib/meet/model.js";
 import { buildViewGrid } from "../../src/lib/meet/score.js";
@@ -120,4 +127,30 @@ test("labels read the way a person would say them", () => {
   assert.equal(timeLabel(0), "12:00 AM");
   assert.equal(rangeLabel(H(16, 30), H(17, 30)), "4:30 – 5:30 PM", "meridiem collapses");
   assert.equal(rangeLabel(H(11, 30), H(12, 30)), "11:30 AM – 12:30 PM", "and doesn't when it shouldn't");
+});
+
+test("isoRange walks a run of days, in either direction", () => {
+  assert.deepEqual(isoRange("2026-09-22", "2026-09-25"), [
+    "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25",
+  ]);
+  assert.deepEqual(
+    isoRange("2026-09-25", "2026-09-22"),
+    isoRange("2026-09-22", "2026-09-25"),
+    "a drag that runs backwards covers the same days"
+  );
+  assert.deepEqual(isoRange("2026-09-22", "2026-09-22"), ["2026-09-22"], "a click is a range of one");
+});
+
+test("isoRange crosses month and year ends", () => {
+  assert.deepEqual(isoRange("2026-09-29", "2026-10-02"), [
+    "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02",
+  ]);
+  assert.deepEqual(isoRange("2026-12-31", "2027-01-01"), ["2026-12-31", "2027-01-01"]);
+  assert.equal(isoRange("2028-02-01", "2028-03-01").length, 30, "2028 is a leap year");
+});
+
+test("isoRange truncates rather than hanging on a runaway endpoint", () => {
+  const long = isoRange("2026-01-01", "2030-01-01");
+  assert.equal(long.length, 400, "the guard bounds it");
+  assert.equal(long[0], "2026-01-01");
 });

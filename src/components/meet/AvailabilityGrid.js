@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import GridFrame from "./GridFrame";
 import { AVAILABLE, IF_NEEDED, UNAVAILABLE } from "../../lib/meet/model";
 import { dayLabel, isoWeekday, rangeLabel, timeLabel } from "../../lib/meet/time";
+import { bindDragRelease } from "../../lib/meet/drag";
 
 const STATE_WORD = { 0: "unavailable", 1: "if needed", 2: "available" };
 const EMPTY_BUSY = new Set();
@@ -315,15 +316,7 @@ export default function AvailabilityGrid({ view, states, onChange, calendarBusy 
   // instead of churning on every frame of a drag.
   const endDragRef = useRef(endDrag);
   endDragRef.current = endDrag;
-  useEffect(() => {
-    const stop = () => endDragRef.current();
-    window.addEventListener("pointerup", stop);
-    window.addEventListener("pointercancel", stop);
-    return () => {
-      window.removeEventListener("pointerup", stop);
-      window.removeEventListener("pointercancel", stop);
-    };
-  }, []);
+  useEffect(() => bindDragRelease(window, () => endDragRef.current()), []);
 
   /* ------------------------------- keyboard ------------------------------- */
 

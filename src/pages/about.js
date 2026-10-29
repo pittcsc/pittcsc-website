@@ -162,7 +162,7 @@ const AboutPage = () => {
                     linkedIn={linkedIn}
                     email={email}
                     bio={bio}
-                    key={email}
+                    key={name}
                   />
                 )
               )}
@@ -182,7 +182,7 @@ const AboutPage = () => {
                     linkedIn={linkedIn}
                     email={email}
                     bio={bio}
-                    key={email}
+                    key={name}
                   />
                 )
               )}

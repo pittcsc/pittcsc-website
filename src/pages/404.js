@@ -1,54 +1,23 @@
 import * as React from "react";
 import { Link } from "gatsby";
+import Layout from "../layouts/layout";
 
-// styles
-const pageStyles = {
-  color: "#232129",
-  padding: "96px",
-  fontFamily: "-apple-system, Roboto, sans-serif, serif",
-};
-const headingStyles = {
-  marginTop: 0,
-  marginBottom: 64,
-  maxWidth: 320,
-};
-
-const paragraphStyles = {
-  marginBottom: 48,
-};
-const codeStyles = {
-  color: "#8A6534",
-  padding: 4,
-  backgroundColor: "#FFF4DB",
-  fontSize: "1.25rem",
-  borderRadius: 4,
-};
-
-// markup
-const NotFoundPage = () => {
-  return (
-    <main style={pageStyles}>
-      <title>Not found</title>
-      <h1 style={headingStyles}>Page not found</h1>
-      <p style={paragraphStyles}>
-        Sorry{" "}
-        <span role="img" aria-label="Pensive emoji">
-          😔
-        </span>{" "}
-        we couldn’t find what you were looking for.
-        <br />
-        {process.env.NODE_ENV === "development" ? (
-          <>
-            <br />
-            Try creating a page in <code style={codeStyles}>src/pages/</code>.
-            <br />
-          </>
-        ) : null}
-        <br />
-        <Link to="/">Go home</Link>.
-      </p>
-    </main>
-  );
-};
+const NotFoundPage = () => (
+  <Layout title="Page not found | Computer Science Club @ Pitt" showFooter={false}>
+    <section className="flex min-h-[70vh] items-center justify-center px-6 py-20 text-center">
+      <div>
+        <h1 className="text-2xl font-bold text-primary md:text-3xl">
+          Page not found
+        </h1>
+        <Link
+          to="/"
+          className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 font-bold text-white transition hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        >
+          Go home
+        </Link>
+      </div>
+    </section>
+  </Layout>
+);
 
 export default NotFoundPage;
