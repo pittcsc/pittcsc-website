@@ -1,0 +1,99 @@
+@import "../helpers/account-tokens";
+
+// Shared staff layout and the staff home's tool cards. Each tool keeps its own
+// stylesheet next to the others in this folder.
+.csc-auth:has(.csc-staff) .csc-auth-cardwrap {
+  max-width: 72rem;
+}
+
+.csc-staff {
+  .csc-staff-back {
+    display: inline-block;
+    margin-top: 1.5rem;
+    text-decoration: underline;
+  }
+}
+
+.csc-staff-home {
+  .csc-staff-eyebrow {
+    margin: 1.5rem 0 0;
+    color: $acc-navy;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin-top: 0.25rem;
+  }
+  .csc-staff-tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .csc-staff-tool {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.75rem;
+    background: $acc-mist;
+    transition:
+      border-color 150ms,
+      box-shadow 150ms;
+
+    &:hover,
+    &:focus-within {
+      border-color: $acc-navy;
+      box-shadow: 0 8px 16px #1b2a4a1f;
+    }
+  }
+  .csc-staff-tool-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid $acc-navy;
+    border-radius: 0.6rem;
+    background: $acc-navy-soft;
+    color: $acc-navy;
+    font-size: 1.25rem;
+  }
+  h2 {
+    margin: 1.25rem 0 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h2 a {
+    color: inherit;
+    text-decoration: none;
+
+    // Stretch the link over the card; the card shows its focus ring instead.
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+    &:focus-visible {
+      outline: none;
+    }
+  }
+  .csc-staff-tool:has(a:focus-visible) {
+    outline: 3px solid $acc-gold;
+    outline-offset: 3px;
+  }
+  .csc-staff-tool p {
+    margin: 0.5rem 0 0;
+    color: $acc-muted;
+    font-size: 0.95rem;
+  }
+}

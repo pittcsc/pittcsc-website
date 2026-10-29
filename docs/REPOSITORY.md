@@ -1,7 +1,6 @@
 # Repository guide
 
-This map describes the active implementation in the `master` checkout.
-CRM-specific implementation lives on a separate branch. See
+This map describes the public site and CRM after the `crm-expansion` merge. See
 [local development](DEVELOPMENT.md) for setup and testing procedures.
 
 ## Code map and boundaries
@@ -16,8 +15,8 @@ CRM-specific implementation lives on a separate branch. See
 | Projects | GraphQL project schema and `/projects`; spreadsheet sourcing is currently commented out |
 | Meeting scheduler | `/meet` pages/components, `src/lib/meet/`, Gatsby `src/api/meet/`, and `tests/meet/` |
 | Branded QR generator | `/qr`, browser-loaded `qr-code-styling`, and the QR logo asset |
-| CRM/auth | Separate `crm-expansion` branch; no Go API, Supabase setup, login or dashboard on `master` |
-| Local tooling | Existing npm scripts in `package.json`, `package-lock.json`, and legacy runtime files |
+| CRM/auth | Gatsby `/login` and `/dashboard`, Go API in `backend/`, and versioned Supabase migrations |
+| Local tooling | Mise tasks, pinned runtimes in `.tool-versions`, npm scripts, and `package-lock.json` |
 | Hosting | `netlify.toml`, Gatsby route configuration, and scheduled Netlify hook |
 
 `src/images/` assets are imported through Gatsby/Webpack. `static/` files are
@@ -36,13 +35,13 @@ must be scoped, not a catch-all over public routes.
 
 The [public-tools guide](PUBLIC_TOOLS.md) documents meeting semantics, calendar
 privacy, persistence, and QR export requirements. Local integration setup is in
-[development instructions](DEVELOPMENT.md#verification).
+[development instructions](DEVELOPMENT.md#public-meeting-tests).
 
 ## CRM boundary
 
-`master` does not contain the Go API, Supabase configuration, login, or dashboard.
-Inspect `crm-expansion` and its architecture/authentication docs when assigned
-CRM work. Do not merge CRM implementation into a public-site or shared-tooling PR.
+The dashboard and Go API live alongside the public Gatsby site. Inspect
+[architecture](ARCHITECTURE.md) and [authentication](AUTH.md) guidance for CRM
+work. Keep public pages and accountless tools working when changing CRM code.
 
 Agreed CRM decisions are Supabase email OTP and additive roles: `member`,
 `foundry`, `staff`, and `alumni`. Supabase Auth owns identities and sessions;
@@ -60,8 +59,8 @@ effect. The existing Notion RSVP counter is not authenticated CRM attendance.
 | Change | Required checks beyond diff/content review |
 | --- | --- |
 | Agent/docs guidance | Local link/content review and credential review |
-| Application/tooling code | `npm test` and credential review |
-| Frontend/runtime/build | Above plus `npm run build`; inspect direct navigation and hydration |
+| Application/tooling code | `mise run check` and credential review |
+| Frontend/runtime/build | Above plus `mise run build`; inspect direct navigation and hydration |
 | Meeting APIs/model/storage | Above plus existing HTTP tests against isolated local Gatsby; exercise retries, duplicate names and concurrent writes |
 | Meeting calendar/time UI | Meeting checks plus DST, multiple imports, manual edits and presets |
 | Public UI/content/assets | Build plus changed pages at mobile/desktop widths, keyboard/focus, SEO and asset/download links |
@@ -74,13 +73,13 @@ performed and any unavailable checks. No new browser-test framework is required
 by this setup.
 
 For meeting HTTP integration, follow the
-[isolated local testing procedure](DEVELOPMENT.md#verification). That procedure
+[isolated local testing procedure](DEVELOPMENT.md#public-meeting-tests). That procedure
 covers server startup, integration configuration, storage isolation, and skips;
 do not point these write tests at hosted data.
 
 Review changed files and diffs for credentials without printing private env
-contents or raw secrets. Automated secret scanning and new CI checks are separate
-tooling follow-ups, not features provided by this documentation.
+contents or raw secrets. Automated secret scanning remains a separate tooling
+follow-up.
 
 ## Known limitations and separate follow-ups
 
@@ -125,8 +124,8 @@ loaded instructions (Claude `/context`); do not maintain copied rule sets.
 
 Instructions guide agents; they do not enforce behavior. Authorization, privacy,
 migration review, and UI quality still require focused tests and human review.
-New CI, secret scanning, branch protection, and propagation to the CRM branch
-are separate tasks. This PR adds no automated checks or runtime changes.
+Secret scanning and build-hook rotation remain separate tasks. CI already runs
+`mise run check` and `mise run build` on PRs to `master`.
 
 The scheduled Netlify workflow currently embeds a build hook. Treat it as a
 deployment credential: do not print, quote, or reuse it. Rotating the hook and

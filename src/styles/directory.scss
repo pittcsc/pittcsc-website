@@ -1,0 +1,453 @@
+@import "./helpers/account-tokens";
+
+.csc-auth:has(.csc-member-directory, .csc-member-profile) .csc-auth-cardwrap {
+  max-width: 72rem;
+}
+.csc-directory-search {
+  margin: 1.5rem 0;
+}
+.csc-directory-search label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+.csc-directory-search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: 0.75rem;
+}
+.csc-directory-name-field {
+  min-width: 0;
+}
+.csc-directory-filter-menu {
+  position: relative;
+}
+.csc-auth .csc-directory-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 52px;
+  border: 1.5px solid $acc-border;
+  background: #fff;
+  color: $acc-ink;
+}
+.csc-auth .csc-directory-filter-toggle:hover,
+.csc-auth .csc-directory-filter-toggle[aria-expanded="true"] {
+  border-color: $acc-navy;
+  background: $acc-navy-soft;
+  color: $acc-ink;
+}
+.csc-directory-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.2rem;
+  border-radius: 999px;
+  background: $acc-navy;
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.csc-directory-filter-chevron {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.15rem) rotate(45deg);
+}
+.csc-directory-filter-toggle[aria-expanded="true"] .csc-directory-filter-chevron {
+  transform: translateY(0.15rem) rotate(225deg);
+}
+.csc-directory-filter-panel {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: min(21rem, calc(100vw - 3rem));
+  padding: 1rem;
+  border: 1px solid $acc-line;
+  border-radius: $acc-radius-control;
+  background: #fff;
+  box-shadow: 0 16px 36px #1b2a4a26;
+  box-sizing: border-box;
+}
+.csc-directory-search .csc-directory-alumni-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0.75rem;
+  border: 1px solid $acc-line;
+  border-radius: $acc-radius-control;
+  cursor: pointer;
+}
+.csc-directory-alumni-filter input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.csc-directory-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1.4rem;
+  height: 1.4rem;
+  border: 2px solid $acc-border;
+  border-radius: 0.35rem;
+  background: #fff;
+  color: #fff;
+}
+.csc-directory-checkbox::after {
+  content: "✓";
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0;
+}
+.csc-directory-alumni-filter input:checked + .csc-directory-checkbox {
+  border-color: $acc-navy;
+  background: $acc-navy;
+}
+.csc-directory-alumni-filter input:checked + .csc-directory-checkbox::after {
+  opacity: 1;
+}
+.csc-directory-alumni-filter input:focus-visible + .csc-directory-checkbox {
+  outline: 3px solid $acc-gold;
+  outline-offset: 2px;
+}
+.csc-directory-alumni-filter:has(input:checked) {
+  border-color: $acc-navy;
+  background: $acc-navy-soft;
+}
+.csc-directory-search input {
+  min-width: 0;
+}
+.csc-directory-filter-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.csc-auth .csc-directory-filter-clear {
+  background: #fff;
+  color: $acc-navy;
+  border: 1.5px solid $acc-navy;
+}
+.csc-auth .csc-directory-filter-clear:hover {
+  background: $acc-navy-soft;
+  color: $acc-navy;
+}
+.csc-auth .csc-directory-search button {
+  width: auto;
+}
+@media (max-width: 540px) {
+  .csc-directory-search-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .csc-directory-name-field {
+    grid-column: 1 / -1;
+  }
+  .csc-auth .csc-directory-search .csc-directory-filter-toggle,
+  .csc-auth .csc-directory-search .csc-directory-search-submit {
+    width: 100%;
+  }
+  .csc-directory-filter-panel {
+    right: auto;
+    left: 0;
+  }
+}
+.csc-directory-list {
+  list-style: none;
+  margin: 1.5rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.csc-directory-member {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #d7dce5;
+  border-radius: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+}
+.csc-directory-member:hover,
+.csc-directory-member:focus-visible {
+  border-color: #3755a5;
+  background: #f5f7ff;
+}
+.csc-directory-member small {
+  display: block;
+  margin-top: 0.2rem;
+}
+.csc-directory-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #e7ecff;
+  color: #1c367d;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.csc-member-avatar {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #dce4fa;
+  color: #254385;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+.csc-member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.csc-directory-pages {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+/* -------------------------------------------------------------- profile --- */
+
+.csc-auth:has(.csc-member-profile) .csc-auth-card {
+  overflow: hidden;
+}
+.csc-member-profile {
+  --csc-profile-bleed: 2.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+
+  @media (max-width: 600px) {
+    --csc-profile-bleed: 1.75rem;
+  }
+}
+// Nested so these beat the generic `.csc-auth h2` / `p` rules in auth.scss.
+.csc-member-profile {
+  .csc-profile-banner {
+    height: 8.5rem;
+    margin: calc(-1 * var(--csc-profile-bleed))
+      calc(-1 * var(--csc-profile-bleed)) 0;
+    padding: 1rem var(--csc-profile-bleed);
+    background-color: $acc-ink;
+    background-image: radial-gradient(#ffffff2e 1px, transparent 1.5px);
+    background-size: 18px 18px;
+    box-sizing: border-box;
+
+    a {
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  .csc-profile-heading {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: -5.5rem;
+
+    .csc-member-avatar {
+      width: 120px;
+      height: 120px;
+      flex-basis: 120px;
+      border: 6px solid #fff;
+      font-size: 2.5rem;
+    }
+    h1 {
+      margin: 0 0 0.6rem;
+    }
+  }
+  .csc-profile-identity {
+    flex: 1;
+    min-width: 12rem;
+    // Keeps the name below the banner while the avatar overlaps it.
+    padding-top: 5.5rem;
+  }
+  .csc-profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: $acc-navy-soft;
+      color: $acc-ink;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    svg {
+      color: $acc-muted;
+      font-size: 0.8em;
+    }
+    .is-warning {
+      background: $acc-cream-soft;
+    }
+  }
+  .csc-profile-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    border: 2px solid $acc-ink;
+    border-radius: $acc-radius-control;
+    color: $acc-ink;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: $acc-navy-soft;
+    }
+  }
+  .csc-profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+  }
+  .csc-profile-stat {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 16px;
+    background: $acc-mist;
+
+    h2 {
+      @extend .csc-profile-eyebrow;
+      margin-bottom: 0.25rem;
+    }
+    p {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      color: $acc-ink;
+      font-weight: 500;
+    }
+    strong {
+      font-size: 2.25rem;
+      line-height: 1;
+      font-weight: 800;
+    }
+    &.is-gold {
+      border-color: $acc-gold;
+      background: $acc-cream-soft;
+
+      .csc-profile-stat-icon {
+        background: $acc-cream;
+        color: #7a5a00;
+      }
+    }
+  }
+  .csc-profile-stat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: #dce4fa;
+    color: $acc-navy;
+    font-size: 1.3rem;
+  }
+  .csc-profile-eyebrow {
+    margin: 0 0 0.75rem;
+    color: $acc-muted;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .csc-profile-details {
+    dl {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+      margin: 0;
+    }
+    dt {
+      color: $acc-muted;
+      font-size: 0.875rem;
+    }
+    dd {
+      margin: 0.2rem 0 0;
+      color: $acc-ink;
+      font-weight: 600;
+    }
+  }
+  .csc-profile-bio {
+    white-space: pre-wrap;
+  }
+  .csc-profile-help {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: $acc-navy-soft;
+      color: $acc-ink;
+    }
+  }
+  .csc-profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-height: 48px;
+      padding: 0 1.1rem;
+      border: 1px solid $acc-line;
+      border-radius: $acc-radius-control;
+      color: $acc-ink;
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        border-color: $acc-navy;
+        background: $acc-navy-soft;
+      }
+    }
+    .csc-profile-link-arrow {
+      color: $acc-muted;
+      font-size: 0.7em;
+    }
+  }
+}

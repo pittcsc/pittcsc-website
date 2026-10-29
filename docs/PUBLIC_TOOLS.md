@@ -2,7 +2,7 @@
 
 Behavior constraints for the accountless `/meet` scheduler and branded `/qr`
 generator. See the [repository guide](REPOSITORY.md) for code locations and the
-[development instructions](DEVELOPMENT.md#verification) for safe local testing.
+[development instructions](DEVELOPMENT.md#public-meeting-tests) for safe local testing.
 
 ## Meeting scheduler
 

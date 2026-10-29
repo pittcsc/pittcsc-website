@@ -1,108 +1,326 @@
 # Local development
 
-This guide applies to the public Gatsby site on `master`. Go, Supabase, and CRM
-setup are separate on `crm-expansion`; use that branch's docs for those systems.
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for issues and PR workflow, the
-[repository guide](REPOSITORY.md) for architecture, and
-[public-tool invariants](PUBLIC_TOOLS.md) for meeting/QR behavior.
+The existing Gatsby site runs alongside a Go API and local Supabase. The current
+API implements database readiness at `/health` and verified identity at
+`/auth/session`. Local Pitt email OTP sign-in is available at `/login`, with a
+signed-in page at `/dashboard`, with a private profile editor at
+`/dashboard/account`. See [authentication](AUTH.md) and [profiles](PROFILES.md) for
+behavior and local testing. Staff access, member search, and role editing are
+implemented; see [staff setup](STAFF.md) for roles, provisioning, and checks.
+The member home shows the next three CRM events; see
+[events](EVENTS.md#member-dashboard). Incomplete accounts are sent to
+My Account until they save first and last name, graduation year, and a major.
+The Members directory at `/dashboard/members` searches active, completed
+profiles by name, current company, and alumni status; member names in CRM
+screens link to their profiles. My Account includes optional career details,
+help offers, a separate contact email, an explicit sharing choice, and
+self-reported Pitt alumni status. See [profiles](PROFILES.md). Optional details
+remain hidden from other members until their owner shares them.
+Members can submit activity links and see all-time and rolling 30-day top-10
+leaderboards at `/dashboard/points`. My Account shows their scores and claim
+history. The full history also has a page linked from Points at
+`/dashboard/points/submissions`. Staff can review and reverse claims at
+`/dashboard/staff/point-claims`; see [points](POINTS.md).
 
-## Setup and runtime
+## Quick start
 
-Use a Gatsby-compatible Node/npm runtime. The existing tests and production build
-were exercised with Node 24.21.0. Current runtime files disagree: `.nvmrc` and
-Netlify's `NODE_VERSION` specify Node 20, while `.tool-versions` contains a legacy
-Node 14 entry. Do not rely on that legacy entry for Gatsby 5 or the Node tests.
-Resolving the runtime pins is separate work; this documentation does not change them.
-There are no mise tasks on `master`; use the existing npm scripts.
+One-time prerequisites:
 
-From the repository root:
+- Git and [mise](https://mise.jdx.dev/installing-mise.html). On macOS with
+  Homebrew: `brew install mise`.
+- Docker Desktop (or a compatible engine), installed and running. Mise manages
+  Node and Go; Docker runs local Supabase, not Gatsby or Go.
+- macOS command-line developer tools if not already installed: `xcode-select --install`.
+- macOS or Linux; on Windows use WSL2 with Docker Desktop's WSL integration.
+
+After cloning, from the repository root:
 
 ```sh
-npm ci --legacy-peer-deps
-npm run develop
+mise trust
+mise run setup
+mise run dev
 ```
 
-Open http://localhost:8000. Setup uses the existing lockfile; do not introduce
-another package manager or regenerate it as unrelated cleanup. No global Gatsby,
-Docker, Go, or Supabase is required. Gatsby reloads edits; Ctrl+C stops your server.
+Open http://localhost:8000. `mise run dev` refuses to start if port 8000 or
+8080 is already in use, so Gatsby cannot quietly move to another port while
+an older site stays at the documented address. Stop the existing server and
+rerun the task. The first run requires internet access and can take
+several minutes to download runtimes, dependencies, and Docker images.
+
+`mise trust` approves this checkout's task configuration; review it before trusting
+an unfamiliar repository. Mise tasks automatically install/use the exact Node and
+Go versions in `.tool-versions`. No nvm, separately installed Go, global npm
+packages, or shell activation is required. To run an arbitrary command with the
+project's runtimes, use `mise exec -- <command>`.
+
+`mise run setup` checks Docker, runs `npm ci --legacy-peer-deps` and
+`go mod download`, starts local Supabase, and reads its local connection details.
+It creates `.env.development` and `backend/.env` from their examples only when
+missing. Existing env files are never overwritten, and no database reset runs.
+Both files are gitignored; admin and storage keys are not copied.
+
+The public site works without production credentials. Notion-backed events are
+omitted without Notion configuration; Google Calendar import is hidden without
+its client ID; `/meet` uses local file storage without Upstash credentials.
+Authentication uses local Supabase and Mailpit; no hosted email credentials are
+needed. My Account supports names, graduation year, majors, and a resume
+PDF. Active staff can open `/dashboard/staff` using the dashboard-only Staff
+link; its User Management tool searches members and edits roles. Its Events tool
+creates, edits, and cancels events with manual calendar recovery; see
+[events](EVENTS.md). Saved events also show a stable attendance QR and a
+staff-only check-in roster, and a staff-only Spending card where receipt photos
+and their editable amounts add up to the event's total spent, with a PDF budget
+package export. Google delivery defaults to disabled for local development.
+
+## Daily commands
 
 | Command | Purpose |
 | --- | --- |
-| `npm ci --legacy-peer-deps` | Install locked dependencies |
-| `npm run develop` | Start Gatsby on localhost:8000 |
-| `npm test` | Run existing JavaScript tests; HTTP tests may skip without Gatsby |
-| `npm run build` | Production Gatsby build |
-| `npm run clean` | Clear generated Gatsby cache/output when needed |
+| `mise run dev` | Start local Supabase, Gatsby, and Go together; stop all with Ctrl+C |
+| `mise run setup` | Reinstall locked dependencies after cloning or dependency changes |
+| `mise run db:start` | Start only Supabase and create any missing env files |
+| `mise run db:stop` | Stop Supabase, preserving local data |
+| `mise run demo` | Start the local stack with a member and a staff demo account ready |
+| `mise run demo:code <email>` | Print the latest local sign-in code for a demo address |
+| `mise run check` | Run JavaScript tests and Go tests, vet, and build; no Docker needed |
+| `mise run build` | Production Gatsby build |
+| `mise run test:auth` | Real local Supabase/Mailpit/Go auth checks (API must be running) |
+| `mise run test:profiles` | Real local profile/upload checks with synthetic accounts (API must be running) |
+| `mise run test:staff` | Real local roles, staff access, provisioning, and role-management checks (API must be running) |
+| `mise run test:events` | Local event, attendance, and spending API/database checks with synthetic accounts and simulated Google Calendar failures (API must be running with calendar disabled) |
+| `mise run test:points` | Local points, leaderboard, and staff moderation checks with synthetic accounts (API must be running) |
+| `mise exec -- npm run clean` | Clear Gatsby's generated cache/output |
 
-## Code conventions
+Ctrl+C in `mise run dev` stops Gatsby, Go, and the local Supabase containers.
+Their Docker images and local database data remain available for the next run.
+If you started Supabase separately with `mise run setup` or `mise run db:start`,
+use `mise run db:stop` when finished. Normal startup never deletes your database.
+Gatsby reloads frontend edits automatically. The minimal Go server currently
+needs a restart after backend code changes.
 
-Match nearby JS/JSX style and use `.mjs` for Node scripts/tests. Gatsby configuration
-uses CommonJS; do not switch the root package to ESM to silence Node's
-module-detection warnings. Reuse the public layout, shared initiative template,
-Tailwind/SCSS conventions, and existing image pipeline. Preserve responsive
-branding, navigation, SEO, animations, analytics behavior, and asset/download URLs
-unless changing them is part of the task.
+For frontend-only work without Docker: `mise exec -- npm ci --legacy-peer-deps`,
+then `mise exec -- npm run develop`. The public site does not need the new API.
 
-## Optional integrations
+## Local configuration details
 
-The public site works without production credentials. Notion-backed events are
-omitted without Notion configuration. Google Calendar import is hidden without
-its client ID. Meeting storage uses local files without Upstash credentials;
-production serverless meeting storage needs a durable adapter.
+Setup fills the values below automatically. To inspect your local connection
+details manually, use `mise exec -- npx supabase status`. Its output includes
+secrets; do not paste it into issues or commit it.
 
-The root `.env.example` lists integration variables. If needed, create a
-gitignored `.env.development` with relevant local/test values. Never overwrite
-existing env files or copy production credentials for tests. Restart Gatsby
-after configuration changes.
+### Frontend: `.env.development`
 
-`GATSBY_*` variables are public browser configuration, not a place for privileged
-keys. Legacy Notion credential names use that prefix; never import the token into
-browser code or extend that naming pattern. See the repository guide's separate
-security follow-ups. Do not paste private records, calendars, tokens, or env
-contents into logs, screenshots, or issues.
+```dotenv
+GATSBY_API_URL=http://localhost:8080
+GATSBY_SUPABASE_URL=http://127.0.0.1:54321
+GATSBY_SUPABASE_PUBLISHABLE_KEY=YOUR_LOCAL_PUBLISHABLE_KEY
+```
 
-## Verification
+Use the Publishable key printed by `npx supabase status`. These variables are
+public browser configuration used by authentication. Restart Gatsby after
+editing them. Never put a Supabase secret/service-role key, database password, or
+S3 credential in a `GATSBY_*` variable.
 
-Run `npm test` for code changes and `npm run build` for frontend/runtime/build
-changes. Docs changes need local link/content review and credential review.
-Add focused behavior tests for changes and regression coverage for bugs; include
-validation failures, retries, and duplicate/concurrent writes where relevant.
-Always run `git diff --check`. See the repository guide's verification matrix
-for focused and manual checks; a build does not prove appearance, accessibility,
-or QR scannability.
+The root example also documents existing Gatsby integrations. Their server-side
+credentials are separate from the new Go API configuration.
 
-The existing HTTP suite writes data and skips without a reachable Gatsby server.
-For meeting changes, use your own server with isolated local storage. For example,
-in one terminal with a compatible Node runtime:
+### Backend: `backend/.env`
+
+```dotenv
+HOST=127.0.0.1
+PORT=8080
+FRONTEND_ORIGIN=http://localhost:8000
+SUPABASE_AUTH_URL=http://127.0.0.1:54321/auth/v1
+DATABASE_URL=postgresql://postgres:YOUR_LOCAL_PASSWORD@127.0.0.1:54322/postgres?sslmode=disable
+```
+
+Use the database URL printed by `npx supabase status`, adding `sslmode=disable`
+only for the local Docker database. The Go process loads `backend/.env` when
+started with `npm run dev:api`; existing process environment variables take
+precedence. It does not load Gatsby's environment file.
+
+The API connects directly to Postgres and uses public JWKS for JWT verification.
+`SUPABASE_AUTH_URL` defaults to the local issuer when absent, so existing local
+env files remain usable. No Supabase admin, storage, or S3 keys are needed. Keep
+privileged credentials out of the frontend.
+
+`FRONTEND_ORIGIN` is the single browser origin allowed by the API's CORS headers.
+If you open Gatsby at `http://127.0.0.1:8000` instead of `http://localhost:8000`,
+update this value to match. CORS is not authentication.
+
+## Run the application
+
+Use `mise run dev` for both servers. If you prefer separate terminals, keep
+Supabase running and use:
+
+```sh
+# Terminal 1
+mise exec -- npm run develop
+```
+
+```sh
+# Terminal 2
+mise exec -- npm run dev:api
+```
+
+Go dependencies are downloaded on the first run. Their versions and checksums
+are tracked in `backend/go.mod` and `backend/go.sum`.
+
+| Service | Local address |
+| --- | --- |
+| Gatsby | http://localhost:8000 |
+| Go API health | http://localhost:8080/health |
+| Supabase API/Auth | http://127.0.0.1:54321 |
+| Postgres | 127.0.0.1:54322 |
+| Supabase Studio | http://127.0.0.1:54323 |
+| Mailpit test inbox | http://127.0.0.1:54324 |
+
+Verify the database connection:
+
+```sh
+curl --fail-with-body http://localhost:8080/health
+```
+
+A successful response is HTTP 200 with:
+
+```json
+{"database":"connected","status":"ok"}
+```
+
+If the database is unavailable, the API returns HTTP 503 with an `unavailable`
+status. Each database check has a two-second timeout. Connection credentials and
+raw database errors are not returned to clients. This endpoint is a readiness
+check, not a database-independent liveness check.
+
+Press Ctrl+C in `mise run dev` to stop both application servers and Supabase.
+The API drains requests and closes its database pool on shutdown. If running
+the servers in separate terminals, stop each one with Ctrl+C, then run
+`mise run db:stop`; no reset is needed for normal development.
+
+## Demo the signed-in site
+
+To compare the member and the staff dashboard without assembling accounts by
+hand:
+
+```sh
+mise run demo
+```
+
+It reuses or starts local Supabase, Gatsby, and the API, makes sure
+`csc-demo-member@pitt.edu` and `csc-demo-staff@pitt.edu` exist, and prints the
+local addresses with each account's roles. Reruns reuse the same two accounts
+and the servers already running, so nothing is duplicated and no env file or
+database data is rewritten. Accounts are created through Auth, and the staff
+role through the audited `grant-staff` command; neither managed Auth tables nor
+`csc` tables are edited directly. The command refuses any service that is not a
+loopback address, so it cannot reach a hosted project.
+
+Gatsby takes the first free port in 8000-8019, which is often not 8000, so the
+API started here receives the matching `FRONTEND_ORIGIN` through its environment
+rather than an edit to `backend/.env`. An API that is already running has to
+allow that origin already; the command stops and says so when it does not.
+
+To open one of the views, go to `/login` in a new private window, enter the
+address, click "Send code", then read the code from Mailpit:
+
+```sh
+mise run demo:code csc-demo-member@pitt.edu
+```
+
+The member view has `/dashboard` and `/dashboard/account`. The staff view adds
+the Staff link to `/dashboard/staff` with its User Management and Events tools.
+Auth sends at most one code per minute per address, so use one private window
+per view, or sign out from My Account, rather than switching back and forth.
+
+## Backend checks
+
+```sh
+mise run check
+```
+
+Unit tests cover database availability, cancellation, HTTP routing, and allowed
+browser origins, plus authentication failures, JWKS rotation, and browser session
+behavior without requiring a running database. Use the curl check above to verify
+the database and `mise run test:auth` for real local OTP/session integration.
+The existing `/meet` HTTP integration tests skip when Gatsby is not running;
+the remaining JavaScript tests and Go tests run in `mise run check` and CI.
+
+## Public meeting tests
+
+The `/meet` scheduler remains accountless and separate from CRM attendance.
+Its HTTP tests write meeting data. Start Gatsby with isolated local storage and
+no hosted integration credentials before running them:
 
 ```sh
 meet_test_storage=$(mktemp -d)
 MEET_DATA_DIR="$meet_test_storage" \
   UPSTASH_REDIS_REST_URL= UPSTASH_REDIS_REST_TOKEN= \
   GATSBY_NOTION_TOKEN= GATSBY_NOTION_DATABASE_ID= \
-  GATSBY_GOOGLE_CLIENT_ID= npm run develop
+  GATSBY_GOOGLE_CLIENT_ID= mise exec -- npm run develop
 ```
 
-Confirm the server uses that isolated file store, then run in a second terminal:
+In a second terminal, run:
 
 ```sh
-MEET_TEST_BASE=http://127.0.0.1:8000 node --test tests/meet/api.test.mjs
+MEET_TEST_BASE=http://127.0.0.1:8000 mise exec -- node --test tests/meet/api.test.mjs
 ```
 
-Never aim these tests at hosted data. The existing suite does not enforce
-loopback targets, require execution, manage a server, or clean up storage.
-Check that all 16 HTTP tests executed. Stop only your own server afterward and
-clean up only the temporary data you created. Do not stop unknown processes or
-change shared data to make a test pass.
+Confirm that all 16 HTTP tests executed; a skipped suite does not verify the
+meeting API. Stop only the server you started and remove only your temporary
+storage. See [public-tool invariants](PUBLIC_TOOLS.md) for meeting behavior.
 
-The existing meeting concurrency failure is described in the repository guide's
-[known limitations](REPOSITORY.md#known-limitations-and-separate-follow-ups).
-Report failures and skips honestly; a fix is a separate application task.
+## Contributing
 
-## Scope and follow-ups
+For a bug report, include the affected route, reproduction steps, expected and
+actual behavior, and relevant browser/runtime versions. For a feature request,
+describe the use case and whether it concerns the public site or CRM. Discuss
+substantial changes before implementing them. Keep credentials, private member
+data, and raw calendars out of reports and screenshots.
 
-This guidance adds no CI jobs, test infrastructure, runtime upgrades, or hosting changes.
+After the CRM merge, target `master` for new feature PRs. Keep each PR focused,
+describe what changed and why, link the relevant issue when available, and
+report checks, failures, skips, and limitations. Include screenshots for UI
+changes without exposing private data. Update the relevant docs when behavior
+or setup changes. See the [repository guide](REPOSITORY.md) for active content
+sources and public-tool boundaries.
 
-See the repository guide for
-[deployment-credential remediation and maintainer rollout](REPOSITORY.md#agent-loading-and-maintainer-rollout).
-Automated checks and branch protection require their own scoped tasks.
+## Runtime versions and CI
+
+`.tool-versions` is the shared Node/Go version list used by mise locally and in
+the development-checks GitHub workflow. `.nvmrc` remains for compatibility with
+nvm users, not as an onboarding requirement. Netlify's `NODE_VERSION` matches
+the Node pin, and `backend/go.mod` currently matches the Go pin. Tests detect drift.
+When upgrading, update the matching pins, run `mise install`, rerun setup to
+reinstall native Node dependencies, and verify `mise run check` and `mise run build`.
+
+PRs targeting `crm-expansion` or `master` run the same checks and a Gatsby build
+using mise. They do not deploy, start Supabase, or need production credentials.
+
+## Troubleshooting
+
+- **`mise` not found:** install it using the link above, then open a new terminal.
+- **Docker unavailable:** start Docker Desktop and wait for its engine to be ready,
+  then rerun setup. Do not use `sudo` for project setup.
+- **Ports in use:** stop the conflicting local process; defaults are listed above.
+- **Old credentials or custom env files:** setup preserves them deliberately.
+  Compare the files with the examples and update only the relevant fields from
+  local Supabase status. Restart the app servers after changes.
+- **Wrong Node/Go version in your terminal:** use `mise exec -- node --version`
+  or `mise exec -- go version`. Bare commands may still use your Homebrew versions.
+- **Missing dependency after pulling changes:** rerun `mise run setup`.
+
+## Deployment configuration
+
+Set backend environment variables through the hosting service rather than
+copying local environment files. Cloud Run needs `HOST=0.0.0.0` and supplies
+`PORT`. Set the deployed frontend origin and a database connection string with
+the database provider's TLS settings. Keep local, staging, and production
+credentials separate. The pool currently permits five connections per API
+instance; account for that when configuring service instance limits.
+
+Startup generates an ignored local asymmetric signing key once and applies
+pending local migrations without resetting data. Migrations add private Pitt-email
+Auth hooks and profile/file tables; they do not edit managed Auth tables. Local
+Data API access is disabled while Auth remains enabled. After changing
+`supabase/config.toml`, stop and restart local Supabase to load settings. See
+[AUTH.md](AUTH.md) and [PROFILES.md](PROFILES.md) for fixtures, checks, and the
+separate hosted rollout requirements.

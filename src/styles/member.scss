@@ -1,0 +1,154 @@
+@import "./helpers/account-tokens";
+
+.csc-auth:has(.csc-member-home) .csc-auth-cardwrap {
+  max-width: 72rem;
+}
+
+.csc-member-home {
+  .csc-member-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .csc-member-eyebrow {
+    margin: 0;
+    color: $acc-muted;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0.3rem 0 0;
+  }
+
+  .csc-member-profile-prompt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #c83737;
+    border-radius: 0.65rem;
+    background: #fff0f0;
+    color: #a12323;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: #ffe4e4;
+      text-decoration: underline;
+    }
+  }
+
+  .csc-member-profile-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    font-size: 0.85rem;
+  }
+
+  .csc-member-profile-error button {
+    width: auto;
+    margin: 0;
+    padding: 0.35rem 0.65rem;
+    min-height: 44px;
+  }
+
+  .csc-member-events {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .csc-member-event {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.85rem;
+    background: $acc-mist;
+  }
+
+  h2 {
+    margin: 0 0 0.75rem;
+    color: $acc-navy;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .csc-member-event-time,
+  .csc-member-event-location,
+  .csc-member-event-description {
+    margin: 0.5rem 0 0;
+  }
+
+  .csc-member-event-time {
+    font-weight: 700;
+  }
+
+  .csc-member-event-description {
+    color: $acc-body;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .csc-member-live {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: #fff0dc;
+    color: #784000;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .csc-member-state {
+    padding: 1.25rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.85rem;
+    background: $acc-mist;
+  }
+
+  .csc-member-state p {
+    margin-top: 0;
+  }
+
+  .csc-member-state button {
+    width: auto;
+  }
+
+  @media (max-width: 1050px) {
+    .csc-member-events {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .csc-member-heading {
+      flex-direction: column;
+    }
+
+    .csc-member-profile-prompt,
+    .csc-member-profile-error {
+      margin-left: auto;
+    }
+
+    .csc-member-events {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,403 @@
+@import "../helpers/account-tokens";
+
+.csc-staff-events {
+  .csc-event-attendance,
+  .csc-event-expenses {
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.75rem;
+  }
+  .csc-event-attendance h2,
+  .csc-event-expenses h2 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  // The budget export sits in the card's top-right corner, wrapping below
+  // the title on narrow screens.
+  .csc-event-expenses-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    h2,
+    p {
+      margin-top: 0;
+    }
+    button {
+      flex: none;
+    }
+  }
+  .csc-event-expenses h3 {
+    margin-top: 1.5rem;
+  }
+  .csc-event-expense-total {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin: 1rem 0;
+    strong {
+      font-size: 1.75rem;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  .csc-event-expense-input {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: 12rem;
+    input {
+      min-width: 0;
+      margin: 0;
+    }
+  }
+  .csc-event-receipts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+    li {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    a {
+      display: block;
+    }
+    img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      border: 1px solid $acc-hairline;
+      border-radius: 0.5rem;
+      background: white;
+    }
+  }
+  .csc-event-receipt-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    label {
+      margin: 0;
+    }
+  }
+  .csc-event-receipts .csc-auth-actions {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    button {
+      margin: 0;
+    }
+  }
+  .csc-event-receipt-meta {
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
+  }
+  .csc-event-receipts-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    h3 {
+      margin: 0;
+    }
+  }
+  .csc-event-receipt-dialog {
+    width: min(28rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    // Padding lives on the form so a click on the dialog element itself is
+    // always a backdrop click.
+    padding: 0;
+    border: 0;
+    border-radius: $acc-radius-control;
+    box-shadow: 0 20px 50px rgba(27, 42, 74, 0.25);
+    color: $acc-ink;
+    &::backdrop {
+      background: rgba(27, 42, 74, 0.45);
+    }
+    form {
+      padding: 1.5rem;
+    }
+    h3 {
+      margin-top: 0;
+    }
+    .csc-auth-actions {
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+  }
+  .csc-event-receipt-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 14rem;
+    margin: 0.5rem 0 1rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.5rem;
+  }
+  .csc-event-qr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+  .csc-event-qr-preview {
+    width: min(100%, 300px);
+    padding: 0.75rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.5rem;
+    background: white;
+  }
+  .csc-event-qr-preview canvas {
+    width: 100%;
+    height: auto;
+  }
+  .csc-event-qr-controls {
+    flex: 1 1 220px;
+  }
+  .csc-event-attendance-link a {
+    display: block;
+    color: $acc-navy;
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+  }
+  .csc-event-qr-background {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+  }
+  .csc-event-qr-background input[type="checkbox"] {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    padding: 0;
+    flex: none;
+    border-radius: 0.2rem;
+  }
+  .csc-event-roster {
+    padding-left: 1.5rem;
+  }
+  .csc-event-roster-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .csc-event-roster li {
+    margin: 0.75rem 0;
+  }
+  .csc-event-roster span,
+  .csc-event-roster time {
+    display: block;
+  }
+  .csc-events-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    h1 {
+      margin-bottom: 0;
+    }
+    p {
+      color: $acc-muted;
+    }
+    button {
+      flex-shrink: 0;
+    }
+  }
+  button {
+    width: auto;
+  }
+  .csc-events-note,
+  .csc-events-optional {
+    color: $acc-muted;
+    font-size: 0.875rem;
+  }
+  .csc-events-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+  }
+  .csc-events-filters button {
+    margin: 0;
+  }
+  .csc-events-filters button[aria-pressed="true"] {
+    background: $acc-navy;
+    color: white;
+  }
+  .csc-events-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .csc-events-list li {
+    border-top: 1px solid $acc-hairline;
+    padding: 1.25rem 0;
+    overflow-wrap: anywhere;
+  }
+  .csc-events-row-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .csc-events-row-heading h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  button.csc-events-title {
+    margin: 0;
+    padding: 0;
+    background: none;
+    color: $acc-navy;
+    text-align: left;
+    text-decoration: underline;
+  }
+  .csc-events-list p {
+    margin: 0.35rem 0;
+  }
+  .csc-events-badge {
+    font-size: 0.8rem;
+    border-radius: 1rem;
+    background: $acc-hairline;
+    padding: 0.2rem 0.6rem;
+  }
+  .csc-events-sync {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 0.4rem;
+  }
+  .csc-events-sync-synced {
+    color: #14532d;
+  }
+  .csc-events-sync-failed,
+  .csc-events-sync-disabled,
+  .csc-events-sync-pending {
+    color: #854d0e;
+  }
+  .csc-events-delivery {
+    padding: 1rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    background: $acc-mist;
+  }
+  .csc-events-delivery p {
+    margin: 0.5rem 0;
+  }
+  .csc-events-delivery a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    text-decoration: underline;
+    color: $acc-navy;
+  }
+  .csc-events-fields {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .csc-events-times {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .csc-events-times label {
+    margin-top: 0;
+  }
+  .csc-events-times input {
+    min-width: 0;
+  }
+  textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid $acc-border;
+    border-radius: 0.5rem;
+    font: inherit;
+    resize: vertical;
+  }
+  .csc-events-back {
+    display: block;
+  }
+  .csc-events-actions {
+    margin-top: 0.5rem;
+  }
+  .csc-auth-actions {
+    flex-wrap: wrap;
+  }
+  textarea:focus-visible {
+    outline: 3px solid $acc-gold;
+    outline-offset: 3px;
+  }
+  button.csc-events-danger {
+    color: $acc-error;
+    border-color: $acc-error;
+  }
+  .csc-events-confirm {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: #fff4e5;
+    margin-top: 1rem;
+  }
+  .csc-events-history {
+    margin-top: 2rem;
+    border-top: 1px solid $acc-hairline;
+  }
+  .csc-events-history h2 {
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+  }
+  .csc-events-history ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .csc-events-history li {
+    padding: 1rem 0;
+    border-bottom: 1px solid $acc-hairline;
+    overflow-wrap: anywhere;
+  }
+  .csc-events-history span {
+    display: block;
+    color: $acc-muted;
+    font-size: 0.875rem;
+  }
+  .csc-events-history details {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .csc-events-history summary {
+    cursor: pointer;
+    color: $acc-navy;
+  }
+  .csc-events-description {
+    white-space: pre-wrap;
+  }
+  nav {
+    align-items: center;
+  }
+  @media (max-width: 600px) {
+    .csc-events-heading {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+    .csc-events-times {
+      grid-template-columns: 1fr;
+    }
+    .csc-events-row-heading {
+      flex-wrap: wrap;
+    }
+  }
+}

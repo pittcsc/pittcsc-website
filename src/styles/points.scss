@@ -1,0 +1,230 @@
+@import "./helpers/account-tokens";
+
+.csc-points-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid $acc-hairline;
+
+  .csc-points-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .csc-points-heading p {
+    margin-top: 0.35rem;
+  }
+  .csc-points-heading a {
+    flex-shrink: 0;
+    font-weight: 700;
+    color: $acc-navy;
+  }
+  .csc-points-totals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .csc-points-totals > div {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: $acc-navy-soft;
+  }
+  .csc-points-totals strong {
+    color: $acc-navy;
+    font-size: 2rem;
+    line-height: 1;
+  }
+  .csc-points-totals span {
+    margin-top: 0.4rem;
+    color: $acc-muted;
+    font-weight: 600;
+  }
+  .csc-points-form-row {
+    display: grid;
+    grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 1.2fr);
+    gap: 1rem;
+  }
+  .csc-points-affirm {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    line-height: 1.45;
+  }
+  .csc-points-affirm input {
+    flex: none;
+    margin-top: 0.25rem;
+  }
+  .csc-points-hint {
+    font-size: 0.875rem;
+  }
+  .csc-points-error {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .csc-points-error button {
+    width: auto;
+  }
+  .csc-points-history {
+    padding-top: 1.5rem;
+    border-top: 1px solid $acc-hairline;
+  }
+  .csc-points-history h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+  .csc-points-history-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+
+    a {
+      color: $acc-navy;
+      font-weight: 700;
+    }
+  }
+  .csc-points-history ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+  .csc-points-history li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.75rem;
+  }
+  .csc-points-history li > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .csc-points-history li span {
+    color: $acc-muted;
+    font-size: 0.875rem;
+  }
+  .csc-points-history li a {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .csc-points-history li button {
+    width: auto;
+    margin-top: 0.35rem;
+  }
+  @media (max-width: 650px) {
+    .csc-points-heading,
+    .csc-points-form-row {
+      display: flex;
+      flex-direction: column;
+    }
+    .csc-points-form-row > div {
+      width: 100%;
+    }
+  }
+}
+
+.csc-auth:has(.csc-points-submissions) .csc-auth-cardwrap {
+  max-width: 72rem;
+}
+.csc-points-submissions {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+
+  .csc-points-submissions-heading a {
+    font-weight: 700;
+    color: $acc-navy;
+  }
+  .csc-points-submissions-heading h1 {
+    margin: 1rem 0 0;
+  }
+  .csc-points-submissions-heading p {
+    margin-top: 0.35rem;
+  }
+}
+
+.csc-auth:has(.csc-points-leaderboards) .csc-auth-cardwrap {
+  max-width: 72rem;
+}
+.csc-points-leaderboards {
+  h1 {
+    margin: 0;
+  }
+  .csc-points-leaderboard-section {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid $acc-hairline;
+  }
+  .csc-points-leaderboard-section > h2 {
+    color: $acc-navy;
+  }
+  .csc-points-boards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .csc-points-board {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 0.85rem;
+    background: $acc-mist;
+  }
+  .csc-points-board h3 {
+    margin-bottom: 1rem;
+    color: $acc-navy;
+  }
+  .csc-points-board ol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .csc-points-board li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+  .csc-points-board li.is-you {
+    background: $acc-navy-soft;
+    font-weight: 700;
+  }
+  .csc-points-board li strong {
+    color: $acc-navy;
+  }
+  .csc-points-rank {
+    font-weight: 700;
+    color: $acc-muted;
+  }
+  .csc-points-own-rank {
+    margin-top: 1rem;
+    font-weight: 700;
+  }
+  @media (max-width: 750px) {
+    .csc-points-boards {
+      grid-template-columns: 1fr;
+    }
+  }
+}

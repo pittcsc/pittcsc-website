@@ -1,90 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import Layout from "../layouts/layout";
-import logoUrl from "../images/qr-logo.png";
+import {
+  EXPORT_SIZE,
+  PREVIEW_SIZE,
+  makeCode,
+  setWhiteBackground,
+  updateCode,
+} from "../lib/qr/code";
 
 // PittCSC print-gamut navy — intentionally darker than the Tailwind `primary`;
 // it matches the navy the logo is printed in on slides and newsletters.
-const NAVY = "#1d2758";
 const FALLBACK_URL = "https://pittcsc.org/";
 const DOWNLOAD_NAME = "pittcsc-qr";
-const PREVIEW_SIZE = 400;
-const EXPORT_SIZE = 1000;
-const MARGIN_SIZE = 16;
-
-const squareNavy = { color: NAVY, type: "square" };
-
-// Transparent by default, so an exported code drops onto a slide or poster of any
-// colour without a white card around it. White is there for the times you *want*
-// the card: a dark backdrop the navy would vanish into, a printer, or a tool that
-// flattens alpha to black. rgba rather than the keyword because it is unambiguous
-// in both the canvas preview and the SVG export.
-const TRANSPARENT = "rgba(0,0,0,0)";
-const WHITE = "#ffffff";
-const backgroundFor = (white) => ({ color: white ? WHITE : TRANSPARENT });
-
-// Base options shared by the preview and the download export. Error correction
-// is forced to "H" (~30% recoverable) so the center logo never breaks
-// scannability.
-const baseOptions = {
-  width: PREVIEW_SIZE,
-  height: PREVIEW_SIZE,
-  type: "canvas",
-  image: logoUrl,
-  margin: MARGIN_SIZE,
-  qrOptions: { errorCorrectionLevel: "H" },
-  dotsOptions: squareNavy,
-  cornersSquareOptions: squareNavy,
-  cornersDotOptions: squareNavy,
-  backgroundOptions: backgroundFor(false),
-  imageOptions: {
-    margin: 0,
-    hideBackgroundDots: true,
-    imageSize: 0.45,
-  },
-};
 
 const buttonBase =
   "rounded-lg px-5 py-3 font-semibold transition disabled:cursor-not-allowed disabled:opacity-40";
 
-// Make a QRCode with the PittCSC logo in it and the correct data and size
-// @data the data string to use
-// @size the final image size, including the margins
-// @white true for a plain white background, false for transparent
-async function makeCode(data, size, white) {
-  const { default: QRCodeStyling} = await import("qr-code-styling");
-  // Make it twice, first approximating the image margin, and then calculating the exact size of one of the
-  // squares and making that the margin. This is the first pass
-  const code = new QRCodeStyling({
-    ...baseOptions,
-    width: size,
-    height: size,
-    data: data,
-    backgroundOptions: backgroundFor(white),
-  });
-  // Calculate the exact margin and apply it
-  const margin = (size - 2 * MARGIN_SIZE) / code._qr.getModuleCount();
-  code.update({
-    imageOptions: {
-      margin: margin,
-      hideBackgroundDots: true,
-      imageSize: 0.45,
-    }
-  });
-  return code;
-}
-
-// Do the double-update loop on an existing QRCode
-async function updateCode(code, data, size) {
-  code.update({data: data});
-  const margin = (size - 2 * MARGIN_SIZE) / code._qr.getModuleCount();
-  code.update({
-    imageOptions: {
-      margin: margin,
-      hideBackgroundDots: true,
-      imageSize: 0.45,
-    }
-  });
-}
 
 const QrPage = () => {
   const [link, setLink] = useState("");
@@ -125,7 +56,7 @@ const QrPage = () => {
   // The background is a one-key update, so it needs none of the margin dance above.
   useEffect(() => {
     if (qrRef.current) {
-      qrRef.current.update({ backgroundOptions: backgroundFor(whiteBackground) });
+      setWhiteBackground(qrRef.current, whiteBackground);
     }
   }, [whiteBackground]);
 

@@ -1,51 +1,93 @@
-# Repository agent guidance
+# Agent instructions
 
-Read [development instructions](docs/DEVELOPMENT.md) for setup and testing, and
-the [repository guide](docs/REPOSITORY.md) for active content sources and code boundaries.
+## Context and scope
 
-## Branches and tooling
+- Read [CONTRIBUTING.md](CONTRIBUTING.md),
+  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
+  [docs/REPOSITORY.md](docs/REPOSITORY.md), and the relevant issue before
+  implementation. Inspect the code to distinguish implemented behavior from
+  planned features; do not assume an issue is complete.
+- The public Gatsby site must retain its appearance and existing functionality.
+  Build the CRM in separate dashboard routes; do not migrate frontend frameworks
+  or replace existing Notion/meeting integrations without an explicit request.
+- Current decisions supersede the older architecture document where it still
+  describes only two roles or an undecided sign-in method: use Supabase email OTP
+  and multiple roles per user: `member`, `foundry`, `staff`, `alumni`.
+- The Go skeleton and local development setup already exist. Authentication and
+  CRM implementation status must be checked in code, not inferred from this file.
 
-- `master` contains the public Gatsby site and accountless tools. CRM development
-  lives on `crm-expansion`; do not assume CRM, Go, or Supabase code exists on `master`.
-- Public-site PRs target `master`; CRM PRs target `crm-expansion`.
-  CRM-specific rules are documented with that branch, not specified here.
-- Use npm and the existing `package-lock.json`; do not introduce another package manager.
-- Do not change frameworks, runtime pins, deployment configuration, or dependencies
-  as incidental cleanup. Runtime files currently disagree; see the development docs.
+## Development workflow
 
-## Public site and content
+- Use mise for the pinned Node and Go runtimes; `.tool-versions` is the shared
+  version list. Use `mise exec -- <command>` for commands outside defined tasks.
+- `mise run setup` installs locked dependencies, starts local Supabase, and creates
+  missing env files. It preserves existing env files and does not reset the database.
+- `mise run dev` starts Supabase, Gatsby, and Go. Docker must be running.
+  See CONTRIBUTING.md for separate-server commands and local addresses.
+- Use npm and the existing `package-lock.json`; do not introduce another package
+  manager or regenerate lockfiles as unrelated cleanup.
+- Keep changes scoped to the requested issue. Preserve unrelated worktree changes.
+  After the CRM merge, new feature PRs target `master`.
+- Commit, push, open/modify PRs or issues, deploy, or change hosted settings only
+  when authorized. Discussion/review requests do not authorize implementation.
 
-- Officers and initiative leads come from `src/components/data.js`.
-- Sponsors are defined separately in `src/pages/sponsors.js`.
-- Initiatives use `src/data/` and the shared initiative template.
-- `content/` files are not automatically authoritative; inspect their consumers
-  before editing or moving data sources.
-- Preserve the public Gatsby site's appearance, asset URLs, and existing redirects.
-  Keep browser-only imports and storage out of Gatsby server rendering.
+## Architecture and security
 
-## Meeting tools
+- Supabase Auth owns identities, OTP verification, and sessions. Go owns CRM
+  business logic, authorization, and database access. Do not build custom OTP logic.
+- Go must verify access tokens and enforce current database-backed roles, account
+  status, ownership, and allowed fields on protected requests. UI guards are not
+  security boundaries; browser-supplied roles/user IDs are not authoritative.
+- Roles are additive, not mutually exclusive. New accounts default to `member`;
+  users cannot self-assign `staff` or `foundry`. Pitt graduates can self-report
+  `alumni` through the dedicated authenticated profile action; it grants no
+  additional privileges. Do not invent additional privileges for foundry/alumni
+  without an agreed requirement.
+- Fetch private dashboard data at runtime. Never include private records in Gatsby
+  build-time data or generated public pages.
+- Commit every application schema/policy change as a Supabase migration. Add local
+  fixtures where relevant; do not change Supabase-managed auth tables ad hoc.
+- Keep local, staging, and production data/credentials separate. Never commit or
+  print secrets, raw Supabase status output, access tokens, or personal member data.
+  `GATSBY_*` variables are public; privileged keys belong server-side. Examples use
+  placeholders. Preserve existing env files.
+- Never reset/drop a database, delete shared files, or apply remote migrations
+  without explicit authorization for the target and operation.
 
-- `/meet` is intentionally accountless and separate from CRM authentication.
-  Its browser-held participant IDs are not authenticated club identities.
-- Preserve 30-minute slots, unavailable/if-needed/available states, and the
-  distinction between pending and submitted participants.
-- Preserve calendar imports, manual overrides, calendar-aware presets, and
-  timezone/DST projection; see [public-tool invariants](docs/PUBLIC_TOOLS.md).
-- Keep persistence server-side, including atomic writes and compare-and-set retries.
-- Never point meeting tests at hosted or production data. The existing HTTP suite
-  does not enforce this; use the isolated local setup in the development docs.
+## Verification and handoff
 
-## Environment boundaries
+- Add focused behavior tests; for bugs, add a regression test. Cover denied access,
+  validation failures, retries, duplicate/concurrent writes, and role combinations
+  when relevant, not only the happy path.
+- Run `mise run check` for code changes and `mise run build` for frontend, runtime,
+  or build changes. Format changed Go files with `gofmt` using the mise toolchain.
+  Documentation-only changes need link/content review and `git diff --check`.
+- Existing `/meet` HTTP tests skip without Gatsby running. Do not report skipped
+  tests as passing; perform relevant local integration checks for changed flows.
+- Review the diff for unrelated changes and credential exposure. Report completed
+  behavior, checks run, failures/skips, and remaining limitations accurately.
+- Update docs when behavior/setup changes. Edit `docs/DEVELOPMENT.md` directly;
+  root `CONTRIBUTING.md` is a symlink to it. Keep this file concise and link to
+  detailed docs instead of duplicating them.
 
-- `GATSBY_*` variables are browser-exposed and must never contain secrets.
-- Legacy Notion credential names use that prefix: this is a documented risk, not
-  a precedent. Never import those credentials into browser modules.
+## Code Review Rules
 
-## Verification
+- Flag missing server-side authorization, self-escalation paths, private data in
+  public output, schema changes without migrations, and unsafe credential handling.
+- Attendance requires an explicit authenticated confirmation. QR scans, GET
+  requests, and login completion must not record attendance automatically.
+- External Calendar/Drive retries and attendance submissions must be idempotent;
+  failures must not silently lose the underlying event or create duplicate records.
 
-- Normal code changes: `npm test`.
-- Frontend, runtime, or build changes: also `npm run build`.
-- Meeting changes: follow the [development testing instructions](docs/DEVELOPMENT.md#verification).
-- Documentation-only changes: `git diff --check`.
-- Explicitly report skipped tests. Meeting HTTP tests can skip when Gatsby is absent;
-  skipped tests are not passing tests.
+## Public site and meeting tools
+
+- Officers and initiative leads come from `src/components/data.js`; sponsors are
+  defined in `src/pages/sponsors.js`. Inspect page consumers before changing
+  `content/` files; see [docs/REPOSITORY.md](docs/REPOSITORY.md).
+- Keep `/meet` accountless and separate from CRM identities. Preserve its
+  availability states, 30-minute slots, calendar imports, timezone behavior,
+  and server-side persistence; see [docs/PUBLIC_TOOLS.md](docs/PUBLIC_TOOLS.md).
+- Never point `/meet` HTTP tests at hosted data. Use the isolated local procedure
+  in [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#public-meeting-tests).
+- Legacy Notion variables have a `GATSBY_` prefix. Never import their credentials
+  into browser code or use that naming pattern for new privileged values.

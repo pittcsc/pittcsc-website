@@ -1,0 +1,193 @@
+package server
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"io"
+	"mime"
+	"net/http"
+	"time"
+
+	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
+)
+
+type profileStore interface {
+	GetOrCreate(context.Context, string) (profile.Record, error)
+	Update(context.Context, string, profile.Input) (profile.Record, error)
+	ClaimAlumni(context.Context, string) (profile.Record, error)
+	UnclaimAlumni(context.Context, string) (profile.Record, error)
+	SetDetailsShared(context.Context, string, bool) (profile.Record, error)
+}
+
+func writeJSONError(w http.ResponseWriter, status int, message string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(map[string]string{"error": message})
+}
+
+func writeProfileError(w http.ResponseWriter, err error) {
+	switch {
+	case errors.Is(err, auth.ErrUnauthorized):
+		w.Header().Set("WWW-Authenticate", "Bearer")
+		writeJSONError(w, http.StatusUnauthorized, "Please sign in again.")
+	case errors.Is(err, profile.ErrSuspended):
+		writeJSONError(w, http.StatusForbidden, "Your account is suspended. Contact Pitt CSC staff.")
+	case errors.Is(err, profile.ErrIncomplete):
+		writeJSONError(w, http.StatusForbidden, "Complete your name, graduation year, and major in My Account first.")
+	case errors.Is(err, profile.ErrAlumniYear):
+		writeJSONError(w, http.StatusConflict, "Your graduation year must be the current year or earlier to mark yourself as alumni.")
+	case errors.Is(err, profile.ErrContactMatchesLogin):
+		writeJSONError(w, http.StatusBadRequest, "Choose a contact email different from your Pitt sign-in address.")
+	case errors.Is(err, profile.ErrInvalid):
+		writeJSONError(w, http.StatusBadRequest, "Check your profile fields. Names can have up to 100 characters, career fields up to 160, bio up to 2000, contact email must be valid, and the website must be an HTTPS URL. Graduation year must be 1900–2100, with up to eight distinct majors of 120 characters each.")
+	case errors.Is(err, profile.ErrNotFound):
+		writeJSONError(w, http.StatusNotFound, "This file has not been uploaded.")
+	case errors.Is(err, profile.ErrFileTooLarge):
+		writeJSONError(w, http.StatusRequestEntityTooLarge, "Choose an avatar up to 5 MB or a resume up to 10 MB.")
+	case errors.Is(err, profile.ErrInvalidFile):
+		writeJSONError(w, http.StatusBadRequest, "Choose a valid PDF resume or a JPEG, PNG, or WebP avatar. Avatars must be at most 4096 pixels per side and 16 megapixels.")
+	default:
+		writeJSONError(w, http.StatusServiceUnavailable, "Your account is temporarily unavailable. Try again.")
+	}
+}
+
+func withProfile(authentication authenticator, profiles profileStore, timeout time.Duration, next func(http.ResponseWriter, *http.Request, auth.Identity, profile.Record)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-store")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		ctx, cancel := context.WithTimeout(r.Context(), timeout)
+		defer cancel()
+		r = r.WithContext(ctx)
+		if len(r.Header.Values("Authorization")) > 1 {
+			writeProfileError(w, auth.ErrUnauthorized)
+			return
+		}
+		if authentication == nil || profiles == nil {
+			writeProfileError(w, auth.ErrUnavailable)
+			return
+		}
+		identity, err := authentication.Authenticate(ctx, r.Header.Get("Authorization"))
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		record, err := profiles.GetOrCreate(ctx, identity.ID)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		next(w, r, identity, record)
+	}
+}
+
+// The account editor and its uploads remain available during setup. All other
+// CRM routes use this guard so clearing a required field revokes access at once.
+func withCompleteProfile(authentication authenticator, profiles profileStore, timeout time.Duration, next func(http.ResponseWriter, *http.Request, auth.Identity, profile.Record)) http.HandlerFunc {
+	return withProfile(authentication, profiles, timeout, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, record profile.Record) {
+		if !record.Complete {
+			writeJSONError(w, http.StatusForbidden, "Complete your name, graduation year, and major in My Account first.")
+			return
+		}
+		next(w, r, identity, record)
+	})
+}
+
+func writeProfile(w http.ResponseWriter, record profile.Record, identity auth.Identity) {
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(struct {
+		profile.Record
+		Email string `json:"email"`
+	}{record, identity.Email})
+}
+
+func registerProfileRoutes(mux *http.ServeMux, authentication authenticator, profiles profileStore) {
+	mux.HandleFunc("GET /profile", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, record profile.Record) {
+		writeProfile(w, record, identity)
+	}))
+	mux.HandleFunc("PUT /profile", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+		if err != nil || mediaType != "application/json" {
+			writeJSONError(w, http.StatusUnsupportedMediaType, "Send profile fields as JSON.")
+			return
+		}
+		r.Body = http.MaxBytesReader(w, r.Body, 16*1024)
+		decoder := json.NewDecoder(r.Body)
+		decoder.DisallowUnknownFields()
+		var input *profile.Input
+		if err := decoder.Decode(&input); err != nil || input == nil {
+			writeJSONError(w, http.StatusBadRequest, "Send only editable profile fields in a valid JSON object.")
+			return
+		}
+		if err := decoder.Decode(new(any)); err != io.EOF {
+			writeJSONError(w, http.StatusBadRequest, "Send one profile object.")
+			return
+		}
+		if err := input.Validate(); err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		record, err := profiles.Update(r.Context(), identity.ID, *input)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		writeProfile(w, record, identity)
+	}))
+	mux.HandleFunc("PUT /profile/alumni", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		if r.ContentLength != 0 {
+			writeJSONError(w, http.StatusBadRequest, "This action does not accept profile fields.")
+			return
+		}
+		record, err := profiles.ClaimAlumni(r.Context(), identity.ID)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		writeProfile(w, record, identity)
+	}))
+	mux.HandleFunc("DELETE /profile/alumni", withProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		if r.ContentLength != 0 {
+			writeJSONError(w, http.StatusBadRequest, "This action does not accept profile fields.")
+			return
+		}
+		record, err := profiles.UnclaimAlumni(r.Context(), identity.ID)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		writeProfile(w, record, identity)
+	}))
+	mux.HandleFunc("PUT /profile/sharing", withCompleteProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+		mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+		if err != nil || mediaType != "application/json" {
+			writeJSONError(w, http.StatusUnsupportedMediaType, "Send sharing as JSON.")
+			return
+		}
+		r.Body = http.MaxBytesReader(w, r.Body, 1024)
+		decoder := json.NewDecoder(r.Body)
+		decoder.DisallowUnknownFields()
+		var input *struct {
+			Shared *bool `json:"shared"`
+		}
+		if err := decoder.Decode(&input); err != nil || input == nil || input.Shared == nil {
+			writeJSONError(w, http.StatusBadRequest, "Send a shared boolean.")
+			return
+		}
+		if err := decoder.Decode(new(any)); err != io.EOF {
+			writeJSONError(w, http.StatusBadRequest, "Send one sharing object.")
+			return
+		}
+		record, err := profiles.SetDetailsShared(r.Context(), identity.ID, *input.Shared)
+		if err != nil {
+			writeProfileError(w, err)
+			return
+		}
+		writeProfile(w, record, identity)
+	}))
+	mux.HandleFunc("OPTIONS /profile", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
+	mux.HandleFunc("OPTIONS /profile/alumni", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
+	mux.HandleFunc("OPTIONS /profile/sharing", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
+}
