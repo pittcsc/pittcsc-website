@@ -288,7 +288,10 @@ sources and public-tool boundaries.
 `.tool-versions` is the shared Node/Go version list used by mise locally and in
 the development-checks GitHub workflow. `.nvmrc` remains for compatibility with
 nvm users, not as an onboarding requirement. Netlify's `NODE_VERSION` matches
-the Node pin, and `backend/go.mod` currently matches the Go pin. Tests detect drift.
+the Node pin, and `backend/go.mod` currently matches the Go pin. Node 22 is pinned
+because the current Netlify Gatsby plugin's API request wrapper crashes when it
+reads JSON request bodies under Node 24. Tests detect drift and exercise that
+wrapper.
 When upgrading, update the matching pins, run `mise install`, rerun setup to
 reinstall native Node dependencies, and verify `mise run check` and `mise run build`.
 

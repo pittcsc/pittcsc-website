@@ -3,7 +3,7 @@ package = "@netlify/plugin-gatsby"
 
 
 [build.environment]
-  NODE_VERSION = "24.21.0"
+  NODE_VERSION = "22.23.4"
   NPM_FLAGS = "--legacy-peer-deps"
 
 [[redirects]]
