@@ -25,6 +25,6 @@ export default async function handler(req, res) {
     // res.status(200).json({ hello: `world` });
   } catch (error) {
     res.status(500).send(error);
-    console.log(error);
+    console.error("[attendance] request failed:", error);
   }
 }

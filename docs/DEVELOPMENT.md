@@ -289,11 +289,17 @@ sources and public-tool boundaries.
 the development-checks GitHub workflow. `.nvmrc` remains for compatibility with
 nvm users, not as an onboarding requirement. Netlify's `NODE_VERSION` matches
 the Node pin, and `backend/go.mod` currently matches the Go pin. Node 22 is pinned
-because the current Netlify Gatsby plugin's API request wrapper crashes when it
-reads JSON request bodies under Node 24. Tests detect drift and exercise that
-wrapper.
+because Gatsby's Netlify function wrapper crashes when it reads JSON request
+bodies under Node 24. Tests detect drift and exercise the copy of that wrapper in
+`@netlify/plugin-gatsby`; hosted builds use `gatsby-adapter-netlify`, so also
+check JSON POSTs on a deploy preview.
 When upgrading, update the matching pins, run `mise install`, rerun setup to
 reinstall native Node dependencies, and verify `mise run check` and `mise run build`.
+Netlify skips uploading function bundles that are unchanged, and those keep running
+on the Node version they were first deployed with. After a Node change, confirm
+that the production deploy log does not say `0 new function(s) to upload` and that
+`/api/meet/health` reports the expected `node` version. If it did not upload them,
+ship a change that alters the compiled functions.
 
 PRs targeting `crm-expansion` or `master` run the same checks and a Gatsby build
 using mise. They do not deploy, start Supabase, or need production credentials.
