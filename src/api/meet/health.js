@@ -18,6 +18,8 @@ export default withHandler("GET", async (req, res) => {
   res.status(status.reachable ? 200 : 503).json({
     ok: status.reachable && status.durable,
     ...status,
+    // Netlify can reuse an unchanged function built for an older runtime.
+    node: process.version,
     advice: status.durable
       ? undefined
       : "Meetings are on a local disk. On a serverless host they will not survive " +

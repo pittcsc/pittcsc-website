@@ -18,7 +18,7 @@ export function withHandler(methods, fn) {
       await fn(req, res);
     } catch (err) {
       const status = err && err.statusCode ? err.statusCode : 500;
-      if (status >= 500) console.error("[meet]", err);
+      if (status >= 500) console.error("[meet] request failed:", err);
       res.status(status).json({
         error: status >= 500 ? "Something went wrong on our end." : err.message,
         ...(err && err.payload ? err.payload : null),
