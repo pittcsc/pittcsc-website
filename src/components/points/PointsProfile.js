@@ -153,12 +153,23 @@ export default function PointsProfile({
       ) : (
         <div className="csc-points-heading">
           <div>
-            <h2 id="points-title">Your points</h2>
-            <p>
-              {showForm
-                ? "Share what you completed. Each link earns 10 points once."
-                : "Your scores and submitted links."}
-            </p>
+            <div className="csc-points-title-row">
+              <h2 id="points-title">Your points</h2>
+              {showForm && (
+                <details className="csc-points-help">
+                  <summary aria-label="How points work">i</summary>
+                  <div className="csc-points-help-panel">
+                    <p>Share what you completed. Each link earns 10 points once.</p>
+                    <p>
+                      Use a LeetCode solution or submission link, a link to the paper
+                      you read, or a public GitHub PR or standalone commit. A PR and
+                      its commits count as one contribution.
+                    </p>
+                  </div>
+                </details>
+              )}
+            </div>
+            {!showForm && <p>Your scores and submitted links.</p>}
           </div>
           <Link
             to={
@@ -254,11 +265,6 @@ export default function PointsProfile({
                   is mine, and the link is public where required.
                 </label>
               )}
-              <p className="csc-points-hint">
-                Use a LeetCode solution or submission link, a link to the paper
-                you read, or a public GitHub PR or standalone commit. A PR and
-                its commits count as one contribution.
-              </p>
               <button type="submit" disabled={busy || !category}>
                 {busy ? "Saving…" : "Submit link"}
               </button>

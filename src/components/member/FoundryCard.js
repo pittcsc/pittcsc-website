@@ -83,7 +83,7 @@ export default function FoundryCard({ status }) {
       </div>
       <figcaption className="csc-foundry-caption">
         {status.active
-          ? `Active through ${foundryLapseDate(status.activeUntil)}, even with no new points.`
+          ? `Active through ${foundryLapseDate(status.activeUntil)}`
           : `${remaining} more ${remaining === 1 ? "point" : "points"} to go active.`}
       </figcaption>
     </figure>

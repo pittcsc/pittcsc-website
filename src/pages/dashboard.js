@@ -69,8 +69,8 @@ export default function Dashboard({ location }) {
     location.pathname,
   )?.[1];
 
-  // Only My Account offers logout and the website link; status screens keep
-  // the website link so users are never stuck.
+  // My Account offers the website link; status screens keep it so users are
+  // never stuck. The account editor controls when logout is available.
   return (
     <AuthFrame dashboard websiteLink={!authenticated || account}>
       {authenticated && !auth.identity.complete && !account ? (
@@ -89,6 +89,7 @@ export default function Dashboard({ location }) {
               key={auth.identity.id}
               identity={auth.identity}
               onSaved={auth.revalidate}
+              onLogout={() => void logoutToWebsite(auth.signOut)}
               returnTo={returnTo}
             />
           ) : memberID ? (
@@ -120,14 +121,6 @@ export default function Dashboard({ location }) {
               identity={auth.identity}
               revalidate={auth.revalidate}
             />
-          )}
-          {account && (
-            <button
-              className="csc-auth-secondary"
-              onClick={() => void logoutToWebsite(auth.signOut)}
-            >
-              Log out
-            </button>
           )}
         </>
       ) : auth.status === "signedOut" ? (

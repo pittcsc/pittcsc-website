@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { formFromProfile, profileInput } from "../../src/lib/account/form.mjs";
+import { formFromProfile, profileInput, MAJOR_OPTIONS } from "../../src/lib/account/form.mjs";
+
+test("major choices preserve custom and multiple existing majors", () => {
+  assert.deepEqual(MAJOR_OPTIONS, [
+    "Computer Science",
+    "Information Science",
+    "Data Science",
+    "Computer Engineering",
+  ]);
+  const form = formFromProfile({ majors: ["Computer Science", "Math"] });
+  assert.deepEqual(form.majorOther, [false, true]);
+  assert.deepEqual(profileInput(form).majors, ["Computer Science", "Math"]);
+});
 
 test("empty and partial profiles can be saved without invented data", () => {
   const form = formFromProfile({ majors: [] });

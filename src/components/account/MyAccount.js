@@ -6,6 +6,7 @@ import {
   formFromProfile,
   profileInput,
   HANDLES,
+  MAJOR_OPTIONS,
 } from "../../lib/account/form.mjs";
 import AccountFiles from "./AccountFiles";
 import PointsProfile from "../points/PointsProfile";
@@ -75,48 +76,91 @@ function YearField({ form, change }) {
 }
 
 function MajorFields({ form, change }) {
+  const updateMajor = (index, value, isOther) => {
+    change(
+      "majors",
+      form.majors.map((major, i) => (i === index ? value : major)),
+    );
+    change(
+      "majorOther",
+      form.majorOther.map((other, i) => (i === index ? isOther : other)),
+    );
+  };
+
   return (
     <>
-      {form.majors.map((major, index) => (
-        <div className="csc-account-major" key={index}>
-          <div>
-            <label htmlFor={`major-${index}`}>Major {index + 1}</label>
-            <input
-              id={`major-${index}`}
-              maxLength={120}
-              value={major}
-              onChange={(event) =>
+      {form.majors.map((major, index) => {
+        const isOther = form.majorOther[index];
+        return (
+          <div className="csc-account-major" key={index}>
+            <div className="csc-account-major-fields">
+              <label htmlFor={`major-${index}`}>Major {index + 1}</label>
+              <select
+                id={`major-${index}`}
+                value={isOther ? "other" : major}
+                onChange={(event) => {
+                  const choice = event.target.value;
+                  updateMajor(
+                    index,
+                    choice === "other" ? "" : choice,
+                    choice === "other",
+                  );
+                }}
+              >
+                <option value="">Select a major</option>
+                {MAJOR_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+                <option value="other">Other</option>
+              </select>
+              {isOther && (
+                <div>
+                  <label htmlFor={`major-other-${index}`}>Other major</label>
+                  <input
+                    id={`major-other-${index}`}
+                    maxLength={120}
+                    value={major}
+                    onChange={(event) =>
+                      updateMajor(index, event.target.value, true)
+                    }
+                  />
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              className="csc-auth-secondary"
+              aria-label={`Remove major ${index + 1}`}
+              onClick={() => {
                 change(
                   "majors",
-                  form.majors.map((value, i) =>
-                    i === index ? event.target.value : value,
-                  ),
-                )
-              }
-            />
+                  form.majors.length === 1
+                    ? [""]
+                    : form.majors.filter((_, i) => i !== index),
+                );
+                change(
+                  "majorOther",
+                  form.majors.length === 1
+                    ? [false]
+                    : form.majorOther.filter((_, i) => i !== index),
+                );
+              }}
+            >
+              Remove
+            </button>
           </div>
-          <button
-            type="button"
-            className="csc-auth-secondary"
-            aria-label={`Remove major ${index + 1}`}
-            onClick={() =>
-              change(
-                "majors",
-                form.majors.length === 1
-                  ? [""]
-                  : form.majors.filter((_, i) => i !== index),
-              )
-            }
-          >
-            Remove
-          </button>
-        </div>
-      ))}
+        );
+      })}
       <button
         type="button"
         className="csc-auth-secondary"
         disabled={form.majors.length >= 8}
-        onClick={() => change("majors", [...form.majors, ""])}
+        onClick={() => {
+          change("majors", [...form.majors, ""]);
+          change("majorOther", [...form.majorOther, false]);
+        }}
       >
         Add another major
       </button>
@@ -226,7 +270,7 @@ function firstUnanswered(profile) {
   return index === -1 ? STEPS.length - 1 : index;
 }
 
-export default function MyAccount({ identity, onSaved, returnTo }) {
+export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
   const [profile, setProfile] = useState(null);
   const [form, setForm] = useState(null);
   const [error, setError] = useState("");
@@ -555,6 +599,11 @@ export default function MyAccount({ identity, onSaved, returnTo }) {
           {guided ? renderGuided() : renderEditor()}
           {profile.complete && <PointsProfile identity={identity} />}
         </>
+      )}
+      {guided === false && profile && (
+        <button type="button" className="csc-auth-secondary" onClick={onLogout}>
+          Log out
+        </button>
       )}
     </div>
   );
