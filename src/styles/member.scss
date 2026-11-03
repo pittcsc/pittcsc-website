@@ -71,6 +71,8 @@
   }
 
   .csc-member-event {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     padding: 1.25rem;
     border: 1px solid $acc-hairline;
@@ -110,6 +112,12 @@
     flex-wrap: wrap;
     gap: 0.4rem;
     margin-bottom: 0.75rem;
+  }
+
+  .csc-member-event-badges--bottom {
+    margin-top: auto;
+    margin-bottom: 0;
+    padding-top: 0.75rem;
   }
 
   .csc-member-event-badges span {

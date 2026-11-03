@@ -51,8 +51,9 @@ eligibility; creator, audit, and calendar delivery
 details remain staff-only. Responses are uncached.
 
 Cards show the title, Eastern Time range, location, and a truncated description.
-Foundry cards also show **Foundry event** and **Eligible** or **Not eligible**,
-without an explanation. Ineligible members can still see the event.
+Foundry cards show **Foundry event** and **Eligible** or **Not eligible** at
+the bottom of the card, without an explanation. Ineligible members can still
+see the event.
 An event in progress has a label. Cards are informational and do not open the
 attendance route or record check-in. When fewer than three events qualify, the
 home shows those available; with none it shows an empty message. Loading and
