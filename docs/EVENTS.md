@@ -112,7 +112,7 @@ audited `csc.foundry_grants`; see [staff grants](STAFF.md#foundry-grants).
 
 ## Spending and receipts
 
-The staff event detail has a **Spending** card below Attendance. **Add receipt**
+The staff event detail has a **Spending** card below Event details. **Add receipt**
 opens a dialog with the photo (previewed once chosen) and its amount; both are
 required. A failed upload keeps the dialog open so it can be retried, while
 Cancel, Esc, or a click outside the dialog discards the draft. The card shows
@@ -182,7 +182,9 @@ publishing states. The dashboard shows the Google event URL after successful syn
 
 There are no background retries, calendar watches, or automatic periodic checks.
 Each save makes one explicit sync attempt. **Sync to Calendar** is available for
-every active event and uses its latest saved data. If the Google entry was manually
+every active event and uses its latest saved data. It sits beside the warning at
+the top of the page while delivery is unconfirmed, and in the **Manage event** card
+otherwise. If the Google entry was manually
 deleted, this action recreates it. A failed cancellation prominently reports that
 the Google entry may remain public and offers **Retry calendar removal**.
 
