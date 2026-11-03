@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -21,6 +22,7 @@ var (
 	ErrNotFound      = errors.New("no eligible account")
 	ErrSelfRevoke    = errors.New("cannot revoke a protected role from yourself")
 	ErrLastHolder    = errors.New("cannot remove the last active holder of a protected role")
+	ErrInvalidGrant  = errors.New("invalid foundry grant request")
 )
 
 const PageSize = 25
@@ -46,13 +48,14 @@ type Role struct {
 }
 
 type Member struct {
-	ID             string   `json:"id"`
-	Email          string   `json:"email"`
-	FirstName      *string  `json:"firstName"`
-	LastName       *string  `json:"lastName"`
-	PreferredName  *string  `json:"preferredName"`
-	GraduationYear *int     `json:"graduationYear"`
-	Roles          []string `json:"roles"`
+	ID                    string     `json:"id"`
+	Email                 string     `json:"email"`
+	FirstName             *string    `json:"firstName"`
+	LastName              *string    `json:"lastName"`
+	PreferredName         *string    `json:"preferredName"`
+	GraduationYear        *int       `json:"graduationYear"`
+	Roles                 []string   `json:"roles"`
+	FoundryGrantExpiresAt *time.Time `json:"foundryGrantExpiresAt"`
 }
 
 type Search struct {
@@ -91,7 +94,7 @@ type Store struct{ DB *pgxpool.Pool }
 
 // Catalog lists every role with whether this actor may change it.
 func (s Store) Catalog(ctx context.Context, actorRoles []string) ([]Role, error) {
-	rows, err := s.DB.Query(ctx, `select name, label, description from csc.roles order by label`)
+	rows, err := s.DB.Query(ctx, `select name, label, description from csc.roles where name <> 'foundry' order by label`)
 	if err != nil {
 		return nil, err
 	}
@@ -107,11 +110,13 @@ func (s Store) Catalog(ctx context.Context, actorRoles []string) ([]Role, error)
 
 const memberColumns = `p.auth_user_id::text, coalesce(u.email, ''), p.first_name, p.last_name,
 	p.preferred_name, p.graduation_year,
-	array(select r.role from csc.user_roles r where r.auth_user_id = p.auth_user_id order by r.role)`
+	array(select r.role from csc.user_roles r where r.auth_user_id = p.auth_user_id order by r.role),
+	(select g.expires_at from csc.foundry_grants g where g.auth_user_id = p.auth_user_id
+	 and g.revoked_at is null and g.expires_at > now())`
 
 func scanMember(row pgx.Row, extra ...any) (Member, error) {
 	var m Member
-	err := row.Scan(append([]any{&m.ID, &m.Email, &m.FirstName, &m.LastName, &m.PreferredName, &m.GraduationYear, &m.Roles}, extra...)...)
+	err := row.Scan(append([]any{&m.ID, &m.Email, &m.FirstName, &m.LastName, &m.PreferredName, &m.GraduationYear, &m.Roles, &m.FoundryGrantExpiresAt}, extra...)...)
 	return m, err
 }
 

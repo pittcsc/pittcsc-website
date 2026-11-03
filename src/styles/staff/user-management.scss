@@ -84,6 +84,26 @@
     color: $acc-border;
     cursor: not-allowed;
   }
+  .csc-staff-foundry-grant {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    width: 100%;
+    font-size: 0.9rem;
+  }
+  .csc-staff-foundry-grant > span {
+    color: $acc-muted;
+  }
+  .csc-staff-foundry-grant .csc-auth-actions {
+    margin: 0;
+  }
+  .csc-staff-foundry-grant button {
+    width: auto;
+    min-height: 44px;
+    padding: 0 0.85rem;
+    font-size: 0.875rem;
+  }
   .csc-staff-confirm,
   .csc-staff-member > [role="alert"] {
     align-self: stretch;

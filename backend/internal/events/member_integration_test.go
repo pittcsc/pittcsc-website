@@ -58,21 +58,27 @@ func TestMemberUpcomingIntegration(t *testing.T) {
 	}
 	end := time.Date(2100, 1, 1, 0, 0, 0, 0, time.UTC)
 	first := insert("Ongoing first", "active", "synced", time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC), end)
+	if _, err := pool.Exec(ctx, `update csc.events set foundry_event = true where id = $1::uuid`, first); err != nil {
+		t.Fatal(err)
+	}
 	insert("Ongoing failed sync", "active", "failed", time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC), end)
 	insert("Ongoing third", "active", "pending", time.Date(2002, 1, 1, 0, 0, 0, 0, time.UTC), end)
 	insert("Ongoing fourth", "active", "disabled", time.Date(2003, 1, 1, 0, 0, 0, 0, time.UTC), end)
 	insert("Cancelled", "cancelled", "failed", time.Date(1999, 1, 1, 0, 0, 0, 0, time.UTC), end)
 	insert("Past", "active", "synced", time.Date(1998, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(1999, 1, 1, 0, 0, 0, 0, time.UTC))
 	s := Store{DB: pool}
-	result, err := s.ListUpcoming(ctx)
+	result, err := s.ListUpcoming(ctx, actor)
 	if err != nil || len(result.Events) != 3 || result.Events[0].Title != "Ongoing first" ||
 		result.Events[1].Title != "Ongoing failed sync" || result.Events[2].Title != "Ongoing third" {
 		t.Fatalf("member event ordering/filtering failed: %+v (%v)", result, err)
 	}
+	if !result.Events[0].FoundryEvent || !result.Events[0].Eligible || result.Events[1].FoundryEvent || !result.Events[1].Eligible {
+		t.Fatalf("member list omitted Foundry flag or staff eligibility: %+v", result.Events)
+	}
 	if _, err := pool.Exec(ctx, `update csc.events set status='cancelled' where id=$1::uuid`, first); err != nil {
 		t.Fatal(err)
 	}
-	result, err = s.ListUpcoming(ctx)
+	result, err = s.ListUpcoming(ctx, actor)
 	if err != nil || len(result.Events) != 3 || result.Events[0].Title != "Ongoing failed sync" ||
 		result.Events[2].Title != "Ongoing fourth" {
 		t.Fatalf("cancellation was not reflected in member list: %+v (%v)", result, err)

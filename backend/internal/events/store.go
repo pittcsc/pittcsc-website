@@ -26,13 +26,13 @@ type Store struct {
 
 const columns = `id::text, title, location, description, starts_at, ends_at, timezone,
 	status, version, created_by::text, created_at, updated_at, calendar_id,
-	calendar_event_id, calendar_url, sync_status, sync_error, synced_at`
+	calendar_event_id, calendar_url, sync_status, sync_error, synced_at, foundry_event`
 
 func scanEvent(row pgx.Row) (Event, error) {
 	var e Event
 	err := row.Scan(&e.ID, &e.Title, &e.Location, &e.Description, &e.StartsAt, &e.EndsAt, &e.Timezone,
 		&e.Status, &e.Version, &e.CreatedBy, &e.CreatedAt, &e.UpdatedAt, &e.CalendarID,
-		&e.CalendarEventID, &e.CalendarURL, &e.SyncStatus, &e.SyncError, &e.SyncedAt)
+		&e.CalendarEventID, &e.CalendarURL, &e.SyncStatus, &e.SyncError, &e.SyncedAt, &e.FoundryEvent)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Event{}, ErrNotFound
 	}
@@ -215,10 +215,14 @@ func (s Store) Save(ctx context.Context, actor, id string, input Input) (Event, 
 		if calendarID == "" {
 			calendarID = ClubCalendarID
 		}
+		foundryEvent := false
+		if input.FoundryEvent != nil {
+			foundryEvent = *input.FoundryEvent
+		}
 		e, err = scanEvent(tx.QueryRow(ctx, `insert into csc.events
-			(id, title, location, description, starts_at, ends_at, created_by, calendar_id, calendar_event_id)
-			values ($1::uuid, $2, $3, $4, $5, $6, $7::uuid, $8, $9) returning `+columns,
-			id, input.Title, input.Location, input.Description, input.StartsAt, input.EndsAt, actor, calendarID, "csc"+strings.ReplaceAll(id, "-", "")))
+			(id, title, location, description, starts_at, ends_at, created_by, calendar_id, calendar_event_id, foundry_event)
+			values ($1::uuid, $2, $3, $4, $5, $6, $7::uuid, $8, $9, $10) returning `+columns,
+			id, input.Title, input.Location, input.Description, input.StartsAt, input.EndsAt, actor, calendarID, "csc"+strings.ReplaceAll(id, "-", ""), foundryEvent))
 		action = "created"
 	} else if err == nil {
 		if e.Status == "cancelled" {
@@ -228,9 +232,13 @@ func (s Store) Save(ctx context.Context, actor, id string, input Input) (Event, 
 			return Event{}, ErrConflict
 		}
 		if !e.matches(input) {
+			foundryEvent := e.FoundryEvent
+			if input.FoundryEvent != nil {
+				foundryEvent = *input.FoundryEvent
+			}
 			e, err = scanEvent(tx.QueryRow(ctx, `update csc.events set title=$2, location=$3, description=$4,
-				starts_at=$5, ends_at=$6, version=version+1, updated_at=now(), sync_status='pending', sync_error=''
-				where id=$1::uuid returning `+columns, id, input.Title, input.Location, input.Description, input.StartsAt, input.EndsAt))
+				starts_at=$5, ends_at=$6, foundry_event=$7, version=version+1, updated_at=now(), sync_status='pending', sync_error=''
+				where id=$1::uuid returning `+columns, id, input.Title, input.Location, input.Description, input.StartsAt, input.EndsAt, foundryEvent))
 			action = "updated"
 		}
 	}

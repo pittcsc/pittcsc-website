@@ -116,7 +116,8 @@ export default function Attendance({ location }) {
       setError(failure.message);
       if (failure.status === 401 || failure.status === 403)
         void auth.revalidate();
-      if (failure.status === 409) setAttempt((n) => n + 1);
+      if (failure.status === 403 || failure.status === 409)
+        setAttempt((n) => n + 1);
     } finally {
       setSubmitting(false);
     }
@@ -138,6 +139,7 @@ export default function Attendance({ location }) {
       ) : (
         <>
           <h1>{currentEvent?.title || "Event attendance"}</h1>
+          {currentEvent?.foundryEvent && <p>Foundry event</p>}
           {loading ? (
             <p role="status">Loading event…</p>
           ) : (
@@ -153,6 +155,10 @@ export default function Attendance({ location }) {
                 </p>
               ) : currentEvent?.checkedInAt ? (
                 <p role="status">You're checked in.</p>
+              ) : currentEvent?.foundryEvent && !currentEvent.eligible ? (
+                <p role="status">
+                  Not eligible to check in to this Foundry event.
+                </p>
               ) : currentEvent ? (
                 <button
                   type="button"

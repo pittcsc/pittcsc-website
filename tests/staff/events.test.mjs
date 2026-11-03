@@ -28,9 +28,15 @@ test("event forms always use New York wall time, across winter and summer", () =
       description: "",
       start: "2027-01-15T18:00",
       end: "2027-01-15T19:00",
+      foundryEvent: false,
       version: 3,
     },
   );
+});
+
+test("event form keeps the Foundry checkbox when editing", () => {
+  assert.equal(eventForm().foundryEvent, false);
+  assert.equal(eventForm({ foundryEvent: true }).foundryEvent, true);
 });
 
 test("sync messages distinguish saved records from calendar delivery and removal", () => {

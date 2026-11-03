@@ -8,8 +8,8 @@ included commits count as one contribution. There is no earning cap.
 
 This first release uses the honor system for authorship, reading, PR/commit
 overlap, and public reachability. The API checks URL format and supported hosts
-but does not fetch external pages. Points should receive a separate verification
-decision before they become a Foundry role requirement.
+but does not fetch external pages. These honor-system awards count toward
+Foundry event eligibility, while the legacy `foundry` role remains separate.
 
 ## Scores and visibility
 
@@ -33,15 +33,18 @@ decision before they become a Foundry role requirement.
 
 **Foundry** (`/dashboard/foundry`) explains the rules and shows the owner's
 status card. A member is active while their awarded points in the same rolling
-30-day window as the 30-day leaderboard reach 50; there is no monthly reset.
+30-day window as the 30-day leaderboard reach 50, or while a staff grant is
+active; there is no monthly reset.
 Claims count from their original award time, including restored claims, and
 withdrawn or revoked claims count zero. An active status reports `activeUntil`:
-when it lapses if no new points are awarded, which is 30 days after the oldest
-claim needed to stay at 50.
+when it lapses if no new points are awarded or grant renewed. The response
+also reports `grantExpiresAt` for an active staff grant. A grant expires exactly
+30 days after staff give or renew it.
 
-This status is informational only. It does not grant or remove the `foundry`
-role and confers no privileges; tying points to that role still needs the
-separate verification decision noted above.
+Current points or an active staff grant allow check-in to a Foundry event,
+subject to the active-account and completed-profile checks. Staff qualify
+without points or a grant. Neither points nor grants add or remove the legacy
+permanent `foundry` role.
 
 ## Data and authorization
 
@@ -69,7 +72,7 @@ access. The public Gatsby build contains no point or claim data.
 | `POST /points/claims` | Active, completed account | Submit `{category,url,affirmed:true}` |
 | `DELETE /points/claims/{id}` | Owner | Withdraw an awarded claim |
 | `GET /points/leaderboard?period=all\|30d` | Active, completed account | Top 10 and own rank |
-| `GET /points/foundry` | Owner | Name, 30-day points, threshold, window, active flag, and `activeUntil` |
+| `GET /points/foundry` | Owner | Name, 30-day points, threshold, window, active flag, `activeUntil`, and `grantExpiresAt` |
 | `GET /staff/points/claims?page=1` | Staff | 20 newest claims per page |
 | `POST /staff/points/claims/{id}/revoke` | Staff | Revoke with `{reason}` |
 | `POST /staff/points/claims/{id}/restore` | Staff | Restore with `{reason}` |

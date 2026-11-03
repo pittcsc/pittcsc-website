@@ -93,7 +93,7 @@ CSC manages its own application permissions:
   Alumni is a self-reported Pitt graduation label that users can add through a
   dedicated authenticated action once their graduation year is no later than
   the current New York year; it confers no additional permissions.
-- Staff have member access and can search active members and grant or revoke `staff`, `foundry`, and `alumni`. `member` is permanent. All active staff can manage events; account status tools remain planned.
+- Staff have member access and can search active members and grant or revoke `staff` and `alumni`. The old permanent `foundry` assignments remain stored but are no longer editable in the dashboard or used for event eligibility. Staff can give, renew, and revoke separate 30-day Foundry grants. `member` is permanent. All active staff can manage events; account status tools remain planned.
 - A trusted operator bootstraps the first staff account with the audited command in [STAFF.md](STAFF.md); dashboard changes are audited with the authenticated staff actor.
 - CSC account suspension is enforced through CSC profile status on API requests, including requests with an otherwise valid access token.
 
@@ -138,9 +138,10 @@ Manage the Postgres schema with versioned SQL migrations.
 | `csc.profile_assets` | Implemented: private file bytes, ownership, type, and update time; unique per user/kind |
 | `csc.roles`, `csc.user_roles` | Implemented: role catalog with display labels; additive assignments, unique per user/role pair |
 | `csc.role_audit` | Implemented: transactional grant/revoke audit with target, role, action, staff actor or operator label, database actor, and time |
-| `csc.events` | Implemented: stable ID, title, description, location, start/end times, fixed New York timezone, active/cancelled status, version, creator/timestamps, and calendar identity/delivery status |
+| `csc.events` | Implemented: stable ID, title, description, location, start/end times, Foundry event flag, fixed New York timezone, active/cancelled status, version, creator/timestamps, and calendar identity/delivery status |
 | `csc.event_audit` | Implemented: event mutations and sync results with staff actor, snapshot, and time |
 | `csc.point_categories`, `csc.point_claims`, `csc.point_claim_links`, `csc.point_claim_audit` | Implemented: extensible values, historical awards, lifetime link uniqueness, and moderation history; see [POINTS.md](POINTS.md) |
+| `csc.foundry_grants`, `csc.foundry_grant_audit` | Implemented: expiring staff grants and retry-safe audited actions for Foundry check-in; see [STAFF.md](STAFF.md#foundry-grants) |
 
 The application-owned `csc.profiles` table references Supabase's managed `auth.users` identities. Credentials remain in Supabase Auth. Private file access goes through Go; bounded files are stored transactionally in Postgres for this initial release. See [PROFILES.md](PROFILES.md) for limits and ownership enforcement.
 
@@ -149,7 +150,8 @@ Keep stable records across academic years. Represent dates and terms as data rat
 `csc.attendance` relates an event to the verified Auth user, with a unique key
 for one check-in per account per event. The Go API records it only after an
 explicit authenticated POST. Staff can read the roster; members can read their
-own status. See [EVENTS.md](EVENTS.md#qr-attendance). Registrations and RSVPs
+own status. Foundry events require current points, an active staff grant, or
+the staff role at check-in. See [EVENTS.md](EVENTS.md#qr-attendance). Registrations and RSVPs
 remain separate future actions.
 
 ## Events and future integrations

@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
+	"mime"
 	"net/http"
 	"slices"
 	"time"
@@ -17,6 +19,7 @@ type roleStore interface {
 	Catalog(context.Context, []string) ([]roles.Role, error)
 	Search(context.Context, roles.Search) (roles.Page, error)
 	Change(ctx context.Context, actorID, targetID, role string, grant bool) (roles.Member, error)
+	ChangeFoundryGrant(ctx context.Context, actorID, targetID, requestID string, grant bool) (roles.Member, error)
 }
 
 // withStaff checks the current database profile/status/roles on every request.
@@ -44,6 +47,8 @@ func writeRoleError(w http.ResponseWriter, err error) {
 	switch {
 	case errors.Is(err, roles.ErrInvalidSearch):
 		writeJSONError(w, http.StatusBadRequest, "Search with up to 100 characters, an existing role, and a valid page.")
+	case errors.Is(err, roles.ErrInvalidGrant):
+		writeJSONError(w, http.StatusBadRequest, "Send a unique request ID for this Foundry grant action.")
 	case errors.Is(err, roles.ErrUnknownRole):
 		writeJSONError(w, http.StatusNotFound, "That role doesn't exist.")
 	case errors.Is(err, roles.ErrReadOnlyRole):
@@ -109,7 +114,42 @@ func registerStaffRoutes(mux *http.ServeMux, authentication authenticator, profi
 	}
 	mux.HandleFunc("PUT /staff/users/{id}/roles/{role}", change(true))
 	mux.HandleFunc("DELETE /staff/users/{id}/roles/{role}", change(false))
-	for _, path := range []string{"/staff/access", "/staff/roles", "/staff/users", "/staff/users/{id}/roles/{role}"} {
+	changeFoundryGrant := func(grant bool) http.HandlerFunc {
+		return withStaff(authentication, profiles, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
+			if store == nil {
+				writeRoleError(w, auth.ErrUnavailable)
+				return
+			}
+			mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+			if err != nil || mediaType != "application/json" {
+				writeJSONError(w, http.StatusUnsupportedMediaType, "Send the grant request as JSON.")
+				return
+			}
+			r.Body = http.MaxBytesReader(w, r.Body, 1024)
+			var body struct {
+				RequestID string `json:"requestId"`
+			}
+			decoder := json.NewDecoder(r.Body)
+			decoder.DisallowUnknownFields()
+			if decoder.Decode(&body) != nil || decoder.Decode(new(any)) != io.EOF {
+				writeRoleError(w, roles.ErrInvalidGrant)
+				return
+			}
+			if !roles.ValidGrantRequestID(body.RequestID) {
+				writeRoleError(w, roles.ErrInvalidGrant)
+				return
+			}
+			member, err := store.ChangeFoundryGrant(r.Context(), identity.ID, r.PathValue("id"), body.RequestID, grant)
+			if err != nil {
+				writeRoleError(w, err)
+				return
+			}
+			writeJSON(w, member)
+		})
+	}
+	mux.HandleFunc("POST /staff/users/{id}/foundry-grant", changeFoundryGrant(true))
+	mux.HandleFunc("POST /staff/users/{id}/foundry-grant/revoke", changeFoundryGrant(false))
+	for _, path := range []string{"/staff/access", "/staff/roles", "/staff/users", "/staff/users/{id}/roles/{role}", "/staff/users/{id}/foundry-grant", "/staff/users/{id}/foundry-grant/revoke"} {
 		mux.HandleFunc("OPTIONS "+path, func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	}
 }

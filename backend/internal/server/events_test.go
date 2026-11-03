@@ -32,8 +32,9 @@ func (s *eventsStub) List(context.Context, string, int) (events.Page, error) {
 	s.calls++
 	return events.Page{Events: []events.Event{}}, s.err
 }
-func (s *eventsStub) ListUpcoming(context.Context) (events.MemberEvents, error) {
+func (s *eventsStub) ListUpcoming(_ context.Context, actor string) (events.MemberEvents, error) {
 	s.calls++
+	s.actor = actor
 	return s.memberEvents, s.err
 }
 func (s *eventsStub) Get(context.Context, string) (events.Event, error) {
@@ -141,7 +142,7 @@ func TestMemberUpcomingEventsAccessAndFields(t *testing.T) {
 			StartsAt: start, EndsAt: start.Add(time.Hour),
 		}}}}
 		w := eventRequest(&profilesStub{roles: assigned}, s, "GET", "/events/upcoming?role=staff&userId=attacker", "", "valid")
-		if w.Code != 200 || s.calls != 1 || w.Header().Get("Cache-Control") != "no-store" {
+		if w.Code != 200 || s.calls != 1 || s.actor != "verified-owner" || w.Header().Get("Cache-Control") != "no-store" {
 			t.Fatalf("active role combination %v could not read events: %d", assigned, w.Code)
 		}
 		var result map[string]any
@@ -209,7 +210,7 @@ func TestEventErrorMappingAndPreflight(t *testing.T) {
 		code int
 	}{
 		{events.ErrInvalid, 400}, {events.ErrTime, 400}, {events.ErrNotFound, 404}, {events.ErrConflict, 409},
-		{events.ErrCancelled, 409}, {events.ErrForbidden, 403}, {errors.New("secret credentials"), 503},
+		{events.ErrCancelled, 409}, {events.ErrForbidden, 403}, {events.ErrIneligible, 403}, {errors.New("secret credentials"), 503},
 	} {
 		w := eventRequest(&profilesStub{roles: []string{"staff"}}, &eventsStub{err: tc.err}, "POST", "/staff/events/id/sync", "", "valid")
 		if w.Code != tc.code || strings.Contains(w.Body.String(), "secret") {

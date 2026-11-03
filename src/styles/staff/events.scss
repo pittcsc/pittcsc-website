@@ -317,6 +317,19 @@
   .csc-events-times input {
     min-width: 0;
   }
+  .csc-events-foundry-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    font-weight: 700;
+  }
+  .csc-events-foundry-toggle input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    accent-color: $acc-navy;
+  }
   textarea {
     display: block;
     width: 100%;

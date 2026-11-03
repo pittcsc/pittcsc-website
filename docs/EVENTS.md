@@ -15,6 +15,9 @@ and [#164](https://github.com/pittcsc/pittcsc-website/issues/164):
 - Title (up to 200 characters), location (500), start, and end are required.
   Description is optional (5,000). The description is public calendar content,
   not a staff-only notes field.
+- Staff may mark an event as a **Foundry event** on creation or edit. The CRM
+  keeps this flag in event history. The public calendar description appends
+  `Foundry event`; the title is unchanged.
 - All times use `America/New_York`, including when the browser is elsewhere.
   Dates are supported from 2000 through 2100, and end must follow start.
   The form sends local wall times; Go converts them to UTC. Nonexistent and
@@ -43,10 +46,14 @@ session and current active profile, then returns at most three active CRM events
 whose end is in the future. Events already in progress come first, followed by
 future events in start-time order. Calendar sync status does not affect inclusion:
 the CRM record is authoritative. The response contains only event ID, title,
-location, description, start, and end; creator, audit, and calendar delivery
+location, description, start, end, Foundry event flag, and the viewer's current
+eligibility; creator, audit, and calendar delivery
 details remain staff-only. Responses are uncached.
 
 Cards show the title, Eastern Time range, location, and a truncated description.
+Foundry cards show **Foundry event** and **Eligible** or **Not eligible** at
+the bottom of the card, without an explanation. Ineligible members can still
+see the event.
 An event in progress has a label. Cards are informational and do not open the
 attendance route or record check-in. When fewer than three events qualify, the
 home shows those available; with none it shows an empty message. Loading and
@@ -71,7 +78,13 @@ A signed-out visitor goes to Pitt email OTP sign-in. An incomplete account then
 finishes profile setup and returns to the same attendance page. The page shows the event title and signed-in email. The
 visitor must explicitly click **I'm Here!** to check in. Scanning, page loads,
 and login completion never record attendance. Any active, completed CSC account
-can check in, with any additive role mix.
+can check in to an ordinary event. A Foundry event also requires current `staff`
+role, at least 50 awarded points in the preceding 30 days, or an active 30-day
+staff grant. Honor-system awarded points count. The old permanent `foundry` role
+alone does not qualify. Go evaluates eligibility from Postgres at check-in,
+including when staff change the event flag after publishing. Existing check-ins
+remain recorded when points expire, a grant is revoked, or the flag changes;
+repeated submissions return the original check-in time.
 Check-in stays open after event creation, even after its scheduled end, until
 staff cancel the event. A cancelled event closes check-in but retains its roster.
 A static QR can be shared, so this workflow does not prove physical presence.
@@ -94,6 +107,8 @@ The `20261009000000_attendance.sql` migration creates private `csc.attendance`
 with RLS and no browser grants. It applies locally with
 `mise exec -- npx supabase migration up --local`; never apply it to a hosted
 database without authorization for that target.
+The Foundry event migration adds `csc.events.foundry_event` and private,
+audited `csc.foundry_grants`; see [staff grants](STAFF.md#foundry-grants).
 
 ## Spending and receipts
 
@@ -224,8 +239,8 @@ account.
 | `GET /staff/events/{id}/budget-package` | PDF of the numbered attendee table followed by every receipt image |
 | `DELETE /staff/events/{id}/receipts/{receiptId}` | Remove a receipt; repeat removals succeed |
 
-Save JSON has only `title`, `location`, `description`, `start`, `end`, and
-`version`. Dates use `YYYY-MM-DDTHH:mm` in New York; use version 0 for creation and
+Save JSON has only `title`, `location`, `description`, `start`, `end`,
+`foundryEvent`, and `version`. Dates use `YYYY-MM-DDTHH:mm` in New York; use version 0 for creation and
 the returned version for edits. Cancellation JSON contains `version`. Actor,
 calendar IDs, timezone, and status cannot be supplied as editable fields. GETs
 never create events, sync Google, or record attendance.

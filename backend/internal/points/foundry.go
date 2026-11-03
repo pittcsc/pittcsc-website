@@ -2,9 +2,8 @@ package points
 
 import "time"
 
-// A member has an active Foundry status while their awarded points from the
-// last FoundryWindowDays reach FoundryThreshold. The status is informational;
-// it does not grant the foundry role or any privileges.
+// A member has active Foundry status with enough recent awarded points or an
+// active staff grant. Neither path assigns the legacy foundry role.
 const (
 	FoundryThreshold  = 50
 	FoundryWindowDays = 30
@@ -18,19 +17,24 @@ type FoundryStatus struct {
 	Active     bool   `json:"active"`
 	// ActiveUntil is when an active status lapses if no new points are
 	// awarded: the moment the window stops covering enough recent claims.
-	ActiveUntil *time.Time `json:"activeUntil"`
+	ActiveUntil    *time.Time `json:"activeUntil"`
+	GrantExpiresAt *time.Time `json:"grantExpiresAt"`
 }
 
-func NewFoundryStatus(name string, points int, activeUntil *time.Time) FoundryStatus {
+func NewFoundryStatus(name string, points int, pointsUntil, grantUntil *time.Time) FoundryStatus {
 	status := FoundryStatus{
-		Name:       name,
-		Points:     points,
-		Threshold:  FoundryThreshold,
-		WindowDays: FoundryWindowDays,
-		Active:     points >= FoundryThreshold,
+		Name:           name,
+		Points:         points,
+		Threshold:      FoundryThreshold,
+		WindowDays:     FoundryWindowDays,
+		Active:         points >= FoundryThreshold || grantUntil != nil,
+		GrantExpiresAt: grantUntil,
 	}
-	if status.Active {
-		status.ActiveUntil = activeUntil
+	if points >= FoundryThreshold {
+		status.ActiveUntil = pointsUntil
+	}
+	if grantUntil != nil && (status.ActiveUntil == nil || grantUntil.After(*status.ActiveUntil)) {
+		status.ActiveUntil = grantUntil
 	}
 	return status
 }

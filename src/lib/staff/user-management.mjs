@@ -14,6 +14,22 @@ export function rolePath(userID, role) {
   return `/staff/users/${encodeURIComponent(userID)}/roles/${encodeURIComponent(role)}`;
 }
 
+export function foundryGrantPath(userID, revoke = false) {
+  return `/staff/users/${encodeURIComponent(userID)}/foundry-grant${revoke ? "/revoke" : ""}`;
+}
+
+export function formatGrantExpiry(value) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(new Date(value));
+}
+
 export function displayName(member) {
   const first = member.preferredName || member.firstName;
   const name = [first, member.lastName].filter(Boolean).join(" ");

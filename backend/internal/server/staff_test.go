@@ -105,6 +105,7 @@ type roleStoreStub struct {
 	targetID   string
 	role       string
 	grant      bool
+	requestID  string
 	err        error
 }
 
@@ -122,6 +123,64 @@ func (s *roleStoreStub) Change(ctx context.Context, actorID, targetID, role stri
 	s.calls++
 	s.actorID, s.targetID, s.role, s.grant = actorID, targetID, role, grant
 	return roles.Member{ID: targetID, Roles: []string{"member", role}}, s.err
+}
+func (s *roleStoreStub) ChangeFoundryGrant(ctx context.Context, actorID, targetID, requestID string, grant bool) (roles.Member, error) {
+	s.calls++
+	s.actorID, s.targetID, s.grant = actorID, targetID, grant
+	s.requestID = requestID
+	return roles.Member{ID: targetID, Roles: []string{"member"}}, s.err
+}
+
+func foundryGrantRequest(store *roleStoreStub, assigned []string, method, path, body, token string) *httptest.ResponseRecorder {
+	r := httptest.NewRequest(method, path, strings.NewReader(body))
+	r.Header.Set("Content-Type", "application/json")
+	if token != "" {
+		r.Header.Set("Authorization", "Bearer "+token)
+	}
+	w := httptest.NewRecorder()
+	NewHandler(nil, "http://localhost:8000", verifiedAuth(), &profilesStub{roles: assigned}, store, nil).ServeHTTP(w, r)
+	return w
+}
+
+func TestFoundryGrantRoutesUseVerifiedStaffAndRequestID(t *testing.T) {
+	const requestID = "11111111-1111-4111-8111-111111111111"
+	const body = `{"requestId":"` + requestID + `"}`
+	for _, route := range []struct {
+		path  string
+		grant bool
+	}{
+		{"/staff/users/target/foundry-grant", true},
+		{"/staff/users/target/foundry-grant/revoke", false},
+	} {
+		for _, assigned := range [][]string{{"member"}, {"member", "foundry"}, {"member", "alumni"}} {
+			store := &roleStoreStub{}
+			w := foundryGrantRequest(store, assigned, "POST", route.path, body, "valid")
+			if w.Code != 403 || store.calls != 0 {
+				t.Fatalf("roles %v reached grant action: %d", assigned, w.Code)
+			}
+		}
+		store := &roleStoreStub{}
+		if w := foundryGrantRequest(store, []string{"staff"}, "POST", route.path, body, ""); w.Code != 401 || store.calls != 0 {
+			t.Fatal("anonymous grant action reached store")
+		}
+		w := foundryGrantRequest(store, []string{"member", "staff", "alumni"}, "POST", route.path+"?actorId=attacker", body, "valid")
+		if w.Code != 200 || store.actorID != "verified-owner" || store.targetID != "target" || store.requestID != requestID || store.grant != route.grant {
+			t.Fatalf("grant action did not use verified actor and request ID: %+v, %d", store, w.Code)
+		}
+	}
+}
+
+func TestFoundryGrantRejectsInvalidPayloads(t *testing.T) {
+	store := &roleStoreStub{}
+	path := "/staff/users/target/foundry-grant"
+	for _, body := range []string{"", "{}", `{"requestId":"bad"}`, `{"requestId":"11111111-1111-4111-8111-111111111111","role":"staff"}`, `{"requestId":"11111111-1111-4111-8111-111111111111"}{}`} {
+		if w := foundryGrantRequest(store, []string{"staff"}, "POST", path, body, "valid"); w.Code != 400 || store.calls != 0 {
+			t.Fatalf("invalid grant payload accepted: %d", w.Code)
+		}
+	}
+	if w := foundryGrantRequest(store, []string{"staff"}, "GET", path, "", "valid"); w.Code != 405 {
+		t.Fatal("GET must not assign a grant")
+	}
 }
 
 func staffRequest(t *testing.T, profiles *profilesStub, store *roleStoreStub, method, path, token string) *httptest.ResponseRecorder {

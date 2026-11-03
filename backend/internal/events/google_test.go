@@ -10,6 +10,23 @@ import (
 	"testing"
 )
 
+func TestFoundryCalendarDescription(t *testing.T) {
+	e := calendarFixture()
+	e.Description = "Bring <laptop>"
+	e.FoundryEvent = true
+	if got := payload(e).Description; got != "Bring &lt;laptop&gt;\n\nFoundry event" {
+		t.Fatalf("Foundry calendar marker missing or unsafe: %q", got)
+	}
+	e.Description = ""
+	if got := payload(e).Description; got != "Foundry event" {
+		t.Fatalf("empty description marker: %q", got)
+	}
+	e.FoundryEvent = false
+	if got := payload(e).Description; got != "" {
+		t.Fatalf("ordinary event was marked Foundry: %q", got)
+	}
+}
+
 func calendarFixture() Event {
 	in := validInput()
 	_ = in.Validate()

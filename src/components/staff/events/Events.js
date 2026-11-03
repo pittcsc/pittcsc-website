@@ -140,6 +140,11 @@ export default function Events({ identity, request, revalidate }) {
                         {event.status === "cancelled" && (
                           <span className="csc-events-badge">Cancelled</span>
                         )}
+                        {event.foundryEvent && (
+                          <span className="csc-events-badge">
+                            Foundry event
+                          </span>
+                        )}
                       </div>
                       <p>
                         {formatEventTime(event.startsAt)} –{" "}
@@ -422,6 +427,20 @@ function EventEditor({ selected, identity, request, denied, onBack }) {
                     setForm({ ...form, description: e.target.value })
                   }
                 />
+                <label
+                  className="csc-events-foundry-toggle"
+                  htmlFor="event-foundry"
+                >
+                  <input
+                    id="event-foundry"
+                    type="checkbox"
+                    checked={form.foundryEvent}
+                    onChange={(e) =>
+                      setForm({ ...form, foundryEvent: e.target.checked })
+                    }
+                  />
+                  Foundry event
+                </label>
               </fieldset>
               {!cancelled && (
                 <>
@@ -560,6 +579,7 @@ function EventEditor({ selected, identity, request, denied, onBack }) {
                             {entry.snapshot.description}
                           </p>
                         )}
+                        {entry.snapshot.foundryEvent && <p>Foundry event</p>}
                         <p>
                           Status: {entry.snapshot.status} ·{" "}
                           {syncLabel(entry.snapshot)}

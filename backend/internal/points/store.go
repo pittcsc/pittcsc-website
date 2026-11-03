@@ -83,7 +83,7 @@ func (s Store) Mine(ctx context.Context, userID string, page int) (Mine, error) 
 	result := Mine{Claims: []Claim{}}
 	err := s.DB.QueryRow(ctx, `
 		select coalesce(sum(points_awarded), 0)::integer,
-		  coalesce(sum(points_awarded) filter (where awarded_at >= now() - interval '30 days'), 0)::integer
+		  coalesce(sum(points_awarded) filter (where awarded_at >= now() - interval '720 hours'), 0)::integer
 		from csc.point_claims where auth_user_id = $1::uuid and status = 'awarded'
 	`, userID).Scan(&result.AllTime, &result.Last30Days)
 	if err != nil {
@@ -120,27 +120,30 @@ func (s Store) Foundry(ctx context.Context, userID string) (FoundryStatus, error
 	var name string
 	var total int
 	var activeUntil *time.Time
+	var grantUntil *time.Time
 	err := s.DB.QueryRow(ctx, `
 		with recent as (
 		  select awarded_at,
 		    sum(points_awarded) over (order by awarded_at desc, id desc) as running
 		  from csc.point_claims
 		  where auth_user_id = $1::uuid and status = 'awarded'
-		    and awarded_at >= now() - make_interval(days => $3)
+		    and awarded_at >= now() - make_interval(hours => $3 * 24)
 		)
 		select coalesce(nullif(btrim(concat_ws(' ', coalesce(p.preferred_name, p.first_name), p.last_name)), ''), 'CSC member'),
 		  (select coalesce(max(running), 0)::integer from recent),
-		  (select max(awarded_at) + make_interval(days => $3) from recent where running >= $2)
+		  (select max(awarded_at) + make_interval(hours => $3 * 24) from recent where running >= $2),
+		  (select expires_at from csc.foundry_grants g where g.auth_user_id = p.auth_user_id
+		    and g.revoked_at is null and g.expires_at > now())
 		from csc.profiles p
 		where p.auth_user_id = $1::uuid
-	`, userID, FoundryThreshold, FoundryWindowDays).Scan(&name, &total, &activeUntil)
+	`, userID, FoundryThreshold, FoundryWindowDays).Scan(&name, &total, &activeUntil, &grantUntil)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return FoundryStatus{}, ErrNotFound
 	}
 	if err != nil {
 		return FoundryStatus{}, err
 	}
-	return NewFoundryStatus(name, total, activeUntil), nil
+	return NewFoundryStatus(name, total, activeUntil, grantUntil), nil
 }
 
 func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderboard, error) {
@@ -161,7 +164,7 @@ func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderbo
 		    and p.first_name is not null and p.last_name is not null
 		    and p.graduation_year is not null and cardinality(p.majors) > 0
 		    and c.status = 'awarded'
-		    and ($2 = 'all' or c.awarded_at >= now() - interval '30 days')
+		    and ($2 = 'all' or c.awarded_at >= now() - interval '720 hours')
 		  group by p.auth_user_id, p.preferred_name, p.first_name, p.last_name
 		), ranked as (
 		  select auth_user_id, name, points, rank() over (order by points desc)::integer as rank,
