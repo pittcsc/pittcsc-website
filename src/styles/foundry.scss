@@ -8,7 +8,7 @@
 $foundry-night: #0d1326;
 $foundry-text: #f3f4fa;
 $foundry-muted: #b4bacb;
-$foundry-ember: #f2802e;
+$foundry-gold: #ffb81c;
 $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
 // Take over the whole dashboard shell: dark background, inverted header, and
@@ -87,7 +87,7 @@ $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
     height: 4px;
     margin: 1.5rem 0;
     border-radius: 2px;
-    background: $foundry-ember;
+    background: $foundry-gold;
   }
   .csc-foundry-lede {
     max-width: 30rem;
@@ -117,7 +117,7 @@ $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
       content: counter(foundry-rule, decimal-leading-zero);
       flex: none;
       padding-top: 0.15rem;
-      color: $foundry-ember;
+      color: $foundry-gold;
       font-family: $foundry-mono;
       font-size: 0.75rem;
       font-weight: 700;
@@ -144,8 +144,8 @@ $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
       margin-left: 0.5rem;
     }
     &:hover {
-      border-color: $foundry-ember;
-      background: #f2802e1a;
+      border-color: $foundry-gold;
+      background: #ffb81c1a;
     }
   }
 

@@ -17,6 +17,55 @@
   .csc-points-heading p {
     margin-top: 0.35rem;
   }
+  .csc-points-title-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .csc-points-help summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1.5px solid $acc-navy;
+    border-radius: 50%;
+    color: $acc-navy;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &:focus-visible {
+      outline: 3px solid $acc-gold;
+      outline-offset: 2px;
+    }
+  }
+  .csc-points-help-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 2;
+    width: min(21rem, calc(100vw - 3rem));
+    padding: 1rem;
+    border: 1px solid $acc-line;
+    border-radius: 0.75rem;
+    background: #fff;
+    box-shadow: 0 12px 30px #1b2a4a24;
+    box-sizing: border-box;
+
+    p:first-child {
+      margin-top: 0;
+    }
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
   .csc-points-heading a {
     flex-shrink: 0;
     font-weight: 700;
@@ -44,6 +93,11 @@
     color: $acc-muted;
     font-weight: 600;
   }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
   .csc-points-form-row {
     display: grid;
     grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 1.2fr);
@@ -58,9 +112,6 @@
   .csc-points-affirm input {
     flex: none;
     margin-top: 0.25rem;
-  }
-  .csc-points-hint {
-    font-size: 0.875rem;
   }
   .csc-points-error {
     display: flex;

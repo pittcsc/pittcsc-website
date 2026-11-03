@@ -32,6 +32,13 @@ export const HANDLES = {
   },
 };
 
+export const MAJOR_OPTIONS = [
+  "Computer Science",
+  "Information Science",
+  "Data Science",
+  "Computer Engineering",
+];
+
 // People paste the whole profile URL. Take the handle out of it rather than
 // rejecting them; anything left over still has to match the pattern below.
 export function handleFromPasted(value) {
@@ -49,12 +56,14 @@ export function handleFromPasted(value) {
 }
 
 export function formFromProfile(profile) {
+  const majors = profile.majors?.length ? [...profile.majors] : [""];
   return {
     firstName: profile.firstName || "",
     lastName: profile.lastName || "",
     preferredName: profile.preferredName || "",
     graduationYear: profile.graduationYear?.toString() || "",
-    majors: profile.majors?.length ? [...profile.majors] : [""],
+    majors,
+    majorOther: majors.map((major) => !!major && !MAJOR_OPTIONS.includes(major)),
     githubUsername: profile.githubUsername || "",
     leetcodeUsername: profile.leetcodeUsername || "",
     linkedinUsername: profile.linkedinUsername || "",

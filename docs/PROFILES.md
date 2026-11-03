@@ -26,7 +26,7 @@ protected request. Removing a required field revokes access until it is restored
 | --- | --- |
 | First, last, preferred name | Trimmed text, up to 100 characters each; preferred name is optional for completion |
 | Graduation year | One integer from 1900 through 2100, or blank while incomplete |
-| Majors | Up to eight free-text entries of 120 characters each; duplicates ignoring case are rejected |
+| Majors | Up to eight entries of 120 characters each. The account form offers Computer Science, Information Science, Data Science, Computer Engineering, and Other with a text field. Existing custom majors remain editable; duplicates ignoring case are rejected |
 | GitHub, LeetCode, LinkedIn | Optional bare usernames, never URLs; a pasted profile URL is reduced to its handle in the browser |
 | Profile picture | Optional JPEG, PNG, or WebP; at most 5 MiB, 4096 pixels per side and 16 megapixels |
 | Resume | Optional PDF, at most 10 MiB |
