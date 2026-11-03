@@ -16,7 +16,7 @@ func TestPolicyKeepsMemberReadOnly(t *testing.T) {
 		}
 		staff := mask&4 != 0
 		for _, role := range all {
-			want := staff && role != "member"
+			want := staff && role != "member" && role != "foundry"
 			if CanManage(actor, role) != want {
 				t.Fatalf("%v managing %s: want %v", actor, role, want)
 			}
@@ -25,7 +25,7 @@ func TestPolicyKeepsMemberReadOnly(t *testing.T) {
 			t.Fatal("roles without a policy rule must be read-only")
 		}
 	}
-	if !Policy["staff"].Protected || !Policy["staff"].Confirm || Policy["foundry"].Confirm || Policy["alumni"].Protected {
+	if !Policy["staff"].Protected || !Policy["staff"].Confirm || Policy["alumni"].Protected {
 		t.Fatal("unexpected confirmation or protection rules")
 	}
 }

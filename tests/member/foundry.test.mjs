@@ -14,6 +14,7 @@ const status = {
   windowDays: 30,
   active: false,
   activeUntil: null,
+  grantExpiresAt: null,
 };
 const active = {
   ...status,
@@ -52,6 +53,17 @@ test("malformed Foundry responses are rejected", () => {
     { ...status, activeUntil: "2026-11-06T18:00:00Z" },
     { ...active, activeUntil: null },
     { ...active, activeUntil: "soon" },
+    { ...status, grantExpiresAt: "soon" },
   ])
     assert.throws(() => parseFoundryStatus(bad), /temporarily unavailable/);
+});
+
+test("a staff grant can make a member active below the points threshold", () => {
+  const granted = {
+    ...status,
+    active: true,
+    activeUntil: active.activeUntil,
+    grantExpiresAt: active.activeUntil,
+  };
+  assert.deepEqual(parseFoundryStatus(granted), granted);
 });

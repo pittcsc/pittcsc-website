@@ -3,6 +3,8 @@ import { Link } from "gatsby";
 import {
   confirmMessage,
   displayName,
+  formatGrantExpiry,
+  foundryGrantPath,
   lockReason,
   pageCount,
   pageSummary,
@@ -27,6 +29,8 @@ export default function UserManagement({ identity, request, revalidate }) {
   const [catalogError, setCatalogError] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [pending, setPending] = useState({});
+  const [grantPending, setGrantPending] = useState({});
+  const [grantRetry, setGrantRetry] = useState({});
   const [rowErrors, setRowErrors] = useState({});
   const [confirming, setConfirming] = useState(null);
   const lifetime = useRef(null);
@@ -67,7 +71,10 @@ export default function UserManagement({ identity, request, revalidate }) {
       signal: controller.signal,
     })
       .then((value) => {
-        if (!controller.signal.aborted) setResults(value);
+        if (!controller.signal.aborted) {
+          setResults(value);
+          setGrantRetry({});
+        }
       })
       .catch((failure) => {
         if (controller.signal.aborted) return;
@@ -111,6 +118,41 @@ export default function UserManagement({ identity, request, revalidate }) {
     const grant = !member.roles.includes(role.name);
     if (role.confirm) setConfirming({ member, role, grant });
     else void change(member, role, grant);
+  }
+
+  async function changeGrant(member, grant) {
+    if (grantPending[member.id]) return;
+    const previous = grantRetry[member.id];
+    const requestId =
+      previous?.grant === grant ? previous.requestId : crypto.randomUUID();
+    setRowErrors(({ [member.id]: _, ...rest }) => rest);
+    setGrantPending((value) => ({ ...value, [member.id]: true }));
+    try {
+      const updated = await request(foundryGrantPath(member.id, !grant), {
+        userID: identity.id,
+        signal: lifetime.current.signal,
+        method: "POST",
+        contentType: "application/json",
+        body: JSON.stringify({ requestId }),
+      });
+      setResults((value) => ({
+        ...value,
+        users: value.users.map((user) =>
+          user.id === updated.id ? updated : user,
+        ),
+      }));
+      setGrantRetry(({ [member.id]: _, ...rest }) => rest);
+    } catch (failure) {
+      if (lifetime.current.signal.aborted) return;
+      setRowErrors((value) => ({ ...value, [member.id]: failure.message }));
+      setGrantRetry((value) => ({
+        ...value,
+        [member.id]: { grant, requestId },
+      }));
+      denied(failure);
+    } finally {
+      setGrantPending(({ [member.id]: _, ...rest }) => rest);
+    }
   }
 
   const pages = results ? pageCount(results) : 1;
@@ -223,6 +265,41 @@ export default function UserManagement({ identity, request, revalidate }) {
                   );
                 })}
               </fieldset>
+              <div className="csc-staff-foundry-grant">
+                <strong>Foundry grant</strong>
+                <span>
+                  {member.foundryGrantExpiresAt
+                    ? `Active until ${formatGrantExpiry(member.foundryGrantExpiresAt)}`
+                    : "No active staff grant"}
+                </span>
+                <div className="csc-auth-actions">
+                  <button
+                    type="button"
+                    disabled={Boolean(grantPending[member.id])}
+                    onClick={() => void changeGrant(member, true)}
+                  >
+                    {grantPending[member.id]
+                      ? "Updating…"
+                      : grantRetry[member.id]?.grant === true
+                        ? "Retry 30-day grant"
+                        : member.foundryGrantExpiresAt
+                          ? "Renew 30-day grant"
+                          : "Give 30-day grant"}
+                  </button>
+                  {member.foundryGrantExpiresAt && (
+                    <button
+                      type="button"
+                      className="csc-auth-secondary"
+                      disabled={Boolean(grantPending[member.id])}
+                      onClick={() => void changeGrant(member, false)}
+                    >
+                      {grantRetry[member.id]?.grant === false
+                        ? "Retry revoke"
+                        : "Revoke grant"}
+                    </button>
+                  )}
+                </div>
+              </div>
               {confirming?.member.id === member.id && (
                 <div
                   className="csc-staff-confirm"

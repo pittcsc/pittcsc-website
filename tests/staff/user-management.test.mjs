@@ -3,6 +3,8 @@ import { test } from "node:test";
 import {
   confirmMessage,
   displayName,
+  foundryGrantPath,
+  formatGrantExpiry,
   lockReason,
   pageCount,
   pageSummary,
@@ -25,6 +27,15 @@ test("role paths cannot escape their segment", () => {
     rolePath("../profile", "staff/x"),
     "/staff/users/..%2Fprofile/roles/staff%2Fx",
   );
+});
+
+test("Foundry grant paths and expiry stay scoped to a member", () => {
+  assert.equal(foundryGrantPath("a/b"), "/staff/users/a%2Fb/foundry-grant");
+  assert.equal(
+    foundryGrantPath("a/b", true),
+    "/staff/users/a%2Fb/foundry-grant/revoke",
+  );
+  assert.match(formatGrantExpiry("2026-11-03T20:00:00Z"), /Nov 3, 2026.*EST/);
 });
 
 test("names prefer the preferred name and fall back when empty", () => {

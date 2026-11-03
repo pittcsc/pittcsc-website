@@ -60,7 +60,13 @@ export default function Foundry({ identity }) {
           <li>
             <span>
               If enough points roll off to drop you below 50, you go inactive
-              until you&rsquo;re back above it.
+              until you&rsquo;re back above it or receive a staff grant.
+            </span>
+          </li>
+          <li>
+            <span>
+              Staff can give a 30-day Foundry grant. It keeps you active while
+              your points are below 50 and can be renewed or revoked.
             </span>
           </li>
         </ol>

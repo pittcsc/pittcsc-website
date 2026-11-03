@@ -363,8 +363,7 @@ async function roleManagement({ fixture, api, grant }) {
     !byName.member.editable &&
       byName.staff.editable &&
       byName.staff.confirm &&
-      byName.foundry.editable &&
-      !byName.foundry.confirm &&
+      !byName.foundry &&
       byName.alumni.editable &&
       roles.every((role) => role.label),
     "Unexpected catalog policy",
@@ -417,36 +416,36 @@ async function roleManagement({ fixture, api, grant }) {
       "Invalid search accepted",
     );
 
-  stage = "concurrent idempotent dashboard grants";
+  stage = "concurrent idempotent dashboard role grants";
   const grants = await Promise.all(
-    Array.from({ length: 6 }, () => api(a, rolePath(c, "foundry"), "PUT")),
+    Array.from({ length: 6 }, () => api(a, rolePath(c, "alumni"), "PUT")),
   );
   check(
     grants.every((r) => r.status === 200),
     "Concurrent grant failed",
   );
   check(
-    (await grants[0].json()).roles.join() === "foundry,member",
+    (await grants[0].json()).roles.join() === "alumni,member",
     "Grant response stale",
   );
-  check(audits(c.id, "foundry", "grant", a.id) === "1", "Grant audit wrong");
+  check(audits(c.id, "alumni", "grant", a.id) === "1", "Grant audit wrong");
   await json(
-    await api(a, rolePath(c, "alumni"), "DELETE"),
+    await api(a, rolePath(c, "staff"), "DELETE"),
     200,
     "No-op revoke failed",
   );
   check(
     sql(
-      `select count(*) from csc.role_audit where target_user_id = '${c.id}' and role = 'alumni'`,
+      `select count(*) from csc.role_audit where target_user_id = '${c.id}' and role = 'staff'`,
     ) === "0",
     "No-op change audited",
   );
   await json(
-    await api(b, rolePath(c, "foundry"), "DELETE"),
+    await api(b, rolePath(c, "alumni"), "DELETE"),
     200,
     "Revoke failed",
   );
-  check(audits(c.id, "foundry", "revoke", b.id) === "1", "Revoke audit wrong");
+  check(audits(c.id, "alumni", "revoke", b.id) === "1", "Revoke audit wrong");
 
   stage = "read-only, unknown, and invalid targets";
   await json(
@@ -455,12 +454,17 @@ async function roleManagement({ fixture, api, grant }) {
     "Member removable",
   );
   await json(
+    await api(a, rolePath(c, "foundry"), "PUT"),
+    403,
+    "Legacy Foundry role was still editable",
+  );
+  await json(
     await api(a, rolePath(c, "admin"), "PUT"),
     404,
     "Unknown role accepted",
   );
   await json(
-    await api(a, "/staff/users/not-a-uuid/roles/foundry", "PUT"),
+    await api(a, "/staff/users/not-a-uuid/roles/alumni", "PUT"),
     404,
     "Invalid target accepted",
   );

@@ -17,9 +17,8 @@ type Rule struct {
 // Policy lists dashboard-editable roles. Any other catalog role, including
 // member and roles added later without a rule here, is read-only.
 var Policy = map[string]Rule{
-	"staff":   {ManagedBy: "staff", Confirm: true, Protected: true},
-	"foundry": {ManagedBy: "staff"},
-	"alumni":  {ManagedBy: "staff"},
+	"staff":  {ManagedBy: "staff", Confirm: true, Protected: true},
+	"alumni": {ManagedBy: "staff"},
 }
 
 // CanManage reports whether an actor with these current roles may change role.

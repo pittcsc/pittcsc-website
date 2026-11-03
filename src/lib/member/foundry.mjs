@@ -6,6 +6,15 @@ const lapseFormat = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
 });
+const grantFormat = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/New_York",
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZoneName: "short",
+});
 
 const validDate = (value) =>
   typeof value === "string" && !Number.isNaN(Date.parse(value));
@@ -21,7 +30,10 @@ export function parseFoundryStatus(value) {
     Number.isInteger(value.windowDays) &&
     value.windowDays > 0 &&
     typeof value.active === "boolean" &&
-    (value.active ? validDate(value.activeUntil) : value.activeUntil === null);
+    (value.active
+      ? validDate(value.activeUntil)
+      : value.activeUntil === null) &&
+    (value.grantExpiresAt === null || validDate(value.grantExpiresAt));
   if (!valid)
     throw new Error("Foundry status is temporarily unavailable. Try again.");
   return value;
@@ -30,6 +42,10 @@ export function parseFoundryStatus(value) {
 // "2026-11-06T18:00:00Z" -> "Nov 6", on the club's New York calendar.
 export function foundryLapseDate(activeUntil) {
   return lapseFormat.format(new Date(activeUntil));
+}
+
+export function foundryGrantExpiry(expiresAt) {
+  return grantFormat.format(new Date(expiresAt));
 }
 
 // Whole-number percent toward the threshold, capped at 100.

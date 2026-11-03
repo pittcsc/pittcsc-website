@@ -41,7 +41,7 @@ func (s *pointsStub) Leaderboard(_ context.Context, userID, period string) (poin
 }
 func (s *pointsStub) Foundry(_ context.Context, userID string) (points.FoundryStatus, error) {
 	s.userID = userID
-	return points.NewFoundryStatus("Ada Lovelace", 20, nil), nil
+	return points.NewFoundryStatus("Ada Lovelace", 20, nil, nil), nil
 }
 func (s *pointsStub) Withdraw(_ context.Context, userID, claimID string) (points.Claim, error) {
 	s.userID, s.claimID = userID, claimID

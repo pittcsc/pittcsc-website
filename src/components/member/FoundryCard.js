@@ -1,6 +1,7 @@
 import React from "react";
 import {
   foundryLapseDate,
+  foundryGrantExpiry,
   foundryProgress,
   foundryRemaining,
 } from "../../lib/member/foundry.mjs";
@@ -83,8 +84,11 @@ export default function FoundryCard({ status }) {
       </div>
       <figcaption className="csc-foundry-caption">
         {status.active
-          ? `Active through ${foundryLapseDate(status.activeUntil)}`
+          ? `Active through ${foundryLapseDate(status.activeUntil)}.`
           : `${remaining} more ${remaining === 1 ? "point" : "points"} to go active.`}
+        {status.grantExpiresAt && (
+          <> Staff grant expires {foundryGrantExpiry(status.grantExpiresAt)}.</>
+        )}
       </figcaption>
     </figure>
   );

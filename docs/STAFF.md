@@ -32,7 +32,9 @@ Subsequent profile reads do not restore intentionally removed roles.
 accounts, 401 for invalid/revoked sessions, and 503 on dependency failure. Both
 responses are private and uncached. The staff guard uses the existing verified
 Auth session and current database profile/status/roles on every request.
-Foundry and alumni confer no additional privileges.
+The legacy permanent `foundry` role and alumni confer no additional privileges.
+Foundry event check-in uses earned points or a separate 30-day staff grant;
+staff can check in to any event. See [Foundry grants](#foundry-grants).
 Because alumni is self-reported without verification, future permissions must
 not treat that role as proof of graduation or staff approval.
 
@@ -74,7 +76,9 @@ one audit row, and requests that change nothing write no audit row.
 
 Who may change what is a policy table in `backend/internal/roles/policy.go`:
 
-- Staff may grant and revoke `staff`, `foundry`, and `alumni`.
+- Staff may grant and revoke `staff` and `alumni`. The old permanent `foundry`
+  role is hidden from the role catalog and cannot be changed from the dashboard.
+  Its existing assignments are preserved and do not become grants.
 - `member` is permanent. Any catalog role without a policy rule, including roles
   added later, is read-only until a rule is added in code.
 - `staff` is protected: the dashboard asks for confirmation, nobody can revoke
@@ -90,6 +94,26 @@ use the same lock and audit the member as both actor and target. Operator grants
 To add a role: add a migration that inserts it into `csc.roles` with a label and
 description and widens the `csc.roles` name check. It then appears in the
 dashboard read-only. To make it editable, add a rule to the Go policy with tests.
+
+## Foundry grants
+
+User Management shows each active staff grant and its expiry. Staff use
+**Give 30-day grant** or **Renew 30-day grant** to set expiry exactly 720 hours
+from that button press, and **Revoke grant** to end it early. A grant can
+overlap earned Foundry status. Revoking it leaves eligibility from points
+intact. The member's Foundry card shows the active grant and its expiry.
+
+| Request | Purpose |
+| --- | --- |
+| `POST /staff/users/{id}/foundry-grant` | Give or renew a 30-day grant |
+| `POST /staff/users/{id}/foundry-grant/revoke` | Revoke an active grant |
+
+Both require an active staff session and JSON `{ "requestId": "UUID" }`.
+The browser reuses the request ID when retrying a failed button press. Go
+rechecks current staff authority and target account status under database locks,
+then writes the grant and audit in one transaction. Repeated or concurrent
+requests with the same ID cannot extend the grant twice or duplicate the audit.
+Grant state and history are private and do not enter Gatsby build output.
 
 ## Provision staff
 
