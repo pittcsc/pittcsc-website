@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "gatsby";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthProvider";
-import { hasStaffRole } from "../../lib/auth/roles.mjs";
+import { dashboardLinks } from "../../lib/auth/navigation.mjs";
 import logo from "../../images/hero_image.png";
 import "../../styles/auth.scss";
 
@@ -12,65 +14,61 @@ export default function AuthFrame({
 }) {
   const { status, identity } = useAuth();
   const authenticated = status === "authenticated";
+  const links = authenticated ? dashboardLinks(identity, dashboard) : [];
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      document.querySelector(".csc-auth-menu-toggle")?.focus();
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
 
   return (
     <div className="csc-auth-layout">
       {authenticated && (
-        <header className="csc-auth-header">
+        <header
+          className={`csc-auth-header${links.length ? " csc-auth-header--menu" : ""}`}
+        >
           <Link className="csc-auth-logo" to="/">
             <img src={logo} alt="" width={64} height={49} />
             Pitt CSC
           </Link>
-          <nav aria-label="Account navigation">
-            {dashboard && identity.complete && (
+          {links.length > 0 && (
+            <button
+              type="button"
+              className="csc-auth-menu-toggle"
+              aria-label="Menu"
+              aria-expanded={menuOpen}
+              aria-controls="csc-auth-nav"
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} />
+            </button>
+          )}
+          <nav
+            id="csc-auth-nav"
+            className={menuOpen ? "is-open" : undefined}
+            aria-label="Account navigation"
+            onClick={(event) => {
+              if (event.target.closest("a")) setMenuOpen(false);
+            }}
+          >
+            {links.map(({ to, label, partiallyActive }) => (
               <Link
+                key={to}
                 className="csc-auth-nav-link"
-                to="/dashboard"
+                to={to}
                 activeClassName="is-current"
+                partiallyActive={partiallyActive}
               >
-                Dashboard
+                {label}
               </Link>
-            )}
-            {dashboard && identity.complete && (
-              <Link
-                className="csc-auth-nav-link"
-                to="/dashboard/points"
-                activeClassName="is-current"
-                partiallyActive
-              >
-                Points
-              </Link>
-            )}
-            {dashboard && identity.complete && (
-              <Link
-                className="csc-auth-nav-link"
-                to="/dashboard/members"
-                activeClassName="is-current"
-                partiallyActive
-              >
-                Members
-              </Link>
-            )}
-            {dashboard && identity.complete && (
-              <Link
-                className="csc-auth-nav-link"
-                to="/dashboard/foundry"
-                activeClassName="is-current"
-                partiallyActive
-              >
-                Foundry
-              </Link>
-            )}
-            {dashboard && identity.complete && hasStaffRole(identity) && (
-              <Link
-                className="csc-auth-nav-link"
-                to="/dashboard/staff"
-                activeClassName="is-current"
-                partiallyActive
-              >
-                Staff
-              </Link>
-            )}
+            ))}
             <Link className="csc-auth-account" to="/dashboard/account">
               My Account
             </Link>

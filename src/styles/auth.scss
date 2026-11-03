@@ -91,6 +91,60 @@
   }
 }
 
+// Hidden on wide screens, where the links fit in the header.
+.csc-auth-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: $acc-radius-control;
+  background: none;
+  color: inherit;
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  // Translucent so it also works on the Foundry page's dark header.
+  &:hover {
+    background: #8a94ab33;
+  }
+}
+
+// A staff account's links need about 900px to fit on one row.
+@media (max-width: 920px) {
+  .csc-auth-header--menu {
+    flex-wrap: wrap;
+    gap: 0 1rem;
+
+    .csc-auth-menu-toggle {
+      display: inline-flex;
+    }
+
+    nav {
+      display: none;
+      flex-basis: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      flex-wrap: nowrap;
+      gap: 0.25rem;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #8a94ab40;
+    }
+    nav.is-open {
+      display: flex;
+    }
+    .csc-auth-nav-link {
+      padding: 0.5rem 0.25rem;
+    }
+    .csc-auth-account {
+      margin-top: 0.5rem;
+    }
+  }
+}
+
 /* ----------------------------------------------------------------- card --- */
 
 .csc-auth {
