@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "gatsby";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowUpRightFromSquare,
+  faCircleInfo,
+} from "@fortawesome/free-solid-svg-icons";
 import { STAFF_BASE } from "../../../lib/staff/tools.mjs";
 import {
   auditLabels,
@@ -54,9 +59,6 @@ export default function Events({ identity, request, revalidate }) {
 
   return (
     <section className="csc-staff csc-staff-events">
-      <Link to={STAFF_BASE} className="csc-staff-back">
-        ← Staff Dashboard
-      </Link>
       {selected ? (
         <EventEditor
           key={selected.id}
@@ -68,6 +70,7 @@ export default function Events({ identity, request, revalidate }) {
         />
       ) : (
         <>
+          <Breadcrumb current="All events" />
           <div className="csc-events-heading">
             <div>
               <h1>Events</h1>
@@ -81,27 +84,29 @@ export default function Events({ identity, request, revalidate }) {
               Create event
             </button>
           </div>
-          <p className="csc-events-note">
-            All times are America/New_York (Eastern Time).
-          </p>
-          <div
-            className="csc-events-filters"
-            role="group"
-            aria-label="Filter events"
-          >
-            {eventFilters.map(([value, label]) => (
-              <button
-                key={value}
-                className="csc-auth-secondary"
-                aria-pressed={filter === value}
-                onClick={() => {
-                  setFilter(value);
-                  setPage(1);
-                }}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="csc-events-toolbar">
+            <div
+              className="csc-events-filters"
+              role="group"
+              aria-label="Filter events"
+            >
+              {eventFilters.map(([value, label]) => (
+                <button
+                  key={value}
+                  className="csc-auth-secondary"
+                  aria-pressed={filter === value}
+                  onClick={() => {
+                    setFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <span className="csc-events-chip">
+              America/New_York (Eastern Time)
+            </span>
           </div>
           {error && (
             <div role="alert">
@@ -120,45 +125,46 @@ export default function Events({ identity, request, revalidate }) {
             !error &&
             results && (
               <>
-                {results.events.length === 0 && (
-                  <p>
+                {results.events.length === 0 ? (
+                  <p className="csc-events-card csc-events-empty">
                     No {filter === "all" ? "" : `${filter} `}events to show.
                   </p>
+                ) : (
+                  <ul className="csc-events-card csc-events-list">
+                    {results.events.map((event) => (
+                      <li key={event.id}>
+                        <div>
+                          <div className="csc-events-row-heading">
+                            <h2>
+                              <button
+                                className="csc-events-title"
+                                onClick={() => setSelected({ id: event.id })}
+                              >
+                                {event.title}
+                              </button>
+                            </h2>
+                            {event.status === "cancelled" && (
+                              <span className="csc-events-badge">
+                                Cancelled
+                              </span>
+                            )}
+                            {event.foundryEvent && (
+                              <span className="csc-events-badge">
+                                Foundry event
+                              </span>
+                            )}
+                          </div>
+                          <p>
+                            {formatEventTime(event.startsAt)} –{" "}
+                            {formatEventTime(event.endsAt)}
+                          </p>
+                          <p>{event.location}</p>
+                        </div>
+                        <SyncStatus record={event} />
+                      </li>
+                    ))}
+                  </ul>
                 )}
-                <ul className="csc-events-list">
-                  {results.events.map((event) => (
-                    <li key={event.id}>
-                      <div className="csc-events-row-heading">
-                        <h2>
-                          <button
-                            className="csc-events-title"
-                            onClick={() => setSelected({ id: event.id })}
-                          >
-                            {event.title}
-                          </button>
-                        </h2>
-                        {event.status === "cancelled" && (
-                          <span className="csc-events-badge">Cancelled</span>
-                        )}
-                        {event.foundryEvent && (
-                          <span className="csc-events-badge">
-                            Foundry event
-                          </span>
-                        )}
-                      </div>
-                      <p>
-                        {formatEventTime(event.startsAt)} –{" "}
-                        {formatEventTime(event.endsAt)}
-                      </p>
-                      <p>{event.location}</p>
-                      <span
-                        className={`csc-events-sync csc-events-sync-${event.syncStatus}`}
-                      >
-                        {syncLabel(event)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
                 {(page > 1 || results.hasMore) && (
                   <nav className="csc-auth-actions" aria-label="Event pages">
                     <button
@@ -184,6 +190,37 @@ export default function Events({ identity, request, revalidate }) {
         </>
       )}
     </section>
+  );
+}
+
+function Breadcrumb({ current, onLeave, onAllEvents, disabled }) {
+  return (
+    <nav className="csc-events-breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li>
+          <Link to={STAFF_BASE} onClick={onLeave}>
+            Staff Dashboard
+          </Link>
+        </li>
+        {onAllEvents && (
+          <li>
+            <button type="button" disabled={disabled} onClick={onAllEvents}>
+              All events
+            </button>
+          </li>
+        )}
+        <li aria-current="page">{current}</li>
+      </ol>
+    </nav>
+  );
+}
+
+function SyncStatus({ record }) {
+  return (
+    <span className={`csc-events-sync csc-events-sync-${record.syncStatus}`}>
+      <span className="csc-events-sync-dot" aria-hidden="true" />
+      {syncLabel(record)}
+    </span>
   );
 }
 
@@ -308,298 +345,401 @@ function EventEditor({ selected, identity, request, denied, onBack }) {
     }
   }
 
+  const discardMessage = "Discard your unsaved event changes?";
+
   function back() {
-    if (!dirty || window.confirm("Discard your unsaved event changes?"))
-      onBack();
+    if (!dirty || window.confirm(discardMessage)) onBack();
   }
 
   const cancelled = record?.status === "cancelled";
   const url = calendarLink(record?.calendarUrl);
   const disabled = Boolean(pending) || cancelled;
+  const heading = record
+    ? cancelled
+      ? "Cancelled event"
+      : "Edit event"
+    : selected.isNew
+      ? "Create event"
+      : "Event";
+  // An unconfirmed calendar state offers its recovery beside the warning, near
+  // the top of the page; otherwise the same action sits with Cancel event.
+  const needsSync = record && record.syncStatus !== "synced";
+  const syncAction = record && (
+    <button
+      type="button"
+      className="csc-auth-secondary"
+      disabled={Boolean(pending) || dirty}
+      aria-describedby={dirty ? "event-sync-dirty" : undefined}
+      onClick={() => void mutate("sync")}
+    >
+      {pending === "sync"
+        ? "Syncing…"
+        : cancelled
+          ? "Retry calendar removal"
+          : "Sync to Calendar"}
+    </button>
+  );
+  const dirtyNote = dirty && (
+    <p className="csc-events-note" id="event-sync-dirty">
+      Save your changes before syncing the calendar.
+    </p>
+  );
+  const messages = (
+    <>
+      {error && <p role="alert">{error}</p>}
+      {notice && <p role="status">{notice}</p>}
+      {(conflict || (!record && !selected.isNew && error)) && (
+        <button
+          type="button"
+          className="csc-auth-secondary"
+          onClick={() => {
+            if (
+              !dirty ||
+              window.confirm(
+                "Reload the saved event and discard your unsaved changes?",
+              )
+            )
+              void reload();
+          }}
+        >
+          Reload saved event
+        </button>
+      )}
+    </>
+  );
+
   return (
     <>
-      <button
-        className="csc-events-back csc-auth-secondary"
+      <Breadcrumb
+        current={heading}
         disabled={Boolean(pending)}
-        onClick={back}
-      >
-        ← All events
-      </button>
-      <h1>
-        {record
-          ? cancelled
-            ? "Cancelled event"
-            : "Edit event"
-          : selected.isNew
-            ? "Create event"
-            : "Event"}
-      </h1>
+        onAllEvents={back}
+        onLeave={(event) => {
+          if (dirty && !window.confirm(discardMessage)) event.preventDefault();
+        }}
+      />
+      <div className="csc-events-heading">
+        <div>
+          <h1>{heading}</h1>
+          {record && <p>{record.title}</p>}
+        </div>
+        {record && (
+          <div className="csc-events-delivery">
+            <SyncStatus record={record} />
+            {url && !cancelled && (
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                Open in Google Calendar
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </a>
+            )}
+          </div>
+        )}
+      </div>
       {loading ? (
         <p role="status">Loading event…</p>
       ) : (
         <>
-          {record && (
+          {needsSync && (
             <div
-              className={`csc-events-delivery csc-events-sync-${record.syncStatus}`}
+              className={`csc-events-sync-alert csc-events-sync-alert-${record.syncStatus}`}
             >
-              <strong>{syncLabel(record)}</strong>
-              {syncMessage(record) && <p role="alert">{syncMessage(record)}</p>}
-              {url && record.status !== "cancelled" && (
-                <a href={url} target="_blank" rel="noopener noreferrer">
-                  Open in Google Calendar ↗
-                </a>
-              )}
+              <div>
+                <p role="alert">{syncMessage(record)}</p>
+                {dirtyNote}
+              </div>
+              {syncAction}
             </div>
           )}
-          {(record || selected.isNew) && (
-            <form
-              onSubmit={(event) => {
-                event.preventDefault();
-                void mutate("save");
-              }}
-            >
-              <fieldset disabled={disabled} className="csc-events-fields">
-                <label htmlFor="event-title">Title</label>
-                <input
-                  id="event-title"
-                  required
-                  maxLength={200}
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                />
-                <label htmlFor="event-location">Location</label>
-                <input
-                  id="event-location"
-                  required
-                  maxLength={500}
-                  value={form.location}
-                  onChange={(e) =>
-                    setForm({ ...form, location: e.target.value })
-                  }
-                />
-                <p className="csc-events-note" id="event-timezone">
-                  America/New_York (Eastern Time)
-                </p>
-                <div className="csc-events-times">
-                  <div>
-                    <label htmlFor="event-start">Start</label>
-                    <input
-                      id="event-start"
-                      type="datetime-local"
-                      required
-                      min="2000-01-01T00:00"
-                      max="2100-12-31T23:59"
-                      step={60}
-                      aria-describedby="event-timezone"
-                      value={form.start}
-                      onChange={(e) =>
-                        setForm({ ...form, start: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="event-end">End</label>
-                    <input
-                      id="event-end"
-                      type="datetime-local"
-                      required
-                      min={form.start || "2000-01-01T00:00"}
-                      max="2100-12-31T23:59"
-                      step={60}
-                      aria-describedby="event-timezone"
-                      value={form.end}
-                      onChange={(e) =>
-                        setForm({ ...form, end: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-                <label htmlFor="event-description">
-                  Description{" "}
-                  <span className="csc-events-optional">(optional)</span>
-                </label>
-                <textarea
-                  id="event-description"
-                  rows={5}
-                  maxLength={5000}
-                  value={form.description}
-                  onChange={(e) =>
-                    setForm({ ...form, description: e.target.value })
-                  }
-                />
-                <label
-                  className="csc-events-foundry-toggle"
-                  htmlFor="event-foundry"
-                >
-                  <input
-                    id="event-foundry"
-                    type="checkbox"
-                    checked={form.foundryEvent}
-                    onChange={(e) =>
-                      setForm({ ...form, foundryEvent: e.target.checked })
-                    }
-                  />
-                  Foundry event
-                </label>
-              </fieldset>
-              {!cancelled && (
-                <>
-                  <p className="csc-events-note">
-                    Saving publishes these details to the public CSC Google
-                    Calendar.
-                  </p>
-                  <button type="submit" disabled={Boolean(pending) || conflict}>
-                    {pending === "save" ? "Saving and syncing…" : "Save event"}
-                  </button>
-                </>
-              )}
-            </form>
-          )}
-          {error && <p role="alert">{error}</p>}
-          {notice && <p role="status">{notice}</p>}
-          {(conflict || (!record && !selected.isNew && error)) && (
-            <button
-              className="csc-auth-secondary"
-              onClick={() => {
-                if (
-                  !dirty ||
-                  window.confirm(
-                    "Reload the saved event and discard your unsaved changes?",
-                  )
-                )
-                  void reload();
-              }}
-            >
-              Reload saved event
-            </button>
-          )}
-          {record && (
-            <>
-              <EventAttendance
-                record={record}
-                identity={identity}
-                request={request}
-                denied={denied}
-              />
-              <EventExpenses
-                record={record}
-                identity={identity}
-                request={request}
-                denied={denied}
-              />
-              <div className="csc-auth-actions csc-events-actions">
-                <button
-                  className="csc-auth-secondary"
-                  disabled={Boolean(pending) || dirty}
-                  onClick={() => void mutate("sync")}
-                >
-                  {pending === "sync"
-                    ? "Syncing…"
-                    : cancelled
-                      ? "Retry calendar removal"
-                      : "Sync to Calendar"}
-                </button>
-                {!cancelled && (
-                  <button
-                    className="csc-auth-secondary csc-events-danger"
-                    disabled={Boolean(pending)}
-                    onClick={() => setConfirming(true)}
+          {record || selected.isNew ? (
+            <div className="csc-events-layout">
+              <div className="csc-events-column">
+                <section className="csc-events-card csc-events-details">
+                  <h2>Event details</h2>
+                  <form
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      void mutate("save");
+                    }}
                   >
-                    Cancel event
-                  </button>
+                    <fieldset disabled={disabled} className="csc-events-fields">
+                      <div>
+                        <label htmlFor="event-title">Title</label>
+                        <input
+                          id="event-title"
+                          required
+                          maxLength={200}
+                          value={form.title}
+                          onChange={(e) =>
+                            setForm({ ...form, title: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="event-location">Location</label>
+                        <input
+                          id="event-location"
+                          required
+                          maxLength={500}
+                          value={form.location}
+                          onChange={(e) =>
+                            setForm({ ...form, location: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div role="group" aria-labelledby="event-datetime">
+                        <div className="csc-events-datetime">
+                          <span id="event-datetime">Date &amp; time</span>
+                          <span className="csc-events-chip" id="event-timezone">
+                            America/New_York (Eastern Time)
+                          </span>
+                        </div>
+                        <div className="csc-events-times">
+                          <div>
+                            <label htmlFor="event-start">Start</label>
+                            <input
+                              id="event-start"
+                              type="datetime-local"
+                              required
+                              min="2000-01-01T00:00"
+                              max="2100-12-31T23:59"
+                              step={60}
+                              aria-describedby="event-timezone"
+                              value={form.start}
+                              onChange={(e) =>
+                                setForm({ ...form, start: e.target.value })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="event-end">End</label>
+                            <input
+                              id="event-end"
+                              type="datetime-local"
+                              required
+                              min={form.start || "2000-01-01T00:00"}
+                              max="2100-12-31T23:59"
+                              step={60}
+                              aria-describedby="event-timezone"
+                              value={form.end}
+                              onChange={(e) =>
+                                setForm({ ...form, end: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="event-description">
+                          Description{" "}
+                          <span className="csc-events-optional">
+                            (optional)
+                          </span>
+                        </label>
+                        <textarea
+                          id="event-description"
+                          rows={5}
+                          maxLength={5000}
+                          placeholder="What should attendees know?"
+                          value={form.description}
+                          onChange={(e) =>
+                            setForm({ ...form, description: e.target.value })
+                          }
+                        />
+                      </div>
+                      <label
+                        className="csc-events-foundry-toggle"
+                        htmlFor="event-foundry"
+                      >
+                        <input
+                          id="event-foundry"
+                          type="checkbox"
+                          checked={form.foundryEvent}
+                          onChange={(e) =>
+                            setForm({ ...form, foundryEvent: e.target.checked })
+                          }
+                        />
+                        Foundry event
+                      </label>
+                    </fieldset>
+                    <div className="csc-events-messages">{messages}</div>
+                    {!cancelled && (
+                      <div className="csc-events-save">
+                        <p>
+                          <FontAwesomeIcon icon={faCircleInfo} />
+                          Saving publishes these details to the public CSC
+                          Google Calendar.
+                        </p>
+                        <button
+                          type="submit"
+                          disabled={Boolean(pending) || conflict}
+                        >
+                          {pending === "save"
+                            ? "Saving and syncing…"
+                            : "Save event"}
+                        </button>
+                      </div>
+                    )}
+                  </form>
+                </section>
+                {record && (!needsSync || !cancelled) && (
+                  <section
+                    className="csc-events-card csc-events-manage"
+                    aria-label="Manage event"
+                  >
+                    <div className="csc-events-manage-row">
+                      <div>
+                        <h2>Manage event</h2>
+                        <p className="csc-events-note">
+                          {cancelled
+                            ? "Cancelled events stay here with their history."
+                            : needsSync
+                              ? "Cancelling removes the event from Google Calendar."
+                              : "Resend the saved details to Google Calendar, or cancel the event."}
+                        </p>
+                        {!needsSync && dirtyNote}
+                      </div>
+                      <div className="csc-auth-actions">
+                        {!needsSync && syncAction}
+                        {!cancelled && (
+                          <button
+                            type="button"
+                            className="csc-auth-secondary csc-events-danger"
+                            disabled={Boolean(pending)}
+                            onClick={() => setConfirming(true)}
+                          >
+                            Cancel event
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    {confirming && (
+                      <div
+                        className="csc-events-confirm"
+                        role="group"
+                        aria-label="Confirm cancellation"
+                      >
+                        <p>
+                          Cancel “{record.title}” and remove it from Google
+                          Calendar? The event and its history will remain here.
+                        </p>
+                        <div className="csc-auth-actions">
+                          <button
+                            type="button"
+                            onClick={() => void mutate("cancel")}
+                          >
+                            Yes, cancel event
+                          </button>
+                          <button
+                            type="button"
+                            className="csc-auth-secondary"
+                            onClick={() => setConfirming(false)}
+                          >
+                            Keep event
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                )}
+                {record && (
+                  <EventExpenses
+                    record={record}
+                    identity={identity}
+                    request={request}
+                    denied={denied}
+                  />
+                )}
+                {record && (
+                  <section
+                    className="csc-events-card csc-events-history"
+                    aria-label="Event history"
+                  >
+                    <h2>History</h2>
+                    {historyError && (
+                      <>
+                        <p role="alert">{historyError}</p>
+                        <button
+                          type="button"
+                          className="csc-auth-secondary"
+                          disabled={historyBusy}
+                          onClick={() => void loadHistory()}
+                        >
+                          Retry history
+                        </button>
+                      </>
+                    )}
+                    <ol>
+                      {history?.entries.map((entry) => (
+                        <li key={entry.id}>
+                          <strong>
+                            {auditLabels[entry.action] || entry.action}
+                          </strong>
+                          <span>
+                            <MemberLink id={entry.actorID}>
+                              {entry.actorName}
+                            </MemberLink>{" "}
+                            · {formatEventTime(entry.createdAt)}
+                          </span>
+                          <details>
+                            <summary>View recorded details</summary>
+                            <p>{entry.snapshot.title}</p>
+                            <p>{entry.snapshot.location}</p>
+                            <p>
+                              {formatEventTime(entry.snapshot.startsAt)} –{" "}
+                              {formatEventTime(entry.snapshot.endsAt)}
+                            </p>
+                            {entry.snapshot.description && (
+                              <p className="csc-events-description">
+                                {entry.snapshot.description}
+                              </p>
+                            )}
+                            {entry.snapshot.foundryEvent && (
+                              <p>Foundry event</p>
+                            )}
+                            <p>
+                              Status: {entry.snapshot.status} ·{" "}
+                              {syncLabel(entry.snapshot)}
+                            </p>
+                          </details>
+                        </li>
+                      ))}
+                    </ol>
+                    {historyBusy && <p role="status">Loading history…</p>}
+                    {history?.hasMore && (
+                      <button
+                        type="button"
+                        className="csc-auth-secondary"
+                        disabled={historyBusy}
+                        onClick={() =>
+                          void loadHistory(history.entries.at(-1).id)
+                        }
+                      >
+                        Load older entries
+                      </button>
+                    )}
+                  </section>
                 )}
               </div>
-              {dirty && (
-                <p className="csc-events-note">
-                  Save your changes before syncing the calendar.
-                </p>
-              )}
-              {confirming && (
-                <div
-                  className="csc-events-confirm"
-                  role="group"
-                  aria-label="Confirm cancellation"
-                >
-                  <p>
-                    Cancel “{record.title}” and remove it from Google Calendar?
-                    The event and its history will remain here.
-                  </p>
-                  <div className="csc-auth-actions">
-                    <button onClick={() => void mutate("cancel")}>
-                      Yes, cancel event
-                    </button>
-                    <button
-                      className="csc-auth-secondary"
-                      onClick={() => setConfirming(false)}
-                    >
-                      Keep event
-                    </button>
-                  </div>
-                </div>
-              )}
-              <section
-                className="csc-events-history"
-                aria-label="Event history"
-              >
-                <h2>History</h2>
-                {historyError && (
-                  <>
-                    <p role="alert">{historyError}</p>
-                    <button
-                      className="csc-auth-secondary"
-                      disabled={historyBusy}
-                      onClick={() => void loadHistory()}
-                    >
-                      Retry history
-                    </button>
-                  </>
+              <div className="csc-events-column">
+                {record ? (
+                  <EventAttendance
+                    record={record}
+                    identity={identity}
+                    request={request}
+                    denied={denied}
+                  />
+                ) : (
+                  <section className="csc-events-card csc-event-attendance">
+                    <h2>Attendance</h2>
+                    <p className="csc-events-note">
+                      Save this event to get its QR code and check-in link.
+                    </p>
+                  </section>
                 )}
-                <ol>
-                  {history?.entries.map((entry) => (
-                    <li key={entry.id}>
-                      <strong>
-                        {auditLabels[entry.action] || entry.action}
-                      </strong>
-                      <span>
-                        <MemberLink id={entry.actorID}>
-                          {entry.actorName}
-                        </MemberLink>{" "}
-                        · {formatEventTime(entry.createdAt)}
-                      </span>
-                      <details>
-                        <summary>View recorded details</summary>
-                        <p>{entry.snapshot.title}</p>
-                        <p>{entry.snapshot.location}</p>
-                        <p>
-                          {formatEventTime(entry.snapshot.startsAt)} –{" "}
-                          {formatEventTime(entry.snapshot.endsAt)}
-                        </p>
-                        {entry.snapshot.description && (
-                          <p className="csc-events-description">
-                            {entry.snapshot.description}
-                          </p>
-                        )}
-                        {entry.snapshot.foundryEvent && <p>Foundry event</p>}
-                        <p>
-                          Status: {entry.snapshot.status} ·{" "}
-                          {syncLabel(entry.snapshot)}
-                        </p>
-                      </details>
-                    </li>
-                  ))}
-                </ol>
-                {historyBusy && <p role="status">Loading history…</p>}
-                {history?.hasMore && (
-                  <button
-                    className="csc-auth-secondary"
-                    disabled={historyBusy}
-                    onClick={() => void loadHistory(history.entries.at(-1).id)}
-                  >
-                    Load older entries
-                  </button>
-                )}
-              </section>
-            </>
+              </div>
+            </div>
+          ) : (
+            messages
           )}
         </>
       )}

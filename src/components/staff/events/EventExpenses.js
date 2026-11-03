@@ -238,7 +238,10 @@ export default function EventExpenses({ record, identity, request, denied }) {
   const full = receipts.length >= MAX_RECEIPTS;
 
   return (
-    <section className="csc-event-expenses" aria-label="Event spending">
+    <section
+      className="csc-events-card csc-event-expenses"
+      aria-label="Event spending"
+    >
       <div className="csc-event-expenses-heading">
         <div>
           <h2>Spending</h2>

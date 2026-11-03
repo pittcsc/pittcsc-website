@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import MemberLink from "../../member/MemberLink";
 import { eventPath } from "../../../lib/staff/events.mjs";
 import {
@@ -106,19 +109,26 @@ export default function EventAttendance({ record, identity, request, denied }) {
   }
 
   return (
-    <section className="csc-event-attendance" aria-label="Event attendance">
-      <h2>Attendance</h2>
-      {record.status === "cancelled" && (
-        <p>Check-in is closed. Existing attendance remains below.</p>
-      )}
-      {url && (
-        <div className="csc-event-qr">
-          <div
-            ref={previewRef}
-            className="csc-event-qr-preview"
-            aria-label="Attendance QR code"
-          />
-          <div className="csc-event-qr-controls">
+    <>
+      <section
+        className="csc-events-card csc-event-attendance"
+        aria-label="Event attendance"
+      >
+        <h2>Attendance</h2>
+        <p className="csc-events-note">
+          {record.status === "cancelled"
+            ? "Check-in is closed. Existing attendance remains below."
+            : "Members scan this QR code to sign in and check in."}
+        </p>
+        {url && (
+          <div className="csc-event-qr">
+            {/* The checkerboard shows through only while the code is transparent. */}
+            <div
+              ref={previewRef}
+              className={`csc-event-qr-preview${white ? " is-white" : ""}`}
+              role="img"
+              aria-label="Attendance QR code"
+            />
             <label className="csc-event-qr-background">
               <input
                 type="checkbox"
@@ -127,8 +137,9 @@ export default function EventAttendance({ record, identity, request, denied }) {
               />
               White background
             </label>
-            <div className="csc-auth-actions">
+            <div className="csc-event-qr-actions">
               <button type="button" onClick={() => void copyImage()}>
+                <FontAwesomeIcon icon={faCopy} />
                 Copy QR image
               </button>
               <button
@@ -136,6 +147,7 @@ export default function EventAttendance({ record, identity, request, denied }) {
                 className="csc-auth-secondary"
                 onClick={() => void download("png")}
               >
+                <FontAwesomeIcon icon={faDownload} />
                 Download PNG
               </button>
               <button
@@ -143,81 +155,89 @@ export default function EventAttendance({ record, identity, request, denied }) {
                 className="csc-auth-secondary"
                 onClick={() => void download("svg")}
               >
+                <FontAwesomeIcon icon={faDownload} />
                 Download SVG
               </button>
             </div>
-            <p className="csc-event-attendance-link">
+            {qrError && <p role="alert">{qrError}</p>}
+            {qrNotice && <p role="status">{qrNotice}</p>}
+            <div className="csc-event-attendance-link">
               <strong>Sign-in and check-in link</strong>
               <a href={url} target="_blank" rel="noopener noreferrer">
                 {url}
               </a>
-            </p>
+            </div>
           </div>
-        </div>
-      )}
-      {qrError && <p role="alert">{qrError}</p>}
-      {qrNotice && <p role="status">{qrNotice}</p>}
-      <div className="csc-event-roster-heading">
-        <h3>Checked in {roster ? `(${roster.count})` : ""}</h3>
-        <button
-          type="button"
-          className="csc-auth-secondary"
-          onClick={() => setRetry((n) => n + 1)}
-        >
-          Refresh attendance
-        </button>
-      </div>
-      {loading && <p role="status">Loading attendance…</p>}
-      {rosterError && (
-        <div role="alert">
-          <p>{rosterError}</p>
-          <button type="button" onClick={() => setRetry((n) => n + 1)}>
-            Retry attendance
+        )}
+      </section>
+      <section
+        className="csc-events-card csc-event-checkins"
+        aria-label="Checked-in members"
+      >
+        <div className="csc-event-roster-heading">
+          <h2>Checked in {roster ? `(${roster.count})` : ""}</h2>
+          <button
+            type="button"
+            className="csc-auth-secondary"
+            onClick={() => setRetry((n) => n + 1)}
+          >
+            Refresh
           </button>
         </div>
-      )}
-      {!loading && !rosterError && roster && (
-        <>
-          {roster.attendees.length === 0 ? (
-            <p>No check-ins to show.</p>
-          ) : (
-            <ol className="csc-event-roster">
-              {roster.attendees.map((attendee) => (
-                <li key={`${attendee.email}-${attendee.checkedInAt}`}>
-                  <strong>
-                    <MemberLink id={attendee.id}>
-                      {attendee.name || attendee.email}
-                    </MemberLink>
-                  </strong>
-                  {attendee.name && <span>{attendee.email}</span>}
-                  <time dateTime={attendee.checkedInAt}>
-                    {new Date(attendee.checkedInAt).toLocaleString()}
-                  </time>
-                </li>
-              ))}
-            </ol>
-          )}
-          {(page > 1 || roster.hasMore) && (
-            <nav className="csc-auth-actions" aria-label="Attendance pages">
-              <button
-                type="button"
-                disabled={page === 1}
-                onClick={() => setPage(page - 1)}
-              >
-                Previous
-              </button>
-              <span>Page {page}</span>
-              <button
-                type="button"
-                disabled={!roster.hasMore}
-                onClick={() => setPage(page + 1)}
-              >
-                Next
-              </button>
-            </nav>
-          )}
-        </>
-      )}
-    </section>
+        {loading && <p role="status">Loading attendance…</p>}
+        {rosterError && (
+          <div role="alert">
+            <p>{rosterError}</p>
+            <button type="button" onClick={() => setRetry((n) => n + 1)}>
+              Retry attendance
+            </button>
+          </div>
+        )}
+        {!loading && !rosterError && roster && (
+          <>
+            {roster.attendees.length === 0 ? (
+              <p className="csc-events-note">No check-ins to show.</p>
+            ) : (
+              <ol className="csc-event-roster">
+                {roster.attendees.map((attendee) => (
+                  <li key={`${attendee.email}-${attendee.checkedInAt}`}>
+                    <strong>
+                      <MemberLink id={attendee.id}>
+                        {attendee.name || attendee.email}
+                      </MemberLink>
+                    </strong>
+                    {attendee.name && <span>{attendee.email}</span>}
+                    <time dateTime={attendee.checkedInAt}>
+                      {new Date(attendee.checkedInAt).toLocaleString()}
+                    </time>
+                  </li>
+                ))}
+              </ol>
+            )}
+            {(page > 1 || roster.hasMore) && (
+              <nav className="csc-auth-actions" aria-label="Attendance pages">
+                <button
+                  type="button"
+                  className="csc-auth-secondary"
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                >
+                  Previous
+                </button>
+                <span>Page {page}</span>
+                <button
+                  type="button"
+                  className="csc-auth-secondary"
+                  disabled={!roster.hasMore}
+                  onClick={() => setPage(page + 1)}
+                >
+                  Next
+                </button>
+              </nav>
+            )}
+          </>
+        )}
+      </section>
+    </>
   );
 }
