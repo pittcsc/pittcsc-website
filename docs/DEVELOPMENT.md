@@ -7,7 +7,8 @@ signed-in page at `/dashboard`, with a private profile editor at
 `/dashboard/account`. See [authentication](AUTH.md) and [profiles](PROFILES.md) for
 behavior and local testing. Staff access, member search, and role editing are
 implemented; see [staff setup](STAFF.md) for roles, provisioning, and checks.
-The member home shows the next three CRM events; see
+The member home shows the next three CRM events, including Foundry event
+eligibility; see
 [events](EVENTS.md#member-dashboard). Incomplete accounts are sent to
 My Account until they save first and last name, graduation year, and a major.
 The Members directory at `/dashboard/members` searches active, completed
@@ -87,7 +88,7 @@ package export. Google delivery defaults to disabled for local development.
 | `mise run test:auth` | Real local Supabase/Mailpit/Go auth checks (API must be running) |
 | `mise run test:profiles` | Real local profile/upload checks with synthetic accounts (API must be running) |
 | `mise run test:staff` | Real local roles, staff access, provisioning, and role-management checks (API must be running) |
-| `mise run test:events` | Local event, attendance, and spending API/database checks with synthetic accounts and simulated Google Calendar failures (API must be running with calendar disabled) |
+| `mise run test:events` | Local event, Foundry eligibility/grant, attendance, and spending API/database checks with synthetic accounts and simulated Google Calendar failures (API must be running with calendar disabled) |
 | `mise run test:points` | Local points, leaderboard, and staff moderation checks with synthetic accounts (API must be running) |
 | `mise exec -- npm run clean` | Clear Gatsby's generated cache/output |
 

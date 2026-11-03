@@ -18,7 +18,7 @@ import (
 
 type eventStore interface {
 	List(context.Context, string, int) (events.Page, error)
-	ListUpcoming(context.Context) (events.MemberEvents, error)
+	ListUpcoming(context.Context, string) (events.MemberEvents, error)
 	Get(context.Context, string) (events.Event, error)
 	History(context.Context, string, int64) (events.History, error)
 	Save(context.Context, string, string, events.Input) (events.Event, error)
@@ -44,6 +44,8 @@ func writeEventError(w http.ResponseWriter, err error) {
 		writeJSONError(w, 409, "Another staff member changed this event. Reload it before saving your changes.")
 	case errors.Is(err, events.ErrCancelled):
 		writeJSONError(w, 409, "This event has been cancelled and cannot be edited.")
+	case errors.Is(err, events.ErrIneligible):
+		writeJSONError(w, 403, "You are not eligible to check in to this Foundry event.")
 	case errors.Is(err, events.ErrForbidden):
 		writeJSONError(w, 403, "Access restricted. Staff access is required.")
 	default:
@@ -87,12 +89,12 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 		})
 	}
 	registerExpenseRoutes(mux, guard, store)
-	mux.HandleFunc("GET /events/upcoming", withCompleteProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, _ auth.Identity, _ profile.Record) {
+	mux.HandleFunc("GET /events/upcoming", withCompleteProfile(authentication, profiles, 5*time.Second, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
 		if store == nil {
 			writeEventError(w, auth.ErrUnavailable)
 			return
 		}
-		result, err := store.ListUpcoming(r.Context())
+		result, err := store.ListUpcoming(r.Context(), identity.ID)
 		if err != nil {
 			writeEventError(w, err)
 			return

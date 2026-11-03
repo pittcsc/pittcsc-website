@@ -143,9 +143,25 @@ export default function MemberHome({ identity, revalidate }) {
         <ul className="csc-member-events">
           {events.map((event) => (
             <li className="csc-member-event" key={event.id}>
-              {isInProgress(event) && (
-                <span className="csc-member-live">In progress</span>
-              )}
+              <div className="csc-member-event-badges">
+                {isInProgress(event) && (
+                  <span className="csc-member-live">In progress</span>
+                )}
+                {event.foundryEvent && (
+                  <>
+                    <span className="csc-member-foundry">Foundry event</span>
+                    <span
+                      className={
+                        event.eligible
+                          ? "csc-member-eligible"
+                          : "csc-member-ineligible"
+                      }
+                    >
+                      {event.eligible ? "Eligible" : "Not eligible"}
+                    </span>
+                  </>
+                )}
+              </div>
               <h2>{event.title}</h2>
               <p className="csc-member-event-time">
                 <time dateTime={event.startsAt}>{formatEventRange(event)}</time>

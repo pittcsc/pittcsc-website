@@ -65,3 +65,19 @@ func TestNewYorkDSTAndInvalidTimes(t *testing.T) {
 		}
 	}
 }
+
+func TestFoundryFlagParticipatesInEventEdits(t *testing.T) {
+	in := validInput()
+	if err := in.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	event := Event{Title: in.Title, Location: in.Location, Description: in.Description, StartsAt: in.StartsAt, EndsAt: in.EndsAt, FoundryEvent: true}
+	if !event.matches(in) {
+		t.Fatal("older client omitted flag and should preserve it")
+	}
+	ordinary := false
+	in.FoundryEvent = &ordinary
+	if event.matches(in) {
+		t.Fatal("Foundry flag change was ignored")
+	}
+}

@@ -105,15 +105,39 @@
     overflow: hidden;
   }
 
-  .csc-member-live {
-    display: inline-block;
+  .csc-member-event-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
     margin-bottom: 0.75rem;
+  }
+
+  .csc-member-event-badges span {
+    display: inline-block;
     padding: 0.2rem 0.55rem;
     border-radius: 999px;
-    background: #fff0dc;
-    color: #784000;
     font-size: 0.75rem;
     font-weight: 700;
+  }
+
+  .csc-member-live {
+    background: #fff0dc;
+    color: #784000;
+  }
+
+  .csc-member-foundry {
+    background: $acc-navy-soft;
+    color: $acc-navy;
+  }
+
+  .csc-member-eligible {
+    background: #e7f5eb;
+    color: #196238;
+  }
+
+  .csc-member-ineligible {
+    background: #fff0f0;
+    color: #a12323;
   }
 
   .csc-member-state {

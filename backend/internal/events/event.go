@@ -17,28 +17,30 @@ const ClubCalendarID = "f64u131to44gn3tn8g62ov2u1s@group.calendar.google.com"
 const PageSize = 25
 
 var (
-	ErrInvalid   = errors.New("invalid event fields")
-	ErrTime      = errors.New("invalid or ambiguous New York time")
-	ErrNotFound  = errors.New("event not found")
-	ErrConflict  = errors.New("event has changed")
-	ErrCancelled = errors.New("event is cancelled")
-	ErrForbidden = errors.New("staff access required")
-	ErrDisabled  = errors.New("calendar integration disabled")
-	ErrCalendar  = errors.New("calendar sync failed")
-	ErrGone      = errors.New("calendar event was deleted")
-	uuidPattern  = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
-	newYork, _   = time.LoadLocation(Timezone)
+	ErrInvalid    = errors.New("invalid event fields")
+	ErrTime       = errors.New("invalid or ambiguous New York time")
+	ErrNotFound   = errors.New("event not found")
+	ErrConflict   = errors.New("event has changed")
+	ErrCancelled  = errors.New("event is cancelled")
+	ErrForbidden  = errors.New("staff access required")
+	ErrIneligible = errors.New("foundry status required for check-in")
+	ErrDisabled   = errors.New("calendar integration disabled")
+	ErrCalendar   = errors.New("calendar sync failed")
+	ErrGone       = errors.New("calendar event was deleted")
+	uuidPattern   = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
+	newYork, _    = time.LoadLocation(Timezone)
 )
 
 type Input struct {
-	Title       string    `json:"title"`
-	Location    string    `json:"location"`
-	Description string    `json:"description"`
-	Start       string    `json:"start"`
-	End         string    `json:"end"`
-	Version     int       `json:"version"`
-	StartsAt    time.Time `json:"-"`
-	EndsAt      time.Time `json:"-"`
+	Title        string    `json:"title"`
+	Location     string    `json:"location"`
+	Description  string    `json:"description"`
+	Start        string    `json:"start"`
+	End          string    `json:"end"`
+	Version      int       `json:"version"`
+	FoundryEvent *bool     `json:"foundryEvent"`
+	StartsAt     time.Time `json:"-"`
+	EndsAt       time.Time `json:"-"`
 }
 
 // Wall-clock values are always interpreted in New York, never in the browser's
@@ -109,11 +111,13 @@ type Event struct {
 	SyncError       string     `json:"syncError"`
 	SyncedAt        *time.Time `json:"syncedAt"`
 	AttendanceURL   string     `json:"attendanceUrl,omitempty"`
+	FoundryEvent    bool       `json:"foundryEvent"`
 }
 
 func (e Event) matches(input Input) bool {
 	return e.Title == input.Title && e.Location == input.Location && e.Description == input.Description &&
-		e.StartsAt.Equal(input.StartsAt) && e.EndsAt.Equal(input.EndsAt)
+		e.StartsAt.Equal(input.StartsAt) && e.EndsAt.Equal(input.EndsAt) &&
+		(input.FoundryEvent == nil || e.FoundryEvent == *input.FoundryEvent)
 }
 
 type Page struct {

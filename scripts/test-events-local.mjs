@@ -186,6 +186,8 @@ async function main() {
           "description",
           "startsAt",
           "endsAt",
+          "foundryEvent",
+          "eligible",
         ].includes(key),
       ),
       "Member event list exposed staff fields",
@@ -235,6 +237,7 @@ async function main() {
     { ...input, role: "staff" },
     { ...input, calendarId: "other" },
     { ...input, timezone: "UTC" },
+    { ...input, foundryEvent: "yes" },
     { ...input, location: "" },
     { ...input, end: input.start },
     { ...input, start: "2027-03-14T02:30", end: "2027-03-14T04:00" },
@@ -243,6 +246,175 @@ async function main() {
       (await api(a, path, "PUT", invalid)).status === 400,
       "Invalid event accepted",
     );
+
+  stage = "Foundry event eligibility, staff grants, and idempotent retries";
+  const foundryID = randomUUID();
+  const foundryPath = `/staff/events/${foundryID}`;
+  const foundryInput = {
+    ...input,
+    title: "[Local fixture] Foundry event",
+    foundryEvent: true,
+  };
+  stage = "Foundry event save";
+  const foundrySave = await api(a, foundryPath, "PUT", foundryInput);
+  check(
+    foundrySave.status === 200,
+    `Foundry save returned ${foundrySave.status}: ${foundrySave.status === 400 ? (await foundrySave.json()).error : "unexpected status"}`,
+  );
+  const foundryEvent = await foundrySave.json();
+  check(foundryEvent.foundryEvent, "Foundry event flag was not saved");
+  const foundryAttendance = `/attendance/${foundryID}`;
+  let foundryState = await json(await api(member, foundryAttendance));
+  check(
+    foundryState.foundryEvent && !foundryState.eligible,
+    "Legacy Foundry role incorrectly granted eligibility",
+  );
+  check(
+    (await api(member, foundryAttendance, "POST")).status === 403,
+    "Ineligible member checked in",
+  );
+  const grantPath = `/staff/users/${member.id}/foundry-grant`;
+  const grantRequest = { requestId: randomUUID() };
+  check(
+    (await api(null, grantPath, "POST", grantRequest)).status === 401 &&
+      (await api(member, grantPath, "POST", grantRequest)).status === 403,
+    "Non-staff grant accepted",
+  );
+  check(
+    (await api(a, grantPath, "POST", { requestId: "bad" })).status === 400,
+    "Invalid grant request accepted",
+  );
+  stage = "Foundry grant creation and retry";
+  const granted = await json(await api(a, grantPath, "POST", grantRequest));
+  check(Boolean(granted.foundryGrantExpiresAt), "Staff grant was not saved");
+  const retriedGrant = await json(
+    await api(a, grantPath, "POST", grantRequest),
+  );
+  check(
+    retriedGrant.foundryGrantExpiresAt === granted.foundryGrantExpiresAt,
+    "Grant retry extended the 30-day window",
+  );
+  const concurrentGrants = await Promise.all([
+    api(a, grantPath, "POST", grantRequest),
+    api(b, grantPath, "POST", grantRequest),
+  ]);
+  for (const response of concurrentGrants)
+    check(
+      (await json(response)).foundryGrantExpiresAt ===
+        granted.foundryGrantExpiresAt,
+      "Concurrent retry extended the grant",
+    );
+  check(
+    sql(
+      `select count(*) from csc.foundry_grant_audit where request_id='${grantRequest.requestId}'`,
+    ) === "1",
+    "Grant retry duplicated audit",
+  );
+  check(
+    sql(
+      `select extract(epoch from expires_at - granted_at)::bigint from csc.foundry_grants where auth_user_id='${member.id}'`,
+    ) === "2592000",
+    "Grant did not last exactly 30 days",
+  );
+  let foundryStatus = await json(await api(member, "/points/foundry"));
+  check(
+    foundryStatus.active &&
+      foundryStatus.points < 50 &&
+      foundryStatus.grantExpiresAt === granted.foundryGrantExpiresAt,
+    "Member Foundry status did not reflect staff grant",
+  );
+  foundryState = await json(await api(member, foundryAttendance));
+  check(foundryState.eligible, "Staff grant did not enable Foundry check-in");
+  const checkedIn = await json(await api(member, foundryAttendance, "POST"));
+  check(Boolean(checkedIn.checkedInAt), "Granted member was not checked in");
+  stage = "Foundry grant renewal and revocation";
+  const renewed = await json(
+    await api(b, grantPath, "POST", { requestId: randomUUID() }),
+  );
+  check(
+    Date.parse(renewed.foundryGrantExpiresAt) >=
+      Date.parse(granted.foundryGrantExpiresAt),
+    "Renewal shortened the grant",
+  );
+  const revokePath = `${grantPath}/revoke`;
+  const revokeRequest = { requestId: randomUUID() };
+  const revoked = await json(await api(b, revokePath, "POST", revokeRequest));
+  check(revoked.foundryGrantExpiresAt === null, "Grant revocation failed");
+  const retriedRevoke = await json(
+    await api(b, revokePath, "POST", revokeRequest),
+  );
+  check(
+    retriedRevoke.foundryGrantExpiresAt === null,
+    "Revoke retry restored the grant",
+  );
+  check(
+    sql(
+      `select count(*) from csc.foundry_grant_audit where request_id='${revokeRequest.requestId}'`,
+    ) === "1",
+    "Revoke retry duplicated audit",
+  );
+  check(
+    (await json(await api(member, foundryAttendance, "POST"))).checkedInAt ===
+      checkedIn.checkedInAt,
+    "Check-in retry after grant revocation lost the original attendance",
+  );
+
+  const toggleID = randomUUID();
+  const togglePath = `/staff/events/${toggleID}`;
+  let toggleEvent = await json(
+    await api(a, togglePath, "PUT", {
+      ...input,
+      title: "[Local fixture] Toggle event",
+      foundryEvent: false,
+    }),
+  );
+  const toggleAttendance = `/attendance/${toggleID}`;
+  check(
+    (await json(await api(member, toggleAttendance))).eligible,
+    "Ordinary event was restricted",
+  );
+  toggleEvent = await json(
+    await api(a, togglePath, "PUT", {
+      ...input,
+      title: "[Local fixture] Toggle event",
+      version: toggleEvent.version,
+      foundryEvent: true,
+    }),
+  );
+  check(
+    toggleEvent.foundryEvent &&
+      !(await json(await api(member, toggleAttendance))).eligible &&
+      (await api(member, toggleAttendance, "POST")).status === 403,
+    "Changing event audience did not restrict future check-ins",
+  );
+
+  stage = "Foundry earned points eligibility";
+  for (let n = 0; n < 5; n++) {
+    await json(
+      await api(member, "/points/claims", "POST", {
+        category: "paper",
+        url: `https://example.com/foundry-fixture/${suffix}/${n}`,
+        affirmed: true,
+      }),
+      201,
+    );
+  }
+  foundryStatus = await json(await api(member, "/points/foundry"));
+  check(
+    foundryStatus.active &&
+      foundryStatus.points >= 50 &&
+      foundryStatus.grantExpiresAt === null,
+    "Honor-system points did not earn Foundry status after grant revocation",
+  );
+  check(
+    (await json(await api(member, toggleAttendance))).eligible,
+    "Points did not enable Foundry check-in",
+  );
+  await json(await api(member, toggleAttendance, "POST"));
+  check(
+    (await json(await api(b, foundryAttendance))).eligible,
+    "Staff without points was not eligible",
+  );
 
   stage = "staff-only event spending and receipts";
   const spendingID = randomUUID();
@@ -579,7 +751,7 @@ async function main() {
     "Logged-out session accepted",
   );
   console.log(
-    "PASS: event and attendance authorization, staff-only spending, receipts, and budget export, stable QR destinations, explicit and concurrent check-in, private roster, staff edits, cancellation, fixtures, disabled mode, simulated Google retries, revocation, suspension, and logout",
+    "PASS: Foundry event restrictions, 30-day staff grants, points eligibility, grant and check-in retries, event and attendance authorization, staff-only spending, receipts, budget export, stable QR destinations, private roster, staff edits, cancellation, fixtures, disabled mode, simulated Google retries, revocation, suspension, and logout",
   );
 }
 

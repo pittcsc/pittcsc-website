@@ -36,6 +36,7 @@ export function eventForm(record) {
     description: record?.description || "",
     start: localEventTime(record?.startsAt),
     end: localEventTime(record?.endsAt),
+    foundryEvent: Boolean(record?.foundryEvent),
     version: record?.version || 0,
   };
 }

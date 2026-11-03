@@ -64,9 +64,16 @@ type googleTime struct {
 }
 
 func payload(e Event) googleEvent {
+	description := e.Description
+	if e.FoundryEvent {
+		if description != "" {
+			description += "\n\n"
+		}
+		description += "Foundry event"
+	}
 	return googleEvent{
 		ID: e.CalendarEventID, Status: "confirmed", Summary: e.Title,
-		Location: e.Location, Description: html.EscapeString(e.Description),
+		Location: e.Location, Description: html.EscapeString(description),
 		Start:              googleTime{e.StartsAt.In(newYork).Format(time.RFC3339), Timezone},
 		End:                googleTime{e.EndsAt.In(newYork).Format(time.RFC3339), Timezone},
 		ExtendedProperties: map[string]map[string]string{"private": {"cscEventId": e.ID}},

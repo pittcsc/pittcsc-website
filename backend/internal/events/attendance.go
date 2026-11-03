@@ -10,10 +10,12 @@ import (
 )
 
 type CheckInStatus struct {
-	ID          string     `json:"id"`
-	Title       string     `json:"title"`
-	Status      string     `json:"status"`
-	CheckedInAt *time.Time `json:"checkedInAt"`
+	ID           string     `json:"id"`
+	Title        string     `json:"title"`
+	Status       string     `json:"status"`
+	CheckedInAt  *time.Time `json:"checkedInAt"`
+	FoundryEvent bool       `json:"foundryEvent"`
+	Eligible     bool       `json:"eligible"`
 }
 
 type Attendee struct {
@@ -36,13 +38,20 @@ func (s Store) CheckInStatus(ctx context.Context, userID, eventID string) (Check
 		return CheckInStatus{}, ErrNotFound
 	}
 	var result CheckInStatus
-	err := s.DB.QueryRow(ctx, `select e.id::text, e.title, e.status, a.checked_in_at
+	err := s.DB.QueryRow(ctx, `select e.id::text, e.title, e.status, a.checked_in_at, e.foundry_event
 		from csc.events e left join csc.attendance a
 		on a.event_id = e.id and a.auth_user_id = $2::uuid
 		where e.id = $1::uuid`, eventID, userID).
-		Scan(&result.ID, &result.Title, &result.Status, &result.CheckedInAt)
+		Scan(&result.ID, &result.Title, &result.Status, &result.CheckedInAt, &result.FoundryEvent)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return CheckInStatus{}, ErrNotFound
+	}
+	if err != nil {
+		return CheckInStatus{}, err
+	}
+	result.Eligible = true
+	if result.FoundryEvent && result.CheckedInAt == nil {
+		result.Eligible, err = foundryAccess(ctx, s.DB, userID)
 	}
 	return result, err
 }
@@ -59,9 +68,9 @@ func (s Store) CheckIn(ctx context.Context, userID, eventID string) (CheckInStat
 	}
 	defer tx.Rollback(ctx)
 	var result CheckInStatus
-	err = tx.QueryRow(ctx, `select id::text, title, status from csc.events
+	err = tx.QueryRow(ctx, `select id::text, title, status, foundry_event from csc.events
 		where id = $1::uuid for share`, eventID).
-		Scan(&result.ID, &result.Title, &result.Status)
+		Scan(&result.ID, &result.Title, &result.Status, &result.FoundryEvent)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return CheckInStatus{}, ErrNotFound
 	}
@@ -79,6 +88,30 @@ func (s Store) CheckIn(ctx context.Context, userID, eventID string) (CheckInStat
 	}
 	if err != nil {
 		return CheckInStatus{}, err
+	}
+	// A successful earlier submission remains idempotent if points or a grant
+	// subsequently expire. It does not need a second eligibility decision.
+	err = tx.QueryRow(ctx, `select checked_in_at from csc.attendance
+		where event_id = $1::uuid and auth_user_id = $2::uuid`, eventID, userID).Scan(&result.CheckedInAt)
+	if err == nil {
+		result.Eligible = true
+		if err := tx.Commit(ctx); err != nil {
+			return CheckInStatus{}, err
+		}
+		return result, nil
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return CheckInStatus{}, err
+	}
+	result.Eligible = true
+	if result.FoundryEvent {
+		result.Eligible, err = foundryAccess(ctx, tx, userID)
+		if err != nil {
+			return CheckInStatus{}, err
+		}
+		if !result.Eligible {
+			return CheckInStatus{}, ErrIneligible
+		}
 	}
 	_, err = tx.Exec(ctx, `insert into csc.attendance (event_id, auth_user_id)
 		values ($1::uuid, $2::uuid) on conflict do nothing`, eventID, userID)

@@ -5,7 +5,8 @@ declare
   relation text;
   role_name text;
 begin
-  foreach relation in array array['csc.events', 'csc.event_audit', 'csc.attendance'] loop
+  foreach relation in array array['csc.events', 'csc.event_audit', 'csc.attendance',
+    'csc.foundry_grants', 'csc.foundry_grant_audit'] loop
     if not exists (select 1 from pg_class where oid = relation::regclass and relrowsecurity) then
       raise exception 'Event table must enable RLS';
     end if;
@@ -18,6 +19,9 @@ begin
   foreach role_name in array array['anon', 'authenticated'] loop
     if has_sequence_privilege(role_name, 'csc.event_audit_id_seq', 'USAGE,SELECT,UPDATE') then
       raise exception 'Browser role must not access the event audit sequence';
+    end if;
+    if has_sequence_privilege(role_name, 'csc.foundry_grant_audit_id_seq', 'USAGE,SELECT,UPDATE') then
+      raise exception 'Browser role must not access the Foundry grant audit sequence';
     end if;
   end loop;
 end;
