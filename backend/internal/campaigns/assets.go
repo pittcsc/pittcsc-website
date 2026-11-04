@@ -2,8 +2,9 @@ package campaigns
 
 import (
 	"context"
-	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 	"time"
+
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 )
 
 type Asset struct {

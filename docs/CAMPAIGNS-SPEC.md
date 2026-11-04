@@ -1,6 +1,6 @@
 # CSC email campaigns — design interview
 
-Status: approved for implementation on `email-system`. The user authorized development and commits after reviewing the design, including shared autosaved drafts. Hosted setup and rollout remain separate.
+Status: implemented on `email-system`; see [CAMPAIGNS.md](CAMPAIGNS.md) for delivered behavior, validation, and operational limits. Hosted SES/domain/scheduler setup and rollout remain separate.
 
 ## Agreed scope
 
@@ -26,8 +26,8 @@ Status: approved for implementation on `email-system`. The user authorized devel
 
 - Gatsby provides private dashboard routes; Go owns CRM authorization and business logic; Supabase provides Auth and Postgres.
 - Current active `staff` authorization is checked against database account status and roles on every protected request; see [STAFF.md](STAFF.md).
-- No campaign sending, subscription, import, event-ingestion, or background delivery implementation exists yet.
-- This checkout differs from the earlier AlumniDB working checkout. Recheck current code rather than assuming that checkout's additional fields exist here.
+- Campaign state, imports, subscriptions, delivery, reporting, and shared drafts are implemented by this feature.
+
 
 ## Contact management and optional information
 
@@ -93,4 +93,4 @@ See [GLOSSARY.md](../GLOSSARY.md) for agreed terminology.
 
 ## Sender setup
 
-See [CAMPAIGNS-SES-SETUP.md](CAMPAIGNS-SES-SETUP.md) for the domain and SES preparation guide. This guide does not indicate that SES is configured or that campaign code exists.
+See [CAMPAIGNS-SES-SETUP.md](CAMPAIGNS-SES-SETUP.md) for the domain and SES preparation guide. The guide documents configuration that is still required before hosted live delivery.

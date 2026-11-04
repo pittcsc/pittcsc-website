@@ -5,15 +5,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
-	"github.com/pittcsc/pittcsc-website/backend/internal/campaigns"
-	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 	"html"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
+	"github.com/pittcsc/pittcsc-website/backend/internal/campaigns"
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 )
 
 func campaignError(w http.ResponseWriter, e error) {

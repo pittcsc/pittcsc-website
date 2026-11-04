@@ -4,15 +4,16 @@ package main
 import (
 	"context"
 	"errors"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
-	"github.com/pittcsc/pittcsc-website/backend/internal/campaigns"
 	"log/slog"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
+	"github.com/pittcsc/pittcsc-website/backend/internal/campaigns"
 )
 
 func main() {

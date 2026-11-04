@@ -1,10 +1,11 @@
 package server
 
 import (
-	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 )
 
 func TestEmailRoutesRequireCurrentStaff(t *testing.T) {
