@@ -630,6 +630,24 @@ async function main() {
     "Member response leaked roster",
   );
 
+  stage = "staff attendance CSV export";
+  const csvPath = `${path}/attendance.csv`;
+  check((await api(null, csvPath)).status === 401, "Anonymous CSV export");
+  check((await api(member, csvPath)).status === 403, "Member CSV export");
+  const csvResponse = await api(a, csvPath);
+  check(csvResponse.status === 200, "Staff CSV export failed");
+  check(
+    csvResponse.headers.get("content-type") === "text/csv; charset=utf-8" &&
+      csvResponse.headers.get("content-disposition")?.includes("attachment;") &&
+      csvResponse.headers.get("cache-control") === "no-store",
+    "CSV download headers are missing",
+  );
+  check(
+    (await csvResponse.text()) ===
+      `Name,Email\nEventsFixture Member2,${member.email}\n`,
+    "CSV must contain only the checked-in member's name and email",
+  );
+
   stage = "other staff edits and stale version conflicts";
   const edit = {
     ...input,
@@ -751,7 +769,7 @@ async function main() {
     "Logged-out session accepted",
   );
   console.log(
-    "PASS: Foundry event restrictions, 30-day staff grants, points eligibility, grant and check-in retries, event and attendance authorization, staff-only spending, receipts, budget export, stable QR destinations, private roster, staff edits, cancellation, fixtures, disabled mode, simulated Google retries, revocation, suspension, and logout",
+    "PASS: Foundry event restrictions, 30-day staff grants, points eligibility, grant and check-in retries, event and attendance authorization, staff-only spending, receipts, budget export, stable QR destinations, private roster and CSV export, staff edits, cancellation, fixtures, disabled mode, simulated Google retries, revocation, suspension, and logout",
   );
 }
 

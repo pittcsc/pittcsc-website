@@ -32,6 +32,11 @@ type AttendancePage struct {
 	HasMore   bool       `json:"hasMore"`
 }
 
+type AttendanceExportRow struct {
+	Name  string
+	Email string
+}
+
 // CheckInStatus reads only the requested event and the current user's own row.
 func (s Store) CheckInStatus(ctx context.Context, userID, eventID string) (CheckInStatus, error) {
 	if !uuidPattern.MatchString(eventID) {
@@ -170,6 +175,43 @@ func (s Store) Attendance(ctx context.Context, eventID string, page int) (Attend
 	if len(result.Attendees) > PageSize {
 		result.Attendees = result.Attendees[:PageSize]
 		result.HasMore = true
+	}
+	return result, nil
+}
+
+// AttendanceExport returns the full roster for a staff-only CSV download.
+func (s Store) AttendanceExport(ctx context.Context, eventID string) ([]AttendanceExportRow, error) {
+	if !uuidPattern.MatchString(eventID) {
+		return nil, ErrNotFound
+	}
+	var exists bool
+	if err := s.DB.QueryRow(ctx, `select exists(select 1 from csc.events where id = $1::uuid)`, eventID).Scan(&exists); err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, ErrNotFound
+	}
+	rows, err := s.DB.Query(ctx, `select
+		coalesce(nullif(concat_ws(' ', coalesce(p.preferred_name, p.first_name), p.last_name), ''), ''),
+		coalesce(u.email, '') from csc.attendance a
+		join csc.profiles p on p.auth_user_id = a.auth_user_id
+		join auth.users u on u.id = a.auth_user_id
+		where a.event_id = $1::uuid
+		order by a.checked_in_at desc, a.auth_user_id`, eventID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	result := []AttendanceExportRow{}
+	for rows.Next() {
+		var attendee AttendanceExportRow
+		if err := rows.Scan(&attendee.Name, &attendee.Email); err != nil {
+			return nil, err
+		}
+		result = append(result, attendee)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return result, nil
 }

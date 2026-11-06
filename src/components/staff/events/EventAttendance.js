@@ -20,6 +20,8 @@ export default function EventAttendance({ record, identity, request, denied }) {
   const [rosterError, setRosterError] = useState("");
   const [retry, setRetry] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState("");
   const previewRef = useRef(null);
   const qrRef = useRef(null);
   const whiteRef = useRef(white);
@@ -108,6 +110,31 @@ export default function EventAttendance({ record, identity, request, denied }) {
     }
   }
 
+  async function exportAttendance() {
+    if (exporting) return;
+    setExporting(true);
+    setExportError("");
+    try {
+      const blob = await request(eventPath(record.id, "attendance.csv"), {
+        userID: identity.id,
+        responseType: "blob",
+      });
+      const objectURL = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectURL;
+      link.download = "event-attendance.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(objectURL), 1000);
+    } catch (error) {
+      setExportError(error.message);
+      denied(error);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <>
       <section
@@ -176,14 +203,26 @@ export default function EventAttendance({ record, identity, request, denied }) {
       >
         <div className="csc-event-roster-heading">
           <h2>Checked in {roster ? `(${roster.count})` : ""}</h2>
-          <button
-            type="button"
-            className="csc-auth-secondary"
-            onClick={() => setRetry((n) => n + 1)}
-          >
-            Refresh
-          </button>
+          <div className="csc-event-roster-actions">
+            <button
+              type="button"
+              className="csc-auth-secondary"
+              disabled={exporting}
+              onClick={() => void exportAttendance()}
+            >
+              <FontAwesomeIcon icon={faDownload} />
+              {exporting ? "Exporting…" : "Export CSV"}
+            </button>
+            <button
+              type="button"
+              className="csc-auth-secondary"
+              onClick={() => setRetry((n) => n + 1)}
+            >
+              Refresh
+            </button>
+          </div>
         </div>
+        {exportError && <p role="alert">{exportError}</p>}
         {loading && <p role="status">Loading attendance…</p>}
         {rosterError && (
           <div role="alert">

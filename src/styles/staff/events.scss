@@ -510,12 +510,18 @@ $events-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 0.75rem;
     margin-bottom: 0.75rem;
 
     button {
       flex: none;
     }
+  }
+  .csc-event-roster-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   .csc-event-roster {
     margin: 0;

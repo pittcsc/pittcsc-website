@@ -1,10 +1,13 @@
 package server
 
 import (
+	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
 
+	"github.com/pittcsc/pittcsc-website/backend/internal/events"
 	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 )
 
@@ -46,6 +49,65 @@ func TestAttendanceRequiresVerifiedActiveAccountAndExplicitPost(t *testing.T) {
 	}
 	if strings.Contains(w.Body.String(), "attendees") {
 		t.Fatal("member attendance response leaked roster")
+	}
+}
+
+func TestAttendanceCSVExport(t *testing.T) {
+	s := &eventsStub{exportRows: []events.AttendanceExportRow{
+		{Name: `Ada, "Analyst" Lovelace`, Email: "ada@pitt.edu"},
+		{Name: "=SUM(1,2)", Email: "person@pitt.edu"},
+		{Name: "First\nLast", Email: "second@pitt.edu"},
+	}}
+	w := eventRequest(&profilesStub{roles: []string{"member", "staff"}}, s,
+		"GET", "/staff/events/event-id/attendance.csv", "", "valid")
+	if w.Code != 200 || s.attendanceCalls != 1 || s.id != "event-id" {
+		t.Fatalf("staff CSV export: status %d, calls %d", w.Code, s.attendanceCalls)
+	}
+	if w.Header().Get("Content-Type") != "text/csv; charset=utf-8" ||
+		!strings.Contains(w.Header().Get("Content-Disposition"), "attachment;") ||
+		w.Header().Get("Cache-Control") != "no-store" {
+		t.Fatal("CSV response missing download or private-cache headers")
+	}
+	reader := csv.NewReader(strings.NewReader(w.Body.String()))
+	got, err := reader.ReadAll()
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := [][]string{{"Name", "Email"}, {`Ada, "Analyst" Lovelace`, "ada@pitt.edu"}, {"'=SUM(1,2)", "person@pitt.edu"}, {"First\nLast", "second@pitt.edu"}}
+	if len(got) != len(want) {
+		t.Fatalf("got %d CSV rows, want %d", len(got), len(want))
+	}
+	for i := range want {
+		if len(got[i]) != 2 || got[i][0] != want[i][0] || got[i][1] != want[i][1] {
+			t.Fatalf("CSV row %d has unexpected columns or content: %q", i, got[i])
+		}
+	}
+
+	s = &eventsStub{}
+	w = eventRequest(&profilesStub{roles: []string{"staff"}}, s,
+		"GET", "/staff/events/event-id/attendance.csv", "", "valid")
+	if w.Code != 200 || w.Body.String() != "Name,Email\n" {
+		t.Fatal("empty attendance should export header only")
+	}
+
+	s = &eventsStub{err: events.ErrNotFound}
+	w = eventRequest(&profilesStub{roles: []string{"staff"}}, s,
+		"GET", "/staff/events/missing/attendance.csv", "", "valid")
+	if w.Code != 404 || strings.Contains(w.Body.String(), "Name,Email") {
+		t.Fatal("missing event returned CSV")
+	}
+
+	s = &eventsStub{err: errors.New("database unavailable")}
+	w = eventRequest(&profilesStub{roles: []string{"staff"}}, s,
+		"GET", "/staff/events/event-id/attendance.csv", "", "valid")
+	if w.Code != 503 || strings.Contains(w.Body.String(), "Name,Email") {
+		t.Fatal("failed export returned partial CSV")
+	}
+
+	for _, value := range []string{" +SUM(1,2)", "-1+2", "@cmd", "\t=1"} {
+		if got := safeCSVCell(value); got != "'"+value {
+			t.Fatalf("formula prefix was not escaped: %q", value)
+		}
 	}
 }
 
