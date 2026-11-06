@@ -111,7 +111,7 @@ func TestStoreIntegration(t *testing.T) {
 	} else {
 		t.Log("fixture already has recent points; skipping Foundry window dates")
 	}
-	board, err := s.Leaderboard(ctx, userID, "30d")
+	board, err := s.Leaderboard(ctx, userID, "7d")
 	if err != nil {
 		t.Fatal(err)
 	}

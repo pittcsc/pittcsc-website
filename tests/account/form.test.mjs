@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { formFromProfile, profileInput, MAJOR_OPTIONS } from "../../src/lib/account/form.mjs";
+import {
+  formFromProfile,
+  pastedHandle,
+  profileInput,
+  MAJOR_OPTIONS,
+} from "../../src/lib/account/form.mjs";
 
 test("major choices preserve custom and multiple existing majors", () => {
   assert.deepEqual(MAJOR_OPTIONS, [
@@ -119,6 +124,22 @@ test("profile handles accept a pasted URL and keep only the username", () => {
     profileInput({ ...form, githubUsername: "   " }).githubUsername,
     null,
   );
+});
+
+test("pasting a profile URL into a handle field leaves only the username", () => {
+  // Regression: the field showed "github.com/ http://github.com/<user>".
+  assert.equal(pastedHandle("http://github.com/codingshreyash"), "codingshreyash");
+  assert.equal(pastedHandle("https://www.github.com/octocat/"), "octocat");
+  assert.equal(pastedHandle("https://leetcode.com/u/octocat/"), "octocat");
+  assert.equal(
+    pastedHandle("https://www.linkedin.com/in/jordan-lee-1a2b3c?trk=nav"),
+    "jordan-lee-1a2b3c",
+  );
+  assert.equal(pastedHandle(" octocat\n"), "octocat");
+  // Plain text pastes normally, including part of a handle mid-edit.
+  assert.equal(pastedHandle("octocat"), null);
+  assert.equal(pastedHandle("-cat"), null);
+  assert.equal(pastedHandle(""), null);
 });
 
 test("profile handles reject shapes the platforms do not use", () => {

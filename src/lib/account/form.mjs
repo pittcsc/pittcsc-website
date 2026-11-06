@@ -55,6 +55,14 @@ export function handleFromPasted(value) {
   return stripped.split(/[/?#]/)[0];
 }
 
+// A paste that handleFromPasted would change (a profile URL, or stray spaces)
+// replaces the field with the bare handle, so the "github.com/" prefix shown
+// beside the input is not repeated. Returns null to let a plain paste through.
+export function pastedHandle(text) {
+  const handle = handleFromPasted(text);
+  return handle === String(text ?? "") ? null : handle;
+}
+
 export function formFromProfile(profile) {
   const majors = profile.majors?.length ? [...profile.majors] : [""];
   return {

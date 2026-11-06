@@ -54,7 +54,7 @@ export default function PointsLeaderboard({ identity }) {
     const controller = new AbortController();
     setError("");
     Promise.all(
-      ["all", "30d"].map((period) =>
+      ["all", "7d"].map((period) =>
         request(`/points/leaderboard?period=${period}`, {
           userID: identity.id,
           signal: controller.signal,
@@ -98,7 +98,7 @@ export default function PointsLeaderboard({ identity }) {
         {boards && (
           <div className="csc-points-boards">
             <Board title="All time" board={boards[0]} />
-            <Board title="Last 30 days" board={boards[1]} />
+            <Board title="Last 7 days" board={boards[1]} />
           </div>
         )}
       </section>

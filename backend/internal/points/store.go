@@ -110,8 +110,8 @@ func (s Store) Mine(ctx context.Context, userID string, page int) (Mine, error) 
 	return result, rows.Err()
 }
 
-// Foundry totals the owner's awarded points over the same rolling window as
-// the 30-day leaderboard. Restored claims keep their original award time.
+// Foundry totals the owner's awarded points over the rolling 30-day window.
+// Restored claims keep their original award time.
 //
 // Walking claims newest first, the first one whose running total reaches the
 // threshold is the oldest claim the status depends on; it lapses once that
@@ -147,7 +147,7 @@ func (s Store) Foundry(ctx context.Context, userID string) (FoundryStatus, error
 }
 
 func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderboard, error) {
-	if period != "all" && period != "30d" {
+	if period != "all" && period != "7d" {
 		return Leaderboard{}, ErrInvalid
 	}
 	result := Leaderboard{Period: period, Entries: []Standing{}}
@@ -164,7 +164,7 @@ func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderbo
 		    and p.first_name is not null and p.last_name is not null
 		    and p.graduation_year is not null and cardinality(p.majors) > 0
 		    and c.status = 'awarded'
-		    and ($2 = 'all' or c.awarded_at >= now() - interval '720 hours')
+		    and ($2 = 'all' or c.awarded_at >= now() - interval '168 hours')
 		  group by p.auth_user_id, p.preferred_name, p.first_name, p.last_name
 		), ranked as (
 		  select auth_user_id, name, points, rank() over (order by points desc)::integer as rank,

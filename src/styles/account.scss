@@ -17,19 +17,6 @@
   flex-direction: column;
   gap: 1.25rem;
 
-  .csc-account-back {
-    align-self: flex-start;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: $acc-muted;
-    text-decoration: none;
-
-    &:hover {
-      color: $acc-navy;
-      text-decoration: underline;
-    }
-  }
-
   // Profile-completion prompt. Cream when there's still something to add,
   // which reads as a nudge rather than the red of a real error.
   .csc-account-completion {

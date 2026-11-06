@@ -67,7 +67,7 @@ function BrandPanel() {
         <span className="csc-login-mark">
           <img src={logo} alt="" width={64} height={49} />
         </span>
-        Pitt CSC
+        PittCSC
       </Link>
 
       <h2 className="csc-login-pitch">
@@ -417,7 +417,7 @@ export default function Login({ location }) {
 
 export const Head = () => (
   <>
-    <title>Sign in | Pitt CSC</title>
+    <title>Sign in | PittCSC</title>
     <meta name="robots" content="noindex" />
   </>
 );

@@ -20,10 +20,11 @@ Foundry event eligibility, while the legacy `foundry` role remains separate.
   history.
 - Completed signed-in users see the top 10 active, completed accounts with
   points on each leaderboard, plus their own rank if outside the top 10. Names
-  link to member profiles. Each profile shows its all-time total and 30-day
+  link to member profiles. Each profile shows its all-time total and 7-day
   rank, or Unranked when it has no award in that period.
-- The rolling period is the preceding 30 days measured from the original award
-  time. Submitting old work today awards points today. Restoring a claim keeps
+- The rolling leaderboard covers the preceding 7 days (168 hours), and the
+  owner's rolling score and Foundry status the preceding 30 days, both measured
+  from the original award time. Submitting old work today awards points today. Restoring a claim keeps
   the original award time. Suspended accounts retain claims but leave the boards.
 - Withdrawn and revoked claims contribute zero points. Owners can withdraw a
   claim; staff can revoke, restore, or correct one with an audit reason. Revoked
@@ -33,7 +34,7 @@ Foundry event eligibility, while the legacy `foundry` role remains separate.
 
 **Foundry** (`/dashboard/foundry`) explains the rules and shows the owner's
 status card. A member is active while their awarded points in the same rolling
-30-day window as the 30-day leaderboard reach 50, or while a staff grant is
+30-day window as the owner's 30-day score reach 50, or while a staff grant is
 active; there is no monthly reset.
 Claims count from their original award time, including restored claims, and
 withdrawn or revoked claims count zero. An active status reports `activeUntil`:
@@ -71,7 +72,7 @@ access. The public Gatsby build contains no point or claim data.
 | `GET /points/me?page=1` | Owner | Scores and 20 newest claims per page |
 | `POST /points/claims` | Active, completed account | Submit `{category,url,affirmed:true}` |
 | `DELETE /points/claims/{id}` | Owner | Withdraw an awarded claim |
-| `GET /points/leaderboard?period=all\|30d` | Active, completed account | Top 10 and own rank |
+| `GET /points/leaderboard?period=all\|7d` | Active, completed account | Top 10 and own rank |
 | `GET /points/foundry` | Owner | Name, 30-day points, threshold, window, active flag, `activeUntil`, and `grantExpiresAt` |
 | `GET /staff/points/claims?page=1` | Staff | 20 newest claims per page |
 | `POST /staff/points/claims/{id}/revoke` | Staff | Revoke with `{reason}` |

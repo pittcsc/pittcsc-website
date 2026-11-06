@@ -134,7 +134,7 @@ export default function Dashboard({ location }) {
 
 export const Head = () => (
   <>
-    <title>Your account | Pitt CSC</title>
+    <title>Your account | PittCSC</title>
     <meta name="robots" content="noindex" />
   </>
 );

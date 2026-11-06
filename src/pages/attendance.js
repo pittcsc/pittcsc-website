@@ -184,7 +184,7 @@ export default function Attendance({ location }) {
 
 export const Head = () => (
   <>
-    <title>Event attendance | Pitt CSC</title>
+    <title>Event attendance | PittCSC</title>
     <meta name="robots" content="noindex" />
   </>
 );

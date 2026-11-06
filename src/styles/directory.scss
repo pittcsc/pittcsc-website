@@ -247,16 +247,6 @@
     background-image: radial-gradient(#ffffff2e 1px, transparent 1.5px);
     background-size: 18px 18px;
     box-sizing: border-box;
-
-    a {
-      color: #fff;
-      font-weight: 600;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
   .csc-profile-heading {
     display: flex;

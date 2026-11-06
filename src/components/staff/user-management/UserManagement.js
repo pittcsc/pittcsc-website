@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "gatsby";
 import {
   confirmMessage,
   displayName,
@@ -11,7 +10,6 @@ import {
   rolePath,
   searchPath,
 } from "../../../lib/staff/user-management.mjs";
-import { STAFF_BASE } from "../../../lib/staff/tools.mjs";
 import "../../../styles/staff/user-management.scss";
 import MemberLink from "../../member/MemberLink";
 
@@ -159,9 +157,6 @@ export default function UserManagement({ identity, request, revalidate }) {
 
   return (
     <section className="csc-staff csc-staff-users">
-      <Link to={STAFF_BASE} className="csc-staff-back">
-        ← Staff Dashboard
-      </Link>
       <h1>User Management</h1>
       <form
         className="csc-staff-search"

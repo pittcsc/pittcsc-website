@@ -52,7 +52,7 @@ type PublicMember struct {
 	OffersReferrals    bool    `json:"offersReferrals"`
 	OffersResumeReview bool    `json:"offersResumeReview"`
 	AllTimePoints      int     `json:"allTimePoints"`
-	Rank30Days         *int    `json:"rank30Days"`
+	Rank7Days          *int    `json:"rank7Days"`
 	Complete           bool    `json:"complete"`
 }
 
@@ -176,12 +176,12 @@ func (s Store) PublicMember(ctx context.Context, memberID string, staff bool) (P
 		select c.auth_user_id, sum(c.points_awarded) as points
 		from csc.point_claims c join csc.profiles p on p.auth_user_id = c.auth_user_id
 		join auth.users u on u.id = c.auth_user_id
-		where c.status = 'awarded' and c.awarded_at >= now() - interval '30 days'
+		where c.status = 'awarded' and c.awarded_at >= now() - interval '168 hours'
 		and `+activeMemberSQL+` and `+completeMemberSQL+`
 		group by c.auth_user_id
 	), ranked as (
 		select auth_user_id, rank() over (order by points desc)::integer as rank from scores
-	) select rank from ranked where auth_user_id = $1::uuid`, memberID).Scan(&result.Rank30Days)
+	) select rank from ranked where auth_user_id = $1::uuid`, memberID).Scan(&result.Rank7Days)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return result, nil
 	}

@@ -87,9 +87,7 @@ export default function MemberProfile({ identity, memberID }) {
 
   return (
     <article className="csc-member-profile">
-      <div className="csc-profile-banner">
-        <Link to="/dashboard/members">← Members</Link>
-      </div>
+      <div className="csc-profile-banner" />
       {loading ? (
         <p role="status">Loading profile…</p>
       ) : error ? (
@@ -155,14 +153,14 @@ export default function MemberProfile({ identity, memberID }) {
                   <FontAwesomeIcon icon={faTrophy} />
                 </span>
                 <div>
-                  <h2>30-day leaderboard</h2>
+                  <h2>7-day leaderboard</h2>
                   <p>
                     <strong>
-                      {member.rank30Days ? `#${member.rank30Days}` : "—"}
+                      {member.rank7Days ? `#${member.rank7Days}` : "—"}
                     </strong>
-                    {member.rank30Days === 1
+                    {member.rank7Days === 1
                       ? "Top of the club"
-                      : !member.rank30Days && "Unranked"}
+                      : !member.rank7Days && "Unranked"}
                   </p>
                 </div>
               </div>

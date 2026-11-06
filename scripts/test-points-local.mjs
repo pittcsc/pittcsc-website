@@ -258,7 +258,7 @@ async function main() {
     ).json();
     check(
       memberProfile.allTimePoints === own.allTime &&
-        memberProfile.rank30Days ===
+        memberProfile.rank7Days ===
           board.entries.find((entry) => entry.id === member.id)?.rank &&
         !("claims" in memberProfile),
       "Public points or rank disagreed with leaderboard",

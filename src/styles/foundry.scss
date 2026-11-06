@@ -23,6 +23,13 @@ $foundry-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
     .csc-auth-logo {
       color: $foundry-text;
+
+      img {
+        display: none;
+      }
+      .csc-auth-logo-tile {
+        display: block;
+      }
     }
     .csc-auth-account {
       background: $foundry-text;
