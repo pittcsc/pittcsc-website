@@ -94,14 +94,17 @@ coordinates check-in with cancellation and suspension, and the unique
 `(event_id, auth_user_id)` key makes retries and concurrent submissions return
 the original check-in time. Staff see the count and a paginated roster in event
 details; ordinary members can read only their own check-in state. The roster
-shows name when available, Pitt email, and check-in time. Corrections and
-exports are follow-up work.
+shows name when available, Pitt email, and check-in time. Staff can download the
+full roster as CSV with only **Name** and **Email** columns, including for
+cancelled events. An event with no check-ins exports the header only. Manual
+attendance corrections remain follow-up work.
 
 | Request | Purpose |
 | --- | --- |
 | `GET /attendance/{id}` | Authenticated event title/status and own check-in time; no write |
 | `POST /attendance/{id}` | Explicit authenticated check-in for the verified user |
 | `GET /staff/events/{id}/attendance?page=1` | Staff-only count and 25-person roster page |
+| `GET /staff/events/{id}/attendance.csv` | Staff-only full attendance CSV with name and email |
 
 The `20261009000000_attendance.sql` migration creates private `csc.attendance`
 with RLS and no browser grants. It applies locally with

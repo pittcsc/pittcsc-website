@@ -19,6 +19,7 @@ type eventsStub struct {
 	input           events.Input
 	err             error
 	attendanceCalls int
+	exportRows      []events.AttendanceExportRow
 	memberEvents    events.MemberEvents
 	expenseCalls    int
 	amount          int64
@@ -75,6 +76,11 @@ func (s *eventsStub) Attendance(_ context.Context, id string, page int) (events.
 	s.id = id
 	return events.AttendancePage{Attendees: []events.Attendee{}, Page: page}, s.err
 }
+func (s *eventsStub) AttendanceExport(_ context.Context, id string) ([]events.AttendanceExportRow, error) {
+	s.attendanceCalls++
+	s.id = id
+	return s.exportRows, s.err
+}
 
 const validEventJSON = `{"title":"Workshop","location":"Room 101","start":"2027-01-15T18:00","end":"2027-01-15T19:00","version":0}`
 
@@ -92,7 +98,7 @@ func eventRequest(p *profilesStub, store eventStore, method, path, body, token s
 func TestEventsAuthorizeEveryOperation(t *testing.T) {
 	for _, operation := range []struct{ method, path, body string }{
 		{"GET", "/staff/events", ""}, {"GET", "/staff/events/test", ""}, {"GET", "/staff/events/test/history", ""},
-		{"GET", "/staff/events/test/attendance", ""},
+		{"GET", "/staff/events/test/attendance", ""}, {"GET", "/staff/events/test/attendance.csv", ""},
 		{"PUT", "/staff/events/test", validEventJSON}, {"POST", "/staff/events/test/cancel", `{"version":1}`}, {"POST", "/staff/events/test/sync", ""},
 	} {
 		for mask := 0; mask < 16; mask++ {

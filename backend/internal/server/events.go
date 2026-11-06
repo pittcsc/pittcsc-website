@@ -1,7 +1,9 @@
 package server
 
 import (
+	"bytes"
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"io"
@@ -30,6 +32,34 @@ type attendanceStore interface {
 	CheckInStatus(context.Context, string, string) (events.CheckInStatus, error)
 	CheckIn(context.Context, string, string) (events.CheckInStatus, error)
 	Attendance(context.Context, string, int) (events.AttendancePage, error)
+	AttendanceExport(context.Context, string) ([]events.AttendanceExportRow, error)
+}
+
+func attendanceCSV(rows []events.AttendanceExportRow) ([]byte, error) {
+	var buffer bytes.Buffer
+	writer := csv.NewWriter(&buffer)
+	if err := writer.Write([]string{"Name", "Email"}); err != nil {
+		return nil, err
+	}
+	for _, row := range rows {
+		if err := writer.Write([]string{safeCSVCell(row.Name), safeCSVCell(row.Email)}); err != nil {
+			return nil, err
+		}
+	}
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		return nil, err
+	}
+	return buffer.Bytes(), nil
+}
+
+// Spreadsheet apps may evaluate a cell that starts with a formula marker.
+func safeCSVCell(value string) string {
+	trimmed := strings.TrimLeft(value, " \t\r\n")
+	if trimmed != "" && strings.ContainsRune("=+-@", rune(trimmed[0])) {
+		return "'" + value
+	}
+	return value
 }
 
 func writeEventError(w http.ResponseWriter, err error) {
@@ -139,6 +169,25 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 		}
 		writeJSON(w, result)
 	}))
+	mux.HandleFunc("GET /staff/events/{id}/attendance.csv", guard(func(w http.ResponseWriter, r *http.Request, _ auth.Identity) {
+		if attendance == nil {
+			writeEventError(w, auth.ErrUnavailable)
+			return
+		}
+		rows, err := attendance.AttendanceExport(r.Context(), r.PathValue("id"))
+		if err != nil {
+			writeEventError(w, err)
+			return
+		}
+		data, err := attendanceCSV(rows)
+		if err != nil {
+			writeEventError(w, err)
+			return
+		}
+		w.Header().Set("Content-Type", "text/csv; charset=utf-8")
+		w.Header().Set("Content-Disposition", `attachment; filename="event-attendance.csv"`)
+		w.Write(data)
+	}))
 	mux.HandleFunc("GET /staff/events/{id}/history", guard(func(w http.ResponseWriter, r *http.Request, _ auth.Identity) {
 		var before int64
 		var err error
@@ -229,7 +278,7 @@ func registerEventRoutes(mux *http.ServeMux, frontendOrigin string, authenticati
 			writeJSON(w, result)
 		}))
 	}
-	for _, path := range []string{"/events/upcoming", "/staff/events", "/staff/events/{id}", "/staff/events/{id}/history", "/staff/events/{id}/attendance", "/staff/events/{id}/cancel", "/staff/events/{id}/sync", "/attendance/{id}"} {
+	for _, path := range []string{"/events/upcoming", "/staff/events", "/staff/events/{id}", "/staff/events/{id}/history", "/staff/events/{id}/attendance", "/staff/events/{id}/attendance.csv", "/staff/events/{id}/cancel", "/staff/events/{id}/sync", "/attendance/{id}"} {
 		mux.HandleFunc("OPTIONS "+path, func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	}
 }
