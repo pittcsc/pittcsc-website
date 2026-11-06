@@ -34,7 +34,7 @@ func writeProfileError(w http.ResponseWriter, err error) {
 		w.Header().Set("WWW-Authenticate", "Bearer")
 		writeJSONError(w, http.StatusUnauthorized, "Please sign in again.")
 	case errors.Is(err, profile.ErrSuspended):
-		writeJSONError(w, http.StatusForbidden, "Your account is suspended. Contact Pitt CSC staff.")
+		writeJSONError(w, http.StatusForbidden, "Your account is suspended. Contact PittCSC staff.")
 	case errors.Is(err, profile.ErrIncomplete):
 		writeJSONError(w, http.StatusForbidden, "Complete your name, graduation year, and major in My Account first.")
 	case errors.Is(err, profile.ErrAlumniYear):

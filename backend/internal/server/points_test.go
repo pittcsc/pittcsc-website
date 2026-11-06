@@ -34,7 +34,7 @@ func (s *pointsStub) Mine(_ context.Context, userID string, _ int) (points.Mine,
 }
 func (s *pointsStub) Leaderboard(_ context.Context, userID, period string) (points.Leaderboard, error) {
 	s.userID = userID
-	if period != "all" && period != "30d" {
+	if period != "all" && period != "7d" {
 		return points.Leaderboard{}, points.ErrInvalid
 	}
 	return points.Leaderboard{Period: period, Entries: []points.Standing{}}, nil
@@ -105,11 +105,13 @@ func TestPointClaimsRequireIdentityAndAcceptOnlyAllowedFields(t *testing.T) {
 
 func TestLeaderboardAndModerationAuthorization(t *testing.T) {
 	s := &pointsStub{}
-	if w := pointRequest(nil, s, "GET", "/points/leaderboard?period=30d", "", "valid"); w.Code != 200 || s.userID != "verified-owner" {
+	if w := pointRequest(nil, s, "GET", "/points/leaderboard?period=7d", "", "valid"); w.Code != 200 || s.userID != "verified-owner" {
 		t.Fatal("member leaderboard failed")
 	}
-	if w := pointRequest(nil, s, "GET", "/points/leaderboard?period=year", "", "valid"); w.Code != 400 {
-		t.Fatal("invalid period accepted")
+	for _, period := range []string{"year", "30d"} {
+		if w := pointRequest(nil, s, "GET", "/points/leaderboard?period="+period, "", "valid"); w.Code != 400 {
+			t.Fatalf("invalid period %q accepted", period)
+		}
 	}
 	path := "/staff/points/claims/" + fixtureClaimID + "/revoke"
 	if w := pointRequest(nil, s, "POST", path, `{"reason":"Duplicate"}`, "valid"); w.Code != 403 || s.actorID != "" {

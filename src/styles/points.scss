@@ -197,13 +197,6 @@
   padding-top: 0;
   border-top: 0;
 
-  .csc-points-submissions-heading a {
-    font-weight: 700;
-    color: $acc-navy;
-  }
-  .csc-points-submissions-heading h1 {
-    margin: 1rem 0 0;
-  }
   .csc-points-submissions-heading p {
     margin-top: 0.35rem;
   }
@@ -258,8 +251,10 @@
     border-radius: 0.5rem;
     background: #fff;
   }
+  // Inset so the outline follows the rounded row without shifting the list.
   .csc-points-board li.is-you {
     background: $acc-navy-soft;
+    box-shadow: inset 0 0 0 2px $acc-gold;
     font-weight: 700;
   }
   .csc-points-board li strong {

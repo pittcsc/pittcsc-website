@@ -146,7 +146,6 @@ export default function PointsProfile({
     >
       {submissionsPage ? (
         <div className="csc-points-submissions-heading">
-          <Link to="/dashboard/points">← Points</Link>
           <h1 id="submissions-title">Your submissions</h1>
           <p>Your submitted links, newest first.</p>
         </div>

@@ -17,7 +17,7 @@ screens link to their profiles. My Account includes optional career details,
 help offers, a separate contact email, an explicit sharing choice, and
 self-reported Pitt alumni status. See [profiles](PROFILES.md). Optional details
 remain hidden from other members until their owner shares them.
-Members can submit activity links and see all-time and rolling 30-day top-10
+Members can submit activity links and see all-time and rolling 7-day top-10
 leaderboards at `/dashboard/points`. My Account shows their scores and claim
 history. The full history also has a page linked from Points at
 `/dashboard/points/submissions`. Staff can review and reverse claims at

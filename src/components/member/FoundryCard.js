@@ -64,7 +64,7 @@ export default function FoundryCard({ status }) {
           </span>
         </div>
         <p className="csc-foundry-card-name">{status.name}</p>
-        <p className="csc-foundry-card-role">Pitt CSC member</p>
+        <p className="csc-foundry-card-role">PittCSC member</p>
         <div className="csc-foundry-card-meta">
           <span>{period}</span>
           <span>

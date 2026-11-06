@@ -245,12 +245,15 @@ async function main() {
       "Foundry status incorrect",
     );
     const board = await (
-      await api(member, "/points/leaderboard?period=30d")
+      await api(member, "/points/leaderboard?period=7d")
     ).json();
+    // A tie at 10th can place the member just past the top 10, where the API
+    // reports them as `own` instead; earlier local runs leave such ties behind.
+    const standing = [...board.entries, board.own].find(
+      (entry) => entry?.id === member.id,
+    );
     check(
-      board.entries.some(
-        (entry) => entry.isYou && entry.id === member.id && entry.points === 10,
-      ),
+      standing?.isYou && standing.points === 10,
       "Leaderboard omitted award",
     );
     const memberProfile = await (
@@ -258,8 +261,7 @@ async function main() {
     ).json();
     check(
       memberProfile.allTimePoints === own.allTime &&
-        memberProfile.rank30Days ===
-          board.entries.find((entry) => entry.id === member.id)?.rank &&
+        memberProfile.rank7Days === standing.rank &&
         !("claims" in memberProfile),
       "Public points or rank disagreed with leaderboard",
     );

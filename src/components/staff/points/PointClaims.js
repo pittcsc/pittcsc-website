@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "gatsby";
 import { staffToolPath } from "../../../lib/staff/tools.mjs";
 import MemberLink from "../../member/MemberLink";
 import "../../../styles/staff/points.scss";
@@ -122,9 +121,6 @@ export default function PointClaims({ identity, request }) {
 
   return (
     <section className="csc-staff csc-staff-points">
-      <Link className="csc-staff-back" to="/dashboard/staff">
-        ← Staff Dashboard
-      </Link>
       <h1>Point claims</h1>
       <p>
         Review submitted links, correct mistakes, or reverse invalid awards.

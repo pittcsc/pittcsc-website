@@ -395,7 +395,7 @@ async function main() {
     publicProfile.id === owner.id &&
       publicProfile.name === `Test Member${suffix.slice(0, 8)}` &&
       publicProfile.allTimePoints === 0 &&
-      publicProfile.rank30Days === null &&
+      publicProfile.rank7Days === null &&
       publicProfile.currentCompany === "PNC Bank" &&
       publicProfile.location === "Pittsburgh" &&
       publicProfile.contactEmail === career.contactEmail &&

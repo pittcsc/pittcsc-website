@@ -5,6 +5,8 @@ import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthProvider";
 import { dashboardLinks } from "../../lib/auth/navigation.mjs";
 import logo from "../../images/hero_image.png";
+// White-tile version for dark pages, where the navy panther would disappear.
+import tileLogo from "../../images/icon.svg";
 import "../../styles/auth.scss";
 
 export default function AuthFrame({
@@ -36,7 +38,14 @@ export default function AuthFrame({
         >
           <Link className="csc-auth-logo" to="/">
             <img src={logo} alt="" width={64} height={49} />
-            Pitt CSC
+            <img
+              className="csc-auth-logo-tile"
+              src={tileLogo}
+              alt=""
+              width={44}
+              height={44}
+            />
+            PittCSC
           </Link>
           {links.length > 0 && (
             <button
@@ -80,7 +89,7 @@ export default function AuthFrame({
           <div className="csc-auth-card">
             {!authenticated && (
               <Link className="csc-auth-brand" to="/">
-                Pitt CSC
+                PittCSC
               </Link>
             )}
             {children}

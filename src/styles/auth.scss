@@ -70,6 +70,11 @@
     width: 44px;
     height: auto;
   }
+  // Shown instead of the default logo on dark pages such as Foundry.
+  .csc-auth-logo .csc-auth-logo-tile {
+    display: none;
+    border-radius: 8px;
+  }
 
   .csc-auth-account {
     display: inline-flex;

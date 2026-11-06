@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link, navigate } from "gatsby";
+import { navigate } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import {
   formFromProfile,
   profileInput,
   HANDLES,
+  pastedHandle,
   MAJOR_OPTIONS,
 } from "../../lib/account/form.mjs";
 import AccountFiles from "./AccountFiles";
@@ -184,6 +185,12 @@ function HandleFields({ form, change }) {
           placeholder={spec.placeholder}
           value={form[field]}
           onChange={(event) => change(field, event.target.value)}
+          onPaste={(event) => {
+            const handle = pastedHandle(event.clipboardData.getData("text"));
+            if (handle === null) return;
+            event.preventDefault();
+            change(field, handle);
+          }}
         />
       </div>
     </div>
@@ -566,9 +573,6 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
 
   return (
     <div className={`csc-account${guided === false ? " csc-account--editor" : ""}`}>
-      <Link to="/dashboard" className="csc-account-back">
-        ← Dashboard
-      </Link>
       <h1>My Account</h1>
       <p>Your club profile. You can save your progress at any time.</p>
       {loading ? (

@@ -92,7 +92,7 @@ export function createAuthStore({ getClient, fetchIdentity }) {
         publish(
           "error",
           null,
-          "Your account is suspended. Contact Pitt CSC staff.",
+          "Your account is suspended. Contact PittCSC staff.",
         );
       } else {
         publish(

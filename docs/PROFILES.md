@@ -102,7 +102,7 @@ file references. Ownership always comes from the verified identity. Responses us
 | `PUT /profile/avatar`, `PUT /profile/resume` | Validate and replace own file from a raw binary request body |
 | `DELETE /profile/avatar`, `DELETE /profile/resume` | Remove own file; repeated removal succeeds |
 | `GET /members?q=&company=&alumni=1&page=1` | Paginated active, completed directory; optional name, case-insensitive partial current-company, and alumni filters combine with AND |
-| `GET /members/{id}` | Member profile with name, majors, year, optional handles/career details/help offers, alumni label, all-time points, and 30-day rank |
+| `GET /members/{id}` | Member profile with name, majors, year, optional handles/career details/help offers, alumni label, all-time points, and 7-day rank |
 | `GET /members/{id}/avatar` | Authenticated avatar bytes for an eligible profile |
 
 These member endpoints require the viewer's completed active account. Staff can
