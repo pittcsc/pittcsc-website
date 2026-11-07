@@ -334,3 +334,9 @@ Data API access is disabled while Auth remains enabled. After changing
 `supabase/config.toml`, stop and restart local Supabase to load settings. See
 [AUTH.md](AUTH.md) and [PROFILES.md](PROFILES.md) for fixtures, checks, and the
 separate hosted rollout requirements.
+
+## Email campaigns
+
+Staff can use **Email studio** to manage contacts, import CSV lists, build shared autosaved drafts, and send or schedule campaigns. [CAMPAIGNS.md](CAMPAIGNS.md) describes the workflows and delivery recovery; [SES setup](CAMPAIGNS-SES-SETUP.md) covers sender-domain and hosted worker configuration. Delivery defaults to disabled, independently of login OTP mail. Set `CAMPAIGN_MAIL_MODE=local` on the API and worker to use loopback Mailpit for development.
+
+Run `mise run email:worker` to process due work once. A hosted scheduler must run this job regularly; browser closure does not cancel queued sends. `mise run test:email` exercises local APIs and database delivery with synthetic identities and a fake provider. It requires local Supabase and Go, supports `TEST_MAIL_URL` for an isolated local stack, and leaves synthetic data for inspection. Never repair/reset an existing local database to resolve a different checkout's migration history: use a separate local project instead.

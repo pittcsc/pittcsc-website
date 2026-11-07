@@ -18,6 +18,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
+	"github.com/pittcsc/pittcsc-website/backend/internal/campaigns"
 	"github.com/pittcsc/pittcsc-website/backend/internal/events"
 	"github.com/pittcsc/pittcsc-website/backend/internal/points"
 	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
@@ -85,11 +86,20 @@ func run() error {
 		return err
 	}
 
+	mail, err := campaigns.NewTransport(context.Background())
+	if err != nil {
+		return err
+	}
+	publicURL := envOr("CAMPAIGN_PUBLIC_URL", "http://localhost:8080")
+	if err := campaigns.ValidatePublicURL(publicURL, os.Getenv("CAMPAIGN_MAIL_MODE")); err != nil {
+		return err
+	}
+	emailStore := &campaigns.Store{DB: pool, Transport: mail, PublicURL: publicURL, TopicARN: os.Getenv("CAMPAIGN_SNS_TOPIC_ARN")}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	api := &http.Server{
 		Addr:              net.JoinHostPort(host, port),
-		Handler:           server.NewHandler(pool, frontendOrigin, verifier, profile.Store{DB: pool}, roles.Store{DB: pool}, eventStore, points.Store{DB: pool}),
+		Handler:           server.NewHandlerWithCampaigns(pool, frontendOrigin, verifier, profile.Store{DB: pool}, roles.Store{DB: pool}, eventStore, emailStore, points.Store{DB: pool}),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      30 * time.Second,

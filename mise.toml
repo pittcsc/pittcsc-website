@@ -63,3 +63,11 @@ run = "node scripts/test-events-local.mjs"
 [tasks."test:points"]
 description = "Test local points API, leaderboard, and moderation with synthetic accounts (API must be running)"
 run = "node scripts/test-points-local.mjs"
+
+[tasks."test:email"]
+description = "Test local email APIs and durable delivery with synthetic accounts and a fake provider"
+run = "node scripts/test-email-local.mjs"
+
+[tasks."email:worker"]
+description = "Process due campaign mail once using the configured backend transport"
+run = "cd backend && go run ./cmd/campaign-worker"
