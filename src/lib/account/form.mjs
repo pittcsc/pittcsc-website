@@ -34,8 +34,12 @@ export const HANDLES = {
 
 export const MAJOR_OPTIONS = [
   "Computer Science",
+  "Computational Biology",
   "Information Science",
   "Data Science",
+  "Digital Narrative and Interactive Design",
+  "Physics and Quantum Computing",
+  "Computational Social Science",
   "Computer Engineering",
 ];
 
