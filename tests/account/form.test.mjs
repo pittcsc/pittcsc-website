@@ -13,7 +13,7 @@ test("major choices preserve custom and multiple existing majors", () => {
     "Computational Biology",
     "Information Science",
     "Data Science",
-    "Digital Narrative and Interaction Design",
+    "Digital Narrative and Interactive Design",
     "Physics and Quantum Computing",
     "Computational Social Science",
     "Computer Engineering",
