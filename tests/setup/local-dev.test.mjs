@@ -146,3 +146,15 @@ test("Node and Go version pins stay aligned", () => {
   );
   assert.equal(read("backend/go.mod").match(/^go (.+)$/m)[1], versions.golang);
 });
+
+test("Netlify applies browser security headers", () => {
+  const config = readFileSync(
+    new URL("../../netlify.toml", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(config, /Content-Security-Policy\s*=/);
+  assert.match(config, /Permissions-Policy\s*=/);
+  assert.match(config, /object-src 'none'/);
+  assert.match(config, /frame-ancestors 'none'/);
+});

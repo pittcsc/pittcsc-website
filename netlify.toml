@@ -6,6 +6,12 @@ package = "@netlify/plugin-gatsby"
   NODE_VERSION = "22.23.4"
   NPM_FLAGS = "--legacy-peer-deps"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.google-analytics.com https://static.hotjar.com https://script.hotjar.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-src https://accounts.google.com https://calendar.google.com https://www.youtube.com https://vars.hotjar.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests"
+    Permissions-Policy = "camera=(), geolocation=(), microphone=(), payment=(), usb=()"
+
 [[redirects]]
   from = "/initiatives/offer-plus"
   to = "/initiatives/foundry"

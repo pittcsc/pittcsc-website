@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
+import { isSecurePointURL } from "../../lib/points/validation.mjs";
 import "../../styles/points.scss";
 
 const dateLabel = (value) =>
@@ -138,6 +139,8 @@ export default function PointsProfile({
       ? data.claims
       : data.claims.slice(0, 3)
     : [];
+  const hasURL = url.trim().length > 0;
+  const validURL = isSecurePointURL(url);
 
   return (
     <section
@@ -244,15 +247,25 @@ export default function PointsProfile({
                     placeholder="https://…"
                     maxLength={2048}
                     value={url}
+                    aria-invalid={hasURL && !validURL}
+                    aria-describedby={
+                      hasURL && !validURL ? "point-url-error" : undefined
+                    }
                     onChange={(event) => {
                       setURL(event.target.value);
                       setAffirmed(false);
                     }}
                     required
                   />
+                  {hasURL && !validURL && (
+                    <p id="point-url-error" className="csc-points-field-error">
+                      Enter a public HTTPS link without a username, password, or
+                      custom port.
+                    </p>
+                  )}
                 </div>
               </div>
-              {url.trim().length > 0 && (
+              {hasURL && (
                 <label className="csc-points-affirm">
                   <input
                     type="checkbox"
@@ -264,7 +277,10 @@ export default function PointsProfile({
                   is mine, and the link is public where required.
                 </label>
               )}
-              <button type="submit" disabled={busy || !category}>
+              <button
+                type="submit"
+                disabled={busy || !category || !validURL || !affirmed}
+              >
                 {busy ? "Saving…" : "Submit link"}
               </button>
             </form>
