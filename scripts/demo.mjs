@@ -4,7 +4,7 @@
 // keys, tokens, or raw `supabase status` output, and preserves existing env
 // files and database data. Accounts are created through Auth and roles through
 // the audited grant-staff command, never by editing managed tables.
-import { spawn, spawnSync, execFileSync } from "node:child_process";
+import { spawnSync, execFileSync } from "node:child_process";
 import { createServer, connect } from "node:net";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 import { parse } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
+import { launchTracked, registerProcess } from "./dev-processes.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const MAIL_URL = "http://127.0.0.1:54324";
@@ -75,12 +76,7 @@ function sql(query) {
 }
 
 function launch(command, args, env = {}) {
-  return spawn(command, args, {
-    cwd: root,
-    stdio: "inherit",
-    detached: true,
-    env: { ...process.env, ...env },
-  });
+  return launchTracked(command, args, env);
 }
 
 function finished(child) {
@@ -194,13 +190,11 @@ async function ensureSupabase() {
     console.log("Reusing the local Supabase already running");
     return existing;
   }
-  const started = spawnSync(
-    process.execPath,
-    ["scripts/local-dev.mjs", "start"],
-    { cwd: root, stdio: "inherit" },
+  const started = await finished(
+    launch(process.execPath, ["scripts/local-dev.mjs", "start"]),
   );
   check(
-    !started.error && started.status === 0,
+    !started.error && started.code === 0,
     "Local Supabase did not start. Make sure Docker is running and check the output above.",
   );
   return readLocalConfig();
@@ -514,11 +508,17 @@ if (
   process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
+  const unregister =
+    process.argv[2] === "code"
+      ? () => {}
+      : registerProcess({ kind: "supervisor", script: "demo.mjs" });
   try {
     process.exitCode = (await main(process.argv.slice(2))) || 0;
   } catch (error) {
     // Message only: SDK errors and responses can carry private payloads.
     console.error(`Demo setup failed at ${stage}: ${error.message}`);
     process.exitCode = 1;
+  } finally {
+    unregister();
   }
 }
