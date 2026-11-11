@@ -78,6 +78,7 @@ package export. Google delivery defaults to disabled for local development.
 | Command | Purpose |
 | --- | --- |
 | `mise run dev` | Start local Supabase, Gatsby, and Go together; stop all with Ctrl+C |
+| `mise run dev:stop` | Recover/stop managed dev and demo servers plus this project's Supabase; preserve database data |
 | `mise run setup` | Reinstall locked dependencies after cloning or dependency changes |
 | `mise run db:start` | Start only Supabase and create any missing env files |
 | `mise run db:stop` | Stop Supabase, preserving local data |
@@ -101,6 +102,29 @@ needs a restart after backend code changes.
 
 For frontend-only work without Docker: `mise exec -- npm ci --legacy-peer-deps`,
 then `mise exec -- npm run develop`. The public site does not need the new API.
+
+### Development cleanup
+
+Run `mise run dev:stop` to clean up after a dev/demo session, including an agent
+session that exited unexpectedly. Repeated calls are safe. The command stops
+verified processes recorded by `mise run dev` and `mise run demo`, then stops
+this checkout's Supabase project without discarding database data. Ownership
+records under gitignored `.dev-processes/` include process start times and
+identity markers so stale records/reused PIDs do not authorize stopping an
+unrelated process. Nothing is killed merely because it uses a development port.
+
+Servers launched directly with npm, separate-server tasks, or older versions of
+the scripts are not tracked; stop those in their original terminal. Supabase
+uses the project ID in `supabase/config.toml`, which can be shared by multiple
+checkouts, so whole-stack cleanup should only run when other sessions are done
+using that database. Agents must clean up stacks they start before handoff;
+services already running before their session must be preserved.
+
+If Docker is unavailable, application server cleanup still runs, but the command
+reports failure because Supabase cannot be inspected or stopped. Start Docker
+Desktop and rerun `mise run dev:stop`. This command does not start Docker or reset
+the database. A force-killed agent cannot execute handoff instructions; run this
+command yourself to recover its recorded servers.
 
 ## Local configuration details
 

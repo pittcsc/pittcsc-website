@@ -2,6 +2,7 @@ import { execFileSync, spawn } from "node:child_process";
 import { connect } from "node:net";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { launchTracked, registerProcess } from "./dev-processes.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -46,7 +47,7 @@ export async function ensureDevelopmentPortsAvailable(
 }
 
 function launch(command, args) {
-  return spawn(command, args, { cwd: root, stdio: "inherit", detached: true });
+  return launchTracked(command, args);
 }
 
 function finished(child) {
@@ -86,7 +87,11 @@ export async function supervise({
   startLocal = () =>
     launch(process.execPath, ["scripts/local-dev.mjs", "start"]),
   stopLocal = () =>
-    launch(resolve(root, "node_modules/.bin/supabase"), ["stop"]),
+    spawn(resolve(root, "node_modules/.bin/supabase"), ["stop"], {
+      cwd: root,
+      stdio: "inherit",
+      detached: true,
+    }),
   startServers = () => [
     launch("npm", ["run", "develop"]),
     launch("npm", ["run", "dev:api"]),
@@ -168,6 +173,7 @@ if (
   }).trim();
   console.log(`Checkout: ${branch} at ${root}`);
   console.log("Website: http://localhost:8000/");
+  const unregister = registerProcess({ kind: "supervisor", script: "dev.mjs" });
   supervise()
     .then((code) => {
       process.exitCode = code;
@@ -175,5 +181,6 @@ if (
     .catch((error) => {
       console.error(`Development startup failed: ${error.message}`);
       process.exitCode = 1;
-    });
+    })
+    .finally(unregister);
 }

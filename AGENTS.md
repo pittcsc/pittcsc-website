@@ -24,6 +24,13 @@
   missing env files. It preserves existing env files and does not reset the database.
 - `mise run dev` starts Supabase, Gatsby, and Go. Docker must be running.
   See CONTRIBUTING.md for separate-server commands and local addresses.
+- Agents should use `mise run dev` or `mise run demo` for managed servers.
+  If you started the local stack, run `mise run dev:stop` before the final handoff,
+  including after failed checks. It preserves database data. Preserve services
+  that predated your session: if sharing an existing stack, do not run whole-stack
+  cleanup; stop only your own additions. Report cleanup failures or services the
+  user explicitly asked you to leave running. See
+  [development cleanup](docs/DEVELOPMENT.md#development-cleanup).
 - Use npm and the existing `package-lock.json`; do not introduce another package
   manager or regenerate lockfiles as unrelated cleanup.
 - Keep changes scoped to the requested issue. Preserve unrelated worktree changes.

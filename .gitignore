@@ -16,3 +16,6 @@ supabase/signing_keys.json
 
 # Local agent/editor session config
 .claude/
+
+# Per-checkout development process ownership records.
+.dev-processes/
