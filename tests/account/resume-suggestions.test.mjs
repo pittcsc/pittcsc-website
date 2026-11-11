@@ -105,6 +105,35 @@ test("does not manufacture names or data from an empty or non-profile document",
     {},
   );
 });
+
+test("does not treat a current education start year as graduation", () => {
+  assert.equal(
+    parse("Jordan Lee\nEducation\nComputer Science\n2024 - Present")
+      .graduationYear,
+    undefined,
+  );
+});
+
+test("recognizes either explicit company/title order and skips ambiguous employment", () => {
+  for (const line of [
+    "Example Labs | Software Engineer | 2024 - Present",
+    "Software Engineer | Example Labs | 2024 - Present",
+  ]) {
+    const result = parse(`Jordan Lee\nExperience\n${line}`);
+    assert.equal(result.currentCompany, "Example Labs");
+    assert.equal(result.jobTitle, "Software Engineer");
+  }
+  assert.equal(
+    parse("Jordan Lee\nExperience\nOne | Two | 2024 - Present").currentCompany,
+    undefined,
+  );
+});
+
+test("plain portfolio domains are recognized without mistaking email domains for websites", () => {
+  const result = parse("Jordan Lee\njordan@example.com | jordan.dev");
+  assert.equal(result.personalWebsite, "https://jordan.dev/");
+  assert.equal(result.contactEmail, "jordan@example.com");
+});
 test("filters individual invalid suggestions and never accepts privilege or preference fields", () => {
   assert.deepEqual(
     validResumeSuggestions(

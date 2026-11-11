@@ -93,7 +93,7 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
     header
       .join(" ")
       .match(
-        /(?:https?:\/\/|www\.)[^\s|<>]+|(?:[a-z0-9-]+\.)+[a-z]{2,}\/[\w./?=#%-]*/gi,
+        /(?:https?:\/\/|www\.)[^\s|<>]+|(?<![\w@.-])(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[\w./?=#%-]*)?/gi,
       ) || [];
   const candidates = {};
   for (const raw of [...textURLs, ...links]) {
@@ -175,6 +175,7 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
   ].map((match) => match[1]);
   const endYears = sections.education
     .map((line) => {
+      if (/\b(present|current)\b/i.test(line)) return undefined;
       const years = line.match(/\b(?:19|20)\d{2}\b/g);
       return years?.at(-1);
     })
@@ -187,6 +188,10 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
     result.graduationYear = years[0];
 
   const currentRoles = [];
+  const isTitle = (value) =>
+    /\b(engineer|developer|intern|analyst|manager|assistant|researcher|designer|consultant|founder|president|director)\b/i.test(
+      value,
+    );
   sections.work.forEach((line, index) => {
     if (!/\b(present|current)\b/i.test(line)) return;
     const beforeDate = line
@@ -202,9 +207,12 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
       });
     else {
       const parts = beforeDate.split(/\s*[|•]\s*/).filter(Boolean);
-      if (parts.length === 2)
-        currentRoles.push({ jobTitle: parts[0], currentCompany: parts[1] });
-      else if (!beforeDate && index >= 2) {
+      if (parts.length === 2 && isTitle(parts[0]) !== isTitle(parts[1])) {
+        const [title, company] = isTitle(parts[0])
+          ? parts
+          : [...parts].reverse();
+        currentRoles.push({ jobTitle: title, currentCompany: company });
+      } else if (!beforeDate && index >= 2) {
         const company = sections.work[index - 2];
         const title = sections.work[index - 1];
         if (
@@ -218,7 +226,12 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
       }
     }
   });
-  if (currentRoles.length === 1) Object.assign(result, currentRoles[0]);
+  if (
+    currentRoles.length === 1 &&
+    sections.work.filter((line) => /\b(present|current)\b/i.test(line))
+      .length === 1
+  )
+    Object.assign(result, currentRoles[0]);
   if (sections.summary.length) result.bio = sections.summary.join("\n");
   return validResumeSuggestions(result, signInEmail);
 }
