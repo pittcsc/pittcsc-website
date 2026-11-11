@@ -91,11 +91,17 @@ bio. They use the existing manual-entry validation. Ambiguous values may be
 omitted, and unidentified fields never clear existing values. Preferred name,
 help offers, sharing, alumni status, roles, and login identity are not inferred.
 
-If any changed input is already populated, including unsaved edits, a confirmation
-panel lists the proposed values before applying them. **Cancel** preserves the
-form; **Confirm autofill** replaces only the identified inputs. Empty inputs can
-be filled without a replacement prompt. Autofill only edits the draft: members
-must review it and click **Save profile** to persist changes. Replacing/removing
+Every successful extraction opens an editable **Review resume autofill** modal,
+including when profile inputs are empty or already match the resume. Each
+suggestion has an inclusion checkbox and an editable input. Members can correct
+names or other values, uncheck suggestions, or leave inputs blank to skip them;
+none of those skipped values clear existing profile information. Majors are
+edited one per line. Included edits use the existing profile validation and show
+field-specific errors before applying. **Cancel** or Escape preserves the form;
+**Apply selected** replaces only the included, nonblank inputs. Native modal focus
+containment prevents editing the underlying page until the modal closes and
+returns focus to the autofill button. Autofill only edits the draft: members
+must click **Save profile** to persist changes. Replacing/removing
 the saved resume invalidates pending suggestions. Download/parse failures retain
 the draft and allow another attempt; logout/unmount cancels pending work.
 
@@ -105,7 +111,11 @@ existing 10 MiB file limit. It does not perform OCR or guarantee accuracy on
 multi-column/unusual layouts. Scanned, password-protected, unreadable, or overly
 long PDFs produce feedback and leave manual editing available. Resume text and
 hyperlink annotations are treated as input data, not instructions or executable
-content; no linked websites are fetched by the parser.
+content; no linked websites are fetched by the parser. Career extraction supports
+explicit company/title/location labels, location alongside header contact links,
+inline summary sections, and current work roles split across neighboring lines.
+Leading middle initials are omitted from the suggested last name. These remain
+editable suggestions, not verified employment or identity information.
 
 ## Storage and authorization
 
@@ -184,11 +194,13 @@ majors, reload the nested URL, and upload/replace/remove both files. Check narro
 screens, retries, and logout while requests are pending.
 
 For resume autofill, upload a synthetic text PDF, confirm the button appears,
-and exercise cancellation and confirmation with populated/unsaved fields. Check
+and exercise cancellation and application with populated/unsaved fields. Edit a
+suggested name, uncheck a suggestion, leave another blank, and verify that invalid
+selected edits prevent application until corrected or excluded. Check
 that unidentified fields survive, custom majors stay editable, and only **Save
 profile** persists the result. Repeat after reloading, replacing, and removing
 the resume; also check an unreadable/scanned PDF, download failure/retry,
-keyboard focus through the confirmation panel, and mobile width. The focused
+keyboard focus/Tab containment and Escape in the modal, and mobile width. The focused
 `tests/account/resume-*.test.mjs` tests run in `mise run check` and cover actual
 PDF text extraction, mapping/validation, confirmation, retries, duplicate clicks,
 and cancellation without requiring hosted services.

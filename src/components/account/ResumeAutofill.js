@@ -1,5 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { resumeChanges } from "../../lib/account/resume/suggestions.mjs";
+import React, { useEffect, useId, useRef, useState } from "react";
+import {
+  RESUME_FIELDS,
+  resumeChanges,
+  reviewResumeSuggestions,
+} from "../../lib/account/resume/suggestions.mjs";
 
 async function parseSavedResume(blob, email, signal) {
   const [{ readResumePDF }, { suggestResumeProfile }] = await Promise.all([
@@ -21,30 +25,58 @@ export default function ResumeAutofill({
   parseResume = parseSavedResume,
 }) {
   const [busy, setBusy] = useState(false);
-  const [suggestions, setSuggestions] = useState(null);
+  const [review, setReview] = useState(null);
+  const [validate, setValidate] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const controller = useRef(null);
   const button = useRef(null);
-  const confirmation = useRef(null);
+  const dialog = useRef(null);
   const restoreFocus = useRef(false);
+  const id = useId();
+  const reviewing = review !== null;
   useEffect(() => () => controller.current?.abort(), []);
   useEffect(() => {
-    if (suggestions) confirmation.current?.focus();
-    else if (!busy && restoreFocus.current) {
+    if (!reviewing) return;
+    const modal = dialog.current;
+    modal?.showModal();
+    const body = typeof document !== "undefined" ? document.body : null;
+    const overflow = body?.style.overflow;
+    if (body) body.style.overflow = "hidden";
+    return () => {
+      modal?.close();
+      if (body) body.style.overflow = overflow;
+    };
+  }, [reviewing]);
+  useEffect(() => {
+    if (!reviewing && !busy && restoreFocus.current) {
       button.current?.focus();
       restoreFocus.current = false;
     }
-  }, [suggestions, busy]);
+  }, [reviewing, busy]);
 
-  const changes = suggestions ? resumeChanges(form, suggestions) : [];
+  const { values, errors } = reviewResumeSuggestions(review || {}, email);
+  const hasSelection = Object.keys(values).length || Object.keys(errors).length;
 
-  function apply(values, fields) {
-    onApply(values);
+  function dismiss() {
     restoreFocus.current = true;
-    setSuggestions(null);
+    setReview(null);
+    setNotice("Autofill canceled. Your profile has not changed.");
+  }
+
+  function apply(event) {
+    event.preventDefault();
+    if (disabled || !hasSelection) return;
+    setValidate(true);
+    if (Object.keys(errors).length) return;
+    const changes = resumeChanges(form, values);
+    if (changes.length) onApply(values);
+    restoreFocus.current = true;
+    setReview(null);
     setNotice(
-      `Autofilled: ${fields.map(({ label }) => label).join(", ")}. Review your changes and click Save profile.`,
+      changes.length
+        ? `Autofilled: ${changes.map(({ label }) => label).join(", ")}. Review your changes and click Save profile.`
+        : "The selected values already match your profile. No changes were made.",
     );
   }
 
@@ -56,26 +88,32 @@ export default function ResumeAutofill({
     onBusyChange(true);
     setError("");
     setNotice("");
-    setSuggestions(null);
+    setReview(null);
+    setValidate(false);
     try {
       const blob = await request("/profile/resume", {
         userID,
         signal: current.signal,
         responseType: "blob",
       });
-      const values = await parseResume(blob, email, current.signal);
+      const suggestions = await parseResume(blob, email, current.signal);
       current.signal.throwIfAborted();
-      const fields = resumeChanges(form, values);
-      if (!Object.keys(values).length)
+      const entries = Object.keys(RESUME_FIELDS)
+        .filter((field) => Object.hasOwn(suggestions, field))
+        .map((field) => [
+          field,
+          {
+            selected: true,
+            text: Array.isArray(suggestions[field])
+              ? suggestions[field].join("\n")
+              : String(suggestions[field]),
+          },
+        ]);
+      if (!entries.length)
         setNotice(
           "No supported profile fields could be identified. You can edit your profile manually.",
         );
-      else if (!fields.length)
-        setNotice(
-          "Your profile already matches the fields identified in this resume.",
-        );
-      else if (fields.some(({ replaces }) => replaces)) setSuggestions(values);
-      else apply(values, fields);
+      else setReview(Object.fromEntries(entries));
     } catch (failure) {
       if (!current.signal.aborted)
         setError(
@@ -91,66 +129,118 @@ export default function ResumeAutofill({
     }
   }
 
+  function change(field, update) {
+    setReview((current) => ({
+      ...current,
+      [field]: { ...current[field], ...update },
+    }));
+  }
+
   return (
     <div className="csc-resume-autofill" aria-busy={busy}>
       <button
         ref={button}
         type="button"
         className="csc-auth-secondary"
-        disabled={disabled || busy || !!suggestions}
+        disabled={disabled || busy || reviewing}
         onClick={autofill}
       >
         {busy ? "Reading resume…" : "Autofill from resume"}
       </button>
-      <p className="csc-account-file-help">
-        Reads your saved PDF in this browser. Best with single-column English
-        resumes. Changes are not saved automatically.
-      </p>
       {busy && <p role="status">Reading your saved resume…</p>}
-      {suggestions && (
-        <section
-          ref={confirmation}
-          tabIndex={-1}
-          className="csc-resume-confirm"
-          aria-label="Confirm resume autofill"
+      {reviewing && (
+        <dialog
+          ref={dialog}
+          className="csc-resume-modal"
+          aria-labelledby={`${id}-title`}
+          aria-describedby={`${id}-help`}
+          onCancel={(event) => {
+            event.preventDefault();
+            dismiss();
+          }}
         >
-          <h3>Replace profile information?</h3>
-          <p>
-            Autofill will replace the listed fields, including any unsaved
-            edits. Fields not identified in your resume will stay unchanged.
-          </p>
-          <dl>
-            {changes.map(({ field, label, value, replaces }) => (
-              <div key={field}>
-                <dt>
-                  {label}
-                  {replaces ? " (replace)" : " (fill)"}
-                </dt>
-                <dd>{Array.isArray(value) ? value.join(", ") : value}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="csc-account-file-actions">
-            <button
-              type="button"
-              disabled={disabled || !changes.length}
-              onClick={() => apply(suggestions, changes)}
-            >
-              Confirm autofill
-            </button>
-            <button
-              type="button"
-              className="csc-auth-secondary"
-              onClick={() => {
-                restoreFocus.current = true;
-                setSuggestions(null);
-                setNotice("Autofill canceled. Your profile has not changed.");
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </section>
+          <form onSubmit={apply} noValidate>
+            <header>
+              <h2 id={`${id}-title`}>Review resume autofill</h2>
+              <p id={`${id}-help`}>
+                Edit the suggestions and choose what to include. Unchecked or
+                blank fields stay unchanged.
+              </p>
+            </header>
+            <div className="csc-resume-suggestions">
+              {Object.entries(review).map(([field, entry]) => {
+                const label = RESUME_FIELDS[field];
+                const inputID = `${id}-${field}`;
+                const inputProps = {
+                  id: inputID,
+                  value: entry.text,
+                  disabled: !entry.selected,
+                  onChange: (event) =>
+                    change(field, { text: event.target.value }),
+                  "aria-invalid": validate && !!errors[field],
+                  "aria-describedby": `${inputID}-hint${validate && errors[field] ? ` ${inputID}-error` : ""}`,
+                };
+                return (
+                  <div className="csc-resume-suggestion" key={field}>
+                    <label className="csc-resume-choice">
+                      <input
+                        type="checkbox"
+                        checked={entry.selected}
+                        onChange={(event) =>
+                          change(field, { selected: event.target.checked })
+                        }
+                        aria-label={`Include ${label.toLowerCase()}`}
+                      />
+                      <span>Include {label.toLowerCase()}</span>
+                    </label>
+                    <label htmlFor={inputID}>{label}</label>
+                    {field === "bio" || field === "majors" ? (
+                      <textarea
+                        {...inputProps}
+                        rows={field === "bio" ? 4 : 2}
+                      />
+                    ) : (
+                      <input
+                        {...inputProps}
+                        type={field === "contactEmail" ? "email" : "text"}
+                        inputMode={
+                          field === "graduationYear" ? "numeric" : undefined
+                        }
+                      />
+                    )}
+                    <p className="csc-account-file-help" id={`${inputID}-hint`}>
+                      {field === "majors" ? "One major per line. " : ""}
+                      {(
+                        Array.isArray(form[field])
+                          ? form[field].some(Boolean)
+                          : !!form[field]
+                      )
+                        ? "Replaces your current value if included."
+                        : "Fills this field if included."}
+                    </p>
+                    {validate && errors[field] && (
+                      <p role="alert" id={`${inputID}-error`}>
+                        {errors[field]}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <footer className="csc-account-file-actions">
+              <button type="submit" disabled={disabled || !hasSelection}>
+                Apply selected
+              </button>
+              <button
+                type="button"
+                className="csc-auth-secondary"
+                onClick={dismiss}
+              >
+                Cancel
+              </button>
+            </footer>
+          </form>
+        </dialog>
       )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}

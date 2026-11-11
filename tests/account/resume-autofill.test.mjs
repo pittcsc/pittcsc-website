@@ -29,6 +29,16 @@ const button = (node, label) =>
   node.root
     .findAllByType("button")
     .find((entry) => entry.children.join("") === label);
+const submit = (view) =>
+  view.root.findByType("form").props.onSubmit({ preventDefault() {} });
+const input = (view, field) =>
+  view.root.findAll(
+    (entry) =>
+      entry.props.id?.endsWith(`-${field}`) &&
+      ["input", "textarea"].includes(entry.type),
+  )[0];
+const checkbox = (view, label) =>
+  view.root.findByProps({ "aria-label": `Include ${label}` });
 
 async function fixture(overrides = {}) {
   const applied = [];
@@ -60,7 +70,8 @@ test("requires confirmation before replacing populated inputs, cancel preserves 
     await button(view, "Autofill from resume").props.onClick();
   });
   assert.equal(applied.length, 0);
-  assert.match(text(view), /Replace profile information/);
+  assert.match(text(view), /Review resume autofill/);
+  assert.equal(view.root.findAllByType("dialog").length, 1);
   assert.match(text(view), /First name/);
   assert.equal(requests[0][0], "/profile/resume");
   assert.equal(requests[0][1].userID, "verified-owner");
@@ -75,23 +86,25 @@ test("requires confirmation before replacing populated inputs, cancel preserves 
     await button(view, "Autofill from resume").props.onClick();
   });
   await act(async () => {
-    button(view, "Confirm autofill").props.onClick();
+    submit(view);
   });
   assert.deepEqual(applied, [{ firstName: "Jordan", githubUsername: "jlee" }]);
   assert.match(text(view), /click Save profile/);
   assert.equal(requests.length, 2); // No profile save request is issued.
   await act(async () => view.unmount());
 });
-test("fills empty inputs without a replacement prompt", async () => {
+test("empty profiles also review editable suggestions before anything is applied", async () => {
   const { view, applied } = await fixture({ form: formFromProfile({}) });
   await act(async () => {
     await button(view, "Autofill from resume").props.onClick();
   });
+  assert.equal(applied.length, 0);
+  assert.match(text(view), /Review resume autofill/);
+  await act(async () => submit(view));
   assert.equal(applied.length, 1);
-  assert.doesNotMatch(text(view), /Replace profile information/);
   await act(async () => view.unmount());
 });
-test("confirmation reflects edits made while reviewing suggestions", async () => {
+test("the review stays editable if the underlying form changes", async () => {
   const { view, props } = await fixture();
   await act(async () => {
     await button(view, "Autofill from resume").props.onClick();
@@ -104,7 +117,7 @@ test("confirmation reflects edits made while reviewing suggestions", async () =>
       }),
     );
   });
-  assert.doesNotMatch(text(view), /First name/);
+  assert.match(text(view), /First name/);
   assert.match(text(view), /GitHub/);
   await act(async () => view.unmount());
 });
@@ -158,10 +171,10 @@ test("logout/unmount aborts pending work and never applies late results", async 
   });
   assert.equal(applied.length, 0);
 });
-test("empty and unchanged parse results give useful feedback without changing the form", async () => {
+test("empty results give feedback and matching results can still be reviewed and edited", async () => {
   for (const [result, message] of [
     [{}, /No supported profile fields/],
-    [{ firstName: "Existing" }, /already matches/],
+    [{ firstName: "Existing" }, /Review resume autofill/],
   ]) {
     const { view, applied } = await fixture({
       parseResume: async () => result,
@@ -173,4 +186,80 @@ test("empty and unchanged parse results give useful feedback without changing th
     assert.match(text(view), message);
     await act(async () => view.unmount());
   }
+});
+
+test("members can correct a name, exclude a suggestion, and blank another without clearing the profile", async () => {
+  const { view, applied } = await fixture({
+    parseResume: async () => ({
+      lastName: "Q. Example",
+      githubUsername: "jlee",
+      currentCompany: "Example Labs",
+      bio: "Suggested bio",
+    }),
+  });
+  await act(async () => {
+    await button(view, "Autofill from resume").props.onClick();
+  });
+  await act(async () =>
+    input(view, "lastName").props.onChange({ target: { value: "Example" } }),
+  );
+  await act(async () =>
+    checkbox(view, "github").props.onChange({ target: { checked: false } }),
+  );
+  assert.equal(input(view, "githubUsername").props.disabled, true);
+  await act(async () =>
+    input(view, "currentCompany").props.onChange({ target: { value: "  " } }),
+  );
+  await act(async () => submit(view));
+  assert.deepEqual(applied, [{ lastName: "Example", bio: "Suggested bio" }]);
+  assert.doesNotMatch(text(view), /Reads your saved PDF/);
+  await act(async () => view.unmount());
+});
+
+test("invalid selected edits keep the modal open; excluding them allows other fields", async () => {
+  const { view, applied } = await fixture({
+    parseResume: async () => ({
+      firstName: "Jordan",
+      contactEmail: "hello@example.com",
+    }),
+  });
+  await act(async () => {
+    await button(view, "Autofill from resume").props.onClick();
+  });
+  await act(async () =>
+    input(view, "contactEmail").props.onChange({
+      target: { value: "member@pitt.edu" },
+    }),
+  );
+  await act(async () => submit(view));
+  assert.equal(applied.length, 0);
+  assert.match(text(view), /different from your Pitt/);
+  assert.equal(view.root.findAllByType("dialog").length, 1);
+  await act(async () =>
+    checkbox(view, "contact email").props.onChange({
+      target: { checked: false },
+    }),
+  );
+  await act(async () => submit(view));
+  assert.deepEqual(applied, [{ firstName: "Jordan" }]);
+  await act(async () => view.unmount());
+});
+
+test("blank or unchecked selections disable applying, and Escape cancels the modal", async () => {
+  const { view, applied } = await fixture({
+    parseResume: async () => ({ firstName: "Jordan" }),
+  });
+  await act(async () => {
+    await button(view, "Autofill from resume").props.onClick();
+  });
+  await act(async () =>
+    input(view, "firstName").props.onChange({ target: { value: " " } }),
+  );
+  assert.equal(button(view, "Apply selected").props.disabled, true);
+  await act(async () =>
+    view.root.findByType("dialog").props.onCancel({ preventDefault() {} }),
+  );
+  assert.equal(applied.length, 0);
+  assert.equal(view.root.findAllByType("dialog").length, 0);
+  await act(async () => view.unmount());
 });
