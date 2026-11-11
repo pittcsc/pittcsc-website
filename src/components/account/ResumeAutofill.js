@@ -98,18 +98,24 @@ export default function ResumeAutofill({
       });
       const suggestions = await parseResume(blob, email, current.signal);
       current.signal.throwIfAborted();
+      // Always offer career inputs in a successful review, even if extraction
+      // missed them. Blank values remain omissions until the member edits them.
+      const careerFields = ["currentCompany", "jobTitle", "location"];
       const entries = Object.keys(RESUME_FIELDS)
-        .filter((field) => Object.hasOwn(suggestions, field))
+        .filter(
+          (field) =>
+            Object.hasOwn(suggestions, field) || careerFields.includes(field),
+        )
         .map((field) => [
           field,
           {
             selected: true,
             text: Array.isArray(suggestions[field])
               ? suggestions[field].join("\n")
-              : String(suggestions[field]),
+              : String(suggestions[field] ?? ""),
           },
         ]);
-      if (!entries.length)
+      if (!Object.keys(suggestions).length)
         setNotice(
           "No supported profile fields could be identified. You can edit your profile manually.",
         );

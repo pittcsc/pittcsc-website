@@ -93,8 +93,10 @@ help offers, sharing, alumni status, roles, and login identity are not inferred.
 
 Every successful extraction opens an editable **Review resume autofill** modal,
 including when profile inputs are empty or already match the resume. Each
-suggestion has an inclusion checkbox and an editable input. Members can correct
-names or other values, uncheck suggestions, or leave inputs blank to skip them;
+suggestion has an inclusion checkbox and an editable input.
+Company, job title, and location inputs are always offered in a successful review;
+when extraction misses one, its input is blank and can be filled manually.
+Members can correct names or other values, uncheck suggestions, or leave inputs blank to skip them;
 none of those skipped values clear existing profile information. Majors are
 edited one per line. Included edits use the existing profile validation and show
 field-specific errors before applying. **Cancel** or Escape preserves the form;

@@ -263,3 +263,41 @@ test("blank or unchecked selections disable applying, and Escape cancels the mod
   assert.equal(view.root.findAllByType("dialog").length, 0);
   await act(async () => view.unmount());
 });
+
+test("company, title and location remain available when extraction misses them", async () => {
+  const { view, applied } = await fixture({
+    parseResume: async () => ({ firstName: "Jordan" }),
+  });
+  await act(async () => {
+    await button(view, "Autofill from resume").props.onClick();
+  });
+  for (const field of ["currentCompany", "jobTitle", "location"]) {
+    assert.equal(input(view, field).props.value, "");
+    assert.equal(input(view, field).props.disabled, false);
+  }
+  await act(async () =>
+    input(view, "currentCompany").props.onChange({
+      target: { value: "Example Labs" },
+    }),
+  );
+  await act(async () =>
+    input(view, "jobTitle").props.onChange({
+      target: { value: "Software Engineer" },
+    }),
+  );
+  await act(async () =>
+    input(view, "location").props.onChange({
+      target: { value: "Pittsburgh, PA" },
+    }),
+  );
+  await act(async () => submit(view));
+  assert.deepEqual(applied, [
+    {
+      firstName: "Jordan",
+      currentCompany: "Example Labs",
+      jobTitle: "Software Engineer",
+      location: "Pittsburgh, PA",
+    },
+  ]);
+  await act(async () => view.unmount());
+});
