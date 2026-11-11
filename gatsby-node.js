@@ -7,6 +7,16 @@ const notion = new Client({
 
 const database_id = process.env.GATSBY_NOTION_DATABASE_ID;
 
+// Emit PDF.js's worker as a same-origin asset, rather than executing its source
+// in the page bundle. The reader itself is loaded only on an autofill request.
+exports.onCreateWebpackConfig = ({ actions }) => {
+  actions.setWebpackConfig({
+    module: {
+      rules: [{ test: /pdf\.worker\.min\.mjs$/, type: "asset/resource" }],
+    },
+  });
+};
+
 // Only this separate dashboard subtree is client-routed. Its generated HTML
 // contains a loading shell; private identity data is fetched in the browser.
 exports.onCreatePage = ({ page, actions }) => {
