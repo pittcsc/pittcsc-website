@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { initials } from "../../lib/account/form.mjs";
+import ResumeAutofill from "./ResumeAutofill";
 
 // `only` can render either file section on its own. Omitted, both are shown.
 export default function AccountFiles({
@@ -8,6 +9,7 @@ export default function AccountFiles({
   request,
   onChanged,
   only,
+  autofill,
 }) {
   const [avatarURL, setAvatarURL] = useState("");
   const [previewError, setPreviewError] = useState("");
@@ -83,6 +85,7 @@ export default function AccountFiles({
             userID={userID}
             request={request}
             onChanged={onChanged}
+            autofill={autofill}
           />
         </div>
       )}
@@ -123,6 +126,7 @@ export default function AccountFiles({
             userID={userID}
             request={request}
             onChanged={onChanged}
+            autofill={autofill}
           />
         </div>
       )}
@@ -130,11 +134,12 @@ export default function AccountFiles({
   );
 }
 
-function FileEditor({ kind, label, exists, userID, request, onChanged }) {
+function FileEditor({ kind, label, exists, userID, request, onChanged, autofill }) {
   const [selected, setSelected] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [resumeVersion, setResumeVersion] = useState(0);
   const input = useRef(null);
   const controller = useRef(null);
   useEffect(() => {
@@ -142,9 +147,10 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
     return () => controller.current.abort();
   }, []);
   const isResume = kind === "resume";
+  const locked = busy || !!autofill?.busy || !!autofill?.disabled;
 
   async function act(action) {
-    if (busy) return;
+    if (locked) return;
     const signal = controller.current.signal;
     setBusy(true);
     setError("");
@@ -188,6 +194,9 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
         return;
       }
       if (signal.aborted) return;
+      // Invalidate suggestions as soon as the saved bytes change, even if the
+      // subsequent metadata refresh fails and the member needs to retry it.
+      if (isResume) setResumeVersion((version) => version + 1);
       // Keep the selected file available for a safe retry if reloading the
       // saved metadata fails after the upload succeeds.
       await onChanged(signal);
@@ -224,7 +233,7 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
             : ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
         }
         aria-describedby={`${kind}-help`}
-        disabled={busy}
+        disabled={locked}
         onChange={(event) => {
           setSelected(event.target.files[0] || null);
           setError("");
@@ -236,7 +245,7 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
           {selected && (
             <button
               type="button"
-              disabled={busy}
+              disabled={locked}
               onClick={() => void act("upload")}
             >
               {exists
@@ -247,7 +256,7 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
           {exists && isResume && (
             <button
               type="button"
-              disabled={busy}
+              disabled={locked}
               className="csc-auth-secondary"
               onClick={() => void act("download")}
             >
@@ -257,7 +266,7 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
           {exists && (
             <button
               type="button"
-              disabled={busy}
+              disabled={locked}
               className="csc-auth-secondary csc-account-file-remove"
               onClick={() => void act("remove")}
             >
@@ -265,6 +274,15 @@ function FileEditor({ kind, label, exists, userID, request, onChanged }) {
             </button>
           )}
         </div>
+      )}
+      {isResume && exists && autofill && (
+        <ResumeAutofill
+          key={`${userID}-${resumeVersion}`}
+          {...autofill}
+          userID={userID}
+          request={request}
+          disabled={busy || autofill.disabled}
+        />
       )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}

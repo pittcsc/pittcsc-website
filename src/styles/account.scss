@@ -415,6 +415,28 @@
     }
   }
 
+  .csc-resume-autofill {
+    border-top: 1px solid $acc-hairline;
+    padding-top: 1rem;
+
+    > button { width: auto; }
+    > p { margin-top: 0.75rem; }
+  }
+  .csc-resume-confirm {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: $acc-mist;
+    border: 1px solid $acc-border;
+    border-radius: $acc-radius-control;
+
+    &:focus { outline: 2px solid $acc-navy; outline-offset: 3px; }
+    h3 { font-weight: 700; }
+    p, dl { margin: 0.75rem 0; }
+    dl > div { margin-bottom: 0.75rem; }
+    dt { font-weight: 600; }
+    dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  }
+
   @media (max-width: 850px) {
     .csc-account-editor-fields,
     .csc-account-files {

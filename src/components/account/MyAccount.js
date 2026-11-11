@@ -10,6 +10,7 @@ import {
   MAJOR_OPTIONS,
 } from "../../lib/account/form.mjs";
 import AccountFiles from "./AccountFiles";
+import { applyResumeSuggestions } from "../../lib/account/resume/suggestions.mjs";
 import PointsProfile from "../points/PointsProfile";
 import "../../styles/account.scss";
 
@@ -284,6 +285,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [autofilling, setAutofilling] = useState(false);
   const [claimingAlumni, setClaimingAlumni] = useState(false);
   const [sharing, setSharingBusy] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -304,6 +306,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
   useEffect(() => {
     const controller = new AbortController();
     lifetime.current = controller;
+    setAutofilling(false);
     setLoading(true);
     setError("");
     request("/profile", { userID: identity.id, signal: controller.signal })
@@ -356,7 +359,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
 
   async function save(event) {
     event.preventDefault();
-    if (saving) return;
+    if (saving || autofilling) return;
     setError("");
     setNotice("");
     try {
@@ -449,6 +452,18 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
         userID={identity.id}
         request={request}
         only={only}
+        autofill={guided ? undefined : {
+          form,
+          email: profile.email,
+          busy: autofilling,
+          disabled: saving || sharing || claimingAlumni,
+          onBusyChange: setAutofilling,
+          onApply: (suggestions) => {
+            setForm((current) => applyResumeSuggestions(current, suggestions));
+            setNotice("");
+            setError("");
+          },
+        }}
         onChanged={async (signal) => {
           const value = await request("/profile", {
             userID: identity.id,
@@ -478,7 +493,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
           </p>
         </div>
         <form onSubmit={next}>
-          <fieldset disabled={saving}>
+          <fieldset disabled={saving || autofilling}>
             <legend>{current.title}</legend>
             {current.hint && <p className="csc-account-hint">{current.hint}</p>}
             {current.Fields && <current.Fields form={form} change={change} />}
@@ -513,7 +528,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
     return (
       <>
         <form onSubmit={save}>
-          <fieldset disabled={saving}>
+          <fieldset disabled={saving || autofilling}>
             <legend>About you</legend>
             <div className="csc-account-editor-fields">
               <div className="csc-account-editor-primary">
@@ -533,7 +548,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
           </fieldset>
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}
-          <button type="submit" disabled={saving}>
+          <button type="submit" disabled={saving || autofilling}>
             {saving ? "Saving…" : "Save profile"}
           </button>
         </form>
@@ -546,7 +561,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
           {JSON.stringify(form) !== JSON.stringify(formFromProfile(profile)) &&
             <p>Save your profile changes before changing sharing.</p>}
           <button type="button" className="csc-auth-secondary"
-            disabled={sharing || saving || !profile.complete ||
+            disabled={sharing || saving || autofilling || !profile.complete ||
               (!profile.detailsShared && JSON.stringify(form) !== JSON.stringify(formFromProfile(profile)))}
             onClick={changeSharing}>
             {sharing ? "Saving…" : profile.detailsShared
@@ -561,7 +576,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
             ? "You’re marked as alumni."
             : "Your alumni badge is hidden because your saved graduation year is in the future."}</p>}
           <button type="button" className="csc-auth-secondary"
-            disabled={claimingAlumni || (!profile.alumniClaimed && (!profile.graduationYear || profile.graduationYear > Number(new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone: "America/New_York" }).format(new Date()))))}
+            disabled={autofilling || claimingAlumni || (!profile.alumniClaimed && (!profile.graduationYear || profile.graduationYear > Number(new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone: "America/New_York" }).format(new Date()))))}
             onClick={changeAlumniStatus}>
             {claimingAlumni ? "Saving…" : profile.alumniClaimed ? "Remove my alumni status" : "Mark me as alumni"}
           </button>
