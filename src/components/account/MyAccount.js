@@ -207,52 +207,103 @@ const HELP_OFFERS = [
 
 function CareerFields({ form, change }) {
   return (
-    <fieldset className="csc-account-career">
-      <legend>Career and community</legend>
-      <p>These optional details stay private until you choose Share my profile details. The Members directory never shows your Pitt sign-in email or résumé.</p>
+    <fieldset className="csc-account-card csc-account-career">
+      <legend>Career</legend>
+      <p>Optional details to help members get to know your work.</p>
       <div className="csc-account-name-grid">
         <div>
           <label htmlFor="current-company">Current company</label>
-          <input id="current-company" autoComplete="organization" maxLength={160} value={form.currentCompany} onChange={(event) => change("currentCompany", event.target.value)} />
+          <input
+            id="current-company"
+            autoComplete="organization"
+            maxLength={160}
+            value={form.currentCompany}
+            onChange={(event) => change("currentCompany", event.target.value)}
+          />
         </div>
         <div>
           <label htmlFor="job-title">Job title</label>
-          <input id="job-title" autoComplete="organization-title" maxLength={160} value={form.jobTitle} onChange={(event) => change("jobTitle", event.target.value)} />
+          <input
+            id="job-title"
+            autoComplete="organization-title"
+            maxLength={160}
+            value={form.jobTitle}
+            onChange={(event) => change("jobTitle", event.target.value)}
+          />
         </div>
       </div>
       <div>
         <label htmlFor="profile-location">Location</label>
-        <input id="profile-location" autoComplete="address-level2" maxLength={160} value={form.location} onChange={(event) => change("location", event.target.value)} />
+        <input
+          id="profile-location"
+          autoComplete="address-level2"
+          maxLength={160}
+          value={form.location}
+          onChange={(event) => change("location", event.target.value)}
+        />
       </div>
+    </fieldset>
+  );
+}
+
+function BioContactFields({ form, change }) {
+  return (
+    <fieldset className="csc-account-card csc-account-career">
+      <legend>Bio &amp; contact</legend>
+      <p>These details stay private until you choose to share your profile.</p>
       <div>
         <label htmlFor="personal-website">Personal website</label>
-        <input id="personal-website" type="url" placeholder="https://example.com" maxLength={500} value={form.personalWebsite} onChange={(event) => change("personalWebsite", event.target.value)} />
+        <input
+          id="personal-website"
+          type="url"
+          placeholder="https://example.com"
+          maxLength={500}
+          value={form.personalWebsite}
+          onChange={(event) => change("personalWebsite", event.target.value)}
+        />
       </div>
       <div>
         <label htmlFor="contact-email">Contact email</label>
-        <input id="contact-email" type="email" maxLength={254} value={form.contactEmail} onChange={(event) => change("contactEmail", event.target.value)} aria-describedby="contact-email-help" />
-        <p id="contact-email-help">Optional. Use an address other than your Pitt sign-in email. It appears on your member profile only while you share your details.</p>
+        <input
+          id="contact-email"
+          type="email"
+          maxLength={254}
+          value={form.contactEmail}
+          onChange={(event) => change("contactEmail", event.target.value)}
+        />
       </div>
       <div>
         <label htmlFor="profile-bio">Bio</label>
-        <textarea id="profile-bio" maxLength={2000} rows={5} value={form.bio} onChange={(event) => change("bio", event.target.value)} />
+        <textarea
+          id="profile-bio"
+          maxLength={2000}
+          rows={5}
+          value={form.bio}
+          onChange={(event) => change("bio", event.target.value)}
+        />
       </div>
-      <fieldset className="csc-account-offers">
-        <legend>I can help with</legend>
-        <div className="csc-account-offer-grid">
-          {HELP_OFFERS.map(([key, label]) => (
-            <label key={key} className="csc-account-checkbox">
-              <input
-                type="checkbox"
-                checked={form[key]}
-                onChange={(event) => change(key, event.target.checked)}
-              />
-              <span className="csc-account-checkbox-mark" aria-hidden="true" />
-              {label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+    </fieldset>
+  );
+}
+
+function CommunityFields({ form, change }) {
+  return (
+    <fieldset className="csc-account-card csc-account-offers">
+      <legend>Community</legend>
+      <p>Let members know how you can help.</p>
+      <div className="csc-account-offer-grid">
+        {HELP_OFFERS.map(([key, label]) => (
+          <label key={key} className="csc-account-checkbox">
+            <input
+              type="checkbox"
+              checked={form[key]}
+              onChange={(event) => change(key, event.target.checked)}
+            />
+            <span className="csc-account-checkbox-mark" aria-hidden="true" />
+            {label}
+          </label>
+        ))}
+      </div>
     </fieldset>
   );
 }
@@ -364,9 +415,12 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
     setNotice("");
     try {
       const value = await persist();
-      if (value) setNotice(profile.detailsShared && !value.detailsShared
-        ? "Your profile was saved. Sharing was turned off because your profile is incomplete; choose Share again after completing it."
-        : "Your profile has been saved.");
+      if (value)
+        setNotice(
+          profile.detailsShared && !value.detailsShared
+            ? "Your profile was saved. Sharing was turned off because your profile is incomplete; choose Share again after completing it."
+            : "Your profile has been saved.",
+        );
     } catch (failure) {
       if (!lifetime.current.signal.aborted) setError(failure.message);
     }
@@ -405,7 +459,11 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
       });
       if (signal.aborted) return;
       setProfile(value);
-      setNotice(value.alumniClaimed ? "You’re marked as alumni." : "Your alumni status has been removed.");
+      setNotice(
+        value.alumniClaimed
+          ? "You’re marked as alumni."
+          : "Your alumni status has been removed.",
+      );
       await onSaved?.();
     } catch (failure) {
       if (!signal.aborted) setError(failure.message);
@@ -430,9 +488,11 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
       });
       if (signal.aborted) return;
       setProfile(value);
-      setNotice(value.detailsShared
-        ? "Your optional profile details are now visible to signed-in members."
-        : "Your optional profile details are now hidden from other members.");
+      setNotice(
+        value.detailsShared
+          ? "Your optional profile details are now visible to signed-in members."
+          : "Your optional profile details are now hidden from other members.",
+      );
     } catch (failure) {
       if (!signal.aborted) setError(failure.message);
     } finally {
@@ -452,18 +512,24 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
         userID={identity.id}
         request={request}
         only={only}
-        autofill={guided ? undefined : {
-          form,
-          email: profile.email,
-          busy: autofilling,
-          disabled: saving || sharing || claimingAlumni,
-          onBusyChange: setAutofilling,
-          onApply: (suggestions) => {
-            setForm((current) => applyResumeSuggestions(current, suggestions));
-            setNotice("");
-            setError("");
-          },
-        }}
+        autofill={
+          guided
+            ? undefined
+            : {
+                form,
+                email: profile.email,
+                busy: autofilling,
+                disabled: saving || sharing || claimingAlumni,
+                onBusyChange: setAutofilling,
+                onApply: (suggestions) => {
+                  setForm((current) =>
+                    applyResumeSuggestions(current, suggestions),
+                  );
+                  setNotice("");
+                  setError("");
+                },
+              }
+        }
         onChanged={async (signal) => {
           const value = await request("/profile", {
             userID: identity.id,
@@ -528,57 +594,135 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
     return (
       <>
         <form onSubmit={save}>
-          <fieldset disabled={saving || autofilling}>
-            <legend>About you</legend>
+          <fieldset
+            className="csc-account-editor-group"
+            disabled={saving || autofilling}
+            aria-label="Edit your profile"
+          >
             <div className="csc-account-editor-fields">
-              <div className="csc-account-editor-primary">
-                <NameFields form={form} change={change} />
-                <YearField form={form} change={change} />
-                <fieldset className="csc-account-majors">
-                  <legend>Majors</legend>
-                  <MajorFields form={form} change={change} />
+              <div className="csc-account-editor-column">
+                <fieldset className="csc-account-card">
+                  <legend>About you</legend>
+                  <NameFields form={form} change={change} />
                 </fieldset>
-                <fieldset className="csc-account-handles">
-                  <legend>Profiles</legend>
+                <fieldset className="csc-account-card csc-account-handles">
+                  <legend>Profile links</legend>
                   <HandleFields form={form} change={change} />
                 </fieldset>
+                <BioContactFields form={form} change={change} />
               </div>
-              <CareerFields form={form} change={change} />
+              <div className="csc-account-editor-column">
+                <fieldset className="csc-account-card">
+                  <legend>Education</legend>
+                  <YearField form={form} change={change} />
+                  <fieldset className="csc-account-majors">
+                    <legend>Majors</legend>
+                    <MajorFields form={form} change={change} />
+                  </fieldset>
+                </fieldset>
+                <CareerFields form={form} change={change} />
+                <CommunityFields form={form} change={change} />
+              </div>
             </div>
           </fieldset>
-          {error && <p role="alert">{error}</p>}
-          {notice && <p role="status">{notice}</p>}
-          <button type="submit" disabled={saving || autofilling}>
-            {saving ? "Saving…" : "Save profile"}
-          </button>
+          <div className="csc-account-card csc-account-save">
+            <p>
+              Save changes across your profile cards. Files and account settings
+              save separately.
+            </p>
+            {error && <p role="alert">{error}</p>}
+            {notice && <p role="status">{notice}</p>}
+            <button type="submit" disabled={saving || autofilling}>
+              {saving ? "Saving…" : "Save profile"}
+            </button>
+          </div>
         </form>
-        <section className="csc-account-sharing" aria-label="Profile sharing">
+        <section
+          className="csc-account-card csc-account-sharing"
+          aria-label="Profile sharing"
+        >
           <h2>Profile sharing</h2>
-          <p>{profile.detailsShared
-            ? "Your optional profile details are visible to other signed-in members."
-            : "Your optional profile details are hidden from other members."}</p>
-          <p>Your basic member entry remains visible. Sharing includes your photo, profile links, career details, bio, website, help offers, and contact email if provided. The Members directory never shows your Pitt sign-in email or résumé.</p>
-          {JSON.stringify(form) !== JSON.stringify(formFromProfile(profile)) &&
-            <p>Save your profile changes before changing sharing.</p>}
-          <button type="button" className="csc-auth-secondary"
-            disabled={sharing || saving || autofilling || !profile.complete ||
-              (!profile.detailsShared && JSON.stringify(form) !== JSON.stringify(formFromProfile(profile)))}
-            onClick={changeSharing}>
-            {sharing ? "Saving…" : profile.detailsShared
-              ? "Stop sharing my profile details"
-              : "Share my profile details"}
+          <p>
+            {profile.detailsShared
+              ? "Your optional profile details are visible to other signed-in members."
+              : "Your optional profile details are hidden from other members."}
+          </p>
+          <p>
+            Your basic member entry remains visible. Sharing includes your
+            photo, profile links, career details, bio, website, help offers, and
+            contact email if provided. The Members directory never shows your
+            Pitt sign-in email or résumé.
+          </p>
+          {JSON.stringify(form) !==
+            JSON.stringify(formFromProfile(profile)) && (
+            <p>Save your profile changes before changing sharing.</p>
+          )}
+          <button
+            type="button"
+            className="csc-auth-secondary"
+            disabled={
+              sharing ||
+              saving ||
+              autofilling ||
+              !profile.complete ||
+              (!profile.detailsShared &&
+                JSON.stringify(form) !==
+                  JSON.stringify(formFromProfile(profile)))
+            }
+            onClick={changeSharing}
+          >
+            {sharing
+              ? "Saving…"
+              : profile.detailsShared
+                ? "Stop sharing my profile details"
+                : "Share my profile details"}
           </button>
         </section>
-        <section className="csc-account-alumni" aria-label="Alumni status">
-          <h2>Alumni status</h2>
-          <p>Graduated from Pitt? You can identify yourself as alumni once your graduation year is the current year or earlier. This badge appears to other signed-in members separately from your sharing choice.</p>
-          {profile.alumniClaimed && <p>{profile.isAlumni
-            ? "You’re marked as alumni."
-            : "Your alumni badge is hidden because your saved graduation year is in the future."}</p>}
-          <button type="button" className="csc-auth-secondary"
-            disabled={autofilling || claimingAlumni || (!profile.alumniClaimed && (!profile.graduationYear || profile.graduationYear > Number(new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone: "America/New_York" }).format(new Date()))))}
-            onClick={changeAlumniStatus}>
-            {claimingAlumni ? "Saving…" : profile.alumniClaimed ? "Remove my alumni status" : "Mark me as alumni"}
+        <section
+          className="csc-account-card csc-account-alumni"
+          aria-label="Alumni status"
+        >
+          <div className="csc-account-alumni-icon" aria-hidden="true">
+            🎓
+          </div>
+          <div>
+            <h2>Alumni status</h2>
+            <p>
+              Graduated from Pitt? You can identify yourself as alumni once your
+              graduation year is the current year or earlier. This badge appears
+              to other signed-in members separately from your sharing choice.
+            </p>
+            {profile.alumniClaimed && (
+              <p>
+                {profile.isAlumni
+                  ? "You’re marked as alumni."
+                  : "Your alumni badge is hidden because your saved graduation year is in the future."}
+              </p>
+            )}
+          </div>
+          <button
+            type="button"
+            className="csc-auth-secondary"
+            disabled={
+              autofilling ||
+              claimingAlumni ||
+              (!profile.alumniClaimed &&
+                (!profile.graduationYear ||
+                  profile.graduationYear >
+                    Number(
+                      new Intl.DateTimeFormat("en-US", {
+                        year: "numeric",
+                        timeZone: "America/New_York",
+                      }).format(new Date()),
+                    )))
+            }
+            onClick={changeAlumniStatus}
+          >
+            {claimingAlumni
+              ? "Saving…"
+              : profile.alumniClaimed
+                ? "Remove my alumni status"
+                : "Mark me as alumni"}
           </button>
         </section>
         {renderFiles()}
@@ -587,9 +731,13 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
   }
 
   return (
-    <div className={`csc-account${guided === false ? " csc-account--editor" : ""}`}>
-      <h1>My Account</h1>
-      <p>Your club profile. You can save your progress at any time.</p>
+    <div
+      className={`csc-account${guided === false ? " csc-account--editor" : ""}`}
+    >
+      <header className="csc-account-heading">
+        <h1>My Account</h1>
+        <p>Your profile, files, and account settings.</p>
+      </header>
       {loading ? (
         <p role="status">Loading your profile…</p>
       ) : !profile ? (
@@ -601,28 +749,44 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
         </>
       ) : (
         <>
-          <div className="csc-account-completion">
-            <strong>
-              {profile.complete ? "Profile complete" : "Complete your profile"}
-            </strong>
-            {!profile.complete && !guided && (
-              <p>
-                Add your first and last name, graduation year, and at least one
-                major before using the member dashboard.
-              </p>
-            )}
+          <div className="csc-account-card csc-account-summary">
+            <div className="csc-account-completion">
+              <strong>
+                {profile.complete
+                  ? "Profile complete"
+                  : "Complete your profile"}
+              </strong>
+              {!profile.complete && !guided && (
+                <p>
+                  Add your first and last name, graduation year, and at least
+                  one major before using the member dashboard.
+                </p>
+              )}
+            </div>
+            <p className="csc-account-email">
+              Signed in as <strong>{profile.email}</strong>
+            </p>
           </div>
-          <p className="csc-account-email">
-            Signed in as <strong>{profile.email}</strong>
-          </p>
           {guided ? renderGuided() : renderEditor()}
           {profile.complete && <PointsProfile identity={identity} />}
         </>
       )}
       {guided === false && profile && (
-        <button type="button" className="csc-auth-secondary" onClick={onLogout}>
-          Log out
-        </button>
+        <section
+          className="csc-account-card csc-account-session"
+          aria-label="Account session"
+        >
+          <div>
+            <h2>Account session</h2>
+          </div>
+          <button
+            type="button"
+            className="csc-auth-secondary"
+            onClick={onLogout}
+          >
+            Log out
+          </button>
+        </section>
       )}
     </div>
   );

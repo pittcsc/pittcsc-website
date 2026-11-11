@@ -39,9 +39,13 @@ protected request. Removing a required field revokes access until it is restored
 An incomplete profile is filled in three questions, and each **Next**
 saves, so leaving mid-flow keeps what was answered and returns to the first
 unanswered question. After completion, the original profile or attendance link
-resumes. Once complete, My Account becomes a single page where
-names, year, majors, the three usernames, and optional career/community details save together with **Save
-profile**. The last successful
+resumes. Once complete, My Account becomes a responsive page with separate cards
+for personal details, education, profile links, career, bio/contact, and community
+help offers. These fields save together with **Save profile**. Sharing, alumni
+status, profile picture, resume, points, and the account session have their own
+cards. File cards support dropping or browsing for a file, then explicitly saving
+the selection; their visibility badges reflect the current sharing setting
+(resumes remain owner-only). The last successful
 save wins if multiple tabs edit the same profile. Failures preserve edits for
 retry. Routine token refresh preserves the editor; logout, account changes, and
 failed identity verification hide private state and cancel requests.
