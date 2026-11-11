@@ -25,7 +25,11 @@ export function linesFromItems(items) {
         (a, b) => a.transform[4] - b.transform[4],
       )) {
         const x = item.transform[4];
-        if (text && x - right > 1 && !text.endsWith(" ")) text += " ";
+        // Preserve a wide horizontal gap (e.g. employer | city, title | dates)
+        // instead of flattening both columns into one indistinguishable string.
+        if (text && x - right > Math.max(32, Math.abs(item.transform[0]) * 3))
+          text += " | ";
+        else if (text && x - right > 1 && !text.endsWith(" ")) text += " ";
         text += item.str;
         right = x + item.width;
       }

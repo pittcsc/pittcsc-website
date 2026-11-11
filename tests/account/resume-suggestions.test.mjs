@@ -134,7 +134,7 @@ Analyst at Two | 2025 - Present`);
   ])
     assert.equal(result[field], undefined, field);
 });
-test("prefers explicitly expected graduation and does not use past jobs as current employment", () => {
+test("prefers explicit graduation and offers the latest past job for review", () => {
   const result = parse(`Élodie O’Neill
 Education
 University of Pittsburgh
@@ -146,7 +146,73 @@ Intern at Old Company | May 2024 - August 2024`);
   assert.equal(result.lastName, "O’Neill");
   assert.deepEqual(result.majors, ["Mathematics"]);
   assert.equal(result.graduationYear, "2028");
-  assert.equal(result.currentCompany, undefined);
+  assert.equal(result.currentCompany, "Old Company");
+  assert.equal(result.jobTitle, "Intern");
+});
+
+test("aligned resume with completed internships suggests the newest role and its location", () => {
+  const result = parse(`Jordan Example
+hello@example.com | github.com/jexample
+Education
+Example University                                          Pittsburgh, PA
+Honors B.S. in Computer Science, Minor in Mathematics        May 2027
+• Teaching Assistant (Jan 2024 – Present): Lead recitations
+Experience
+Northstar Labs                                             Mountain View, CA
+Software Engineering Intern                                May 2026 – Aug 2026
+• Built a debugging service across several systems
+Example Systems (YC F25)                                    Remote
+Software Engineer                                          Oct 2025 – May 2026
+• Developed a live viewer for engineering tools
+Northstar Labs                                             Mountain View, CA
+Software Engineering Intern                                Jun 2025 – Aug 2025
+• Improved application data synchronization
+Leadership & Projects
+Community Club | President                                 Jan 2027 – Present
+Technical Skills
+Languages: Go, Python`);
+  assert.equal(result.currentCompany, "Northstar Labs");
+  assert.equal(result.jobTitle, "Software Engineering Intern");
+  assert.equal(result.location, "Mountain View, CA");
+  assert.equal(result.graduationYear, "2027");
+});
+
+test("employment ranking uses dates, prefers current work, and preserves header location", () => {
+  const result = parse(`Jordan Example
+Boston, MA
+Experience
+Old Company | Remote
+Software Engineer | Jan 2024 – Aug 2024
+Newest Company | Seattle, WA
+Research Assistant | Jun 2026 – Dec 2026`);
+  assert.equal(result.currentCompany, "Newest Company");
+  assert.equal(result.location, "Boston, MA");
+  const current = parse(`Jordan Example
+Experience
+Current Company | Remote
+Software Engineer | Jan 2023 – Present
+Recent Company | Seattle, WA
+Research Assistant | Jun 2026 – Dec 2026`);
+  assert.equal(current.currentCompany, "Current Company");
+  assert.equal(current.location, "Remote");
+});
+
+test("same-date roles are ambiguous and undated or bullet text cannot become employment", () => {
+  assert.equal(
+    parse(`Jordan Example
+Experience
+One | Engineer | May 2025 – Aug 2025
+Two | Analyst | May 2025 – Aug 2025`).currentCompany,
+    undefined,
+  );
+  assert.equal(
+    parse(`Jordan Example
+Experience
+Unknown Company
+Software Engineer
+• Built a service between May 2025 – Aug 2025`).currentCompany,
+    undefined,
+  );
 });
 test("does not manufacture names or data from an empty or non-profile document", () => {
   assert.deepEqual(parse(""), {});

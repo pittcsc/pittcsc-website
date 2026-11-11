@@ -115,7 +115,15 @@ long PDFs produce feedback and leave manual editing available. Resume text and
 hyperlink annotations are treated as input data, not instructions or executable
 content; no linked websites are fetched by the parser. Career extraction supports
 explicit company/title/location labels, location alongside header contact links,
-inline summary sections, and current work roles split across neighboring lines.
+inline summary sections, and work roles split across neighboring lines. Wide PDF
+alignment gaps preserve separate company/location and title/date columns. A
+single explicitly current role is preferred; otherwise the most recently ended
+dated experience supplies company/title suggestions. A location in the resume
+header takes precedence; when absent, that role's location is offered for review.
+The latest role may be a completed internship and its location may be a workplace
+rather than the member's residence, so members can edit or exclude those values.
+Combined Leadership & Projects headings end work extraction so club/project
+dates cannot replace employment suggestions.
 Leading middle initials are omitted from the suggested last name. These remain
 editable suggestions, not verified employment or identity information.
 

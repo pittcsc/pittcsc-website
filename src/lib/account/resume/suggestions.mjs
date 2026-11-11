@@ -4,6 +4,7 @@ import {
   formFromProfile,
   profileInput,
 } from "../form.mjs";
+import { suggestEmployment } from "./employment.mjs";
 
 export const RESUME_FIELDS = {
   firstName: "First name",
@@ -40,7 +41,7 @@ const sectionName = (line) => {
   )
     return "summary";
   if (
-    /^(skills|technical skills|projects|personal projects|certifications|awards|activities|leadership|publications|interests|references|volunteering|coursework)$/.test(
+    /^(skills|technical skills|projects|personal projects|certifications|awards|activities|leadership|leadership\s*(?:&|and)\s*projects|projects\s*(?:&|and)\s*leadership|publications|interests|references|volunteering|coursework)$/.test(
       title,
     )
   )
@@ -61,7 +62,10 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
   };
   let section = "header";
   for (const raw of lines) {
-    const line = raw.replace(/\s+/g, " ").trim();
+    const line = raw
+      .trim()
+      .replace(/[ \t]{3,}/g, " | ")
+      .replace(/\s+/g, " ");
     const inline = line.match(
       /^(summary|professional summary|about(?: me)?|objective):\s*(.+)$/i,
     );
@@ -201,79 +205,12 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
   )
     result.graduationYear = years[0];
 
-  const currentRoles = [];
-  const isTitle = (value) =>
-    /\b(engineer|developer|intern|analyst|manager|assistant|researcher|designer|consultant|founder|president|director)\b/i.test(
-      value,
-    );
-  sections.work.forEach((line, index) => {
-    if (!/\b(present|current)\b/i.test(line)) return;
-    const beforeDate = line
-      .split(
-        /\b(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+)?(?:\d{1,2}[/.-])?(?:19|20)\d{2}\b/i,
-      )[0]
-      .replace(/[|,\s–—-]+$/, "");
-    const titleCompany = beforeDate.match(/^(.+?)\s+(?:at|@)\s+(.+)$/i);
-    if (titleCompany)
-      currentRoles.push({
-        jobTitle: titleCompany[1],
-        currentCompany: titleCompany[2],
-      });
-    else {
-      const parts = beforeDate.split(/\s*[|•]\s*/).filter(Boolean);
-      if (parts.length === 2 && isTitle(parts[0]) !== isTitle(parts[1])) {
-        const [title, company] = isTitle(parts[0])
-          ? parts
-          : [...parts].reverse();
-        currentRoles.push({ jobTitle: title, currentCompany: company });
-      } else {
-        // A role often spans two lines, with its dates beside either the
-        // company or title. Only pair immediate neighbors, never bullet text.
-        const clean = (value = "") => value.split(/\s*[|•]\s*/)[0].trim();
-        const safe = (value) =>
-          value &&
-          !/^[•*\-]|\b(?:19|20)\d{2}\b|[.!?]$/.test(value) &&
-          value.length <= 160;
-        const current = clean(beforeDate);
-        const previous = clean(sections.work[index - 1]);
-        const next = clean(sections.work[index + 1]);
-        if (safe(current) && isTitle(current)) {
-          const company =
-            safe(previous) && !isTitle(previous)
-              ? previous
-              : safe(next) && !isTitle(next)
-                ? next
-                : null;
-          if (company)
-            currentRoles.push({ currentCompany: company, jobTitle: current });
-        } else if (safe(current) && !isTitle(current)) {
-          const title =
-            safe(previous) && isTitle(previous)
-              ? previous
-              : safe(next) && isTitle(next)
-                ? next
-                : null;
-          if (title)
-            currentRoles.push({ currentCompany: current, jobTitle: title });
-        } else if (!current && safe(previous) && index >= 2) {
-          const earlier = clean(sections.work[index - 2]);
-          if (safe(earlier) && isTitle(previous) !== isTitle(earlier)) {
-            currentRoles.push(
-              isTitle(previous)
-                ? { currentCompany: earlier, jobTitle: previous }
-                : { currentCompany: previous, jobTitle: earlier },
-            );
-          }
-        }
-      }
-    }
-  });
-  if (
-    currentRoles.length === 1 &&
-    sections.work.filter((line) => /\b(present|current)\b/i.test(line))
-      .length === 1
-  )
-    Object.assign(result, currentRoles[0]);
+  const employment = suggestEmployment(sections.work);
+  if (employment.currentCompany)
+    result.currentCompany = employment.currentCompany;
+  if (employment.jobTitle) result.jobTitle = employment.jobTitle;
+  if (!result.location && employment.location)
+    result.location = employment.location;
   // Explicit career details in the header take precedence over inferred jobs.
   for (const [field, pattern] of [
     ["currentCompany", /^(?:current company|company|employer):\s*(.+)$/i],

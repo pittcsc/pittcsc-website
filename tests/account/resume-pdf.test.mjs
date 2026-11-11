@@ -4,6 +4,7 @@ import {
   linesFromItems,
   readResumePDF,
 } from "../../src/lib/account/resume/read-pdf.mjs";
+import { suggestResumeProfile } from "../../src/lib/account/resume/suggestions.mjs";
 
 const item = (str, x, y, width = str.length * 5) => ({
   str,
@@ -20,6 +21,21 @@ test("PDF fragments are ordered visually and adjacent URL fragments remain conne
       item("Computer", 10, 70),
     ]),
     ["Jordan Lee", "github.com/jlee", "Computer Science"],
+  );
+});
+
+test("PDF alignment gaps keep employers and locations separate", () => {
+  assert.deepEqual(
+    linesFromItems([
+      item("Northstar Labs", 50, 700, 80),
+      item("Mountain View, CA", 420, 700, 100),
+      item("Software Engineering Intern", 50, 680, 170),
+      item("May 2026 - Aug 2026", 400, 680, 130),
+    ]),
+    [
+      "Northstar Labs | Mountain View, CA",
+      "Software Engineering Intern | May 2026 - Aug 2026",
+    ],
   );
 });
 
@@ -94,9 +110,7 @@ test("an aborted request never loads a PDF", async () => {
   );
 });
 
-test("extracts a real text PDF with PDF.js", async () => {
-  const stream =
-    "BT /F1 16 Tf 50 750 Td (Jordan Lee) Tj 0 -24 Td (Computer Science) Tj ET";
+function resumePDF(stream) {
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
     "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
@@ -115,8 +129,41 @@ test("extracts a real text PDF with PDF.js", async () => {
     .slice(1)
     .map((offset) => `${String(offset).padStart(10, "0")} 00000 n \n`)
     .join("")}trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
-  const result = await readResumePDF(new Blob([pdf]), {
+  return new Blob([pdf]);
+}
+
+test("extracts a real text PDF with PDF.js", async () => {
+  const result = await readResumePDF(
+    resumePDF(
+      "BT /F1 16 Tf 50 750 Td (Jordan Lee) Tj 0 -24 Td (Computer Science) Tj ET",
+    ),
+    {
+      loadPDF: () => import("pdfjs-dist/legacy/build/pdf.mjs"),
+    },
+  );
+  assert.deepEqual(result.lines, ["Jordan Lee", "Computer Science"]);
+});
+
+test("real aligned PDF yields the latest completed employer, title, and job location", async () => {
+  const stream = [
+    [50, 760, "Jordan Example"],
+    [50, 735, "Experience"],
+    [50, 710, "Northstar Labs"],
+    [420, 710, "Mountain View, CA"],
+    [50, 690, "Software Engineering Intern"],
+    [400, 690, "May 2026 - Aug 2026"],
+    [50, 650, "Older Company"],
+    [420, 650, "Remote"],
+    [50, 630, "Software Engineer"],
+    [400, 630, "Oct 2025 - May 2026"],
+  ]
+    .map(([x, y, text]) => `BT /F1 12 Tf 1 0 0 1 ${x} ${y} Tm (${text}) Tj ET`)
+    .join("\n");
+  const document = await readResumePDF(resumePDF(stream), {
     loadPDF: () => import("pdfjs-dist/legacy/build/pdf.mjs"),
   });
-  assert.deepEqual(result.lines, ["Jordan Lee", "Computer Science"]);
+  const result = suggestResumeProfile(document);
+  assert.equal(result.currentCompany, "Northstar Labs");
+  assert.equal(result.jobTitle, "Software Engineering Intern");
+  assert.equal(result.location, "Mountain View, CA");
 });
