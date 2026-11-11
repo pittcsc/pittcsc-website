@@ -1,5 +1,4 @@
-// My Account profile editor. Inherits the card, field and button styling from
-// auth.scss; this file only adds what the form itself needs.
+// My Account cards and profile editor. Fields and buttons inherit auth.scss.
 
 @import "./helpers/account-tokens";
 
@@ -10,12 +9,84 @@
 }
 .csc-auth:has(.csc-account--editor) .csc-auth-cardwrap {
   max-width: 72rem;
+
+  &::before {
+    display: none;
+  }
+}
+.csc-auth:has(.csc-account--editor) .csc-auth-card {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .csc-account {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+
+  .csc-account-heading {
+    display: grid;
+    gap: 0.625rem;
+    margin-bottom: 0.5rem;
+  }
+  .csc-account-card {
+    min-width: 0;
+    padding: 1.75rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 20px;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  fieldset.csc-account-card {
+    // Keep the title inside the card rather than interrupting its border.
+    display: block;
+
+    > legend {
+      float: left;
+      width: 100%;
+      margin-bottom: 1.25rem;
+    }
+    > legend + * {
+      clear: both;
+    }
+    > :not(legend) + * {
+      margin-top: 1.125rem;
+    }
+    > p {
+      color: $acc-muted;
+    }
+  }
+  .csc-account-summary,
+  .csc-account-session {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .csc-account-session button {
+    width: auto;
+  }
+  .csc-account-save {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    button {
+      width: auto;
+      min-width: 11rem;
+    }
+  }
+  &.csc-account--editor > .csc-points-profile {
+    margin: 0;
+    padding: 1.75rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 20px;
+    background: #fff;
+  }
 
   // Profile-completion prompt. Cream when there's still something to add,
   // which reads as a nudge rather than the red of a real error.
@@ -115,20 +186,15 @@
   .csc-account-editor-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(2rem, 4vw, 4rem);
+    gap: 1.5rem;
+    align-items: start;
   }
-  .csc-account-editor-primary {
+  .csc-account-editor-column {
     display: flex;
     flex-direction: column;
-    gap: 1.125rem;
+    gap: 1.5rem;
     min-width: 0;
   }
-  &.csc-account--editor > form > button {
-    align-self: flex-start;
-    width: auto;
-    min-width: 11rem;
-  }
-
   .csc-account-majors {
     margin-top: 1.75rem;
     padding-top: 1.75rem;
@@ -153,14 +219,16 @@
   }
 
   .csc-account-handles {
-    margin-top: 1.75rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid $acc-hairline;
+    min-width: 0;
   }
   .csc-account-career {
     min-width: 0;
 
-    > p { margin: 0; color: $acc-muted; line-height: 1.5; }
+    > p {
+      margin: 0;
+      color: $acc-muted;
+      line-height: 1.5;
+    }
     textarea {
       @include acc-field;
       height: auto;
@@ -170,17 +238,51 @@
       resize: vertical;
     }
   }
-  .csc-account-alumni, .csc-account-sharing {
-    margin-top: 1.75rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid $acc-hairline;
-    h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
-    p { margin: 0 0 1rem; color: $acc-muted; line-height: 1.5; }
-    button { width: auto; }
+  .csc-account-alumni,
+  .csc-account-sharing {
+    h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.25rem;
+    }
+    p {
+      margin: 0 0 1rem;
+      color: $acc-muted;
+      line-height: 1.5;
+    }
+    button {
+      width: auto;
+    }
+  }
+  .csc-account-alumni {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+
+    > div:nth-child(2) {
+      flex: 1;
+      min-width: 0;
+    }
+    p:last-child {
+      margin-bottom: 0;
+    }
+    button {
+      flex-shrink: 0;
+    }
+  }
+  .csc-account-alumni-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 3.25rem;
+    height: 3.25rem;
+    border-radius: 14px;
+    background: $acc-navy-soft;
+    font-size: 1.5rem;
   }
   .csc-account-offers {
-    margin-top: 0.5rem;
-    legend { margin-bottom: 0.75rem; font-size: 1rem; }
+    legend {
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+    }
   }
   .csc-account-offer-grid {
     display: grid;
@@ -304,10 +406,7 @@
     flex-direction: column;
     gap: 1.25rem;
     min-width: 0;
-    padding: 1.5rem;
-    border: 1px solid $acc-hairline;
-    border-radius: $acc-radius-control;
-    background: $acc-mist;
+    background: #fff;
   }
   .csc-account-file-heading {
     display: flex;
@@ -370,6 +469,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    flex: 1;
 
     label {
       margin: 0;
@@ -380,38 +480,102 @@
     margin-top: 0.75rem;
   }
   .csc-account-file input[type="file"] {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    padding: 0.75rem;
-    border: 1.5px dashed $acc-border;
-    border-radius: $acc-radius-control;
-    background: $acc-mist;
-    font-size: 0.875rem;
-    box-sizing: border-box;
+    height: 100%;
+    opacity: 0;
     cursor: pointer;
+  }
+  .csc-account-upload {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 11rem;
+    padding: 1.25rem;
+    border: 1.5px dashed #bcc8eb;
+    border-radius: 16px;
+    background: #f7f8fc;
+    text-align: center;
 
-    &::file-selector-button {
-      margin-right: 0.75rem;
-      padding: 0.5rem 0.875rem;
-      border: 0;
-      border-radius: 8px;
-      background: $acc-navy;
-      color: #fff;
-      font: inherit;
+    &:focus-within {
+      outline: 3px solid $acc-navy;
+      outline-offset: 3px;
+    }
+    &:hover {
+      border-color: $acc-navy;
+    }
+    label span {
+      color: $acc-navy;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+    &--disabled {
+      opacity: 0.6;
+    }
+  }
+  .csc-account-upload-icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid $acc-hairline;
+    border-radius: 50%;
+    background: #fff;
+    color: $acc-navy;
+    font-size: 1.5rem;
+  }
+  .csc-account-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.625rem;
+  }
+  .csc-account-badge {
+    padding: 0.25rem 0.625rem;
+    border-radius: 2rem;
+    background: $acc-navy-soft;
+    color: $acc-body;
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    &--saved {
+      background: #e3f3eb;
+      color: #167044;
+    }
+  }
+  .csc-account-autofill-panel {
+    padding: 1rem;
+    border-radius: 14px;
+    background: $acc-navy-soft;
+
+    p {
       font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
+    }
+    .csc-resume-autofill {
+      border: 0;
+      padding-top: 0.75rem;
     }
   }
   .csc-account-file-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid $acc-hairline;
 
     button {
       width: auto;
     }
     .csc-account-file-remove {
       margin-left: auto;
+      color: $acc-error;
+      border-color: transparent;
+      background: transparent;
     }
   }
 
@@ -419,8 +583,12 @@
     border-top: 1px solid $acc-hairline;
     padding-top: 1rem;
 
-    > button { width: auto; }
-    > p { margin-top: 0.75rem; }
+    > button {
+      width: auto;
+    }
+    > p {
+      margin-top: 0.75rem;
+    }
   }
   .csc-resume-modal {
     width: min(44rem, calc(100vw - 2rem));
@@ -435,12 +603,28 @@
     box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, 0.25);
     overflow-y: auto;
 
-    &::backdrop { background: rgba(10, 25, 50, 0.55); }
-    h2 { margin: 0; font-size: 1.5rem; font-weight: 700; }
-    header p { margin: 0.75rem 0 0; }
-    .csc-account-file-actions { position: sticky; bottom: -1.5rem; padding: 1rem 0; background: #fff; }
+    &::backdrop {
+      background: rgba(10, 25, 50, 0.55);
+    }
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    header p {
+      margin: 0.75rem 0 0;
+    }
+    .csc-account-file-actions {
+      position: sticky;
+      bottom: -1.5rem;
+      padding: 1rem 0;
+      background: #fff;
+    }
   }
-  .csc-resume-suggestions { display: grid; gap: 1rem; }
+  .csc-resume-suggestions {
+    display: grid;
+    gap: 1rem;
+  }
   .csc-resume-suggestion {
     display: grid;
     gap: 0.5rem;
@@ -449,12 +633,33 @@
     border-radius: $acc-radius-control;
     background: $acc-mist;
 
-    .csc-resume-choice { display: flex; align-items: center; gap: 0.625rem; }
-    input[type="checkbox"] { width: 1.125rem; height: 1.125rem; flex: 0 0 auto; accent-color: $acc-navy; }
-    input:not([type="checkbox"]), textarea { width: 100%; min-width: 0; box-sizing: border-box; }
-    input:disabled, textarea:disabled { opacity: 0.55; }
-    textarea { resize: vertical; }
-    p { margin: 0; }
+    .csc-resume-choice {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    input[type="checkbox"] {
+      width: 1.125rem;
+      height: 1.125rem;
+      flex: 0 0 auto;
+      accent-color: $acc-navy;
+    }
+    input:not([type="checkbox"]),
+    textarea {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    input:disabled,
+    textarea:disabled {
+      opacity: 0.55;
+    }
+    textarea {
+      resize: vertical;
+    }
+    p {
+      margin: 0;
+    }
   }
 
   @media (max-width: 850px) {
@@ -462,9 +667,11 @@
     .csc-account-files {
       grid-template-columns: 1fr;
     }
-    .csc-account-career {
-      padding-top: 1.75rem;
-      border-top: 1px solid $acc-hairline;
+    .csc-account-alumni {
+      flex-wrap: wrap;
+    }
+    .csc-account-alumni button {
+      flex-basis: 100%;
     }
   }
 
@@ -484,7 +691,8 @@
         width: 100%;
       }
     }
-    .csc-account-file-card {
+    .csc-account-card,
+    &.csc-account--editor > .csc-points-profile {
       padding: 1.125rem;
     }
     .csc-account-file-heading {

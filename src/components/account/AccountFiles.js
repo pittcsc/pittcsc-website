@@ -46,7 +46,7 @@ export default function AccountFiles({
   return (
     <section className="csc-account-files" aria-label="Profile files">
       {showAvatar && (
-        <div className="csc-account-file-card">
+        <div className="csc-account-card csc-account-file-card">
           <div className="csc-account-file-heading">
             <div className="csc-account-avatar">
               {avatarURL ? (
@@ -59,11 +59,20 @@ export default function AccountFiles({
             </div>
             <div>
               <h2>Profile picture</h2>
-              <p>
-                {profile.hasAvatar
-                  ? "Your picture is saved."
-                  : "Your initials appear until you add a picture."}
-              </p>
+              <div className="csc-account-badges">
+                <span
+                  className={
+                    profile.hasAvatar
+                      ? "csc-account-badge csc-account-badge--saved"
+                      : "csc-account-badge"
+                  }
+                >
+                  {profile.hasAvatar ? "✓ Saved" : "No picture yet"}
+                </span>
+                <span className="csc-account-badge">
+                  {profile.detailsShared ? "Visible to members" : "Only you"}
+                </span>
+              </div>
             </div>
           </div>
           {previewError && (
@@ -90,7 +99,7 @@ export default function AccountFiles({
         </div>
       )}
       {showResume && (
-        <div className="csc-account-file-card">
+        <div className="csc-account-card csc-account-file-card">
           <div className="csc-account-file-heading">
             <div className="csc-account-resume-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none">
@@ -111,12 +120,18 @@ export default function AccountFiles({
             </div>
             <div>
               <h2>Resume</h2>
-              <p>
-                {profile.hasResume
-                  ? "Your PDF is saved."
-                  : "No resume uploaded yet."}{" "}
-                Only you can access it.
-              </p>
+              <div className="csc-account-badges">
+                <span
+                  className={
+                    profile.hasResume
+                      ? "csc-account-badge csc-account-badge--saved"
+                      : "csc-account-badge"
+                  }
+                >
+                  {profile.hasResume ? "✓ Saved" : "No resume yet"}
+                </span>
+                <span className="csc-account-badge">Only you</span>
+              </div>
             </div>
           </div>
           <FileEditor
@@ -134,7 +149,15 @@ export default function AccountFiles({
   );
 }
 
-function FileEditor({ kind, label, exists, userID, request, onChanged, autofill }) {
+function FileEditor({
+  kind,
+  label,
+  exists,
+  userID,
+  request,
+  onChanged,
+  autofill,
+}) {
   const [selected, setSelected] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -213,33 +236,54 @@ function FileEditor({ kind, label, exists, userID, request, onChanged, autofill 
 
   return (
     <div className="csc-account-file">
-      <label htmlFor={`${kind}-file`}>
-        {exists
-          ? `Choose a replacement ${isResume ? "PDF" : "picture"}`
-          : `Choose a ${isResume ? "resume PDF" : "picture"}`}
-      </label>
-      <p id={`${kind}-help`} className="csc-account-file-help">
-        {isResume
-          ? "PDF, up to 10 MB."
-          : "JPEG, PNG, or WebP, up to 5 MB. Visible to signed-in members."}
-      </p>
-      <input
-        ref={input}
-        id={`${kind}-file`}
-        type="file"
-        accept={
-          isResume
-            ? ".pdf,application/pdf"
-            : ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-        }
-        aria-describedby={`${kind}-help`}
-        disabled={locked}
-        onChange={(event) => {
-          setSelected(event.target.files[0] || null);
-          setError("");
-          setNotice("");
-        }}
-      />
+      <div
+        className={`csc-account-upload${locked ? " csc-account-upload--disabled" : ""}`}
+      >
+        <span className="csc-account-upload-icon" aria-hidden="true">
+          ↑
+        </span>
+        <label htmlFor={`${kind}-file`}>
+          Drop {exists ? "a new" : "a"} {isResume ? "PDF" : "photo"} here, or{" "}
+          <span>browse</span>
+        </label>
+        <p id={`${kind}-help`} className="csc-account-file-help">
+          {isResume ? "PDF · up to 10 MB" : "JPEG, PNG, or WebP · up to 5 MB"}
+        </p>
+        <input
+          ref={input}
+          id={`${kind}-file`}
+          type="file"
+          accept={
+            isResume
+              ? ".pdf,application/pdf"
+              : ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+          }
+          aria-describedby={`${kind}-help`}
+          disabled={locked}
+          onChange={(event) => {
+            setSelected(event.target.files[0] || null);
+            setError("");
+            setNotice("");
+          }}
+        />
+      </div>
+      {selected && (
+        <p className="csc-account-selected-file">
+          Selected: {selected.name}. Save to upload.
+        </p>
+      )}
+      {isResume && exists && autofill && (
+        <div className="csc-account-autofill-panel">
+          <p>Fill in your profile details from your saved PDF.</p>
+          <ResumeAutofill
+            key={`${userID}-${resumeVersion}`}
+            {...autofill}
+            userID={userID}
+            request={request}
+            disabled={busy || autofill.disabled}
+          />
+        </div>
+      )}
       {(selected || exists) && (
         <div className="csc-account-file-actions">
           {selected && (
@@ -274,15 +318,6 @@ function FileEditor({ kind, label, exists, userID, request, onChanged, autofill 
             </button>
           )}
         </div>
-      )}
-      {isResume && exists && autofill && (
-        <ResumeAutofill
-          key={`${userID}-${resumeVersion}`}
-          {...autofill}
-          userID={userID}
-          request={request}
-          disabled={busy || autofill.disabled}
-        />
       )}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
