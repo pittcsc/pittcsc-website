@@ -2,11 +2,61 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { formFromProfile, profileInput } from "../../src/lib/account/form.mjs";
 import {
+  reviewResumeSuggestions,
   suggestResumeProfile,
   validResumeSuggestions,
   resumeChanges,
   applyResumeSuggestions,
 } from "../../src/lib/account/resume/suggestions.mjs";
+
+test("career and community fields are extracted from explicit header details and an inline summary", () => {
+  const result = parse(`Jordan Q. Example
+hello@example.com | Pittsburgh, PA | jordan.dev
+Current company: Example Labs
+Job title: Software Engineer
+Summary: I develop community tools.`);
+  assert.equal(result.lastName, "Example");
+  assert.equal(result.currentCompany, "Example Labs");
+  assert.equal(result.jobTitle, "Software Engineer");
+  assert.equal(result.location, "Pittsburgh, PA");
+  assert.equal(result.bio, "I develop community tools.");
+  assert.equal(result.personalWebsite, "https://jordan.dev/");
+  assert.equal(result.contactEmail, "hello@example.com");
+});
+
+test("current employment can span neighboring lines with dates beside the title or company", () => {
+  for (const work of [
+    "Example Labs | Remote\nSoftware Engineer | 06/2025 - Present",
+    "Software Engineer | 06/2025 - Present\nExample Labs | Remote",
+    "Software Engineer\nExample Labs | June 2025 - Present",
+    "Example Labs | June 2025 - Present\nSoftware Engineer",
+  ]) {
+    const result = parse(`Jordan Example\nProfessional Experience\n${work}`);
+    assert.equal(result.currentCompany, "Example Labs", work);
+    assert.equal(result.jobTitle, "Software Engineer", work);
+  }
+});
+
+test("review validates edited values and treats empty and excluded inputs as omissions", () => {
+  const result = reviewResumeSuggestions(
+    {
+      firstName: { selected: true, text: " Jordan " },
+      lastName: { selected: true, text: " " },
+      currentCompany: { selected: false, text: "Do not use" },
+      majors: { selected: true, text: "Computer Science\n Mathematics \n" },
+      githubUsername: { selected: true, text: "https://github.com/jlee" },
+      offersReferrals: { selected: true, text: "yes" },
+      contactEmail: { selected: true, text: "member@pitt.edu" },
+    },
+    "member@pitt.edu",
+  );
+  assert.deepEqual(result.values, {
+    firstName: "Jordan",
+    majors: ["Computer Science", "Mathematics"],
+    githubUsername: "jlee",
+  });
+  assert.deepEqual(Object.keys(result.errors), ["contactEmail"]);
+});
 
 const parse = (text, links = []) =>
   suggestResumeProfile({ lines: text.split("\n"), links }, "jlee@pitt.edu");

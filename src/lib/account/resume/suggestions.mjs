@@ -28,12 +28,16 @@ const sectionName = (line) => {
   )
     return "education";
   if (
-    /^(experience|work experience|professional experience|employment|employment history)$/.test(
+    /^(experience|work experience|professional experience|relevant experience|research experience|employment|employment history)$/.test(
       title,
     )
   )
     return "work";
-  if (/^(summary|professional summary|profile|about me|objective)$/.test(title))
+  if (
+    /^(summary|professional summary|career summary|career profile|professional profile|profile|about|about me|objective)$/.test(
+      title,
+    )
+  )
     return "summary";
   if (
     /^(skills|technical skills|projects|personal projects|certifications|awards|activities|leadership|publications|interests|references|volunteering|coursework)$/.test(
@@ -58,6 +62,14 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
   let section = "header";
   for (const raw of lines) {
     const line = raw.replace(/\s+/g, " ").trim();
+    const inline = line.match(
+      /^(summary|professional summary|about(?: me)?|objective):\s*(.+)$/i,
+    );
+    if (inline) {
+      section = "summary";
+      sections.summary.push(inline[2]);
+      continue;
+    }
     const heading = sectionName(line);
     if (heading) section = heading;
     else if (line) sections[section].push(line);
@@ -77,6 +89,7 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
   });
   if (name) {
     const [first, ...last] = name.split(" ");
+    while (last.length > 1 && /^\p{Lu}\.$/u.test(last[0])) last.shift();
     result.firstName = first;
     result.lastName = last.join(" ");
   }
@@ -140,10 +153,11 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
   }
 
   const location = header
+    .flatMap((line) => line.split(/\s*[|•·]\s*/))
     .map(
       (line) =>
         line.match(
-          /^(?:Location:\s*)?([\p{L} .'-]+,\s*[A-Z]{2})(?:\s*[|•].*)?$/u,
+          /^(?:Location:\s*)?([\p{L} .'-]+,\s*[A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/u,
         )?.[1],
     )
     .filter(Boolean);
@@ -196,7 +210,7 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
     if (!/\b(present|current)\b/i.test(line)) return;
     const beforeDate = line
       .split(
-        /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|(?:19|20)\d{2})\b/i,
+        /\b(?:(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+)?(?:\d{1,2}[/.-])?(?:19|20)\d{2}\b/i,
       )[0]
       .replace(/[|,\s–—-]+$/, "");
     const titleCompany = beforeDate.match(/^(.+?)\s+(?:at|@)\s+(.+)$/i);
@@ -212,16 +226,44 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
           ? parts
           : [...parts].reverse();
         currentRoles.push({ jobTitle: title, currentCompany: company });
-      } else if (!beforeDate && index >= 2) {
-        const company = sections.work[index - 2];
-        const title = sections.work[index - 1];
-        if (
-          /\b(engineer|developer|intern|analyst|manager|assistant|researcher|designer|consultant)\b/i.test(
-            title,
-          ) &&
-          !/\d|[•|]/.test(company)
-        ) {
-          currentRoles.push({ currentCompany: company, jobTitle: title });
+      } else {
+        // A role often spans two lines, with its dates beside either the
+        // company or title. Only pair immediate neighbors, never bullet text.
+        const clean = (value = "") => value.split(/\s*[|•]\s*/)[0].trim();
+        const safe = (value) =>
+          value &&
+          !/^[•*\-]|\b(?:19|20)\d{2}\b|[.!?]$/.test(value) &&
+          value.length <= 160;
+        const current = clean(beforeDate);
+        const previous = clean(sections.work[index - 1]);
+        const next = clean(sections.work[index + 1]);
+        if (safe(current) && isTitle(current)) {
+          const company =
+            safe(previous) && !isTitle(previous)
+              ? previous
+              : safe(next) && !isTitle(next)
+                ? next
+                : null;
+          if (company)
+            currentRoles.push({ currentCompany: company, jobTitle: current });
+        } else if (safe(current) && !isTitle(current)) {
+          const title =
+            safe(previous) && isTitle(previous)
+              ? previous
+              : safe(next) && isTitle(next)
+                ? next
+                : null;
+          if (title)
+            currentRoles.push({ currentCompany: current, jobTitle: title });
+        } else if (!current && safe(previous) && index >= 2) {
+          const earlier = clean(sections.work[index - 2]);
+          if (safe(earlier) && isTitle(previous) !== isTitle(earlier)) {
+            currentRoles.push(
+              isTitle(previous)
+                ? { currentCompany: earlier, jobTitle: previous }
+                : { currentCompany: previous, jobTitle: earlier },
+            );
+          }
         }
       }
     }
@@ -232,6 +274,17 @@ export function suggestResumeProfile({ lines, links = [] }, signInEmail = "") {
       .length === 1
   )
     Object.assign(result, currentRoles[0]);
+  // Explicit career details in the header take precedence over inferred jobs.
+  for (const [field, pattern] of [
+    ["currentCompany", /^(?:current company|company|employer):\s*(.+)$/i],
+    ["jobTitle", /^(?:job title|current role|role|title):\s*(.+)$/i],
+    ["location", /^location:\s*(.+)$/i],
+  ]) {
+    const matches = unique(
+      header.map((line) => line.match(pattern)?.[1]).filter(Boolean),
+    );
+    if (matches.length === 1) result[field] = matches[0];
+  }
   if (sections.summary.length) result.bio = sections.summary.join("\n");
   return validResumeSuggestions(result, signInEmail);
 }
@@ -293,4 +346,33 @@ export function applyResumeSuggestions(form, suggestions) {
     );
   }
   return next;
+}
+
+// Review inputs are strings so members can correct every suggestion before it
+// reaches the profile draft. Unchecked and blank inputs both mean "leave alone".
+export function reviewResumeSuggestions(review, signInEmail) {
+  const values = {};
+  const errors = {};
+  for (const field of Object.keys(RESUME_FIELDS)) {
+    const entry = review[field];
+    if (!entry?.selected || !entry.text.trim()) continue;
+    const value =
+      field === "majors"
+        ? entry.text
+            .split(/\r?\n/)
+            .map((major) => major.trim())
+            .filter(Boolean)
+        : entry.text.trim();
+    try {
+      const normalized = profileInput(
+        { ...formFromProfile({}), [field]: value },
+        signInEmail,
+      )[field];
+      values[field] =
+        field === "graduationYear" ? String(normalized) : normalized;
+    } catch (error) {
+      errors[field] = error.message;
+    }
+  }
+  return { values, errors };
 }
