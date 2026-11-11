@@ -415,6 +415,48 @@
     }
   }
 
+  .csc-resume-autofill {
+    border-top: 1px solid $acc-hairline;
+    padding-top: 1rem;
+
+    > button { width: auto; }
+    > p { margin-top: 0.75rem; }
+  }
+  .csc-resume-modal {
+    width: min(44rem, calc(100vw - 2rem));
+    max-width: none;
+    max-height: calc(100dvh - 3rem);
+    margin: auto;
+    padding: 1.5rem;
+    background: #fff;
+    color: $acc-navy;
+    border: 1px solid $acc-border;
+    border-radius: $acc-radius-control;
+    box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, 0.25);
+    overflow-y: auto;
+
+    &::backdrop { background: rgba(10, 25, 50, 0.55); }
+    h2 { margin: 0; font-size: 1.5rem; font-weight: 700; }
+    header p { margin: 0.75rem 0 0; }
+    .csc-account-file-actions { position: sticky; bottom: -1.5rem; padding: 1rem 0; background: #fff; }
+  }
+  .csc-resume-suggestions { display: grid; gap: 1rem; }
+  .csc-resume-suggestion {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 1px solid $acc-border;
+    border-radius: $acc-radius-control;
+    background: $acc-mist;
+
+    .csc-resume-choice { display: flex; align-items: center; gap: 0.625rem; }
+    input[type="checkbox"] { width: 1.125rem; height: 1.125rem; flex: 0 0 auto; accent-color: $acc-navy; }
+    input:not([type="checkbox"]), textarea { width: 100%; min-width: 0; box-sizing: border-box; }
+    input:disabled, textarea:disabled { opacity: 0.55; }
+    textarea { resize: vertical; }
+    p { margin: 0; }
+  }
+
   @media (max-width: 850px) {
     .csc-account-editor-fields,
     .csc-account-files {

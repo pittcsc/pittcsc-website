@@ -70,6 +70,63 @@ for an empty profile. PDFs are checked for their header, end marker, and size,
 then downloaded as attachments with their original bytes. This validates file
 type; it does not scan for malware or repair malformed PDFs.
 
+## Resume autofill
+
+The full My Account editor shows **Autofill from resume** after a resume has
+been saved. It is also available for previously uploaded resumes on later
+visits. Selecting a replacement file does not change the source until **Save
+replacement** succeeds. Initial guided onboarding does not include this feature.
+
+Autofill retrieves the owner's saved PDF through the existing authenticated
+`GET /profile/resume` endpoint, then parses it locally in the browser. It uses
+Mozilla PDF.js and independently written extraction rules; it does not incorporate
+OpenResume source code or send documents to a parsing/AI service. The PDF reader
+and its same-origin worker load on demand. There are no new credentials,
+backend endpoints, schema changes, or parsing-service charges.
+
+Suggestions target first/last name, majors, graduation year, external profile
+handles, personal website, a contact email different from the Pitt sign-in
+address, location, current company/title, and an explicit summary section for
+bio. They use the existing manual-entry validation. Ambiguous values may be
+omitted, and unidentified fields never clear existing values. Preferred name,
+help offers, sharing, alumni status, roles, and login identity are not inferred.
+
+Every successful extraction opens an editable **Review resume autofill** modal,
+including when profile inputs are empty or already match the resume. Each
+suggestion has an inclusion checkbox and an editable input.
+Company, job title, and location inputs are always offered in a successful review;
+when extraction misses one, its input is blank and can be filled manually.
+Members can correct names or other values, uncheck suggestions, or leave inputs blank to skip them;
+none of those skipped values clear existing profile information. Majors are
+edited one per line. Included edits use the existing profile validation and show
+field-specific errors before applying. **Cancel** or Escape preserves the form;
+**Apply selected** replaces only the included, nonblank inputs. Native modal focus
+containment prevents editing the underlying page until the modal closes and
+returns focus to the autofill button. Autofill only edits the draft: members
+must click **Save profile** to persist changes. Replacing/removing
+the saved resume invalidates pending suggestions. Download/parse failures retain
+the draft and allow another attempt; logout/unmount cancels pending work.
+
+This first version targets text-based English PDFs, especially single-column
+layouts, with a maximum of 10 pages and 150,000 extracted characters within the
+existing 10 MiB file limit. It does not perform OCR or guarantee accuracy on
+multi-column/unusual layouts. Scanned, password-protected, unreadable, or overly
+long PDFs produce feedback and leave manual editing available. Resume text and
+hyperlink annotations are treated as input data, not instructions or executable
+content; no linked websites are fetched by the parser. Career extraction supports
+explicit company/title/location labels, location alongside header contact links,
+inline summary sections, and work roles split across neighboring lines. Wide PDF
+alignment gaps preserve separate company/location and title/date columns. A
+single explicitly current role is preferred; otherwise the most recently ended
+dated experience supplies company/title suggestions. A location in the resume
+header takes precedence; when absent, that role's location is offered for review.
+The latest role may be a completed internship and its location may be a workplace
+rather than the member's residence, so members can edit or exclude those values.
+Combined Leadership & Projects headings end work extraction so club/project
+dates cannot replace employment suggestions.
+Leading middle initials are omitted from the suggested last name. These remain
+editable suggestions, not verified employment or identity information.
+
 ## Storage and authorization
 
 Migrations create `csc.profiles` and `csc.profile_assets` in a private schema.
@@ -145,6 +202,18 @@ out. The SQL check verifies browser-role isolation.
 For browser review, sign in, save a partial profile, complete it with multiple
 majors, reload the nested URL, and upload/replace/remove both files. Check narrow
 screens, retries, and logout while requests are pending.
+
+For resume autofill, upload a synthetic text PDF, confirm the button appears,
+and exercise cancellation and application with populated/unsaved fields. Edit a
+suggested name, uncheck a suggestion, leave another blank, and verify that invalid
+selected edits prevent application until corrected or excluded. Check
+that unidentified fields survive, custom majors stay editable, and only **Save
+profile** persists the result. Repeat after reloading, replacing, and removing
+the resume; also check an unreadable/scanned PDF, download failure/retry,
+keyboard focus/Tab containment and Escape in the modal, and mobile width. The focused
+`tests/account/resume-*.test.mjs` tests run in `mise run check` and cover actual
+PDF text extraction, mapping/validation, confirmation, retries, duplicate clicks,
+and cancellation without requiring hosted services.
 
 Hosted rollout is separate: review/apply the migration to the intended project,
 disable its generated Data API while retaining Auth, deploy Go and Gatsby, and
