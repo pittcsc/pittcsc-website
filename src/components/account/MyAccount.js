@@ -9,6 +9,7 @@ import {
   pastedHandle,
   MAJOR_OPTIONS,
 } from "../../lib/account/form.mjs";
+import EmailSubscription from "./EmailSubscription";
 import AccountFiles from "./AccountFiles";
 import { applyResumeSuggestions } from "../../lib/account/resume/suggestions.mjs";
 import PointsProfile from "../points/PointsProfile";
@@ -762,6 +763,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
             </p>
           </div>
           {guided ? renderGuided() : renderEditor()}
+ <EmailSubscription identity={identity} request={request} />
           {profile.complete && <PointsProfile identity={identity} />}
         </>
       )}
