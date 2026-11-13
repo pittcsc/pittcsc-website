@@ -8,7 +8,6 @@ import ROBLOX from "../images/sponsors/roblox_logo.png";
 import CGI from "../images/sponsors/CGI_logo.svg";
 import AEROTECH from "../images/sponsors/aerotech_logo.png";
 import WESCO from "../images/sponsors/wesco_logo.png";
-import TSENTA from "../images/sponsors/tsenta_logo.jpeg";
 
 import SpringReportImage from "../images/hero_image.png";
 
@@ -47,7 +46,6 @@ const sponsors = [
   { src: AEROTECH, alt: "Aerotech Logo",               href: "https://www.aerotech.com/",              imgClass: "h-24" },
   { src: FAST,     alt: "FAST Enterprises Logo",       href: "https://www.fastenterprises.com/",       imgClass: "h-12" },
   { src: WESCO,    alt: "Wesco Logo",                  href: "https://www.wesco.com/",                 imgClass: "h-16" },
-  { src: TSENTA,   alt: "Tsenta Logo",                 href: "https://tsenta.com/",                    imgClass: "h-16" },
 ];
 
 // "At a Glance" stats pulled from the 2026-2027 partnership package.

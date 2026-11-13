@@ -35,8 +35,9 @@ function track(event) {
 
 function release(event) {
   const card = event.currentTarget;
-  for (const name of ["--tilt-x", "--tilt-y", "--shine-x", "--shine-y"])
-    card.style.removeProperty(name);
+  // Keep the highlight at its last pointer position as the card levels out.
+  card.style.removeProperty("--tilt-x");
+  card.style.removeProperty("--tilt-y");
   card.classList.remove("is-tracking");
 }
 
