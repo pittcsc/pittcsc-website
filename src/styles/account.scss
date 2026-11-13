@@ -2,13 +2,12 @@
 
 @import "./helpers/account-tokens";
 
-// Keep the short setup questions compact, then give the completed editor the
-// same room as the member dashboard.
+// Keep the setup questions compact and give the scrolling editor more room.
 .csc-auth:has(.csc-account) .csc-auth-cardwrap {
   max-width: 44rem;
 }
 .csc-auth:has(.csc-account--editor) .csc-auth-cardwrap {
-  max-width: 72rem;
+  max-width: 48rem;
 
   &::before {
     display: none;
@@ -183,17 +182,15 @@
     gap: 1.125rem;
   }
 
-  .csc-account-editor-fields {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
-    align-items: start;
-  }
-  .csc-account-editor-column {
+  .csc-account-editor-group {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     min-width: 0;
+
+    .csc-account-name-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
   .csc-account-majors {
     margin-top: 1.75rem;
@@ -286,7 +283,6 @@
   }
   .csc-account-offer-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
   }
   .csc-account-checkbox {
@@ -391,8 +387,8 @@
   }
 
   .csc-account-files {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 1.25rem;
 
     h2 {
@@ -663,10 +659,6 @@
   }
 
   @media (max-width: 850px) {
-    .csc-account-editor-fields,
-    .csc-account-files {
-      grid-template-columns: 1fr;
-    }
     .csc-account-alumni {
       flex-wrap: wrap;
     }
@@ -676,9 +668,6 @@
   }
 
   @media (max-width: 480px) {
-    .csc-account-offer-grid {
-      grid-template-columns: 1fr;
-    }
     .csc-account-name-grid {
       grid-template-columns: 1fr;
       gap: 1.125rem;

@@ -599,31 +599,25 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
             disabled={saving || autofilling}
             aria-label="Edit your profile"
           >
-            <div className="csc-account-editor-fields">
-              <div className="csc-account-editor-column">
-                <fieldset className="csc-account-card">
-                  <legend>About you</legend>
-                  <NameFields form={form} change={change} />
-                </fieldset>
-                <fieldset className="csc-account-card csc-account-handles">
-                  <legend>Profile links</legend>
-                  <HandleFields form={form} change={change} />
-                </fieldset>
-                <BioContactFields form={form} change={change} />
-              </div>
-              <div className="csc-account-editor-column">
-                <fieldset className="csc-account-card">
-                  <legend>Education</legend>
-                  <YearField form={form} change={change} />
-                  <fieldset className="csc-account-majors">
-                    <legend>Majors</legend>
-                    <MajorFields form={form} change={change} />
-                  </fieldset>
-                </fieldset>
-                <CareerFields form={form} change={change} />
-                <CommunityFields form={form} change={change} />
-              </div>
-            </div>
+            <fieldset className="csc-account-card">
+              <legend>About you</legend>
+              <NameFields form={form} change={change} />
+            </fieldset>
+            <fieldset className="csc-account-card">
+              <legend>Education</legend>
+              <YearField form={form} change={change} />
+              <fieldset className="csc-account-majors">
+                <legend>Majors</legend>
+                <MajorFields form={form} change={change} />
+              </fieldset>
+            </fieldset>
+            <CareerFields form={form} change={change} />
+            <fieldset className="csc-account-card csc-account-handles">
+              <legend>Profile links</legend>
+              <HandleFields form={form} change={change} />
+            </fieldset>
+            <BioContactFields form={form} change={change} />
+            <CommunityFields form={form} change={change} />
           </fieldset>
           <div className="csc-account-card csc-account-save">
             <p>
