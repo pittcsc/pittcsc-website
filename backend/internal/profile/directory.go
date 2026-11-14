@@ -40,20 +40,21 @@ type DirectoryMember struct {
 
 type PublicMember struct {
 	DirectoryMember
-	GitHubUsername     *string `json:"githubUsername"`
-	LeetCodeUsername   *string `json:"leetcodeUsername"`
-	LinkedInUsername   *string `json:"linkedinUsername"`
-	Location           *string `json:"location"`
-	Bio                *string `json:"bio"`
-	PersonalWebsite    *string `json:"personalWebsite"`
-	ContactEmail       *string `json:"contactEmail"`
-	OffersCoffee       bool    `json:"offersCoffee"`
-	OffersMentorship   bool    `json:"offersMentorship"`
-	OffersReferrals    bool    `json:"offersReferrals"`
-	OffersResumeReview bool    `json:"offersResumeReview"`
-	AllTimePoints      int     `json:"allTimePoints"`
-	Rank7Days          *int    `json:"rank7Days"`
-	Complete           bool    `json:"complete"`
+	GitHubUsername          *string `json:"githubUsername"`
+	LeetCodeUsername        *string `json:"leetcodeUsername"`
+	LinkedInUsername        *string `json:"linkedinUsername"`
+	Location                *string `json:"location"`
+	Bio                     *string `json:"bio"`
+	PersonalWebsite         *string `json:"personalWebsite"`
+	ContactEmail            *string `json:"contactEmail"`
+	OffersCoffee            bool    `json:"offersCoffee"`
+	OffersMentorship        bool    `json:"offersMentorship"`
+	OffersReferrals         bool    `json:"offersReferrals"`
+	OffersResumeReview      bool    `json:"offersResumeReview"`
+	PointsLeaderboardShared bool    `json:"pointsLeaderboardShared"`
+	AllTimePoints           int     `json:"allTimePoints"`
+	Rank7Days               *int    `json:"rank7Days"`
+	Complete                bool    `json:"complete"`
 }
 
 type DirectoryPage struct {
@@ -151,6 +152,7 @@ func (s Store) PublicMember(ctx context.Context, memberID string, staff bool) (P
 		p.details_shared and p.offers_mentorship,
 		p.details_shared and p.offers_referrals,
 		p.details_shared and p.offers_resume_review,
+		p.points_leaderboard_shared and (`+completeMemberSQL+`),
 		(`+completeMemberSQL+`)
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
 		where p.auth_user_id = $1::uuid and `+activeMemberSQL+`
@@ -160,15 +162,19 @@ func (s Store) PublicMember(ctx context.Context, memberID string, staff bool) (P
 			&result.GitHubUsername, &result.LeetCodeUsername, &result.LinkedInUsername,
 			&result.Location, &result.Bio, &result.PersonalWebsite, &result.ContactEmail,
 			&result.OffersCoffee, &result.OffersMentorship, &result.OffersReferrals, &result.OffersResumeReview,
-			&result.Complete)
+			&result.PointsLeaderboardShared, &result.Complete)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return PublicMember{}, ErrMemberNotFound
 	}
 	if err != nil {
 		return PublicMember{}, err
 	}
+	if !result.PointsLeaderboardShared {
+		return result, nil
+	}
 	if err := s.DB.QueryRow(ctx, `select coalesce(sum(points_awarded), 0)::integer
-		from csc.point_claims where auth_user_id = $1::uuid and status = 'awarded'`, memberID).
+		from csc.point_claims c join csc.profiles p using (auth_user_id)
+		where c.auth_user_id = $1::uuid and c.status = 'awarded' and p.points_leaderboard_shared`, memberID).
 		Scan(&result.AllTimePoints); err != nil {
 		return PublicMember{}, err
 	}
@@ -177,7 +183,7 @@ func (s Store) PublicMember(ctx context.Context, memberID string, staff bool) (P
 		from csc.point_claims c join csc.profiles p on p.auth_user_id = c.auth_user_id
 		join auth.users u on u.id = c.auth_user_id
 		where c.status = 'awarded' and c.awarded_at >= now() - interval '168 hours'
-		and `+activeMemberSQL+` and `+completeMemberSQL+`
+		and p.points_leaderboard_shared and `+activeMemberSQL+` and `+completeMemberSQL+`
 		group by c.auth_user_id
 	), ranked as (
 		select auth_user_id, rank() over (order by points desc)::integer as rank from scores

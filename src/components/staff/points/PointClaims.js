@@ -169,6 +169,7 @@ export default function PointClaims({ identity, request }) {
                 <a href={claim.url} target="_blank" rel="noopener noreferrer">
                   {claim.url}
                 </a>
+                {claim.summary && <p>{claim.summary}</p>}
                 {claim.statusReason && <p>Reason: {claim.statusReason}</p>}
                 <div className="csc-staff-points-actions">
                   {claim.status === "awarded" && (

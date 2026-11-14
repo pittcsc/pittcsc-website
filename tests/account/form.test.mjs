@@ -40,6 +40,7 @@ test("empty and partial profiles can be saved without invented data", () => {
     bio: null,
     personalWebsite: null,
     contactEmail: null,
+    pointsLeaderboardShared: false,
     offersCoffee: false,
     offersMentorship: false,
     offersReferrals: false,
@@ -184,4 +185,11 @@ test("formFromProfile round-trips stored handles", () => {
   const input = profileInput(form);
   assert.equal(input.leetcodeUsername, "octo.cat");
   assert.equal(input.linkedinUsername, "jordan-lee");
+});
+
+test("leaderboard sharing is unchecked by default and round-trips when selected", () => {
+  assert.equal(formFromProfile({}).pointsLeaderboardShared, false);
+  const form = formFromProfile({ pointsLeaderboardShared: true });
+  assert.equal(profileInput(form).pointsLeaderboardShared, true);
+  assert.equal(profileInput({ ...form, pointsLeaderboardShared: false }).pointsLeaderboardShared, false);
 });

@@ -103,6 +103,17 @@
     grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 1.2fr);
     gap: 1rem;
   }
+  .csc-points-summary textarea {
+    @include acc-field;
+    margin-top: 0.5rem;
+    resize: vertical;
+  }
+  .csc-points-summary p {
+    font-size: 0.875rem;
+  }
+  .csc-points-history .csc-points-submission-summary {
+    white-space: pre-line;
+  }
   .csc-points-affirm {
     display: flex;
     align-items: flex-start;
@@ -278,4 +289,10 @@
       grid-template-columns: 1fr;
     }
   }
+}
+
+.csc-account-card .csc-points-visibility {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
 }

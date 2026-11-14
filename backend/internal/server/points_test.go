@@ -32,6 +32,11 @@ func (s *pointsStub) Mine(_ context.Context, userID string, _ int) (points.Mine,
 	s.userID = userID
 	return points.Mine{Claims: []points.Claim{}}, nil
 }
+func (s *pointsStub) SharedHistory(_ context.Context, memberID string, page int) (points.SharedHistory, error) {
+	s.userID = memberID
+	return points.SharedHistory{}, points.ErrHistoryUnavailable
+}
+
 func (s *pointsStub) Leaderboard(_ context.Context, userID, period string) (points.Leaderboard, error) {
 	s.userID = userID
 	if period != "all" && period != "7d" {
@@ -74,7 +79,7 @@ func pointRequest(roles []string, store *pointsStub, method, path, body, token s
 
 func TestPointClaimsRequireIdentityAndAcceptOnlyAllowedFields(t *testing.T) {
 	s := &pointsStub{}
-	valid := `{"category":"paper","url":"https://example.org/paper","affirmed":true}`
+	valid := `{"category":"paper","url":"https://example.org/paper","affirmed":true,"summary":"` + strings.Repeat("é", 100) + `"}`
 	if w := pointRequest(nil, s, "POST", "/points/claims", valid, ""); w.Code != 401 || s.writes != 0 {
 		t.Fatal("anonymous claim accepted")
 	}
@@ -82,6 +87,9 @@ func TestPointClaimsRequireIdentityAndAcceptOnlyAllowedFields(t *testing.T) {
 		`{"category":"paper","url":"https://example.org/paper","affirmed":true,"userID":"someone-else"}`,
 		`{"category":"paper","url":"https://example.org/paper","affirmed":true,"points":1000}`,
 		`null`, `{} {}`,
+		`{"category":"paper","url":"https://example.org/paper","affirmed":true}`,
+		strings.Replace(valid, strings.Repeat("é", 100), "too short", 1),
+		strings.Replace(valid, strings.Repeat("é", 100), strings.Repeat("é", 251), 1),
 	} {
 		if w := pointRequest(nil, s, "POST", "/points/claims", body, "valid"); w.Code != 400 || s.writes != 0 {
 			t.Fatalf("invalid payload accepted: %d", w.Code)
@@ -100,6 +108,20 @@ func TestPointClaimsRequireIdentityAndAcceptOnlyAllowedFields(t *testing.T) {
 	}
 	if w := pointRequest(nil, s, "DELETE", "/points/claims/not-a-uuid", "", "valid"); w.Code != 400 {
 		t.Fatal("invalid claim ID accepted")
+	}
+}
+
+func TestSharedSubmissionHistoryAuthorization(t *testing.T) {
+	s := &pointsStub{}
+	path := "/points/leaderboard/" + fixtureClaimID + "/submissions"
+	if w := pointRequest(nil, s, "GET", path, "", ""); w.Code != 401 || s.userID != "" {
+		t.Fatal("anonymous request reached shared history store")
+	}
+	if w := pointRequest(nil, s, "GET", path+"?page=0", "", "valid"); w.Code != 400 || s.userID != "" {
+		t.Fatal("invalid page reached shared history store")
+	}
+	if w := pointRequest(nil, s, "GET", path+"?page=2", "", "valid"); w.Code != 404 || s.userID != fixtureClaimID {
+		t.Fatal("history did not use the selected member or enforce the store's visibility decision")
 	}
 }
 

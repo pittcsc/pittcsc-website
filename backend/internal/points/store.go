@@ -15,11 +15,11 @@ type Store struct{ DB *pgxpool.Pool }
 
 func scanClaim(row pgx.Row) (Claim, error) {
 	var c Claim
-	err := row.Scan(&c.ID, &c.Category, &c.URL, &c.Points, &c.Status, &c.AwardedAt, &c.ChangedAt, &c.StatusReason)
+	err := row.Scan(&c.ID, &c.Category, &c.URL, &c.Points, &c.Status, &c.AwardedAt, &c.ChangedAt, &c.StatusReason, &c.Summary)
 	return c, err
 }
 
-const claimColumns = `id, category_code, url, points_awarded, status, awarded_at, changed_at, status_reason`
+const claimColumns = `id, category_code, url, points_awarded, status, awarded_at, changed_at, status_reason, summary`
 
 func (s Store) Categories(ctx context.Context) ([]Category, error) {
 	rows, err := s.DB.Query(ctx, `select code, label, points from csc.point_categories where active order by code`)
@@ -42,6 +42,10 @@ func (s Store) Create(ctx context.Context, userID string, input Input) (Claim, e
 	if !input.Affirmed {
 		return Claim{}, ErrInvalid
 	}
+	summary, err := NormalizeSummary(input.Summary)
+	if err != nil {
+		return Claim{}, err
+	}
 	normalized, err := NormalizeURL(input.Category, input.URL)
 	if err != nil {
 		return Claim{}, err
@@ -52,10 +56,10 @@ func (s Store) Create(ctx context.Context, userID string, input Input) (Claim, e
 	}
 	defer tx.Rollback(ctx)
 	claim, err := scanClaim(tx.QueryRow(ctx, `
-		insert into csc.point_claims (auth_user_id, category_code, url, normalized_url, points_awarded)
-		select $1::uuid, code, $3, $3, points from csc.point_categories
+		insert into csc.point_claims (auth_user_id, category_code, url, normalized_url, points_awarded, summary)
+		select $1::uuid, code, $3, $3, points, $4 from csc.point_categories
 		where code = $2 and active
-		returning `+claimColumns, userID, input.Category, normalized))
+		returning `+claimColumns, userID, input.Category, normalized, summary))
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Claim{}, ErrInvalid
 	}
@@ -158,11 +162,7 @@ func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderbo
 		    sum(c.points_awarded)::integer as points
 		  from csc.point_claims c join csc.profiles p on p.auth_user_id = c.auth_user_id
 		  join auth.users u on u.id = c.auth_user_id
-		  where p.account_status = 'active' and u.email_confirmed_at is not null
-		    and u.deleted_at is null and not u.is_anonymous
-		    and (u.banned_until is null or u.banned_until <= now())
-		    and p.first_name is not null and p.last_name is not null
-		    and p.graduation_year is not null and cardinality(p.majors) > 0
+		  where `+sharedPointsMemberSQL+`
 		    and c.status = 'awarded'
 		    and ($2 = 'all' or c.awarded_at >= now() - interval '168 hours')
 		  group by p.auth_user_id, p.preferred_name, p.first_name, p.last_name
@@ -194,6 +194,40 @@ func (s Store) Leaderboard(ctx context.Context, userID, period string) (Leaderbo
 	return result, rows.Err()
 }
 
+const sharedPointsMemberSQL = `p.points_leaderboard_shared and p.account_status = 'active'
+	and u.email_confirmed_at is not null and u.deleted_at is null and not u.is_anonymous
+	and (u.banned_until is null or u.banned_until <= now())
+	and p.first_name is not null and p.last_name is not null
+	and p.graduation_year is not null and cardinality(p.majors) > 0`
+
+func (s Store) SharedHistory(ctx context.Context, memberID string, page int) (SharedHistory, error) {
+	// Check visibility in the same statement that reads the history, including empty pages.
+	var result SharedHistory
+	err := s.DB.QueryRow(ctx, `
+		select coalesce(jsonb_agg(to_jsonb(submission) order by submission."awardedAt" desc, submission.id desc)
+		  filter (where submission.id is not null), '[]'::jsonb)
+		from csc.profiles p join auth.users u on u.id = p.auth_user_id
+		left join lateral (
+		  select c.id, v.label, c.url, c.summary, c.points_awarded as points, c.status, c.awarded_at as "awardedAt"
+		  from csc.point_claims c join csc.point_categories v on v.code = c.category_code
+		  where c.auth_user_id = p.auth_user_id
+		  order by awarded_at desc, id desc limit $2 offset $3
+		) submission on true
+		where p.auth_user_id = $1::uuid and `+sharedPointsMemberSQL+`
+		group by p.auth_user_id`, memberID, PageSize+1, (page-1)*PageSize).Scan(&result.Claims)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return SharedHistory{}, ErrHistoryUnavailable
+	}
+	if err != nil {
+		return SharedHistory{}, err
+	}
+	if len(result.Claims) > PageSize {
+		result.Claims = result.Claims[:PageSize]
+		result.HasMore = true
+	}
+	return result, nil
+}
+
 func (s Store) StaffList(ctx context.Context, page int) (StaffPage, error) {
 	result := StaffPage{Claims: []Claim{}}
 	rows, err := s.DB.Query(ctx, `select c.`+claimColumns+`, c.auth_user_id,
@@ -207,7 +241,7 @@ func (s Store) StaffList(ctx context.Context, page int) (StaffPage, error) {
 	for rows.Next() {
 		var claim Claim
 		if err := rows.Scan(&claim.ID, &claim.Category, &claim.URL, &claim.Points, &claim.Status,
-			&claim.AwardedAt, &claim.ChangedAt, &claim.StatusReason, &claim.MemberID, &claim.MemberName); err != nil {
+			&claim.AwardedAt, &claim.ChangedAt, &claim.StatusReason, &claim.Summary, &claim.MemberID, &claim.MemberName); err != nil {
 			return StaffPage{}, err
 		}
 		if len(result.Claims) == PageSize {
