@@ -18,9 +18,11 @@ Foundry event eligibility, while the legacy `foundry` role remains separate.
   link to the full history page also linked from Points. Staff can inspect
   claims in their moderation tool. Older claims remain visible without summaries.
 - Completed signed-in users see the top 10 active, completed accounts with
-  points on each leaderboard who opt in through **My Account**, plus their own
-  rank if outside the top 10. Participation defaults to off. Names link to
-  member profiles, where opted-in members share their points, 7-day rank, and
+  points on each leaderboard who have sharing enabled, plus their own rank if
+  outside the top 10. Sharing starts enabled for new accounts and can be turned
+  off during profile setup or in **My Account**. Existing preferences are
+  preserved. Names link to member profiles, where participating members share
+  their points, 7-day rank, and
   full history (including links, summaries, dates, and claim statuses) with
   other signed-in members who have completed their profiles. Opting out hides
   this information and preserves the owner’s points and history.
@@ -75,7 +77,7 @@ access. The public Gatsby build contains no point or claim data.
 | `POST /points/claims` | Active, completed account | Submit `{category,url,summary,affirmed:true}` |
 | `DELETE /points/claims/{id}` | Owner | Withdraw an awarded claim |
 | `GET /points/leaderboard?period=all\|7d` | Active, completed account | Top 10 and own rank |
-| `GET /points/leaderboard/{id}/submissions?page=1` | Active, completed account | 20 newest submissions per page for an eligible member who opted in. Staff reasons stay private. |
+| `GET /points/leaderboard/{id}/submissions?page=1` | Active, completed account | 20 newest submissions per page for an eligible member with leaderboard sharing enabled. Staff reasons stay private. |
 | `GET /points/foundry` | Owner | Name, 30-day points, threshold, window, active flag, `activeUntil`, and `grantExpiresAt` |
 | `GET /staff/points/claims?page=1` | Staff | 20 newest claims per page |
 | `POST /staff/points/claims/{id}/revoke` | Staff | Revoke with `{reason}` |

@@ -256,27 +256,10 @@ async function main() {
       (await api(null, historyPath)).status === 401,
       "Anonymous history access accepted",
     );
+    const defaultProfile = await (await api(member, "/profile")).json();
     check(
-      (await api(staff, historyPath)).status === 404,
-      "History shared by default",
-    );
-    const privateBoard = await (
-      await api(member, "/points/leaderboard")
-    ).json();
-    check(
-      ![...privateBoard.entries, privateBoard.own].some(
-        (entry) => entry?.id === member.id,
-      ),
-      "Member ranked without opting in",
-    );
-    check(
-      (
-        await api(member, "/profile", "PUT", {
-          ...memberProfileInput,
-          pointsLeaderboardShared: true,
-        })
-      ).ok,
-      "Leaderboard opt-in failed",
+      defaultProfile.pointsLeaderboardShared === true,
+      "New profile is not sharing by default",
     );
     const shared = await (await api(staff, historyPath)).json();
     check(
