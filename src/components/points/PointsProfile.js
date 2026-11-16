@@ -3,12 +3,8 @@ import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import { isSecurePointURL } from "../../lib/points/validation.mjs";
+import SubmissionList from "./SubmissionList";
 import "../../styles/points.scss";
-
-const dateLabel = (value) =>
-  new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
-    new Date(value),
-  );
 
 export default function PointsProfile({
   identity,
@@ -33,6 +29,7 @@ export default function PointsProfile({
   const [notice, setNotice] = useState("");
   const [category, setCategory] = useState("");
   const [url, setURL] = useState("");
+  const [summary, setSummary] = useState("");
   const [affirmed, setAffirmed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -62,7 +59,7 @@ export default function PointsProfile({
 
   async function submit(event) {
     event.preventDefault();
-    if (busy) return;
+    if (busy || !validSummary) return;
     setBusy(true);
     setError("");
     setNotice("");
@@ -71,9 +68,15 @@ export default function PointsProfile({
         userID: identity.id,
         method: "POST",
         contentType: "application/json",
-        body: JSON.stringify({ category, url: url.trim(), affirmed }),
+        body: JSON.stringify({
+          category,
+          url: url.trim(),
+          summary: trimmedSummary,
+          affirmed,
+        }),
       });
       setURL("");
+      setSummary("");
       setAffirmed(false);
       setNotice(
         `${claim.points} points awarded. Your claim is on your profile.`,
@@ -141,6 +144,15 @@ export default function PointsProfile({
     : [];
   const hasURL = url.trim().length > 0;
   const validURL = isSecurePointURL(url);
+  const trimmedSummary = summary.replace(
+    /^\p{White_Space}+|\p{White_Space}+$/gu,
+    "",
+  );
+  const summaryLength = [...trimmedSummary].length;
+  const validSummary =
+    summaryLength >= 100 &&
+    summaryLength <= 250 &&
+    !trimmedSummary.includes("\0");
 
   return (
     <section
@@ -161,11 +173,13 @@ export default function PointsProfile({
                 <details className="csc-points-help">
                   <summary aria-label="How points work">i</summary>
                   <div className="csc-points-help-panel">
-                    <p>Share what you completed. Each link earns 10 points once.</p>
                     <p>
-                      Use a LeetCode solution or submission link, a link to the paper
-                      you read, or a public GitHub PR or standalone commit. A PR and
-                      its commits count as one contribution.
+                      Share what you completed. Each link earns 10 points once.
+                    </p>
+                    <p>
+                      Use a LeetCode solution or submission link, a link to the
+                      paper you read, or a public GitHub PR or standalone
+                      commit. A PR and its commits count as one contribution.
                     </p>
                   </div>
                 </details>
@@ -265,6 +279,30 @@ export default function PointsProfile({
                   )}
                 </div>
               </div>
+              <div className="csc-points-summary">
+                <label htmlFor="point-summary">Submission summary</label>
+                <p id="point-summary-help">
+                  Describe what you’re submitting in 1–2 sentences (100–250
+                  characters).
+                </p>
+                <textarea
+                  id="point-summary"
+                  rows={3}
+                  value={summary}
+                  onChange={(event) => setSummary(event.target.value)}
+                  aria-describedby="point-summary-help point-summary-count"
+                  aria-invalid={summaryLength > 250}
+                  required
+                />
+                <p
+                  id="point-summary-count"
+                  className={
+                    summaryLength > 250 ? "csc-points-field-error" : undefined
+                  }
+                >
+                  {summaryLength}/250 characters
+                </p>
+              </div>
               {hasURL && (
                 <label className="csc-points-affirm">
                   <input
@@ -279,7 +317,9 @@ export default function PointsProfile({
               )}
               <button
                 type="submit"
-                disabled={busy || !category || !validURL || !affirmed}
+                disabled={
+                  busy || !category || !validURL || !validSummary || !affirmed
+                }
               >
                 {busy ? "Saving…" : "Submit link"}
               </button>
@@ -295,47 +335,12 @@ export default function PointsProfile({
                   </Link>
                 </div>
               )}
-              {visibleClaims.length === 0 ? (
-                <p>No links submitted yet.</p>
-              ) : (
-                <ul>
-                  {visibleClaims.map((claim) => (
-                    <li key={claim.id}>
-                      <div>
-                        <strong>
-                          {labels[claim.category] || claim.category}
-                        </strong>
-                        <span>
-                          {dateLabel(claim.awardedAt)} ·{" "}
-                          {claim.status === "awarded"
-                            ? `+${claim.points} points`
-                            : claim.status}
-                        </span>
-                      </div>
-                      <a
-                        href={claim.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {claim.url}
-                      </a>
-                      {claim.status === "revoked" && claim.statusReason && (
-                        <p>Staff reason: {claim.statusReason}</p>
-                      )}
-                      {claim.status === "awarded" && (
-                        <button
-                          type="button"
-                          className="csc-auth-secondary"
-                          disabled={busy}
-                          onClick={() => void withdraw(claim)}
-                        >
-                          Withdraw claim
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <SubmissionList
+                claims={visibleClaims}
+                labels={labels}
+                onWithdraw={withdraw}
+                busy={busy}
+              />
               {submissionsPage && data.hasMore && (
                 <button
                   type="button"

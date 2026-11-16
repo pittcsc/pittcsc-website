@@ -618,6 +618,23 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
             </fieldset>
             <BioContactFields form={form} change={change} />
             <CommunityFields form={form} change={change} />
+            <fieldset className="csc-account-card">
+              <legend>Points leaderboard</legend>
+              <label className="csc-points-visibility">
+                <input
+                  type="checkbox"
+                  checked={form.pointsLeaderboardShared}
+                  onChange={(event) =>
+                    change("pointsLeaderboardShared", event.target.checked)
+                  }
+                />
+                Show me on the points leaderboard
+              </label>
+              <p>
+                Signed-in members can see your rank, scores, and full submission
+                history, including links and summaries, when you turn this on.
+              </p>
+            </fieldset>
           </fieldset>
           <div className="csc-account-card csc-account-save">
             <p>

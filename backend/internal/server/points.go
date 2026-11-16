@@ -20,6 +20,7 @@ type pointStore interface {
 	Create(context.Context, string, points.Input) (points.Claim, error)
 	Mine(context.Context, string, int) (points.Mine, error)
 	Leaderboard(context.Context, string, string) (points.Leaderboard, error)
+	SharedHistory(context.Context, string, int) (points.SharedHistory, error)
 	Foundry(context.Context, string) (points.FoundryStatus, error)
 	Withdraw(context.Context, string, string) (points.Claim, error)
 	StaffList(context.Context, int) (points.StaffPage, error)
@@ -31,6 +32,10 @@ var pointClaimID = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F
 
 func writePointError(w http.ResponseWriter, err error) {
 	switch {
+	case errors.Is(err, points.ErrInvalidSummary):
+		writeJSONError(w, 400, "Write a summary of 100–250 characters.")
+	case errors.Is(err, points.ErrHistoryUnavailable):
+		writeJSONError(w, 404, "This member’s submission history is unavailable.")
 	case errors.Is(err, points.ErrInvalid):
 		writeJSONError(w, 400, "Choose a valid category and HTTPS link, confirm the activity, and check any reason or page number.")
 	case errors.Is(err, points.ErrDuplicate):
@@ -50,7 +55,7 @@ func decodePointBody(w http.ResponseWriter, r *http.Request, value any) bool {
 		writeJSONError(w, 415, "Send point fields as JSON.")
 		return false
 	}
-	r.Body = http.MaxBytesReader(w, r.Body, 4096)
+	r.Body = http.MaxBytesReader(w, r.Body, 16384)
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(value); err != nil {
@@ -116,6 +121,24 @@ func registerPointRoutes(mux *http.ServeMux, authentication authenticator, profi
 		}
 		writeJSON(w, result)
 	}))
+	mux.HandleFunc("GET /points/leaderboard/{id}/submissions", member(func(w http.ResponseWriter, r *http.Request, _ auth.Identity) {
+		memberID := r.PathValue("id")
+		if !pointClaimID.MatchString(memberID) {
+			writePointError(w, points.ErrHistoryUnavailable)
+			return
+		}
+		page, err := points.ParsePage(r.URL.Query().Get("page"))
+		if err != nil {
+			writePointError(w, err)
+			return
+		}
+		result, err := store.SharedHistory(r.Context(), memberID, page)
+		if err != nil {
+			writePointError(w, err)
+			return
+		}
+		writeJSON(w, result)
+	}))
 	mux.HandleFunc("GET /points/foundry", member(func(w http.ResponseWriter, r *http.Request, identity auth.Identity) {
 		result, err := store.Foundry(r.Context(), identity.ID)
 		if err != nil {
@@ -138,6 +161,10 @@ func registerPointRoutes(mux *http.ServeMux, authentication authenticator, profi
 			return
 		}
 		if _, err := points.NormalizeURL(input.Category, input.URL); err != nil {
+			writePointError(w, err)
+			return
+		}
+		if _, err := points.NormalizeSummary(input.Summary); err != nil {
 			writePointError(w, err)
 			return
 		}
@@ -234,7 +261,7 @@ func registerPointRoutes(mux *http.ServeMux, authentication authenticator, profi
 		writeJSON(w, claim)
 	}))
 	for _, path := range []string{
-		"/points/categories", "/points/me", "/points/leaderboard", "/points/foundry", "/points/claims", "/points/claims/{id}",
+		"/points/categories", "/points/me", "/points/leaderboard", "/points/leaderboard/{id}/submissions", "/points/foundry", "/points/claims", "/points/claims/{id}",
 		"/staff/points/claims", "/staff/points/claims/{id}", "/staff/points/claims/{id}/revoke", "/staff/points/claims/{id}/restore",
 	} {
 		mux.HandleFunc("OPTIONS "+path, func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })

@@ -16,6 +16,7 @@ import {
   faPenToSquare,
   faStar,
 } from "@fortawesome/free-regular-svg-icons";
+import SharedSubmissions from "../points/SharedSubmissions";
 import MemberAvatar from "./MemberAvatar";
 import "../../styles/directory.scss";
 
@@ -136,37 +137,50 @@ export default function MemberProfile({ identity, memberID }) {
                 </Link>
               )}
             </header>
-            <section className="csc-profile-stats" aria-label="Points">
-              <div className="csc-profile-stat">
-                <span className="csc-profile-stat-icon">
-                  <FontAwesomeIcon icon={faStar} />
-                </span>
-                <div>
-                  <h2>Total points</h2>
-                  <p>
-                    <strong>{member.allTimePoints}</strong>
-                  </p>
+            {member.pointsLeaderboardShared && (
+              <section className="csc-profile-stats" aria-label="Points">
+                <div className="csc-profile-stat">
+                  <span className="csc-profile-stat-icon">
+                    <FontAwesomeIcon icon={faStar} />
+                  </span>
+                  <div>
+                    <h2>Total points</h2>
+                    <p>
+                      <strong>{member.allTimePoints}</strong>
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="csc-profile-stat is-gold">
-                <span className="csc-profile-stat-icon">
-                  <FontAwesomeIcon icon={faTrophy} />
-                </span>
-                <div>
-                  <h2>7-day leaderboard</h2>
-                  <p>
-                    <strong>
-                      {member.rank7Days ? `#${member.rank7Days}` : "—"}
-                    </strong>
-                    {member.rank7Days === 1
-                      ? "Top of the club"
-                      : !member.rank7Days && "Unranked"}
-                  </p>
+                <div className="csc-profile-stat is-gold">
+                  <span className="csc-profile-stat-icon">
+                    <FontAwesomeIcon icon={faTrophy} />
+                  </span>
+                  <div>
+                    <h2>7-day leaderboard</h2>
+                    <p>
+                      <strong>
+                        {member.rank7Days ? `#${member.rank7Days}` : "—"}
+                      </strong>
+                      {member.rank7Days === 1
+                        ? "Top of the club"
+                        : !member.rank7Days && "Unranked"}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            )}
+            {member.pointsLeaderboardShared && (
+              <SharedSubmissions
+                key={member.id}
+                identity={identity}
+                memberID={member.id}
+                request={request}
+              />
+            )}
             {(member.jobTitle || member.currentCompany || member.location) && (
-              <section className="csc-profile-details" aria-label="Career details">
+              <section
+                className="csc-profile-details"
+                aria-label="Career details"
+              >
                 <h2 className="csc-profile-eyebrow">Career</h2>
                 <dl>
                   {member.jobTitle && (
@@ -199,14 +213,19 @@ export default function MemberProfile({ identity, memberID }) {
             {member.contactEmail && (
               <section className="csc-profile-details" aria-label="Contact">
                 <h2 className="csc-profile-eyebrow">Contact</h2>
-                <a href={`mailto:${member.contactEmail}`}>{member.contactEmail}</a>
+                <a href={`mailto:${member.contactEmail}`}>
+                  {member.contactEmail}
+                </a>
               </section>
             )}
             {(member.offersCoffee ||
               member.offersMentorship ||
               member.offersReferrals ||
               member.offersResumeReview) && (
-              <section className="csc-profile-details" aria-label="Help offered">
+              <section
+                className="csc-profile-details"
+                aria-label="Help offered"
+              >
                 <h2 className="csc-profile-eyebrow">Happy to help with</h2>
                 <ul className="csc-profile-help">
                   {member.offersCoffee && <li>Coffee chats</li>}

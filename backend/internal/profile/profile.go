@@ -24,53 +24,55 @@ var (
 )
 
 type Record struct {
-	Roles              []string  `json:"-"`
-	IsAlumni           bool      `json:"isAlumni"`
-	AlumniClaimed      bool      `json:"alumniClaimed"`
-	FirstName          *string   `json:"firstName"`
-	LastName           *string   `json:"lastName"`
-	PreferredName      *string   `json:"preferredName"`
-	GraduationYear     *int      `json:"graduationYear"`
-	Majors             []string  `json:"majors"`
-	GitHubUsername     *string   `json:"githubUsername"`
-	LeetCodeUsername   *string   `json:"leetcodeUsername"`
-	LinkedInUsername   *string   `json:"linkedinUsername"`
-	CurrentCompany     *string   `json:"currentCompany"`
-	JobTitle           *string   `json:"jobTitle"`
-	Location           *string   `json:"location"`
-	Bio                *string   `json:"bio"`
-	PersonalWebsite    *string   `json:"personalWebsite"`
-	OffersCoffee       bool      `json:"offersCoffee"`
-	OffersMentorship   bool      `json:"offersMentorship"`
-	OffersReferrals    bool      `json:"offersReferrals"`
-	OffersResumeReview bool      `json:"offersResumeReview"`
-	ContactEmail       *string   `json:"contactEmail"`
-	DetailsShared      bool      `json:"detailsShared"`
-	Complete           bool      `json:"complete"`
-	HasAvatar          bool      `json:"hasAvatar"`
-	HasResume          bool      `json:"hasResume"`
-	UpdatedAt          time.Time `json:"updatedAt"`
+	Roles                   []string  `json:"-"`
+	IsAlumni                bool      `json:"isAlumni"`
+	AlumniClaimed           bool      `json:"alumniClaimed"`
+	FirstName               *string   `json:"firstName"`
+	LastName                *string   `json:"lastName"`
+	PreferredName           *string   `json:"preferredName"`
+	GraduationYear          *int      `json:"graduationYear"`
+	Majors                  []string  `json:"majors"`
+	GitHubUsername          *string   `json:"githubUsername"`
+	LeetCodeUsername        *string   `json:"leetcodeUsername"`
+	LinkedInUsername        *string   `json:"linkedinUsername"`
+	CurrentCompany          *string   `json:"currentCompany"`
+	JobTitle                *string   `json:"jobTitle"`
+	Location                *string   `json:"location"`
+	Bio                     *string   `json:"bio"`
+	PersonalWebsite         *string   `json:"personalWebsite"`
+	OffersCoffee            bool      `json:"offersCoffee"`
+	OffersMentorship        bool      `json:"offersMentorship"`
+	OffersReferrals         bool      `json:"offersReferrals"`
+	OffersResumeReview      bool      `json:"offersResumeReview"`
+	ContactEmail            *string   `json:"contactEmail"`
+	PointsLeaderboardShared bool      `json:"pointsLeaderboardShared"`
+	DetailsShared           bool      `json:"detailsShared"`
+	Complete                bool      `json:"complete"`
+	HasAvatar               bool      `json:"hasAvatar"`
+	HasResume               bool      `json:"hasResume"`
+	UpdatedAt               time.Time `json:"updatedAt"`
 }
 
 type Input struct {
-	FirstName          *string  `json:"firstName"`
-	LastName           *string  `json:"lastName"`
-	PreferredName      *string  `json:"preferredName"`
-	GraduationYear     *int     `json:"graduationYear"`
-	Majors             []string `json:"majors"`
-	GitHubUsername     *string  `json:"githubUsername"`
-	LeetCodeUsername   *string  `json:"leetcodeUsername"`
-	LinkedInUsername   *string  `json:"linkedinUsername"`
-	CurrentCompany     *string  `json:"currentCompany"`
-	JobTitle           *string  `json:"jobTitle"`
-	Location           *string  `json:"location"`
-	Bio                *string  `json:"bio"`
-	PersonalWebsite    *string  `json:"personalWebsite"`
-	OffersCoffee       bool     `json:"offersCoffee"`
-	OffersMentorship   bool     `json:"offersMentorship"`
-	OffersReferrals    bool     `json:"offersReferrals"`
-	OffersResumeReview bool     `json:"offersResumeReview"`
-	ContactEmail       *string  `json:"contactEmail"`
+	PointsLeaderboardShared *bool    `json:"pointsLeaderboardShared"`
+	FirstName               *string  `json:"firstName"`
+	LastName                *string  `json:"lastName"`
+	PreferredName           *string  `json:"preferredName"`
+	GraduationYear          *int     `json:"graduationYear"`
+	Majors                  []string `json:"majors"`
+	GitHubUsername          *string  `json:"githubUsername"`
+	LeetCodeUsername        *string  `json:"leetcodeUsername"`
+	LinkedInUsername        *string  `json:"linkedinUsername"`
+	CurrentCompany          *string  `json:"currentCompany"`
+	JobTitle                *string  `json:"jobTitle"`
+	Location                *string  `json:"location"`
+	Bio                     *string  `json:"bio"`
+	PersonalWebsite         *string  `json:"personalWebsite"`
+	OffersCoffee            bool     `json:"offersCoffee"`
+	OffersMentorship        bool     `json:"offersMentorship"`
+	OffersReferrals         bool     `json:"offersReferrals"`
+	OffersResumeReview      bool     `json:"offersResumeReview"`
+	ContactEmail            *string  `json:"contactEmail"`
 }
 
 // Handles are stored as bare usernames so nothing can put an arbitrary link in
@@ -256,7 +258,7 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 		  github_username, leetcode_username, linkedin_username,
 		  current_company, job_title, location, bio, personal_website,
 		  offers_coffee, offers_mentorship, offers_referrals, offers_resume_review,
-		  contact_email, details_shared,
+		  contact_email, details_shared, points_leaderboard_shared,
 		  account_status, avatar_asset_id is not null, resume_asset_id is not null, updated_at,
 		  coalesce(graduation_year <= extract(year from statement_timestamp() at time zone 'America/New_York')::integer, false),
 		  array(select role from csc.user_roles where auth_user_id = $1::uuid order by role)
@@ -266,7 +268,7 @@ func (s Store) Get(ctx context.Context, authUserID string) (Record, error) {
 		&record.GitHubUsername, &record.LeetCodeUsername, &record.LinkedInUsername,
 		&record.CurrentCompany, &record.JobTitle, &record.Location, &record.Bio, &record.PersonalWebsite,
 		&record.OffersCoffee, &record.OffersMentorship, &record.OffersReferrals, &record.OffersResumeReview,
-		&record.ContactEmail, &record.DetailsShared,
+		&record.ContactEmail, &record.DetailsShared, &record.PointsLeaderboardShared,
 		&status, &record.HasAvatar, &record.HasResume, &record.UpdatedAt, &alumniYearEligible, &record.Roles)
 	if err != nil {
 		return Record{}, err
@@ -292,7 +294,7 @@ func (s Store) Update(ctx context.Context, authUserID string, input Input) (Reco
 		  current_company = $10, job_title = $11, location = $12, bio = $13,
 		  personal_website = $14, offers_coffee = $15, offers_mentorship = $16,
 		  offers_referrals = $17, offers_resume_review = $18,
-		  contact_email = $19, updated_at = now()
+		  contact_email = $19, points_leaderboard_shared = coalesce($20, points_leaderboard_shared), updated_at = now()
 		where auth_user_id = $1::uuid and account_status = 'active'
 		  and ($19::text is null or lower($19) <> (select lower(email) from auth.users where id = $1::uuid))
 		returning account_status
@@ -301,7 +303,7 @@ func (s Store) Update(ctx context.Context, authUserID string, input Input) (Reco
 		input.LeetCodeUsername, input.LinkedInUsername,
 		input.CurrentCompany, input.JobTitle, input.Location, input.Bio, input.PersonalWebsite,
 		input.OffersCoffee, input.OffersMentorship, input.OffersReferrals, input.OffersResumeReview,
-		input.ContactEmail).Scan(&status)
+		input.ContactEmail, input.PointsLeaderboardShared).Scan(&status)
 	if errors.Is(err, pgx.ErrNoRows) {
 		if _, lookupErr := s.Get(ctx, authUserID); lookupErr != nil {
 			return Record{}, lookupErr

@@ -1,3 +1,4 @@
+import { Link } from "gatsby";
 import React, { useEffect, useMemo, useState } from "react";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
@@ -10,7 +11,7 @@ function Board({ title, board }) {
     <section className="csc-points-board" aria-label={title}>
       <h3>{title}</h3>
       {board.entries.length === 0 ? (
-        <p>No points earned in this period yet.</p>
+        <p>No members ranked in this period yet.</p>
       ) : (
         <ol>
           {board.entries.map((entry, index) => (
@@ -30,7 +31,8 @@ function Board({ title, board }) {
       )}
       {board.own && (
         <p className="csc-points-own-rank">
-          You are #{board.own.rank} with {board.own.points} points.
+          You are <MemberLink id={board.own.id}>#{board.own.rank}</MemberLink>{" "}
+          with {board.own.points} points.
         </p>
       )}
     </section>
@@ -83,6 +85,10 @@ export default function PointsLeaderboard({ identity }) {
         aria-labelledby="leaderboards-title"
       >
         <h2 id="leaderboards-title">Leaderboards</h2>
+        <p>
+          Manage your leaderboard visibility in{" "}
+          <Link to="/dashboard/account">My Account</Link>.
+        </p>
         {error && (
           <div role="alert">
             <p>{error}</p>

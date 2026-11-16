@@ -1,6 +1,6 @@
 # CRM points
 
-Active accounts can submit a category, an HTTPS link, and an affirmation on
+Active accounts can submit a category, an HTTPS link, a 100–250 character summary (1–2 sentences), and an affirmation on
 **Points** (`/dashboard/points`). Each accepted link awards 10 points
 immediately. Current categories are a LeetCode solution or submission, a
 research paper read, and a public GitHub PR or standalone commit. A PR and its
@@ -16,12 +16,14 @@ Foundry event eligibility, while the legacy `foundry` role remains separate.
 - Points and My Account show the owner's all-time and rolling 30-day scores.
   My Account shows the three newest claim links, dates, and statuses, with a
   link to the full history page also linked from Points. Staff can inspect
-  claims in their moderation tool. Other members cannot see claim links or
-  history.
+  claims in their moderation tool. Older claims remain visible without summaries.
 - Completed signed-in users see the top 10 active, completed accounts with
-  points on each leaderboard, plus their own rank if outside the top 10. Names
-  link to member profiles. Each profile shows its all-time total and 7-day
-  rank, or Unranked when it has no award in that period.
+  points on each leaderboard who opt in through **My Account**, plus their own
+  rank if outside the top 10. Participation defaults to off. Names link to
+  member profiles, where opted-in members share their points, 7-day rank, and
+  full history (including links, summaries, dates, and claim statuses) with
+  other signed-in members who have completed their profiles. Opting out hides
+  this information and preserves the owner’s points and history.
 - The rolling leaderboard covers the preceding 7 days (168 hours), and the
   owner's rolling score and Foundry status the preceding 30 days, both measured
   from the original award time. Submitting old work today awards points today. Restoring a claim keeps
@@ -70,9 +72,10 @@ access. The public Gatsby build contains no point or claim data.
 | --- | --- | --- |
 | `GET /points/categories` | Active, completed account | Current activity choices and values |
 | `GET /points/me?page=1` | Owner | Scores and 20 newest claims per page |
-| `POST /points/claims` | Active, completed account | Submit `{category,url,affirmed:true}` |
+| `POST /points/claims` | Active, completed account | Submit `{category,url,summary,affirmed:true}` |
 | `DELETE /points/claims/{id}` | Owner | Withdraw an awarded claim |
 | `GET /points/leaderboard?period=all\|7d` | Active, completed account | Top 10 and own rank |
+| `GET /points/leaderboard/{id}/submissions?page=1` | Active, completed account | 20 newest submissions per page for an eligible member who opted in. Staff reasons stay private. |
 | `GET /points/foundry` | Owner | Name, 30-day points, threshold, window, active flag, `activeUntil`, and `grantExpiresAt` |
 | `GET /staff/points/claims?page=1` | Staff | 20 newest claims per page |
 | `POST /staff/points/claims/{id}/revoke` | Staff | Revoke with `{reason}` |
@@ -101,7 +104,7 @@ docker exec -i supabase_db_pittcsc-website psql -U postgres -d postgres -v ON_ER
 
 `backend/internal/points/store_integration_test.go` exercises concurrent
 claims, duplicate links, score and Foundry window changes, moderation, audit
-entries, and corrections against a **synthetic active local** Auth/profile fixture when
+entries, and corrections against a **synthetic active local** Auth/profile fixture opted in to the leaderboard when
 `POINTS_TEST_DATABASE_URL` and `POINTS_TEST_USER_ID` are set. It refuses a
 non-loopback database and skips in the regular check suite when no fixture is
 configured. The test removes its own claim afterward.

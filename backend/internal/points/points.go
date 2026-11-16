@@ -9,13 +9,16 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 var (
-	ErrInvalid   = errors.New("invalid point claim")
-	ErrDuplicate = errors.New("link already claimed")
-	ErrNotFound  = errors.New("point claim not found")
-	ErrConflict  = errors.New("point claim conflict")
+	ErrInvalidSummary     = errors.New("summary must contain 100–250 characters")
+	ErrHistoryUnavailable = errors.New("submission history is unavailable")
+	ErrInvalid            = errors.New("invalid point claim")
+	ErrDuplicate          = errors.New("link already claimed")
+	ErrNotFound           = errors.New("point claim not found")
+	ErrConflict           = errors.New("point claim conflict")
 )
 
 const PageSize = 20
@@ -33,6 +36,7 @@ type Category struct {
 }
 
 type Input struct {
+	Summary  string `json:"summary"`
 	Category string `json:"category"`
 	URL      string `json:"url"`
 	Affirmed bool   `json:"affirmed"`
@@ -45,6 +49,7 @@ type Correction struct {
 }
 
 type Claim struct {
+	Summary      *string   `json:"summary"`
 	ID           string    `json:"id"`
 	Category     string    `json:"category"`
 	URL          string    `json:"url"`
@@ -78,6 +83,21 @@ type Leaderboard struct {
 	Own     *Standing  `json:"own,omitempty"`
 }
 
+type SharedSubmission struct {
+	ID        string    `json:"id"`
+	Label     string    `json:"label"`
+	URL       string    `json:"url"`
+	Summary   *string   `json:"summary"`
+	Points    int       `json:"points"`
+	Status    string    `json:"status"`
+	AwardedAt time.Time `json:"awardedAt"`
+}
+
+type SharedHistory struct {
+	Claims  []SharedSubmission `json:"claims"`
+	HasMore bool               `json:"hasMore"`
+}
+
 type StaffPage struct {
 	Claims  []Claim `json:"claims"`
 	HasMore bool    `json:"hasMore"`
@@ -92,6 +112,15 @@ func ParsePage(raw string) (int, error) {
 		return 0, ErrInvalid
 	}
 	return page, nil
+}
+
+func NormalizeSummary(value string) (string, error) {
+	summary := strings.TrimSpace(value)
+	length := utf8.RuneCountInString(summary)
+	if length < 100 || length > 250 || !utf8.ValidString(summary) || strings.ContainsRune(summary, 0) {
+		return "", ErrInvalidSummary
+	}
+	return summary, nil
 }
 
 func ValidReason(reason string) (string, error) {

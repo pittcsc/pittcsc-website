@@ -59,6 +59,8 @@ async function main() {
   const key = frontend.GATSBY_SUPABASE_PUBLISHABLE_KEY;
   check(key, "Public Auth key missing");
   const suffix = randomUUID();
+  const summary =
+    "I read this paper and reviewed how its evaluation compares two approaches on the same dataset. The results explain when each approach works well.";
   const mailURL = "http://127.0.0.1:54324";
   async function fixture(name) {
     const email = `csc-points-test-${name}-${suffix}@pitt.edu`;
@@ -134,15 +136,14 @@ async function main() {
       (await api(staff, "/auth/session")).status === 200,
       "Staff provisioning failed",
     );
+    const memberProfileInput = {
+      firstName: "PointsFixtureMember",
+      lastName: "Fixture",
+      graduationYear: 2028,
+      majors: ["Computer Science"],
+    };
     check(
-      (
-        await api(member, "/profile", "PUT", {
-          firstName: "PointsFixtureMember",
-          lastName: "Fixture",
-          graduationYear: 2028,
-          majors: ["Computer Science"],
-        })
-      ).status === 200,
+      (await api(member, "/profile", "PUT", memberProfileInput)).status === 200,
       "Member name setup failed",
     );
     check(
@@ -181,6 +182,7 @@ async function main() {
           category: "leetcode",
           url: "https://leetcode.com/problems/two-sum",
           affirmed: true,
+          summary,
         })
       ).status === 400,
       "Problem page earned points",
@@ -200,11 +202,14 @@ async function main() {
       category: "paper",
       url: `${link}?utm_source=first`,
       affirmed: true,
+      summary,
     });
     check(submitted.status === 201, "Member award failed");
     const claim = await submitted.json();
     check(
-      claim.points === 10 && claim.status === "awarded",
+      claim.points === 10 &&
+        claim.status === "awarded" &&
+        claim.summary === summary,
       "Wrong award value",
     );
     check(
@@ -213,6 +218,7 @@ async function main() {
           category: "paper",
           url: `${link}#variant`,
           affirmed: true,
+          summary,
         })
       ).status === 409,
       "Normalized duplicate earned points",
@@ -223,6 +229,7 @@ async function main() {
           category: "paper",
           url: link,
           affirmed: true,
+          summary,
         })
       ).status === 201,
       "Collaborator could not claim same link",
@@ -243,6 +250,40 @@ async function main() {
         foundry.active === false &&
         foundry.activeUntil === null,
       "Foundry status incorrect",
+    );
+    const historyPath = `/points/leaderboard/${member.id}/submissions`;
+    check(
+      (await api(null, historyPath)).status === 401,
+      "Anonymous history access accepted",
+    );
+    check(
+      (await api(staff, historyPath)).status === 404,
+      "History shared by default",
+    );
+    const privateBoard = await (
+      await api(member, "/points/leaderboard")
+    ).json();
+    check(
+      ![...privateBoard.entries, privateBoard.own].some(
+        (entry) => entry?.id === member.id,
+      ),
+      "Member ranked without opting in",
+    );
+    check(
+      (
+        await api(member, "/profile", "PUT", {
+          ...memberProfileInput,
+          pointsLeaderboardShared: true,
+        })
+      ).ok,
+      "Leaderboard opt-in failed",
+    );
+    const shared = await (await api(staff, historyPath)).json();
+    check(
+      shared.claims[0].summary === summary &&
+        shared.claims[0].url === link &&
+        !("statusReason" in shared.claims[0]),
+      "Shared submission content incorrect",
     );
     const board = await (
       await api(member, "/points/leaderboard?period=7d")
@@ -302,6 +343,44 @@ async function main() {
       ).status === 200,
       "Staff restore failed",
     );
+    stage = "leaderboard opt-out";
+    check(
+      (
+        await api(member, "/profile", "PUT", {
+          ...memberProfileInput,
+          pointsLeaderboardShared: false,
+        })
+      ).ok,
+      "Leaderboard opt-out failed",
+    );
+    check(
+      (await api(staff, historyPath)).status === 404,
+      "Opted-out history stayed visible",
+    );
+    const optedOut = await (
+      await api(member, "/points/leaderboard?period=7d")
+    ).json();
+    check(
+      ![...optedOut.entries, optedOut.own].some(
+        (entry) => entry?.id === member.id,
+      ),
+      "Opted-out member stayed ranked",
+    );
+    const privateOwn = await (await api(member, "/points/me")).json();
+    check(
+      privateOwn.allTime === own.allTime &&
+        privateOwn.claims[0].summary === summary,
+      "Opt-out changed owner points or history",
+    );
+    check(
+      (
+        await api(member, "/profile", "PUT", {
+          ...memberProfileInput,
+          pointsLeaderboardShared: true,
+        })
+      ).ok,
+      "Rejoining leaderboard failed",
+    );
     stage = "suspended account";
     sql(
       `update csc.profiles set account_status = 'suspended' where auth_user_id = '${member.id}'::uuid;`,
@@ -310,6 +389,10 @@ async function main() {
       check(
         (await api(member, "/points/me")).status === 403,
         "Suspended account read points",
+      );
+      check(
+        (await api(staff, historyPath)).status === 404,
+        "Suspended history stayed visible",
       );
       const suspendedBoard = await (
         await api(staff, "/points/leaderboard")
@@ -342,6 +425,7 @@ async function main() {
           category: "paper",
           url: link,
           affirmed: true,
+          summary,
         })
       ).status === 409,
       "Withdrawn link reused",
@@ -355,6 +439,7 @@ async function main() {
           category: "leetcode",
           url: submission,
           affirmed: true,
+          summary,
         })
       ).status === 201,
       "LeetCode submission link was rejected",
@@ -365,6 +450,7 @@ async function main() {
           category: "leetcode",
           url: `${submission}?utm_source=retry`,
           affirmed: true,
+          summary,
         })
       ).status === 409,
       "Normalized LeetCode submission earned points twice",

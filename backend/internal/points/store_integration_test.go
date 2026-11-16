@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/pittcsc/pittcsc-website/backend/internal/profile"
 )
 
 // Set these only for a local synthetic Auth/profile fixture. The regular check
@@ -34,12 +36,12 @@ func TestStoreIntegration(t *testing.T) {
 	t.Cleanup(pool.Close)
 	var email string
 	err = pool.QueryRow(ctx, `select u.email from auth.users u join csc.profiles p on p.auth_user_id = u.id
-		where u.id = $1::uuid and p.account_status = 'active'`, userID).Scan(&email)
+		where u.id = $1::uuid and p.account_status = 'active' and p.points_leaderboard_shared`, userID).Scan(&email)
 	if err != nil {
 		t.Fatalf("fixture lookup failed: %v", err)
 	}
 	if !strings.HasPrefix(email, "csc-") || !strings.Contains(email, "test-") || !strings.HasSuffix(email, "@pitt.edu") {
-		t.Fatal("synthetic active profile required")
+		t.Fatal("synthetic active profile opted in to the leaderboard required")
 	}
 	s := Store{DB: pool}
 	base, err := s.Mine(ctx, userID, 1)
@@ -55,7 +57,7 @@ func TestStoreIntegration(t *testing.T) {
 		t.Fatal("point categories missing")
 	}
 	firstURL := fmt.Sprintf("https://example.org/csc-points-test/%d", time.Now().UnixNano())
-	input := Input{Category: "paper", URL: firstURL + "?utm_source=first", Affirmed: true}
+	input := Input{Category: "paper", URL: firstURL + "?utm_source=first", Affirmed: true, Summary: strings.Repeat("é", 100)}
 	claims := make(chan Claim, 2)
 	errorsCh := make(chan error, 2)
 	var wg sync.WaitGroup
@@ -95,7 +97,7 @@ func TestStoreIntegration(t *testing.T) {
 	if successes != 1 || duplicates != 1 {
 		t.Fatalf("concurrent claims: %d success, %d duplicate", successes, duplicates)
 	}
-	if _, err := s.Create(ctx, userID, Input{Category: "paper", URL: firstURL + "#other", Affirmed: true}); !errors.Is(err, ErrDuplicate) {
+	if _, err := s.Create(ctx, userID, Input{Category: "paper", URL: firstURL + "#other", Affirmed: true, Summary: strings.Repeat("é", 100)}); !errors.Is(err, ErrDuplicate) {
 		t.Fatalf("variant duplicate: %v", err)
 	}
 	mine, err := s.Mine(ctx, userID, 1)
@@ -122,6 +124,19 @@ func TestStoreIntegration(t *testing.T) {
 	if !found {
 		t.Fatal("active member omitted from leaderboard")
 	}
+	history, err := s.SharedHistory(ctx, userID, 1)
+	if err != nil || len(history.Claims) == 0 || history.Claims[0].ID != created.ID ||
+		history.Claims[0].Summary == nil || *history.Claims[0].Summary != input.Summary {
+		t.Fatalf("shared history did not include the new claim: %v", err)
+	}
+	empty, err := s.SharedHistory(ctx, userID, 100000)
+	if err != nil || len(empty.Claims) != 0 || empty.HasMore {
+		t.Fatalf("shared history did not return an empty page: %v", err)
+	}
+	if _, err := s.SharedHistory(ctx, "00000000-0000-0000-0000-000000000000", 1); !errors.Is(err, ErrHistoryUnavailable) {
+		t.Fatalf("unknown history target returned %v", err)
+	}
+	testLeaderboardOptOut(ctx, t, pool, s, userID, mine.AllTime)
 	withdrawn, err := s.Withdraw(ctx, userID, created.ID)
 	if err != nil || withdrawn.Status != "withdrawn" {
 		t.Fatalf("withdraw failed: %v", err)
@@ -158,13 +173,54 @@ func TestStoreIntegration(t *testing.T) {
 		t.Fatal("correction retry changed claim")
 	}
 	for _, link := range []string{firstURL, secondURL} {
-		if _, err := s.Create(ctx, userID, Input{Category: "paper", URL: link, Affirmed: true}); !errors.Is(err, ErrDuplicate) {
+		if _, err := s.Create(ctx, userID, Input{Category: "paper", URL: link, Affirmed: true, Summary: strings.Repeat("é", 100)}); !errors.Is(err, ErrDuplicate) {
 			t.Fatalf("lifetime link reused: %v", err)
 		}
 	}
 	var audits int
 	if err := pool.QueryRow(ctx, `select count(*) from csc.point_claim_audit where claim_id = $1::uuid`, created.ID).Scan(&audits); err != nil || audits != 4 {
 		t.Fatalf("audit count: %d, %v", audits, err)
+	}
+}
+
+func testLeaderboardOptOut(ctx context.Context, t *testing.T, pool *pgxpool.Pool, s Store, userID string, total int) {
+	t.Helper()
+	profiles := profile.Store{DB: pool}
+	member, err := profiles.PublicMember(ctx, userID, false)
+	if err != nil || !member.PointsLeaderboardShared || member.AllTimePoints != total {
+		t.Fatalf("opted-in profile did not show its score: %v", err)
+	}
+	t.Cleanup(func() {
+		cleanupCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if _, err := pool.Exec(cleanupCtx, `update csc.profiles set points_leaderboard_shared = true where auth_user_id = $1::uuid`, userID); err != nil {
+			t.Errorf("restore fixture sharing: %v", err)
+		}
+	})
+	if _, err := pool.Exec(ctx, `update csc.profiles set points_leaderboard_shared = false where auth_user_id = $1::uuid`, userID); err != nil {
+		t.Fatal(err)
+	}
+	for _, period := range []string{"all", "7d"} {
+		board, err := s.Leaderboard(ctx, userID, period)
+		if err != nil || board.Own != nil {
+			t.Fatalf("opted-out profile received a rank for %s: %v", period, err)
+		}
+		for _, entry := range board.Entries {
+			if entry.ID == userID {
+				t.Fatalf("opted-out profile appeared on the %s leaderboard", period)
+			}
+		}
+	}
+	if _, err := s.SharedHistory(ctx, userID, 1); !errors.Is(err, ErrHistoryUnavailable) {
+		t.Fatalf("direct history link remained available after opt-out: %v", err)
+	}
+	member, err = profiles.PublicMember(ctx, userID, false)
+	if err != nil || member.PointsLeaderboardShared || member.AllTimePoints != 0 || member.Rank7Days != nil {
+		t.Fatalf("opted-out profile leaked points or rank: %v", err)
+	}
+	own, err := s.Mine(ctx, userID, 1)
+	if err != nil || own.AllTime != total || len(own.Claims) == 0 {
+		t.Fatalf("opt-out affected the owner's points or submissions: %v", err)
 	}
 }
 
