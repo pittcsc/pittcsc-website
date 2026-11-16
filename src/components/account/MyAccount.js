@@ -308,8 +308,28 @@ function CommunityFields({ form, change }) {
   );
 }
 
-// Membership setup asks only for the required fields. Optional links and files
-// remain in the editor after setup.
+function PointsLeaderboardFields({ form, change }) {
+  return (
+    <fieldset className="csc-account-card">
+      <legend>Points leaderboard</legend>
+      <label className="csc-points-visibility">
+        <input
+          type="checkbox"
+          checked={form.pointsLeaderboardShared}
+          onChange={(event) =>
+            change("pointsLeaderboardShared", event.target.checked)
+          }
+          aria-describedby="points-leaderboard-sharing"
+        />
+        Show me on the points leaderboard
+      </label>
+      <p id="points-leaderboard-sharing">
+        When enabled, signed-in members can see your rank, scores, and full
+        submission history, including links and summaries.
+      </p>
+    </fieldset>
+  );
+}
 const STEPS = [
   { id: "name", title: "What’s your name?", Fields: NameFields },
   { id: "year", title: "When do you graduate?", Fields: YearField },
@@ -563,6 +583,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
             <legend>{current.title}</legend>
             {current.hint && <p className="csc-account-hint">{current.hint}</p>}
             {current.Fields && <current.Fields form={form} change={change} />}
+            {last && <PointsLeaderboardFields form={form} change={change} />}
           </fieldset>
           {error && <p role="alert">{error}</p>}
           {notice && <p role="status">{notice}</p>}
@@ -618,23 +639,7 @@ export default function MyAccount({ identity, onSaved, onLogout, returnTo }) {
             </fieldset>
             <BioContactFields form={form} change={change} />
             <CommunityFields form={form} change={change} />
-            <fieldset className="csc-account-card">
-              <legend>Points leaderboard</legend>
-              <label className="csc-points-visibility">
-                <input
-                  type="checkbox"
-                  checked={form.pointsLeaderboardShared}
-                  onChange={(event) =>
-                    change("pointsLeaderboardShared", event.target.checked)
-                  }
-                />
-                Show me on the points leaderboard
-              </label>
-              <p>
-                Signed-in members can see your rank, scores, and full submission
-                history, including links and summaries, when you turn this on.
-              </p>
-            </fieldset>
+            <PointsLeaderboardFields form={form} change={change} />
           </fieldset>
           <div className="csc-account-card csc-account-save">
             <p>
