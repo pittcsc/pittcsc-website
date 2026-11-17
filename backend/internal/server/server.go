@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/pittcsc/pittcsc-website/backend/internal/auth"
+	"github.com/pittcsc/pittcsc-website/backend/internal/campaigns"
 )
 
 type databasePinger interface {
@@ -20,6 +21,10 @@ type authenticator interface {
 
 // NewHandler serves public readiness and private, authenticated account routes.
 func NewHandler(db databasePinger, frontendOrigin string, authentication authenticator, profiles profileStore, roleChanges roleStore, eventRecords eventStore, pointRecords ...pointStore) http.Handler {
+	return NewHandlerWithCampaigns(db, frontendOrigin, authentication, profiles, roleChanges, eventRecords, nil, pointRecords...)
+}
+
+func NewHandlerWithCampaigns(db databasePinger, frontendOrigin string, authentication authenticator, profiles profileStore, roleChanges roleStore, eventRecords eventStore, emails *campaigns.Store, pointRecords ...pointStore) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
@@ -92,6 +97,7 @@ func NewHandler(db databasePinger, frontendOrigin string, authentication authent
 		pointRecord = pointRecords[0]
 	}
 	registerPointRoutes(mux, authentication, profiles, pointRecord)
+	registerCampaignRoutes(mux, authentication, profiles, emails)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")

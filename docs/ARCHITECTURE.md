@@ -191,3 +191,7 @@ configured. The public Notion event cards remain independent.
 5. Add QR attendance (implemented), then Drive integration and additional CRM features.
 
 Before rollout, verify that CSC registration and sign-in work, invalid tokens are rejected, member requests cannot perform staff operations, role/status changes affect subsequent API requests, and nested dashboard URLs work on direct navigation. Use a non-production environment for development and testing, with deployment configuration and handoff documentation suitable for future club maintainers.
+
+## Email campaigns
+
+The [email studio](CAMPAIGNS.md) adds campaign state in private Postgres tables, a Go SES adapter, signed SNS feedback ingestion, accountless subscription controls, and a separate durable delivery worker. Go owns subscription truth, audience snapshots, cancellation, uncertain-send review, and aggregate reporting. All active staff can prepare/send; campaign credentials never enter browser code. A scheduled Cloud Run Job runs `campaign-worker`; it does not depend on an API instance staying alive. Sender-domain and deployment preparation are in [SES setup](CAMPAIGNS-SES-SETUP.md). Login OTP transport remains independent.

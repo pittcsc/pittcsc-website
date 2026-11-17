@@ -22,6 +22,12 @@ export const staffTools = [
     title: "Point claims",
     description: "Review links and revoke, restore, or correct point awards.",
   },
+  {
+    slug: "email",
+    title: "Email studio",
+    description:
+      "Create newsletters, manage contacts, and track campaign results.",
+  },
 ];
 
 export function staffToolPath(slug) {

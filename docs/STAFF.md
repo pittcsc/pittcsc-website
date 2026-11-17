@@ -161,3 +161,7 @@ database assertions with:
 docker exec -i supabase_db_pittcsc-website psql -U postgres -d postgres \
   -v ON_ERROR_STOP=1 < supabase/tests/roles.sql
 ```
+
+## Email studio
+
+All active staff can use `/dashboard/staff/email` to manage campaign contacts, tags, CSV imports, saved audiences/templates, shared autosaved drafts, previews, test mail, scheduled delivery, aggregate reports, and CSV exports. There is no separate sender privilege. See [CAMPAIGNS.md](CAMPAIGNS.md); live delivery requires the documented SES/worker setup.
