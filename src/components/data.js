@@ -34,7 +34,7 @@ export const officerList = [
   {
     name: "Jayson Dang",
     title: "Partnerships Coordinator",
-    linkedIn: "",
+    linkedIn: "https://www.linkedin.com/in/jbdang/",
     email: "JBD58@pitt.edu",
     image: "../images/officers_2026/jayson.jpeg",
     bio: "Hi everyone! Im Jayson Dang! Im a sophomore studying CS + Psychology. I like lifting, climbing, cycling, and reading manga. Please feel free to reach out!\n\nSet your heart ablaze ❤️‍🔥",
