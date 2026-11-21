@@ -5,7 +5,8 @@ tool. **User Management** at `/dashboard/staff/user-management` is the first
 tool; it lets staff search members and edit their roles (see
 [Manage roles](#manage-roles)). **Events** at `/dashboard/staff/events` creates,
 edits, and cancels events, with Google Calendar sync and staff-visible history;
-see [events](EVENTS.md). Unknown staff paths show a not-found message.
+see [events](EVENTS.md). **Attendance** at `/dashboard/staff/attendance`
+shows member check-ins by academic year. Unknown staff paths show a not-found message.
 The dashboard navbar shows **Staff** only to active users with the staff role; the
 original public website navbar is unchanged. Signed-out direct visits go through
 login and return to the staff route. Signed-in non-staff users see **Access
@@ -52,6 +53,22 @@ not treat that role as proof of graduation or staff approval.
 
 Tools receive the verified `identity`, an authenticated `request` client, and
 `revalidate`, and render inside the shared staff access check.
+
+## Review attendance
+
+Attendance lists active, verified members, including those with zero recorded
+check-ins and those with additional roles. Search by name or select the
+**Events attended** heading to reverse the sort. Each row shows the count and the
+title and scheduled date of the member's latest attended event in the selected year.
+
+The report opens to the current academic year. A year starts at midnight on
+August 1 in Pittsburgh and runs through July 31. Each recorded check-in belongs
+to the year of its event's scheduled start. Earlier reporting years are available
+in the year selector. See the [CRM glossary](../GLOSSARY.md#attendance).
+
+`GET /staff/attendance?year=2026&q=&sort=desc&page=1` returns up to 25 rows.
+The optional year is its four-digit starting year. The endpoint uses the
+same current staff guard as other staff tools and sends uncached responses.
 
 ## Manage roles
 

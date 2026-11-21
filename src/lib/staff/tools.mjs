@@ -22,6 +22,11 @@ export const staffTools = [
     title: "Point claims",
     description: "Review links and revoke, restore, or correct point awards.",
   },
+  {
+    slug: "attendance",
+    title: "Attendance",
+    description: "Review member check-ins by academic year.",
+  },
 ];
 
 export function staffToolPath(slug) {

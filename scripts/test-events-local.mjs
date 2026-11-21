@@ -648,6 +648,42 @@ async function main() {
     "CSV must contain only the checked-in member's name and email",
   );
 
+  stage = "staff attendance report across academic years";
+  const reportPath = "/staff/attendance";
+  check((await api(null, reportPath)).status === 401, "Anonymous attendance report");
+  check((await api(member, reportPath)).status === 403, "Member reached attendance report");
+  const { currentYear } = await json(await api(a, reportPath));
+  const fixtureName = `Attendance ${suffix}`;
+  await json(await api(member, "/profile", "PUT", { firstName: fixtureName }));
+  await json(await api(b, "/profile", "PUT", { firstName: fixtureName }));
+  for (const [date, time, end] of [
+    [`${currentYear}-07-31`, "23:59", `${currentYear}-08-01T00:30`],
+    [`${currentYear}-08-01`, "00:00", `${currentYear}-08-01T00:30`],
+    [`${currentYear}-08-01`, "18:00", `${currentYear}-08-01T19:00`],
+  ]) {
+    const eventID = randomUUID();
+    await json(await api(a, `/staff/events/${eventID}`, "PUT", {
+      ...input, title: `[Local fixture] ${date} ${time}`, start: `${date}T${time}`, end,
+    }));
+    await json(await api(member, `/attendance/${eventID}`, "POST"));
+  }
+  const matching = `${reportPath}?q=${encodeURIComponent(fixtureName)}`;
+  const current = await json(await api(a, matching));
+  check(current.year === currentYear && current.members.length === 2, "Search did not return both active fixture members");
+  check(
+    current.members[0].id === member.id && current.members[0].eventsAttended === 2 &&
+      current.members[0].lastEventTitle === `[Local fixture] ${currentYear}-08-01 18:00` &&
+      Date.parse(current.members[0].lastEventStart) === Date.parse(`${currentYear}-08-01T22:00:00Z`),
+    "Current academic year count or last event is incorrect",
+  );
+  const previous = await json(await api(a, `${matching}&year=${currentYear - 1}&sort=asc`));
+  check(
+    previous.members[0].id === b.id && previous.members[0].eventsAttended === 0 &&
+      previous.members[0].lastEventStart === null && previous.members[1].eventsAttended === 1 &&
+      previous.members[1].lastEventTitle === `[Local fixture] ${currentYear}-07-31 23:59`,
+    "Previous academic year or ascending sort is incorrect",
+  );
+
   stage = "other staff edits and stale version conflicts";
   const edit = {
     ...input,
