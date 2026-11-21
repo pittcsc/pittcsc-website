@@ -101,6 +101,7 @@ type roleStoreStub struct {
 	calls      int
 	actorRoles []string
 	search     roles.Search
+	attendance roles.AttendanceSearch
 	actorID    string
 	targetID   string
 	role       string
@@ -118,6 +119,11 @@ func (s *roleStoreStub) Search(ctx context.Context, search roles.Search) (roles.
 	s.calls++
 	s.search = search
 	return roles.Page{Users: []roles.Member{{ID: "target", Roles: []string{"member"}}}, Total: 1, Page: search.Page, PageSize: roles.PageSize}, s.err
+}
+func (s *roleStoreStub) AttendanceReport(_ context.Context, search roles.AttendanceSearch) (roles.AttendanceReport, error) {
+	s.calls++
+	s.attendance = search
+	return roles.AttendanceReport{Year: search.Year, Page: search.Page}, s.err
 }
 func (s *roleStoreStub) Change(ctx context.Context, actorID, targetID, role string, grant bool) (roles.Member, error) {
 	s.calls++
@@ -200,6 +206,7 @@ func staffRequest(t *testing.T, profiles *profilesStub, store *roleStoreStub, me
 
 var staffRoutes = [][2]string{
 	{"GET", "/staff/roles"}, {"GET", "/staff/users?q=ada"},
+	{"GET", "/staff/attendance"},
 	{"PUT", "/staff/users/11111111-1111-1111-1111-111111111111/roles/staff"},
 	{"DELETE", "/staff/users/11111111-1111-1111-1111-111111111111/roles/foundry"},
 }

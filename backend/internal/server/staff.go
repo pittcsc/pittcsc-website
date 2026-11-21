@@ -18,6 +18,7 @@ import (
 type roleStore interface {
 	Catalog(context.Context, []string) ([]roles.Role, error)
 	Search(context.Context, roles.Search) (roles.Page, error)
+	AttendanceReport(context.Context, roles.AttendanceSearch) (roles.AttendanceReport, error)
 	Change(ctx context.Context, actorID, targetID, role string, grant bool) (roles.Member, error)
 	ChangeFoundryGrant(ctx context.Context, actorID, targetID, requestID string, grant bool) (roles.Member, error)
 }
@@ -98,6 +99,22 @@ func registerStaffRoutes(mux *http.ServeMux, authentication authenticator, profi
 		}
 		writeJSON(w, page)
 	}))
+	mux.HandleFunc("GET /staff/attendance", withStaff(authentication, profiles, func(w http.ResponseWriter, r *http.Request, _ auth.Identity, _ profile.Record) {
+		query := r.URL.Query()
+		search, err := roles.ParseAttendanceSearch(query.Get("q"), query.Get("page"), query.Get("year"), query.Get("sort"), time.Now())
+		if err != nil {
+			writeJSONError(w, http.StatusBadRequest, "Choose a valid academic year, sort order, and page. Search can contain up to 100 characters.")
+			return
+		}
+		if store != nil {
+			report, err := store.AttendanceReport(r.Context(), search)
+			if err == nil {
+				writeJSON(w, report)
+				return
+			}
+		}
+		writeJSONError(w, http.StatusServiceUnavailable, "Attendance is temporarily unavailable. Try again.")
+	}))
 	change := func(grant bool) http.HandlerFunc {
 		return withStaff(authentication, profiles, func(w http.ResponseWriter, r *http.Request, identity auth.Identity, _ profile.Record) {
 			if store == nil {
@@ -149,7 +166,7 @@ func registerStaffRoutes(mux *http.ServeMux, authentication authenticator, profi
 	}
 	mux.HandleFunc("POST /staff/users/{id}/foundry-grant", changeFoundryGrant(true))
 	mux.HandleFunc("POST /staff/users/{id}/foundry-grant/revoke", changeFoundryGrant(false))
-	for _, path := range []string{"/staff/access", "/staff/roles", "/staff/users", "/staff/users/{id}/roles/{role}", "/staff/users/{id}/foundry-grant", "/staff/users/{id}/foundry-grant/revoke"} {
+	for _, path := range []string{"/staff/access", "/staff/roles", "/staff/users", "/staff/attendance", "/staff/users/{id}/roles/{role}", "/staff/users/{id}/foundry-grant", "/staff/users/{id}/foundry-grant/revoke"} {
 		mux.HandleFunc("OPTIONS "+path, func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	}
 }

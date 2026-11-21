@@ -33,6 +33,10 @@ const eligible = `p.account_status = 'active' and u.email_confirmed_at is not nu
 	and u.deleted_at is null and not u.is_anonymous
 	and (u.banned_until is null or u.banned_until <= now())`
 
+const nameMatches = `(p.first_name ilike $1 or p.last_name ilike $1 or p.preferred_name ilike $1
+	or concat_ws(' ', p.first_name, p.last_name) ilike $1
+	or concat_ws(' ', p.preferred_name, p.last_name) ilike $1)`
+
 var (
 	uuidPattern = regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 	rolePattern = regexp.MustCompile(`^[a-z]{1,30}$`)
@@ -92,6 +96,14 @@ func ParseSearch(query, role, page string) (Search, error) {
 
 type Store struct{ DB *pgxpool.Pool }
 
+func searchPattern(query string) *string {
+	if query == "" {
+		return nil
+	}
+	pattern := "%" + likeEscaper.Replace(query) + "%"
+	return &pattern
+}
+
 // Catalog lists every role with whether this actor may change it.
 func (s Store) Catalog(ctx context.Context, actorRoles []string) ([]Role, error) {
 	rows, err := s.DB.Query(ctx, `select name, label, description from csc.roles where name <> 'foundry' order by label`)
@@ -131,24 +143,16 @@ func (s Store) Search(ctx context.Context, search Search) (Page, error) {
 			return Page{}, ErrInvalidSearch
 		}
 	}
-	var pattern *string
-	if search.Query != "" {
-		value := "%" + likeEscaper.Replace(search.Query) + "%"
-		pattern = &value
-	}
 	rows, err := s.DB.Query(ctx, `
 		select `+memberColumns+`, count(*) over ()
 		from csc.profiles p join auth.users u on u.id = p.auth_user_id
 		where `+eligible+`
-		  and ($1::text is null or u.email ilike $1 or p.first_name ilike $1
-		    or p.last_name ilike $1 or p.preferred_name ilike $1
-		    or concat_ws(' ', p.first_name, p.last_name) ilike $1
-		    or concat_ws(' ', p.preferred_name, p.last_name) ilike $1)
+		  and ($1::text is null or u.email ilike $1 or `+nameMatches+`)
 		  and ($2 = '' or exists (select 1 from csc.user_roles r
 		    where r.auth_user_id = p.auth_user_id and r.role = $2))
 		order by lower(p.last_name) nulls last, lower(u.email), p.auth_user_id
 		limit $3 offset $4
-	`, pattern, search.Role, PageSize, (search.Page-1)*PageSize)
+	`, searchPattern(search.Query), search.Role, PageSize, (search.Page-1)*PageSize)
 	if err != nil {
 		return Page{}, err
 	}
