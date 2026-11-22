@@ -185,9 +185,9 @@ export default function PointsProfile({
                       Share what you completed. Each link earns 10 points once.
                     </p>
                     <p>
-                      Use a LeetCode solution or submission link, a link to the
-                      paper you read, or a public GitHub PR or standalone
-                      commit. A PR and its commits count as one contribution.
+                      Use a LeetCode submission link, a link to the paper you
+                      read, or a public GitHub PR or standalone commit. A PR and
+                      its commits count as one contribution.
                     </p>
                   </div>
                 </details>
@@ -282,8 +282,8 @@ export default function PointsProfile({
                       id="point-url-leetcode-help"
                       className="csc-points-field-help"
                     >
-                      Open your individual solution or submission in LeetCode
-                      and copy its URL. Look for a number after /solutions/ or
+                      Open the Submissions tab in LeetCode, select your
+                      submission, and copy the URL. Look for a number after
                       /submissions/.
                     </p>
                   )}
@@ -327,8 +327,8 @@ export default function PointsProfile({
                     onChange={(event) => setAffirmed(event.target.checked)}
                     required
                   />
-                  I completed this activity. The linked solution or contribution
-                  is mine, and the link is public where required.
+                  I completed this activity. The linked submission or
+                  contribution is mine, and the link is public where required.
                 </label>
               )}
               <button

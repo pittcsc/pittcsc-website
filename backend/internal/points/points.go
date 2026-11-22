@@ -24,9 +24,10 @@ var (
 const PageSize = 20
 
 var (
-	leetcodePath = regexp.MustCompile(`^/problems/[a-z0-9-]+/(?:solutions|submissions)/[0-9]+(?:/.*)?$`)
-	githubPull   = regexp.MustCompile(`^/[^/]+/[^/]+/pull/[0-9]+(?:/.*)?$`)
-	githubCommit = regexp.MustCompile(`^/[^/]+/[^/]+/commit/[0-9a-fA-F]{7,40}(?:/.*)?$`)
+	leetcodeSubmissionPath = regexp.MustCompile(`^/problems/[a-z0-9-]+/submissions/[0-9]+(?:/.*)?$`)
+	leetcodeSolutionPath   = regexp.MustCompile(`^/problems/[a-z0-9-]+/solutions/[0-9]+(?:/.*)?$`)
+	githubPull             = regexp.MustCompile(`^/[^/]+/[^/]+/pull/[0-9]+(?:/.*)?$`)
+	githubCommit           = regexp.MustCompile(`^/[^/]+/[^/]+/commit/[0-9a-fA-F]{7,40}(?:/.*)?$`)
 )
 
 type Category struct {
@@ -164,11 +165,13 @@ func NormalizeURL(category, raw string) (string, error) {
 	if strings.Contains(path, "..") {
 		return "", ErrInvalid
 	}
-	isSolution := (host == "leetcode.com" || host == "www.leetcode.com") && leetcodePath.MatchString(path)
+	isLeetCodeHost := host == "leetcode.com" || host == "www.leetcode.com"
+	isSubmission := isLeetCodeHost && leetcodeSubmissionPath.MatchString(path)
+	isLegacySolution := isLeetCodeHost && leetcodeSolutionPath.MatchString(path)
 	isProject := (host == "github.com" || host == "www.github.com") && (githubPull.MatchString(path) || githubCommit.MatchString(path))
 	switch category {
 	case "leetcode":
-		if !isSolution {
+		if !isSubmission {
 			return "", ErrInvalid
 		}
 	case "project":
@@ -176,13 +179,12 @@ func NormalizeURL(category, raw string) (string, error) {
 			return "", ErrInvalid
 		}
 	case "paper":
-		// Papers can live on any HTTPS host. Known solution/PR links still
-		// receive their usual canonical form so a URL cannot be claimed twice
-		// merely by choosing a different category.
+		// Papers can live on any HTTPS host. Keep canonicalizing recognized
+		// links, including legacy solutions, for the lifetime duplicate check.
 	default:
 		return "", ErrInvalid
 	}
-	if isSolution {
+	if isSubmission || isLegacySolution {
 		parts := strings.Split(path, "/")
 		path = strings.Join(parts[:5], "/")
 		u.Host = "leetcode.com"

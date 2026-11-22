@@ -191,16 +191,23 @@ func TestFoundryStatusUsesVerifiedOwner(t *testing.T) {
 
 func TestCreatePointClaimLeetCodeValidationMessages(t *testing.T) {
 	const validLink = "https://leetcode.com/problems/two-sum/submissions/12345/"
+	const invalidLinkMessage = "Use an HTTPS link to your LeetCode submission. " +
+		"Open the Submissions tab, select your submission, and copy the URL. " +
+		"It should look like https://leetcode.com/problems/<problem>/submissions/<id>/, with a numeric ID."
 	for _, tc := range []struct {
 		name, link, message string
 		affirmed            bool
 	}{
 		{
-			name: "problem description",
-			link: "https://leetcode.com/problems/two-sum/description/",
-			message: "Use an HTTPS link to your individual LeetCode solution or submission. " +
-				"The link must look like leetcode.com/problems/<problem>/solutions/<id>/ " +
-				"or leetcode.com/problems/<problem>/submissions/<id>/, with a numeric ID.",
+			name:     "problem description",
+			link:     "https://leetcode.com/problems/two-sum/description/",
+			message:  invalidLinkMessage,
+			affirmed: true,
+		},
+		{
+			name:     "published solution",
+			link:     "https://leetcode.com/problems/two-sum/solutions/12345/",
+			message:  invalidLinkMessage,
 			affirmed: true,
 		},
 		{
