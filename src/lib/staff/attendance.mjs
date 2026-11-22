@@ -14,11 +14,13 @@ export function academicYearLabel(year) {
   return `${short(year)}–${short(year + 1)}`;
 }
 
-export function attendanceReportPath({ year, query, sort, page }) {
+export function attendanceReportPath({ year, query, sort, page, minEvents, csv }) {
   const params = new URLSearchParams();
   if (year) params.set("year", String(year));
   if (query) params.set("q", query);
   if (sort === "asc") params.set("sort", sort);
-  if (page > 1) params.set("page", String(page));
+  if (minEvents) params.set("minEvents", String(minEvents));
+  if (csv) params.set("format", "csv");
+  else if (page > 1) params.set("page", String(page));
   return params.size ? `/staff/attendance?${params}` : "/staff/attendance";
 }

@@ -17,7 +17,7 @@ func TestAcademicYearRollover(t *testing.T) {
 		{cutoff.AddDate(1, 0, 0).Add(-time.Nanosecond), 2026},
 		{cutoff.AddDate(1, 0, 0), 2027},
 	} {
-		search, err := ParseAttendanceSearch("", "", "", "", tc.at)
+		search, err := ParseAttendanceSearch("", "", "", "", "", tc.at)
 		if err != nil || search.Year != tc.year || search.CurrentYear != tc.year || search.Ascending {
 			t.Fatalf("default attendance search at %s: %+v, %v", tc.at, search, err)
 		}

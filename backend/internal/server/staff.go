@@ -101,15 +101,21 @@ func registerStaffRoutes(mux *http.ServeMux, authentication authenticator, profi
 	}))
 	mux.HandleFunc("GET /staff/attendance", withStaff(authentication, profiles, func(w http.ResponseWriter, r *http.Request, _ auth.Identity, _ profile.Record) {
 		query := r.URL.Query()
-		search, err := roles.ParseAttendanceSearch(query.Get("q"), query.Get("page"), query.Get("year"), query.Get("sort"), time.Now())
-		if err != nil {
-			writeJSONError(w, http.StatusBadRequest, "Choose a valid academic year, sort order, and page. Search can contain up to 100 characters.")
+		format := query.Get("format")
+		search, err := roles.ParseAttendanceSearch(query.Get("q"), query.Get("page"), query.Get("year"), query.Get("sort"), query.Get("minEvents"), time.Now())
+		if err != nil || (format != "" && format != "csv") {
+			writeJSONError(w, http.StatusBadRequest, "Choose a valid academic year, sort order, page, minimum event count, and format. Search can contain up to 100 characters.")
 			return
 		}
+		search.Unpaged = format == "csv"
 		if store != nil {
 			report, err := store.AttendanceReport(r.Context(), search)
 			if err == nil {
-				writeJSON(w, report)
+				if search.Unpaged {
+					writeAttendanceCSV(w, report)
+				} else {
+					writeJSON(w, report)
+				}
 				return
 			}
 		}

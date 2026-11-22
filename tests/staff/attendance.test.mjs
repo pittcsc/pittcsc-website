@@ -27,6 +27,18 @@ test("Attendance resolves under the staff dashboard and uses the current year by
   );
 });
 
+test("attendance CSV keeps the selected filters and ignores the current page", () => {
+  const filters = { year: 2025, query: "Ada", sort: "asc", minEvents: "4", page: 3 };
+  assert.equal(
+    attendanceReportPath(filters),
+    "/staff/attendance?year=2025&q=Ada&sort=asc&minEvents=4&page=3",
+  );
+  assert.equal(
+    attendanceReportPath({ ...filters, csv: true }),
+    "/staff/attendance?year=2025&q=Ada&sort=asc&minEvents=4&format=csv",
+  );
+});
+
 test("dates use Pittsburgh time and years display both halves", () => {
   assert.equal(academicYearLabel(2025), "25–26");
   assert.equal(formatAttendanceDate("2026-08-01T03:59:59Z"), "Jul 31, 2026");

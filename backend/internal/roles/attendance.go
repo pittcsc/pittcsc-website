@@ -16,6 +16,8 @@ type AttendanceSearch struct {
 	Year        int
 	CurrentYear int
 	Ascending   bool
+	MinEvents   int
+	Unpaged     bool
 }
 
 type MemberAttendance struct {
@@ -52,7 +54,7 @@ func academicYearStart(year int) time.Time {
 	return time.Date(year, time.August, 1, 0, 0, 0, 0, attendanceLocation)
 }
 
-func ParseAttendanceSearch(query, page, year, sort string, now time.Time) (AttendanceSearch, error) {
+func ParseAttendanceSearch(query, page, year, sort, minEvents string, now time.Time) (AttendanceSearch, error) {
 	search, err := ParseSearch(query, "", page)
 	if err != nil || (sort != "" && sort != "desc" && sort != "asc") {
 		return AttendanceSearch{}, ErrInvalidAttendanceSearch
@@ -66,6 +68,13 @@ func ParseAttendanceSearch(query, page, year, sort string, now time.Time) (Atten
 			return AttendanceSearch{}, ErrInvalidAttendanceSearch
 		}
 	}
+	if minEvents != "" {
+		minimum, err := strconv.ParseUint(minEvents, 10, 31)
+		if err != nil {
+			return AttendanceSearch{}, ErrInvalidAttendanceSearch
+		}
+		result.MinEvents = int(minimum)
+	}
 	return result, nil
 }
 
@@ -74,12 +83,19 @@ func (s Store) AttendanceReport(ctx context.Context, search AttendanceSearch) (A
 		Members: []MemberAttendance{}, Year: search.Year, CurrentYear: search.CurrentYear,
 		FirstYear: min(search.Year, search.CurrentYear-1), Page: search.Page,
 	}
-	var firstEvent *time.Time
-	if err := s.DB.QueryRow(ctx, `select min(starts_at) from csc.events`).Scan(&firstEvent); err != nil {
-		return AttendanceReport{}, err
-	}
-	if firstEvent != nil {
-		result.FirstYear = min(result.FirstYear, academicYear(*firstEvent))
+	var limit *int
+	offset := 0
+	if !search.Unpaged {
+		var firstEvent *time.Time
+		if err := s.DB.QueryRow(ctx, `select min(starts_at) from csc.events`).Scan(&firstEvent); err != nil {
+			return AttendanceReport{}, err
+		}
+		if firstEvent != nil {
+			result.FirstYear = min(result.FirstYear, academicYear(*firstEvent))
+		}
+		pageLimit := PageSize + 1
+		limit = &pageLimit
+		offset = (search.Page - 1) * PageSize
 	}
 
 	// The attendance key already enforces one row per member/event. Choose
@@ -101,12 +117,13 @@ func (s Store) AttendanceReport(ctx context.Context, search AttendanceSearch) (A
 		)
 		select auth_user_id::text, first_name, last_name, preferred_name, event_count, title, starts_at
 		from members
+		where event_count >= $5
 		order by case when $4::boolean then event_count end asc,
 			case when not $4 then event_count end desc, lower(last_name) nulls last,
 			lower(coalesce(preferred_name, first_name)) nulls last, auth_user_id
-		limit $5 offset $6
+		limit $6 offset $7
 	`, searchPattern(search.Query), academicYearStart(search.Year), academicYearStart(search.Year+1),
-		search.Ascending, PageSize+1, (search.Page-1)*PageSize)
+		search.Ascending, search.MinEvents, limit, offset)
 	if err != nil {
 		return AttendanceReport{}, err
 	}
@@ -123,7 +140,7 @@ func (s Store) AttendanceReport(ctx context.Context, search AttendanceSearch) (A
 	if err := rows.Err(); err != nil {
 		return AttendanceReport{}, err
 	}
-	if len(result.Members) > PageSize {
+	if !search.Unpaged && len(result.Members) > PageSize {
 		result.Members = result.Members[:PageSize]
 		result.HasMore = true
 	}
