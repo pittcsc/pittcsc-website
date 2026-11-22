@@ -60,9 +60,13 @@ Attendance lists active, verified members, including those with zero recorded
 check-ins and those with additional roles. Search by name or select the
 **Events attended** heading to reverse the sort. Each row shows the count and the
 title and scheduled date of the member's latest attended event in the selected year.
-Enter a **Minimum events attended** to show members at or above that count.
-**Export CSV** downloads every matching row for the selected academic year,
-using the active name search, minimum count, and sort order across all pages.
+Open **Filters**, set **Minimum events attended**, and select **Apply filters**
+to show members at or above that count. The active minimum appears above the
+table. **Clear** removes it.
+
+**Export CSV** downloads every matching row for the selected academic year
+across all pages using the active search, minimum, and sort. The columns match
+the table and the last event includes its scheduled date in Pittsburgh time.
 
 The report opens to the current academic year. A year starts at midnight on
 August 1 in Pittsburgh and runs through July 31. Each recorded check-in belongs
@@ -70,7 +74,7 @@ to the year of its event's scheduled start. Earlier reporting years are availabl
 in the year selector. See the [CRM glossary](../GLOSSARY.md#attendance).
 
 `GET /staff/attendance?year=2026&minEvents=4&sort=desc&page=1` returns up to
-25 rows. The optional year is its four-digit starting year. Add `format=csv`
+25 rows and reports the applied minimum. The optional year is its four-digit starting year. Add `format=csv`
 to download the complete result, with the last event start in UTC. The
 endpoint checks current staff access and sends uncached responses.
 

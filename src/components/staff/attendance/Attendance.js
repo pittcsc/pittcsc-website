@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "gatsby";
 import {
   academicYearLabel,
-  attendanceReportPath,
-  formatAttendanceDate,
+  attendanceCSV,
+  attendanceMemberRow,
+  loadAttendanceReport,
 } from "../../../lib/staff/attendance.mjs";
 import { STAFF_BASE } from "../../../lib/staff/tools.mjs";
-import { displayName } from "../../../lib/staff/user-management.mjs";
 import "../../../styles/staff/attendance.scss";
 
 export default function Attendance({ identity, request, revalidate }) {
@@ -16,14 +16,25 @@ export default function Attendance({ identity, request, revalidate }) {
     year: "",
     sort: "desc",
     page: 1,
-    minEvents: "",
+    minEvents: 0,
   });
+  const [minimumDraft, setMinimumDraft] = useState("");
   const [response, setResponse] = useState(null);
   const [attempt, setAttempt] = useState(0);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState("");
   const activeExport = useRef(null);
-  const path = attendanceReportPath(filters);
+  const filterMenu = useRef(null);
+  const filterButton = useRef(null);
+
+  useEffect(() => {
+    function dismissOnOutsideClick(event) {
+      const menu = filterMenu.current;
+      if (menu?.open && !menu.contains(event.target)) menu.open = false;
+    }
+    document.addEventListener("pointerdown", dismissOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", dismissOnOutsideClick);
+  }, []);
 
   useEffect(() => {
     setExporting(false);
@@ -48,14 +59,14 @@ export default function Attendance({ identity, request, revalidate }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    request(path, { userID: identity.id, signal: controller.signal })
+    loadAttendanceReport(request, filters, { userID: identity.id, signal: controller.signal })
       .then((report) => {
-        if (!controller.signal.aborted) setResponse({ path, attempt, report });
+        if (!controller.signal.aborted) setResponse({ filters, attempt, report });
       })
       .catch((error) => {
         if (controller.signal.aborted) return;
         setResponse((previous) => ({
-          path,
+          filters,
           attempt,
           error,
           report: previous?.report,
@@ -63,13 +74,13 @@ export default function Attendance({ identity, request, revalidate }) {
         if (error.status === 401 || error.status === 403) void revalidate();
       });
     return () => controller.abort();
-  }, [identity.id, request, revalidate, path, attempt]);
+  }, [identity.id, request, revalidate, filters, attempt]);
 
   function updateFilters(changes) {
     setFilters((previous) => ({ ...previous, page: 1, ...changes }));
   }
 
-  const settled = response?.path === path && response.attempt === attempt;
+  const settled = response?.filters === filters && response.attempt === attempt;
   const loaded = response?.report;
   const error = settled && response.error;
   const report = settled && !error ? loaded : null;
@@ -80,6 +91,16 @@ export default function Attendance({ identity, request, revalidate }) {
       )
     : [];
 
+  function closeFilterMenu() {
+    filterMenu.current.open = false;
+    filterButton.current.focus();
+  }
+
+  function applyMinimum(minEvents) {
+    updateFilters({ minEvents, query: query.trim() });
+    closeFilterMenu();
+  }
+
   async function exportCSV() {
     if (activeExport.current || !report) return;
     const controller = new AbortController();
@@ -88,12 +109,14 @@ export default function Attendance({ identity, request, revalidate }) {
     setExporting(true);
     try {
       const year = report.year;
-      const blob = await request(attendanceReportPath({ ...filters, year, csv: true }), {
-        userID: identity.id,
-        signal: controller.signal,
-        responseType: "blob",
-      });
+      const { members } = await loadAttendanceReport(
+        request,
+        { ...filters, year },
+        { userID: identity.id, signal: controller.signal },
+        { all: true },
+      );
       if (controller.signal.aborted) return;
+      const blob = new Blob([attendanceCSV(members)], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -147,22 +170,46 @@ export default function Attendance({ identity, request, revalidate }) {
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="attendance-min-events">Minimum events attended</label>
-          <input
-            id="attendance-min-events"
-            type="text"
-            inputMode="numeric"
-            maxLength={10}
-            value={filters.minEvents}
-            onChange={(event) => {
-              const value = event.target.value;
-              if (/^\d*$/.test(value) && Number(value) <= 2147483647) {
-                updateFilters({ minEvents: value });
-              }
+        <details
+          className="csc-attendance-filter-menu"
+          ref={filterMenu}
+          onToggle={(event) => {
+            if (event.currentTarget.open) setMinimumDraft(String(filters.minEvents || ""));
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && event.currentTarget.open) {
+              event.preventDefault();
+              closeFilterMenu();
+            }
+          }}
+        >
+          <summary ref={filterButton} className="csc-auth-secondary">Filters</summary>
+          <form
+            className="csc-attendance-filter-panel"
+            onSubmit={(event) => {
+              event.preventDefault();
+              applyMinimum(Number(minimumDraft));
             }}
-          />
-        </div>
+          >
+            <label htmlFor="attendance-min-events">Minimum events attended</label>
+            <input
+              id="attendance-min-events"
+              type="number"
+              inputMode="numeric"
+              min={0}
+              max={2147483647}
+              step={1}
+              value={minimumDraft}
+              onChange={(event) => setMinimumDraft(event.target.value)}
+            />
+            <div className="csc-attendance-filter-actions">
+              <button type="button" className="csc-auth-secondary" onClick={() => applyMinimum(0)}>
+                Clear
+              </button>
+              <button type="submit">Apply filters</button>
+            </div>
+          </form>
+        </details>
         <button
           type="button"
           className="csc-auth-secondary"
@@ -172,6 +219,11 @@ export default function Attendance({ identity, request, revalidate }) {
           {exporting ? "Exporting…" : "Export CSV"}
         </button>
       </div>
+      {filters.minEvents > 0 && (
+        <p className="csc-attendance-active-filter">
+          Minimum events attended · {filters.minEvents}
+        </p>
+      )}
       {exportError && <p role="alert">{exportError}</p>}
       {error && (
         <div className="csc-attendance-error">
@@ -211,24 +263,23 @@ export default function Attendance({ identity, request, revalidate }) {
             </tr>
           </thead>
           <tbody>
-            {report?.members.map((member) => (
-              <tr key={member.id}>
-                <th scope="row">{displayName(member)}</th>
-                <td>{member.eventsAttended}</td>
-                <td>
-                  {member.lastEventStart ? (
-                    <>
-                      {member.lastEventTitle}
-                      <time dateTime={member.lastEventStart}>
-                        {formatAttendanceDate(member.lastEventStart)}
-                      </time>
-                    </>
-                  ) : (
-                    "—"
-                  )}
-                </td>
-              </tr>
-            ))}
+            {report?.members.map((member) => {
+              const { name, count, eventTitle, eventStart, eventDate } = attendanceMemberRow(member);
+              return (
+                <tr key={member.id}>
+                  <th scope="row">{name}</th>
+                  <td>{count}</td>
+                  <td>
+                    {eventStart ? (
+                      <>
+                        {eventTitle}
+                        <time dateTime={eventStart}>{eventDate}</time>
+                      </>
+                    ) : "—"}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
         {!error && (
