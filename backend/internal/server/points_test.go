@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -185,5 +186,57 @@ func TestFoundryStatusUsesVerifiedOwner(t *testing.T) {
 	body := w.Body.String()
 	if !strings.Contains(body, `"points":20`) || !strings.Contains(body, `"threshold":50`) || !strings.Contains(body, `"active":false`) || !strings.Contains(body, `"windowDays":30`) {
 		t.Fatalf("unexpected Foundry status: %s", body)
+	}
+}
+
+func TestCreatePointClaimLeetCodeValidationMessages(t *testing.T) {
+	const validLink = "https://leetcode.com/problems/two-sum/submissions/12345/"
+	for _, tc := range []struct {
+		name, link, message string
+		affirmed            bool
+	}{
+		{
+			name: "problem description",
+			link: "https://leetcode.com/problems/two-sum/description/",
+			message: "Use an HTTPS link to your individual LeetCode solution or submission. " +
+				"The link must look like leetcode.com/problems/<problem>/solutions/<id>/ " +
+				"or leetcode.com/problems/<problem>/submissions/<id>/, with a numeric ID.",
+			affirmed: true,
+		},
+		{
+			name:    "missing confirmation",
+			link:    validLink,
+			message: "Check the box to confirm you completed this activity.",
+		},
+		{name: "individual submission", link: validLink, affirmed: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			store := &pointsStub{}
+			body, err := json.Marshal(points.Input{
+				Category: "leetcode",
+				URL:      tc.link,
+				Summary:  strings.Repeat("a", 100),
+				Affirmed: tc.affirmed,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			w := pointRequest(nil, store, http.MethodPost, "/points/claims", string(body), "valid")
+			if tc.message == "" {
+				if w.Code != http.StatusCreated || store.writes != 1 {
+					t.Fatalf("valid claim not created: status %d, writes %d", w.Code, store.writes)
+				}
+				return
+			}
+			var response struct {
+				Error string `json:"error"`
+			}
+			if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+				t.Fatal(err)
+			}
+			if w.Code != http.StatusBadRequest || response.Error != tc.message || store.writes != 0 {
+				t.Fatalf("status %d, error %q, writes %d", w.Code, response.Error, store.writes)
+			}
+		})
 	}
 }

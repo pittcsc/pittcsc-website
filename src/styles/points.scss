@@ -124,10 +124,16 @@
     flex: none;
     margin-top: 0.25rem;
   }
+  .csc-points-field-help,
   .csc-points-field-error {
     margin-top: 0.4rem;
-    color: $acc-error;
     font-size: 0.875rem;
+  }
+  .csc-points-field-help {
+    color: $acc-muted;
+  }
+  .csc-points-field-error {
+    color: $acc-error;
   }
   .csc-points-error {
     display: flex;

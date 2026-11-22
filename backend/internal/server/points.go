@@ -157,10 +157,17 @@ func registerPointRoutes(mux *http.ServeMux, authentication authenticator, profi
 			return
 		}
 		if !input.Affirmed {
-			writePointError(w, points.ErrInvalid)
+			writeJSONError(w, http.StatusBadRequest, "Check the box to confirm you completed this activity.")
 			return
 		}
 		if _, err := points.NormalizeURL(input.Category, input.URL); err != nil {
+			if input.Category == "leetcode" {
+				writeJSONError(w, http.StatusBadRequest,
+					"Use an HTTPS link to your individual LeetCode solution or submission. "+
+						"The link must look like leetcode.com/problems/<problem>/solutions/<id>/ "+
+						"or leetcode.com/problems/<problem>/submissions/<id>/, with a numeric ID.")
+				return
+			}
 			writePointError(w, err)
 			return
 		}
