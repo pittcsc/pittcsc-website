@@ -124,7 +124,7 @@ func (s *roleStoreStub) Search(ctx context.Context, search roles.Search) (roles.
 func (s *roleStoreStub) AttendanceReport(_ context.Context, search roles.AttendanceSearch) (roles.AttendanceReport, error) {
 	s.calls++
 	s.attendance = search
-	return roles.AttendanceReport{Members: s.attendees, Year: search.Year, Page: search.Page}, s.err
+	return roles.AttendanceReport{Members: s.attendees, Year: search.Year, Page: search.Page, MinEvents: search.MinEvents}, s.err
 }
 func (s *roleStoreStub) Change(ctx context.Context, actorID, targetID, role string, grant bool) (roles.Member, error) {
 	s.calls++

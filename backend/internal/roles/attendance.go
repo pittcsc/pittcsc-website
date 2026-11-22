@@ -37,6 +37,7 @@ type AttendanceReport struct {
 	FirstYear   int                `json:"firstYear"`
 	Page        int                `json:"page"`
 	HasMore     bool               `json:"hasMore"`
+	MinEvents   int                `json:"minEvents"`
 }
 
 var attendanceLocation, _ = time.LoadLocation(events.Timezone)
@@ -81,7 +82,7 @@ func ParseAttendanceSearch(query, page, year, sort, minEvents string, now time.T
 func (s Store) AttendanceReport(ctx context.Context, search AttendanceSearch) (AttendanceReport, error) {
 	result := AttendanceReport{
 		Members: []MemberAttendance{}, Year: search.Year, CurrentYear: search.CurrentYear,
-		FirstYear: min(search.Year, search.CurrentYear-1), Page: search.Page,
+		FirstYear: min(search.Year, search.CurrentYear-1), Page: search.Page, MinEvents: search.MinEvents,
 	}
 	var limit *int
 	offset := 0

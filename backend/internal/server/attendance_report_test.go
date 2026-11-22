@@ -24,7 +24,7 @@ func TestStaffAttendanceReport(t *testing.T) {
 	response := staffRequest(t, profiles, store, "GET", "/staff/attendance?year=2025&q=Ada+Lovelace&sort=asc&page=2&minEvents=4", "valid")
 	var report roles.AttendanceReport
 	if response.Code != 200 || response.Header().Get("Cache-Control") != "no-store" ||
-		json.Unmarshal(response.Body.Bytes(), &report) != nil || report.Year != 2025 || report.Page != 2 {
+		json.Unmarshal(response.Body.Bytes(), &report) != nil || report.Year != 2025 || report.Page != 2 || report.MinEvents != 4 {
 		t.Fatalf("unexpected attendance response: %d %s", response.Code, response.Body.String())
 	}
 	if store.calls != 1 || store.attendance.Query != "Ada Lovelace" || !store.attendance.Ascending || store.attendance.MinEvents != 4 || store.attendance.Unpaged {
