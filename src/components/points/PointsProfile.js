@@ -144,6 +144,14 @@ export default function PointsProfile({
     : [];
   const hasURL = url.trim().length > 0;
   const validURL = isSecurePointURL(url);
+  const isLeetCode = category === "leetcode";
+  const urlDescription =
+    [
+      isLeetCode && "point-url-leetcode-help",
+      hasURL && !validURL && "point-url-error",
+    ]
+      .filter(Boolean)
+      .join(" ") || undefined;
   const trimmedSummary = summary.replace(
     /^\p{White_Space}+|\p{White_Space}+$/gu,
     "",
@@ -262,15 +270,23 @@ export default function PointsProfile({
                     maxLength={2048}
                     value={url}
                     aria-invalid={hasURL && !validURL}
-                    aria-describedby={
-                      hasURL && !validURL ? "point-url-error" : undefined
-                    }
+                    aria-describedby={urlDescription}
                     onChange={(event) => {
                       setURL(event.target.value);
                       setAffirmed(false);
                     }}
                     required
                   />
+                  {isLeetCode && (
+                    <p
+                      id="point-url-leetcode-help"
+                      className="csc-points-field-help"
+                    >
+                      Open your individual solution or submission in LeetCode
+                      and copy its URL. Look for a number after /solutions/ or
+                      /submissions/.
+                    </p>
+                  )}
                   {hasURL && !validURL && (
                     <p id="point-url-error" className="csc-points-field-error">
                       Enter a public HTTPS link without a username, password, or
