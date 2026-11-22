@@ -2,7 +2,7 @@
 
 Active accounts can submit a category, an HTTPS link, a 100–250 character summary (1–2 sentences), and an affirmation on
 **Points** (`/dashboard/points`). Each accepted link awards 10 points
-immediately. Current categories are a LeetCode solution or submission, a
+immediately. Current categories are a LeetCode submission, a
 research paper read, and a public GitHub PR or standalone commit. A PR and its
 included commits count as one contribution. There is no earning cap.
 
@@ -84,11 +84,11 @@ access. The public Gatsby build contains no point or claim data.
 | `POST /staff/points/claims/{id}/restore` | Staff | Restore with `{reason}` |
 | `PUT /staff/points/claims/{id}` | Staff | Correct with `{category,url,reason}` |
 
-The current URL rules accept `leetcode.com/problems/.../solutions/{id}` and
-`leetcode.com/problems/.../submissions/{id}` for LeetCode,
-`github.com/{owner}/{repo}/pull/{number}` or
-`github.com/{owner}/{repo}/commit/{hash}` for project contributions, and any
-HTTPS URL for a paper. Simple variants such as fragments, trailing slashes,
+For LeetCode, open the Submissions tab, select your submission, and copy its
+HTTPS URL. The link must match `leetcode.com/problems/{slug}/submissions/{id}`
+with a numeric ID. Existing points from published solutions are preserved.
+Project contributions accept `github.com/{owner}/{repo}/pull/{number}` or
+`github.com/{owner}/{repo}/commit/{hash}`. Papers can use any HTTPS URL. Simple variants such as fragments, trailing slashes,
 tracking parameters, and GitHub URL subpages normalize to one link. Paper
 links retain meaningful query parameters. This is not a semantic duplicate
 check: alternate sites or URLs for the same work need staff review.
