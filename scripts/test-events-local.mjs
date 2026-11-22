@@ -683,6 +683,19 @@ async function main() {
       previous.members[1].lastEventTitle === `[Local fixture] ${currentYear}-07-31 23:59`,
     "Previous academic year or ascending sort is incorrect",
   );
+  const minimum = await json(await api(a, `${matching}&minEvents=2`));
+  check(
+    minimum.members.length === 1 && minimum.members[0].id === member.id,
+    "Minimum event count must include members at the threshold and exclude lower counts",
+  );
+  const reportCSV = await api(a, `${matching}&year=${currentYear - 1}&minEvents=1&format=csv&page=2`);
+  const csvRows = (await reportCSV.text()).trimEnd().split("\n");
+  check(
+    reportCSV.ok && reportCSV.headers.get("content-type")?.startsWith("text/csv") &&
+      csvRows.length === 2 && csvRows[1].startsWith(fixtureName) &&
+      csvRows[1].includes(`,1,[Local fixture] ${currentYear}-07-31 23:59,`),
+    "CSV must apply the selected year and minimum while ignoring the page",
+  );
 
   stage = "other staff edits and stale version conflicts";
   const edit = {

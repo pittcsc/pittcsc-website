@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "gatsby";
 import {
   academicYearLabel,
@@ -16,10 +16,23 @@ export default function Attendance({ identity, request, revalidate }) {
     year: "",
     sort: "desc",
     page: 1,
+    minEvents: "",
   });
   const [response, setResponse] = useState(null);
   const [attempt, setAttempt] = useState(0);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState("");
+  const activeExport = useRef(null);
   const path = attendanceReportPath(filters);
+
+  useEffect(() => {
+    setExporting(false);
+    setExportError("");
+    return () => {
+      activeExport.current?.abort();
+      activeExport.current = null;
+    };
+  }, [identity.id]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,6 +80,40 @@ export default function Attendance({ identity, request, revalidate }) {
       )
     : [];
 
+  async function exportCSV() {
+    if (activeExport.current || !report) return;
+    const controller = new AbortController();
+    activeExport.current = controller;
+    setExportError("");
+    setExporting(true);
+    try {
+      const year = report.year;
+      const blob = await request(attendanceReportPath({ ...filters, year, csv: true }), {
+        userID: identity.id,
+        signal: controller.signal,
+        responseType: "blob",
+      });
+      if (controller.signal.aborted) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `pittcsc-attendance-${year}-${year + 1}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (failure) {
+      if (controller.signal.aborted) return;
+      setExportError(failure.message || "Could not export attendance. Try again.");
+      if (failure.status === 401 || failure.status === 403) void revalidate();
+    } finally {
+      if (activeExport.current === controller) {
+        activeExport.current = null;
+        setExporting(false);
+      }
+    }
+  }
+
   return (
     <section className="csc-staff csc-staff-attendance">
       <Link to={STAFF_BASE} className="csc-staff-back">
@@ -100,7 +147,32 @@ export default function Attendance({ identity, request, revalidate }) {
             ))}
           </select>
         </div>
+        <div>
+          <label htmlFor="attendance-min-events">Minimum events attended</label>
+          <input
+            id="attendance-min-events"
+            type="text"
+            inputMode="numeric"
+            maxLength={10}
+            value={filters.minEvents}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (/^\d*$/.test(value) && Number(value) <= 2147483647) {
+                updateFilters({ minEvents: value });
+              }
+            }}
+          />
+        </div>
+        <button
+          type="button"
+          className="csc-auth-secondary"
+          disabled={!report || exporting || query.trim() !== filters.query}
+          onClick={() => void exportCSV()}
+        >
+          {exporting ? "Exporting…" : "Export CSV"}
+        </button>
       </div>
+      {exportError && <p role="alert">{exportError}</p>}
       {error && (
         <div className="csc-attendance-error">
           <p role="alert">{error.message}</p>
