@@ -41,32 +41,33 @@ export default function Foundry({ identity }) {
         <h1 id="foundry-title">Foundry</h1>
         <span className="csc-foundry-underline" aria-hidden="true" />
         <p className="csc-foundry-lede">
-          Foundry is how CSC recognizes the members who keep showing up:
-          shipping code, solving problems, and growing.
+          Foundry recognizes active members of CSC based on their
+          contributions.
         </p>
         <ol className="csc-foundry-rules">
           <li>
             <span>
-              Earn <strong>50 points</strong> within any 30-day stretch to go
-              active.
+              Earn <strong>50 points</strong> in the last 30 days to become an
+              active Foundry member.
             </span>
           </li>
           <li>
             <span>
-              Only the last 30 days count. Older points roll off one day at a
-              time, so there&rsquo;s no monthly reset.
+              Points expire 30 days after they are earned. There is no monthly
+              reset.
             </span>
           </li>
           <li>
             <span>
-              If enough points roll off to drop you below 50, you go inactive
-              until you&rsquo;re back above it or receive a staff grant.
+              If your points fall below 50, your Foundry status becomes
+              inactive until you meet the requirement again or receive a staff
+              grant.
             </span>
           </li>
           <li>
             <span>
-              Staff can give a 30-day Foundry grant. It keeps you active while
-              your points are below 50 and can be renewed or revoked.
+              Staff can grant active Foundry status for 30 days regardless of
+              your point total. Grants can be renewed or revoked by staff.
             </span>
           </li>
         </ol>
