@@ -34,7 +34,11 @@ import EventItem from "../components/eventItem";
 import { eventList } from "../components/data";
 
 import SafeLottie from "../components/SafeLottie";
-import { CLUB_POSITIONING, CLUB_STATS } from "../lib/site/stats.mjs";
+import {
+  CLUB_POSITIONING,
+  CLUB_SOCIALS,
+  CLUB_STATS,
+} from "../lib/site/stats.mjs";
 import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 const logoAnimationOptions = {
@@ -380,7 +384,35 @@ const IndexPage = ({ data }) => {
                     professionally.
                   </p>
                   <p className="xl:text-md mt-4 block leading-loose">
-                    {`As ${CLUB_POSITIONING.largestOrgClaim} and a partner of the ${CLUB_POSITIONING.schoolPartnerName}, we serve ${CLUB_STATS.members.value} members across all majors. Our programs include Zero to Offer, Foundry, Launchpad, industry recruiting events, and hackathons including SteelHacks.`}
+                    {`As ${CLUB_POSITIONING.largestOrgClaim} and a partner of the ${CLUB_POSITIONING.schoolPartnerName}, we serve ${CLUB_STATS.members.value} members across all majors. Our programs include `}
+                    <Link to="/initiatives/z2o/" className="underline hover:text-primary">
+                      Zero to Offer
+                    </Link>
+                    {", "}
+                    <Link to="/initiatives/foundry/" className="underline hover:text-primary">
+                      Foundry
+                    </Link>
+                    {", "}
+                    <Link to="/initiatives/launchpad/" className="underline hover:text-primary">
+                      Launchpad
+                    </Link>
+                    {", "}
+                    <Link
+                      to="/initiatives/industry-recruiting/"
+                      className="underline hover:text-primary"
+                    >
+                      industry recruiting events
+                    </Link>
+                    {", and hackathons including "}
+                    <a
+                      href={CLUB_SOCIALS.steelhacks}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-primary"
+                    >
+                      SteelHacks
+                    </a>
+                    .
                   </p>
                 </div>
               </motion.div>

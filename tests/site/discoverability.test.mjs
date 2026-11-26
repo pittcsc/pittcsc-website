@@ -403,3 +403,21 @@ test("join Markdown carries the join steps, schedule, and community channels", (
   }
   assert.ok(markdown.includes(buildCanonicalUrl(SITE_URL, "/join/")));
 });
+
+test("homepage links each named program to its initiative page", () => {
+  const home = readRepoFile("src/pages/index.js");
+  for (const [title, link] of [
+    ["Zero to Offer", "/initiatives/z2o"],
+    ["Foundry", "/initiatives/foundry"],
+    ["Launchpad", "/initiatives/launchpad"],
+    ["Industry Recruiting Events", "/initiatives/industry-recruiting"],
+  ]) {
+    assert.ok(
+      CLUB_INITIATIVES.some((item) => item.title === title && item.link === link),
+      `${link} is not a known initiative page`,
+    );
+    assert.ok(home.includes(`to="${link}/"`), `homepage must link ${title} to ${link}/`);
+  }
+  assert.match(home, /href=\{CLUB_SOCIALS\.steelhacks\}/);
+  assert.equal(CLUB_SOCIALS.steelhacks, "https://steelhacks.org");
+});
