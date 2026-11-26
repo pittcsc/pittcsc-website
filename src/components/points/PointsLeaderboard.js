@@ -13,36 +13,21 @@ function Board({ title, board }) {
       {board.entries.length === 0 ? (
         <p>No members ranked in this period yet.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Rank</th>
-              <th scope="col">Member</th>
-              <th scope="col">Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            {board.entries.map((entry, index) => (
-              <tr
-                key={`${entry.rank}-${index}`}
-                className={entry.isYou ? "is-you" : undefined}
-              >
-                <td>
-                  <span
-                    className={`csc-points-rank${entry.rank <= 3 ? " is-top" : ""}`}
-                  >
-                    {entry.rank}
-                  </span>
-                </td>
-                <td>
-                  <MemberLink id={entry.id}>{entry.name}</MemberLink>
-                  {entry.isYou ? " (you)" : ""}
-                </td>
-                <td>{entry.points}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ol>
+          {board.entries.map((entry, index) => (
+            <li
+              key={`${entry.rank}-${index}`}
+              className={entry.isYou ? "is-you" : ""}
+            >
+              <span className="csc-points-rank">#{entry.rank}</span>
+              <span>
+                <MemberLink id={entry.id}>{entry.name}</MemberLink>
+                {entry.isYou ? " (you)" : ""}
+              </span>
+              <strong>{entry.points}</strong>
+            </li>
+          ))}
+        </ol>
       )}
       {board.own && (
         <p className="csc-points-own-rank">
@@ -89,7 +74,7 @@ export default function PointsLeaderboard({ identity }) {
 
   return (
     <div className="csc-points-leaderboards">
-      <h1 className="csc-points-title">Points</h1>
+      <h1>Points</h1>
       <PointsProfile
         identity={identity}
         variant="points"
@@ -99,19 +84,16 @@ export default function PointsLeaderboard({ identity }) {
         className="csc-points-leaderboard-section"
         aria-labelledby="leaderboards-title"
       >
-        <div className="csc-points-leaderboard-heading">
-          <h2 id="leaderboards-title">Leaderboards</h2>
-          <p>
-            Manage your leaderboard visibility in{" "}
-            <Link to="/dashboard/account">My account</Link>.
-          </p>
-        </div>
+        <h2 id="leaderboards-title">Leaderboards</h2>
+        <p>
+          Manage your leaderboard visibility in{" "}
+          <Link to="/dashboard/account">My Account</Link>.
+        </p>
         {error && (
           <div role="alert">
             <p>{error}</p>
             <button
               type="button"
-              className="csc-auth-secondary"
               onClick={() => setAttempt((value) => value + 1)}
             >
               Retry
