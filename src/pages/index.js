@@ -225,7 +225,10 @@ const IndexPage = ({ data }) => {
               </motion.p>
               <motion.h1
                 variants={text}
-                className="relative z-10 my-2 w-full whitespace-pre text-4xl 2xl:text-8xl font-bold md:text-5xl lg:my-4 lg:text-7xl"
+                // The heading cannot wrap and the animation beside it has a
+                // fixed width, so each size waits until both fit; earlier
+                // breakpoints pushed the text past the left edge.
+                className="relative z-10 my-2 w-full whitespace-pre text-4xl font-bold md:text-5xl lg:my-4 xl:text-7xl min-[1680px]:text-8xl"
               >
                 Computer Science
                 <br />
