@@ -34,12 +34,25 @@ export const PAGE_SEO = {
   },
 };
 
+export const LLMS_TXT_PATH = "/llms.txt";
+
+export const MARKDOWN_ALTERNATES = {
+  "/about/": "/about.md",
+  "/initiatives/": "/initiatives.md",
+  "/join/": "/join.md",
+  "/sponsors/": "/sponsors.md",
+};
+
+export const MACHINE_READABLE_PATHS = [
+  LLMS_TXT_PATH,
+  "/llms-full.txt",
+  ...Object.values(MARKDOWN_ALTERNATES),
+];
+
 const FILE_EXTENSION_RE = /\.[a-z0-9]{1,8}$/i;
 
-/**
- * Normalizes a route pathname to match Gatsby 5's default trailingSlash: "always"
- * behavior while preserving file-extension paths (e.g. /about.md, /llms.txt).
- */
+// Gatsby 5 serves pages with a trailing slash, so canonicals without one point at a
+// redirect. Static files such as /llms.txt must keep their exact path.
 export function normalizeCanonicalPath(pathname = "/") {
   if (!pathname) return "/";
   const clean = pathname.split(/[?#]/)[0].trim();
@@ -55,6 +68,10 @@ export function normalizeCanonicalPath(pathname = "/") {
 export function buildCanonicalUrl(siteUrl = SITE_URL, pathname = "/") {
   const base = (siteUrl || SITE_URL).replace(/\/+$/, "");
   return `${base}${normalizeCanonicalPath(pathname)}`;
+}
+
+export function getMarkdownAlternatePath(pathname = "/") {
+  return MARKDOWN_ALTERNATES[normalizeCanonicalPath(pathname)] || null;
 }
 
 export function resolveImageUrl(siteUrl = SITE_URL, imagePath = DEFAULT_SOCIAL_IMAGE) {
@@ -78,12 +95,8 @@ export function summarizeDescription(text, maxLength = 155) {
   return `${boundary.replace(/[.,;:\s]+$/, "")}…`;
 }
 
-/**
- * Builds schema.org Organization JSON-LD describing Computer Science Club at Pitt.
- *
- * Intentionally omits Event JSON-LD because no confirmed upcoming event dates
- * are stored in the repository (SteelHacks XIII on September 19-20, 2026 is past).
- */
+// No Event JSON-LD: the repository stores no confirmed upcoming event dates, and
+// stale dates in structured data would mislead search results.
 export function buildOrganizationJsonLd(siteUrl = SITE_URL) {
   const base = (siteUrl || SITE_URL).replace(/\/+$/, "");
   return {

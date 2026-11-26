@@ -5,13 +5,19 @@ import { test } from "node:test";
 import { loadLeadershipData } from "../../src/lib/site/leadership.mjs";
 import {
   buildAboutMarkdown,
+  buildInitiativesMarkdown,
+  buildJoinMarkdown,
   buildLlmsFullTxt,
   buildLlmsTxt,
+  buildMachineReadableFiles,
   buildSponsorsMarkdown,
 } from "../../src/lib/site/machineReadable.mjs";
 import {
   buildCanonicalUrl,
   buildOrganizationJsonLd,
+  getMarkdownAlternatePath,
+  MACHINE_READABLE_PATHS,
+  MARKDOWN_ALTERNATES,
   normalizeCanonicalPath,
   PAGE_SEO,
   summarizeDescription,
@@ -22,6 +28,7 @@ import {
   renderSitemapXml,
 } from "../../src/lib/site/sitemap.mjs";
 import {
+  CLUB_INITIATIVES,
   CLUB_POSITIONING,
   CLUB_SOCIALS,
   CLUB_STATS,
@@ -232,6 +239,8 @@ test("sitemap includes public pages, PDF, and machine-readable files while exclu
   assert.ok(urls.includes("https://pittcsc.org/llms-full.txt"));
   assert.ok(urls.includes("https://pittcsc.org/about.md"));
   assert.ok(urls.includes("https://pittcsc.org/sponsors.md"));
+  assert.ok(urls.includes("https://pittcsc.org/initiatives.md"));
+  assert.ok(urls.includes("https://pittcsc.org/join.md"));
 
   for (const excluded of [
     "/login",
@@ -281,13 +290,21 @@ test("static machine-readable files stay in sync with shared data and current le
   assert.equal(readRepoFile("static/llms-full.txt"), buildLlmsFullTxt(leadership));
   assert.equal(readRepoFile("static/about.md"), buildAboutMarkdown(leadership));
   assert.equal(readRepoFile("static/sponsors.md"), buildSponsorsMarkdown());
+  assert.equal(readRepoFile("static/initiatives.md"), buildInitiativesMarkdown());
+  assert.equal(readRepoFile("static/join.md"), buildJoinMarkdown());
+
+  const files = buildMachineReadableFiles(leadership);
+  assert.deepEqual(Object.keys(files).sort(), [...MACHINE_READABLE_PATHS].sort());
+  for (const [filePath, content] of Object.entries(files)) {
+    assert.equal(readRepoFile(`static${filePath}`), content, `static${filePath} is out of sync`);
+    assert.doesNotMatch(content, /\bSAP\b|Zhengming Wang/, `${filePath} must not pull stale content JSON`);
+  }
 
   assert.ok(
     existsSync(resolve(REPO_ROOT, "static", SPONSORSHIP_DATA.pdfPath.replace(/^\//, ""))),
     "sponsorship package PDF must exist in static/",
   );
 
-  // Confirm stale content JSON entries and unconfirmed 1000+ member figures are absent.
   for (const file of [
     "static/llms.txt",
     "static/llms-full.txt",
@@ -321,7 +338,7 @@ test("human UI links machine-readable summaries and Netlify serves them as plain
   assert.ok(sponsors.includes('href="/llms.txt"'));
 
   const netlify = readRepoFile("netlify.toml");
-  for (const path of ["/llms.txt", "/llms-full.txt", "/about.md", "/sponsors.md"]) {
+  for (const path of MACHINE_READABLE_PATHS) {
     assert.match(
       netlify,
       new RegExp(`for = "${path.replace(".", "\\.")}"[\\s\\S]*?Content-Type = "text/plain; charset=utf-8"`),
@@ -329,7 +346,6 @@ test("human UI links machine-readable summaries and Netlify serves them as plain
     );
   }
 
-  // Verify official social links match required profiles.
   assert.equal(CLUB_SOCIALS.instagram, "https://www.instagram.com/csc.at.pitt/");
   assert.equal(CLUB_SOCIALS.x, "https://x.com/CSC_at_Pitt");
   assert.equal(CLUB_SOCIALS.linkedin, "https://www.linkedin.com/company/cscatpitt/");
@@ -338,4 +354,52 @@ test("human UI links machine-readable summaries and Netlify serves them as plain
     CLUB_POSITIONING.largestOrgClaim,
     "the largest student organization at the University of Pittsburgh",
   );
+});
+
+test("core pages advertise their Markdown alternate and llms.txt in <head>", () => {
+  assert.equal(getMarkdownAlternatePath("/about"), "/about.md");
+  assert.equal(getMarkdownAlternatePath("/initiatives/"), "/initiatives.md");
+  assert.equal(getMarkdownAlternatePath("/join/?ref=x"), "/join.md");
+  assert.equal(getMarkdownAlternatePath("/sponsors/"), "/sponsors.md");
+  assert.equal(getMarkdownAlternatePath("/"), null);
+  assert.equal(getMarkdownAlternatePath("/initiatives/foundry/"), null);
+  assert.equal(getMarkdownAlternatePath("/login/"), null);
+
+  for (const markdownPath of Object.values(MARKDOWN_ALTERNATES)) {
+    assert.ok(MACHINE_READABLE_PATHS.includes(markdownPath));
+  }
+
+  const seo = readRepoFile("src/components/seo.js");
+  assert.match(seo, /rel="alternate"\s+type="text\/markdown"/);
+  assert.match(seo, /rel="alternate"\s+type="text\/plain"/);
+  assert.match(seo, /isNoindex \? null : getMarkdownAlternatePath/);
+});
+
+test("initiatives Markdown lists every initiative shown on /initiatives/", () => {
+  const markdown = buildInitiativesMarkdown();
+  const page = readRepoFile("src/pages/initiatives.js");
+  for (const item of CLUB_INITIATIVES) {
+    assert.ok(page.includes(`title: "${item.title}"`), `${item.title} missing from initiatives.js`);
+    assert.ok(page.includes(`link: "${item.link}"`), `${item.link} missing from initiatives.js`);
+    assert.ok(markdown.includes(`[${item.title}](`), `${item.title} missing from initiatives.md`);
+  }
+  const pageTitleCount = (page.match(/^\s+title: "/gm) || []).length;
+  assert.equal(pageTitleCount, CLUB_INITIATIVES.length);
+});
+
+test("join Markdown carries the join steps, schedule, and community channels", () => {
+  const markdown = buildJoinMarkdown();
+  for (const value of [
+    CLUB_SOCIALS.emailListUrl,
+    CLUB_SOCIALS.calendarAddUrl,
+    CLUB_SOCIALS.discord,
+    CLUB_SOCIALS.instagram,
+    CLUB_SOCIALS.linkedin,
+    CLUB_SOCIALS.github,
+    CLUB_POSITIONING.meetingSchedule,
+    CLUB_POSITIONING.openTo,
+  ]) {
+    assert.ok(markdown.includes(value), `join.md missing ${value}`);
+  }
+  assert.ok(markdown.includes(buildCanonicalUrl(SITE_URL, "/join/")));
 });

@@ -169,22 +169,11 @@ exports.onPostBuild = async ({ graphql, reporter }) => {
   fs.writeFileSync(path.join(publicDir, "sitemap.xml"), renderSitemapXml(sitemapUrls), "utf8");
 
   const leadership = loadLeadershipData(__dirname);
-  fs.writeFileSync(path.join(publicDir, "llms.txt"), machineReadable.buildLlmsTxt(), "utf8");
-  fs.writeFileSync(
-    path.join(publicDir, "llms-full.txt"),
-    machineReadable.buildLlmsFullTxt(leadership),
-    "utf8",
-  );
-  fs.writeFileSync(
-    path.join(publicDir, "about.md"),
-    machineReadable.buildAboutMarkdown(leadership),
-    "utf8",
-  );
-  fs.writeFileSync(
-    path.join(publicDir, "sponsors.md"),
-    machineReadable.buildSponsorsMarkdown(),
-    "utf8",
-  );
+  for (const [filePath, content] of Object.entries(
+    machineReadable.buildMachineReadableFiles(leadership),
+  )) {
+    fs.writeFileSync(path.join(publicDir, filePath), content, "utf8");
+  }
 
   reporter.info(`Generated public/sitemap.xml with ${sitemapUrls.length} URLs and machine-readable summaries.`);
 };

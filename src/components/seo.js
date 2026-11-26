@@ -1,6 +1,6 @@
 /**
  * SEO component that queries for data with
- * Gatsby's useStaticQuery React hook.
+ *  Gatsby's useStaticQuery React hook
  *
  * See: https://www.gatsbyjs.com/docs/use-static-query/
  */
@@ -13,6 +13,8 @@ import { useStaticQuery, graphql } from "gatsby";
 import {
   buildCanonicalUrl,
   buildOrganizationJsonLd,
+  getMarkdownAlternatePath,
+  LLMS_TXT_PATH,
   resolveImageUrl,
 } from "../lib/site/seo.mjs";
 
@@ -47,6 +49,7 @@ const Seo = ({
     lang: lang || "en",
   };
   const orgJsonLd = includeOrgJsonLd ? buildOrganizationJsonLd(siteUrl) : null;
+  const markdownPath = isNoindex ? null : getMarkdownAlternatePath(pathname);
 
   return (
     <Helmet title={seo.title}>
@@ -55,6 +58,21 @@ const Seo = ({
       <meta name="image" content={seo.image} />
       {robots && <meta name="robots" content={robots} />}
       {!isNoindex && seo.url && <link rel="canonical" href={seo.url} />}
+      {markdownPath && (
+        <link
+          rel="alternate"
+          type="text/markdown"
+          href={buildCanonicalUrl(siteUrl, markdownPath)}
+        />
+      )}
+      {!isNoindex && (
+        <link
+          rel="alternate"
+          type="text/plain"
+          title="llms.txt"
+          href={buildCanonicalUrl(siteUrl, LLMS_TXT_PATH)}
+        />
+      )}
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content={defaultTitle} />
       {seo.url && <meta property="og:url" content={seo.url} />}

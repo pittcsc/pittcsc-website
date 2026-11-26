@@ -28,6 +28,8 @@ Also known as: CSC at Pitt, Pitt CSC, Pitt Computer Science Club.
 
 - [Full plain-text site summary (/llms-full.txt)](https://pittcsc.org/llms-full.txt): Detailed club overview, initiatives, leadership, and sponsorship information in one document.
 - [About page in Markdown (/about.md)](https://pittcsc.org/about.md): Plain-text version of the About Us page.
+- [Initiatives page in Markdown (/initiatives.md)](https://pittcsc.org/initiatives.md): Plain-text version of the Initiatives page.
+- [Join page in Markdown (/join.md)](https://pittcsc.org/join.md): Plain-text version of the Join the Club page.
 - [Sponsors page in Markdown (/sponsors.md)](https://pittcsc.org/sponsors.md): Plain-text version of the Sponsors & Partnerships page.
 
 ## Official Profiles & Links

@@ -28,6 +28,16 @@ package = "@netlify/plugin-gatsby"
     Content-Type = "text/plain; charset=utf-8"
 
 [[headers]]
+  for = "/initiatives.md"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
+[[headers]]
+  for = "/join.md"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
+[[headers]]
   for = "/sponsors.md"
   [headers.values]
     Content-Type = "text/plain; charset=utf-8"

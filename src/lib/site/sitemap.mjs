@@ -1,4 +1,8 @@
-import { buildCanonicalUrl, normalizeCanonicalPath } from "./seo.mjs";
+import {
+  buildCanonicalUrl,
+  MACHINE_READABLE_PATHS,
+  normalizeCanonicalPath,
+} from "./seo.mjs";
 import { SITE_URL, SPONSORSHIP_DATA } from "./stats.mjs";
 
 export const EXCLUDED_SITEMAP_PREFIXES = [
@@ -17,10 +21,7 @@ export const EXCLUDED_SITEMAP_PREFIXES = [
 
 export const STATIC_PUBLIC_SITEMAP_PATHS = [
   SPONSORSHIP_DATA.pdfPath,
-  "/llms.txt",
-  "/llms-full.txt",
-  "/about.md",
-  "/sponsors.md",
+  ...MACHINE_READABLE_PATHS,
 ];
 
 function matchesExcludedPrefix(pathname, prefix) {

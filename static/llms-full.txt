@@ -3,6 +3,8 @@
 Website: https://pittcsc.org/
 Concise index: https://pittcsc.org/llms.txt
 About (Markdown): https://pittcsc.org/about.md
+Initiatives (Markdown): https://pittcsc.org/initiatives.md
+Join (Markdown): https://pittcsc.org/join.md
 Sponsors (Markdown): https://pittcsc.org/sponsors.md
 
 ## Identity & Positioning

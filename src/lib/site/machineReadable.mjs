@@ -13,10 +13,8 @@ function formatInitiativeUrl(item) {
   return item.external ? item.link : buildCanonicalUrl(SITE_URL, item.link);
 }
 
-/**
- * Generates /llms.txt following the llms.txt plain-text summary convention.
- * Only confirmed facts appear here; unconfirmed stat discrepancies are noted transparently.
- */
+// State unconfirmed figures as unconfirmed instead of picking one, so assistants
+// do not repeat a number the e-board has not approved.
 export function buildLlmsTxt() {
   const pdfUrl = buildCanonicalUrl(SITE_URL, SPONSORSHIP_DATA.pdfPath);
   const initiativeNames = CLUB_INITIATIVES.map((item) => item.title).join(", ");
@@ -52,6 +50,8 @@ Also known as: ${CLUB_POSITIONING.alternateNames.join(", ")}.
 
 - [Full plain-text site summary (/llms-full.txt)](${buildCanonicalUrl(SITE_URL, "/llms-full.txt")}): Detailed club overview, initiatives, leadership, and sponsorship information in one document.
 - [About page in Markdown (/about.md)](${buildCanonicalUrl(SITE_URL, "/about.md")}): Plain-text version of the About Us page.
+- [Initiatives page in Markdown (/initiatives.md)](${buildCanonicalUrl(SITE_URL, "/initiatives.md")}): Plain-text version of the Initiatives page.
+- [Join page in Markdown (/join.md)](${buildCanonicalUrl(SITE_URL, "/join.md")}): Plain-text version of the Join the Club page.
 - [Sponsors page in Markdown (/sponsors.md)](${buildCanonicalUrl(SITE_URL, "/sponsors.md")}): Plain-text version of the Sponsors & Partnerships page.
 
 ## Official Profiles & Links
@@ -68,9 +68,6 @@ Also known as: ${CLUB_POSITIONING.alternateNames.join(", ")}.
 `;
 }
 
-/**
- * Generates /about.md matching the visible facts on /about/.
- */
 export function buildAboutMarkdown({ officers = [], initiativeLeads = [] } = {}) {
   const officerLines = officers
     .map((person) => `- **${person.name}** — ${person.title}`)
@@ -128,9 +125,6 @@ ${leadLines}
 `;
 }
 
-/**
- * Generates /sponsors.md matching the visible facts on /sponsors/.
- */
 export function buildSponsorsMarkdown() {
   const pdfUrl = buildCanonicalUrl(SITE_URL, SPONSORSHIP_DATA.pdfPath);
   const sponsorLines = SPONSORSHIP_DATA.sponsors
@@ -213,9 +207,76 @@ ${addOnBlocks}
 `;
 }
 
-/**
- * Generates /llms-full.txt combining confirmed site-wide information into a single plain-text file.
- */
+export function buildInitiativesMarkdown() {
+  const categories = [...new Set(CLUB_INITIATIVES.map((item) => item.category))];
+  const sections = categories
+    .map((category) => {
+      const items = CLUB_INITIATIVES.filter((item) => item.category === category)
+        .map((item) => `- **[${item.title}](${formatInitiativeUrl(item)})**: ${item.description}`)
+        .join("\n");
+      return `## ${category}\n\n${items}`;
+    })
+    .join("\n\n");
+
+  return `# Initiatives — Computer Science Club at Pitt (Pitt CSC)
+
+HTML version: ${buildCanonicalUrl(SITE_URL, "/initiatives/")}
+Site summary: ${buildCanonicalUrl(SITE_URL, "/llms.txt")}
+
+## Overview
+
+${CLUB_POSITIONING.summarySentence} ${CLUB_POSITIONING.openTo} Pitt CSC runs career, project team, hackathon, mentorship, guest speaker, and social programs.
+
+${sections}
+
+## Related Pages
+
+- Home: ${buildCanonicalUrl(SITE_URL, "/")}
+- About Us: ${buildCanonicalUrl(SITE_URL, "/about/")}
+- Join the Club: ${buildCanonicalUrl(SITE_URL, "/join/")}
+- Join (Markdown): ${buildCanonicalUrl(SITE_URL, "/join.md")}
+- Full site summary: ${buildCanonicalUrl(SITE_URL, "/llms-full.txt")}
+`;
+}
+
+export function buildJoinMarkdown() {
+  return `# Join the Computer Science Club at Pitt (Pitt CSC)
+
+HTML version: ${buildCanonicalUrl(SITE_URL, "/join/")}
+Site summary: ${buildCanonicalUrl(SITE_URL, "/llms.txt")}
+
+## Overview
+
+${CLUB_POSITIONING.summarySentence} ${CLUB_POSITIONING.openTo}
+
+## How to Join
+
+1. Join the email list: ${CLUB_SOCIALS.emailListUrl}
+2. Add the Google Calendar: ${CLUB_SOCIALS.calendarAddUrl}
+3. Keep in contact through the channels below.
+
+## Meetings & Events
+
+${CLUB_POSITIONING.meetingSchedule} Events include hackathons, talks, and coffee chats.
+
+## Community Channels
+
+- Discord: ${CLUB_SOCIALS.discord}
+- Instagram: ${CLUB_SOCIALS.instagram}
+- LinkedIn: ${CLUB_SOCIALS.linkedin}
+- GitHub: ${CLUB_SOCIALS.github}
+- Email: ${CLUB_CONTACT.email}
+
+## Related Pages
+
+- Home: ${buildCanonicalUrl(SITE_URL, "/")}
+- Initiatives: ${buildCanonicalUrl(SITE_URL, "/initiatives/")}
+- Initiatives (Markdown): ${buildCanonicalUrl(SITE_URL, "/initiatives.md")}
+- About Us: ${buildCanonicalUrl(SITE_URL, "/about/")}
+- Full site summary: ${buildCanonicalUrl(SITE_URL, "/llms-full.txt")}
+`;
+}
+
 export function buildLlmsFullTxt({ officers = [], initiativeLeads = [] } = {}) {
   const initiativeLines = CLUB_INITIATIVES.map(
     (item) =>
@@ -249,6 +310,8 @@ export function buildLlmsFullTxt({ officers = [], initiativeLeads = [] } = {}) {
 Website: ${buildCanonicalUrl(SITE_URL, "/")}
 Concise index: ${buildCanonicalUrl(SITE_URL, "/llms.txt")}
 About (Markdown): ${buildCanonicalUrl(SITE_URL, "/about.md")}
+Initiatives (Markdown): ${buildCanonicalUrl(SITE_URL, "/initiatives.md")}
+Join (Markdown): ${buildCanonicalUrl(SITE_URL, "/join.md")}
 Sponsors (Markdown): ${buildCanonicalUrl(SITE_URL, "/sponsors.md")}
 
 ## Identity & Positioning
@@ -316,4 +379,15 @@ ${addOnLines}
 - LinkedIn: ${CLUB_SOCIALS.linkedin}
 - GitHub: ${CLUB_SOCIALS.github}
 `;
+}
+
+export function buildMachineReadableFiles(leadership) {
+  return {
+    "/llms.txt": buildLlmsTxt(),
+    "/llms-full.txt": buildLlmsFullTxt(leadership),
+    "/about.md": buildAboutMarkdown(leadership),
+    "/initiatives.md": buildInitiativesMarkdown(),
+    "/join.md": buildJoinMarkdown(),
+    "/sponsors.md": buildSponsorsMarkdown(),
+  };
 }
