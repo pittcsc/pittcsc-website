@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthProvider";
+import CommandPalette from "./CommandPalette";
 import { dashboardLinks } from "../../lib/auth/navigation.mjs";
 import logo from "../../images/hero_image.png";
 // White-tile version for dark pages, where the navy panther would disappear.
@@ -47,6 +48,7 @@ export default function AuthFrame({
             />
             PittCSC
           </Link>
+          {links.length > 0 && <CommandPalette identity={identity} />}
           {links.length > 0 && (
             <button
               type="button"
