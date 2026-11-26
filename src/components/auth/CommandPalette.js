@@ -82,8 +82,6 @@ function PaletteDialog({ identity, onClose }) {
       setSearch(IDLE_SEARCH);
       return undefined;
     }
-    // Earlier results stay listed until the new ones arrive, so the list
-    // doesn't jump on every keystroke.
     setSearch((current) => ({ ...current, status: "loading" }));
     const controller = new AbortController();
     const timer = setTimeout(() => {
@@ -131,7 +129,6 @@ function PaletteDialog({ identity, onClose }) {
   function onDialogKeyDown(event) {
     if (event.key === "Escape") {
       event.preventDefault();
-      // Keeps the header's own Escape handler from also closing the menu.
       event.stopPropagation();
       onClose();
     } else if (event.key === "Tab") {
