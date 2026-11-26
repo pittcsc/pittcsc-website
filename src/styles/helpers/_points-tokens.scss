@@ -1,10 +1,9 @@
-// Tokens for the refreshed Points page. Kept out of _account-tokens.scss so
-// the rest of the dashboard keeps its current look until it moves over too.
-// Only points.scss imports this file.
+// Kept out of _account-tokens.scss so the rest of the dashboard keeps its
+// current look until it moves to the refreshed design too.
 
 @use "sass:color";
 
-// Palette. Every other colour is one of these four or an opacity of navy.
+// The brand palette is fixed: derive any other colour as an opacity of navy.
 $pts-white: #ffffff;
 $pts-gold: #f8e3b4;
 $pts-gray: #eeeeee;
@@ -87,7 +86,6 @@ $pts-focus-ring: 0 0 0 3px rgba($pts-navy, 0.18);
 @mixin pts-control-size {
   height: $pts-control-height;
 
-  // Larger touch targets where the pointer is a finger.
   @media (pointer: coarse) {
     height: 44px;
   }

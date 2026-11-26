@@ -6,7 +6,6 @@ import { isSecurePointURL } from "../../lib/points/validation.mjs";
 import SubmissionList from "./SubmissionList";
 import "../../styles/points.scss";
 
-// Info toggle that opens on mouse hover and stays open when clicked or tapped.
 // The close delay lets the pointer cross the gap between the icon and panel.
 function PointsHelp({ children }) {
   const [pinned, setPinned] = useState(false);
@@ -36,7 +35,8 @@ function PointsHelp({ children }) {
         aria-label="How points work"
         onClick={(event) => {
           event.preventDefault();
-          // A click on a pinned panel closes it, even while the mouse is over it.
+          // Without clearing hover, the panel would stay open under the mouse
+          // and the click would look ignored.
           if (pinned) setHovered(false);
           setPinned(!pinned);
         }}

@@ -82,7 +82,7 @@ export default function MemberDirectory({ identity }) {
     return () => controller.abort();
   }, [identity.id, request, query, company, alumni, page, retry]);
 
-  // Search names as the user types, without a request per keystroke.
+  // The delay avoids sending one request per keystroke.
   useEffect(() => {
     const next = normalize(input);
     if (next === query) return undefined;

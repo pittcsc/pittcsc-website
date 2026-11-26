@@ -10,8 +10,8 @@
   max-width: 72rem;
 }
 
-// Inter only on the standalone points pages; where PointsProfile is embedded
-// (My account, member profiles) it keeps the host page's typeface.
+// Embedded copies (My account, member profiles) keep the host page's
+// typeface so those pages don't mix two fonts.
 .csc-points-leaderboards,
 .csc-points-submissions {
   font-family: $pts-font;
