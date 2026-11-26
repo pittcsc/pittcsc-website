@@ -1,0 +1,43 @@
+# Computer Science Club at Pitt
+
+> The Computer Science Club at Pitt (Pitt CSC) is the largest student organization at the University of Pittsburgh and a partner of the School of Computing and Information. Open to all majors.
+
+Also known as: CSC at Pitt, Pitt CSC, Pitt Computer Science Club.
+
+## Quick Facts
+
+- Location: Pittsburgh, PA (University of Pittsburgh)
+- Affiliation: Student organization at the University of Pittsburgh; partner of the School of Computing and Information
+- Membership: Open to all majors. Meetings are typically held Mondays and Thursdays at 8pm.
+- Scale (note on site figures): The Sponsors page and 2026-2027 sponsorship package report 1000+ active members, 75+ events/year, 15K social followers, 100M+ total reel views, and 750K average views per video. The About page currently displays 750+ members and 70+ events (pending e-board confirmation).
+- Flagship hackathon: SteelHacks (https://steelhacks.org), Pitt's annual hackathon hosted by Pitt CSC in partnership with the School of Computing and Information.
+- Initiatives: Zero to Offer, Foundry, Mock Interviews, Industry Recruiting Events, Site Visits, Launchpad, Dev Lab, Consulting, CSC Hacks, SteelHacks, Bit/Byte, Fireside Chats, Social Events, Social Media.
+- Current sponsors on /sponsors/: BNY, CGI, Roblox, Naval Nuclear Lab, Stevens Capital Management, Aerotech, FAST Enterprises, Wesco.
+- Contact: pittcsc@gmail.com
+
+## Public Pages
+
+- [Home](https://pittcsc.org/): Club overview, mission, social channels, and Google Calendar.
+- [About Us](https://pittcsc.org/about/): Club mission, member/event overview, current officers, and initiative leads.
+- [Initiatives](https://pittcsc.org/initiatives/): Career, project team, hackathon, mentorship, speaker, and social programs.
+- [Join the Club](https://pittcsc.org/join/): Email list, Google Calendar, community links, and meeting schedule.
+- [Sponsors & Partnerships](https://pittcsc.org/sponsors/): Current sponsors, at-a-glance reach, annual tiers, social add-ons, and giving instructions.
+- [2026-2027 Sponsorship Package (PDF)](https://pittcsc.org/Pitt_CSC_Sponsorship_Package_2026-2027.pdf): Downloadable partnership overview and tier details.
+
+## Plain-Text & Markdown Versions
+
+- [Full plain-text site summary (/llms-full.txt)](https://pittcsc.org/llms-full.txt): Detailed club overview, initiatives, leadership, and sponsorship information in one document.
+- [About page in Markdown (/about.md)](https://pittcsc.org/about.md): Plain-text version of the About Us page.
+- [Sponsors page in Markdown (/sponsors.md)](https://pittcsc.org/sponsors.md): Plain-text version of the Sponsors & Partnerships page.
+
+## Official Profiles & Links
+
+- Website: https://pittcsc.org/
+- Instagram: https://www.instagram.com/csc.at.pitt/
+- X (Twitter): https://x.com/CSC_at_Pitt (@CSC_at_Pitt)
+- LinkedIn: https://www.linkedin.com/company/cscatpitt/
+- GitHub: https://github.com/pittcsc
+- Discord: https://discord.gg/wzPeq2GCRT
+- Pitt CS Wiki: https://pittcs.wiki/
+- SteelHacks: https://steelhacks.org
+- Email: mailto:pittcsc@gmail.com

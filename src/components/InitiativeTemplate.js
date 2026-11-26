@@ -3,6 +3,7 @@ import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 import { motion } from "framer-motion";
 import Layout from "../layouts/layout";
+import { summarizeDescription } from "../lib/site/seo.mjs";
 
 const InitiativeTemplate = ({ data }) => {
   useEffect(() => {
@@ -26,8 +27,14 @@ const InitiativeTemplate = ({ data }) => {
     gallery = []
   } = data;
 
+  const pageDescription = summarizeDescription(subtitle || description[0]);
+
   return (
-    <Layout title={`${title} | Computer Science Club @ Pitt`} header={title}>
+    <Layout
+      title={`${title} | Computer Science Club at Pitt`}
+      description={pageDescription}
+      header={title}
+    >
       <motion.div
         className="overflow-hidden relative"
         initial={{ opacity: 0 }}

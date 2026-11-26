@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const dotenv = require("dotenv").config();
 const { Client } = require("@notionhq/client");
 
@@ -125,4 +127,64 @@ exports.sourceNodes = async ({
     };
     createNode(newNode);
   });
+};
+
+exports.onPostBuild = async ({ graphql, reporter }) => {
+  const result = await graphql(`
+    {
+      site {
+        siteMetadata {
+          siteUrl
+          url
+        }
+      }
+      allSitePage {
+        nodes {
+          path
+        }
+      }
+    }
+  `);
+
+  if (result.errors) {
+    reporter.panicOnBuild("Failed to query pages for sitemap generation", result.errors);
+    return;
+  }
+
+  const [{ collectSitemapUrls, renderSitemapXml }, { loadLeadershipData }, machineReadable] =
+    await Promise.all([
+      import("./src/lib/site/sitemap.mjs"),
+      import("./src/lib/site/leadership.mjs"),
+      import("./src/lib/site/machineReadable.mjs"),
+    ]);
+
+  const siteUrl =
+    result.data?.site?.siteMetadata?.siteUrl ||
+    result.data?.site?.siteMetadata?.url ||
+    "https://pittcsc.org";
+  const pagePaths = (result.data?.allSitePage?.nodes || []).map((node) => node.path);
+  const sitemapUrls = collectSitemapUrls(siteUrl, pagePaths);
+  const publicDir = path.join(__dirname, "public");
+
+  fs.writeFileSync(path.join(publicDir, "sitemap.xml"), renderSitemapXml(sitemapUrls), "utf8");
+
+  const leadership = loadLeadershipData(__dirname);
+  fs.writeFileSync(path.join(publicDir, "llms.txt"), machineReadable.buildLlmsTxt(), "utf8");
+  fs.writeFileSync(
+    path.join(publicDir, "llms-full.txt"),
+    machineReadable.buildLlmsFullTxt(leadership),
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(publicDir, "about.md"),
+    machineReadable.buildAboutMarkdown(leadership),
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(publicDir, "sponsors.md"),
+    machineReadable.buildSponsorsMarkdown(),
+    "utf8",
+  );
+
+  reporter.info(`Generated public/sitemap.xml with ${sitemapUrls.length} URLs and machine-readable summaries.`);
 };

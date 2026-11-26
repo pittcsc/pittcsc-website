@@ -34,6 +34,8 @@ import EventItem from "../components/eventItem";
 import { eventList } from "../components/data";
 
 import SafeLottie from "../components/SafeLottie";
+import { CLUB_POSITIONING } from "../lib/site/stats.mjs";
+import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 const logoAnimationOptions = {
   loop: false,
@@ -199,7 +201,8 @@ const IndexPage = ({ data }) => {
 
   return (
     <Layout
-      title="Supporting the CS Community | Computer Science Club @ Pitt"
+      title={PAGE_SEO.home.title}
+      description={PAGE_SEO.home.description}
       header="home"
     >
       <motion.div
@@ -247,7 +250,7 @@ const IndexPage = ({ data }) => {
                 variants={text}
                 className="relative z-10 w-3/4 2xl:text-lg text-sm leading-loose 2xl:leading-loose md:text-base md:leading-loose xl:w-3/4 xl:leading-loose"
               >
-                Pitt's Largest Student Organization.
+                {CLUB_POSITIONING.homeTagline}
               </motion.p>
               <motion.p
                 variants={subtextAnimate}

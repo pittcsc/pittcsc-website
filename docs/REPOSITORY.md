@@ -8,8 +8,9 @@ This map describes the public site and CRM after the `crm-expansion` merge. See
 | Area | Implementation and source of truth |
 | --- | --- |
 | Public pages | `src/pages/`, shared `src/layouts/layout.js`, Header/Footer, SEO, Tailwind and `src/styles/` |
+| Site discoverability | Shared facts/stats and SEO/sitemap/markdown helpers in `src/lib/site/`, `static/robots.txt`, `static/llms*.txt`, `static/{about,sponsors}.md`, and `sitemap.xml` built in `gatsby-node.js` |
 | Officers and initiative leads | `src/components/data.js`, consumed by `/about`; inspect consumers before editing `content/` JSON |
-| Sponsors | Data and presentation in `src/pages/sponsors.js`; package PDF in `static/` |
+| Sponsors | Presentation in `src/pages/sponsors.js`, shared stats/tiers/sponsor metadata in `src/lib/site/stats.mjs`, package PDF in `static/` |
 | Initiatives | Route wrappers, `src/data/` content modules, and `src/components/InitiativeTemplate.js` |
 | Public events and RSVP | Notion nodes in `gatsby-node.js`, public page GraphQL, `eventItem.js`, and Gatsby `/api/attendance` |
 | Projects | GraphQL project schema and `/projects`; spreadsheet sourcing is currently commented out |

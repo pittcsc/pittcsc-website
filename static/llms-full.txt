@@ -1,0 +1,98 @@
+# Computer Science Club at Pitt — Full Plain-Text Summary
+
+Website: https://pittcsc.org/
+Concise index: https://pittcsc.org/llms.txt
+About (Markdown): https://pittcsc.org/about.md
+Sponsors (Markdown): https://pittcsc.org/sponsors.md
+
+## Identity & Positioning
+
+The Computer Science Club at Pitt (Pitt CSC) is the largest student organization at the University of Pittsburgh and a partner of the School of Computing and Information.
+
+- Official name: Computer Science Club at Pitt
+- Alternate names: CSC at Pitt, Pitt CSC, Pitt Computer Science Club
+- Location: Pittsburgh, PA (University of Pittsburgh)
+- Partner school: School of Computing and Information, University of Pittsburgh
+- Mission: To help create an engaging atmosphere for students to learn more about the field of computer science and develop professionally.
+- Membership: Open to all majors. Meetings are typically held Mondays and Thursdays at 8pm.
+- Contact email: pittcsc@gmail.com
+
+## Club Scale & Reach
+
+- 2026-2027 sponsorship package and /sponsors/ page: 1000+ active members, 75+ events/year, 15K followers across social platforms, 100M+ total reel views, 750K average views per video.
+- /about/ page: 750+ members and 70+ events.
+- Status: E-board confirmation is pending to align the /about/ and /sponsors/ member and event counts.
+
+## Initiatives & Programs
+
+- **Zero to Offer** (Career): Our premier internship training program helping students land top-tier tech offers through mentorship and practice. (https://pittcsc.org/initiatives/z2o/)
+- **Foundry** (Career): A committed community for growth through interview practice, presentations, project building, mentorship, and peer accountability. (https://pittcsc.org/initiatives/foundry/)
+- **Mock Interviews** (Career): Practice technical and behavioral interviews with experienced peers and industry professionals. (https://pittcsc.org/initiatives/mock-interviews/)
+- **Industry Recruiting Events** (Career): Exclusive recruiting sessions and networking opportunities with top tech companies and sponsors. (https://pittcsc.org/initiatives/industry-recruiting/)
+- **Site Visits** (Career): Visit local tech companies and offices to see real-world engineering environments and culture. (https://pittcsc.org/initiatives/site-visits/)
+- **Launchpad** (Career): An incubator program to help you launch your own startup or big idea from scratch. (https://pittcsc.org/initiatives/launchpad/)
+- **Dev Lab** (Project Teams): A hands-on development lab for students to build and collaborate on projects. (https://pittcs.wiki/guides/skills/csc-dev-lab)
+- **Consulting** (Project Teams): Gain real-world experience building software solutions for local non-profits and startups in our community. (https://pittcsc.org/initiatives/consulting/)
+- **CSC Hacks** (Hackathons): Our internal hackathon event designed to help members learn and collaborate on innovative projects. (https://pittcsc.org/initiatives/csc-hacks/)
+- **SteelHacks** (Hackathons): Pitt's annual hackathon, hosted by Pitt CSC in partnership with the School of Computing and Information. (https://steelhacks.org)
+- **Bit/Byte** (Mentorship): Peer mentorship program connecting upperclassmen with underclassmen for academic and career guidance. (https://pittcsc.org/initiatives/bit-byte/)
+- **Fireside Chats** (Guest Speakers): Intimate Q&A sessions connecting you with industry leaders, successful alumni, and tech visionaries. (https://pittcsc.org/initiatives/fireside-chats/)
+- **Social Events** (Social): Fun gatherings, game nights, and outings to build a tight-knit community and make lasting friendships. (https://pittcsc.org/initiatives/social-events/)
+- **Social Media** (Social): Stay connected with the club through our active social media presence and community updates. (https://pittcsc.org/initiatives/social-media/)
+
+## Leadership (as listed on /about/)
+
+### Officers
+
+- Liam Brem — President
+- Insiah Kizilbash — Vice President
+- Casey Karwatske — Business Manager
+- Preston Probst — Events Coordinator
+- Jayson Dang — Partnerships Coordinator
+- Gabriella Flynn — Director of Outreach
+- Aarash Zakeri — Director of Technology
+- Raima Saha — Director of Design
+- Ava Luu — Creative Media Officer
+
+### Initiative Leads
+
+- Abigail Huang — SteelHacks Co-Executive Director
+- Denys Tsinyk — SteelHacks Co-Executive Director
+- Jon Coulter — Mock Interview Lead
+
+## Sponsorship & Partnerships
+
+- Current sponsors on /sponsors/: BNY (https://www.bny.com/), CGI (https://www.cgi.com/), Roblox (https://www.roblox.com/), Naval Nuclear Lab (https://navalnuclearlab.energy.gov/), Stevens Capital Management (https://www.scm-lp.com/), Aerotech (https://www.aerotech.com/), FAST Enterprises (https://www.fastenterprises.com/), Wesco (https://www.wesco.com/)
+- Sponsorship validity: September 1 to August 31
+- 2026-2027 Partnership Package PDF: https://pittcsc.org/Pitt_CSC_Sponsorship_Package_2026-2027.pdf
+
+### Tiers
+
+- Tier 1 — Ada Lovelace ($1,000/year): Logo on the CSC website and Wiki; Recruiting & campus outreach featured in weekly newsletters; Ability to promote campus visits.
+- Tier 2 — Alan Turing ($1,500/year): Includes Tier 1, plus Logo on CSC at Pitt t-shirts; Invitation to host one (1) custom company event.
+- Tier 3 — John von Neumann ($2,500/year): Includes Tier 2, plus Host up to two (2) custom company events; Exclusive access to the club's member resume book.
+- Tier 4 — Grace Hopper ($5,000/year): Includes Tier 3, plus Host up to three (3) custom company events; Exclusively sponsor a CSC initiative (Zero to Offer, Foundry, mentorship, etc.); Present at an event during Zero to Offer or Foundry.
+
+### Social Media Add-Ons
+
+- 1-Day Story Takeover ($100): Post stories on the CSC Instagram for a day; Highlight posted stories for a semester (+$200).
+- Single Reel Video ($500): Feature in a custom Instagram reel; Reach thousands of engaged followers.
+
+### How to Give
+
+- Online: https://give.pitt.edu (search "Computer Science Club" under designation)
+- Mail: University of Pittsburgh, PO Box 640093, Pittsburgh, PA 15264-0093
+- Contact: pittcsc@gmail.com or SORC at sorc@pitt.edu
+
+## Joining & Official Channels
+
+- Join page: https://pittcsc.org/join/
+- Email list: http://eepurl.com/bgY5c9
+- Google Calendar: https://calendar.google.com/calendar/u/0/render?cid=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com
+- Discord: https://discord.gg/wzPeq2GCRT
+- Pitt CS Wiki: https://pittcs.wiki/
+- SteelHacks: https://steelhacks.org
+- Instagram: https://www.instagram.com/csc.at.pitt/
+- X (Twitter): https://x.com/CSC_at_Pitt (@CSC_at_Pitt)
+- LinkedIn: https://www.linkedin.com/company/cscatpitt/
+- GitHub: https://github.com/pittcsc
