@@ -8,16 +8,16 @@ Site summary: https://pittcsc.org/llms.txt
 
 The Computer Science Club at Pitt (Pitt CSC) is the largest student organization at the University of Pittsburgh and a partner of the School of Computing and Information. CSC gives partners direct access to a deep, engaged pipeline of computer science talent on campus and online.
 
-## CSC at a Glance (2026-2027 Partnership Package)
+## CSC at a Glance
 
-- 1000+ active members
+- 750+ active members
 - Largest student organization at the University of Pittsburgh and partner of the School of Computing and Information
 - 75+ events / year, including workshops, site visits, and socials
 - 15K followers across social platforms
 - 100M+ total views on reels
 - 750K average views per video
 
-*Note: The /about/ page currently displays 750+ members and 70+ events; e-board confirmation is pending to align both pages.*
+*Note: The /about/ page currently displays 70+ events; e-board confirmation is pending to align the events/year figure.*
 
 ## Current Sponsors
 

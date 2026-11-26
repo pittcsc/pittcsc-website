@@ -62,7 +62,7 @@ const sponsors = SPONSORSHIP_DATA.sponsors.map((sponsor) => ({
 // "At a Glance" stats pulled from the shared stats module (see TODO in src/lib/site/stats.mjs).
 // accent alternates blue / yellow to echo the printed one-pager.
 const stats = [
-  { value: CLUB_STATS.members.sponsors, label: "active members", accent: "blue" },
+  { value: CLUB_STATS.members.value, label: "active members", accent: "blue" },
   { value: "Largest", label: "student org at Pitt & partner of the School of Computing and Information", accent: "yellow" },
   { value: CLUB_STATS.social.totalReelViews, label: "total views on reels", accent: "yellow" },
   { value: CLUB_STATS.eventsPerYear.sponsors, label: "events / year, including workshops, site visits & socials", accent: "blue" },
@@ -111,10 +111,7 @@ const SponsorPage = ({ data }) => {
                 </svg>
               </h2>
               <p className="mt-4 max-w-2xl text-center text-slate-600 leading-relaxed">
-                As {CLUB_POSITIONING.largestOrgClaim} and a partner of the{" "}
-                {CLUB_POSITIONING.schoolPartnerName}, Pitt CSC gives partners
-                direct access to a deep, engaged pipeline of computer science
-                talent — on campus and online.
+                {`As ${CLUB_POSITIONING.largestOrgClaim} and a partner of the ${CLUB_POSITIONING.schoolPartnerName}, Pitt CSC gives partners direct access to a deep, engaged pipeline of computer science talent — on campus and online.`}
               </p>
             </div>
 

@@ -9,7 +9,7 @@ Also known as: CSC at Pitt, Pitt CSC, Pitt Computer Science Club.
 - Location: Pittsburgh, PA (University of Pittsburgh)
 - Affiliation: Student organization at the University of Pittsburgh; partner of the School of Computing and Information
 - Membership: Open to all majors. Meetings are typically held Mondays and Thursdays at 8pm.
-- Scale (note on site figures): The Sponsors page and 2026-2027 sponsorship package report 1000+ active members, 75+ events/year, 15K social followers, 100M+ total reel views, and 750K average views per video. The About page currently displays 750+ members and 70+ events (pending e-board confirmation).
+- Scale: 750+ active members, 15K social followers, 100M+ total reel views, and 750K average views per video. Events per year: the Sponsors page and 2026-2027 sponsorship package report 75+ events/year, while the About page currently displays 70+ events (pending e-board confirmation).
 - Flagship hackathon: SteelHacks (https://steelhacks.org), Pitt's annual hackathon hosted by Pitt CSC in partnership with the School of Computing and Information.
 - Initiatives: Zero to Offer, Foundry, Mock Interviews, Industry Recruiting Events, Site Visits, Launchpad, Dev Lab, Consulting, CSC Hacks, SteelHacks, Bit/Byte, Fireside Chats, Social Events, Social Media.
 - Current sponsors on /sponsors/: BNY, CGI, Roblox, Naval Nuclear Lab, Stevens Capital Management, Aerotech, FAST Enterprises, Wesco.

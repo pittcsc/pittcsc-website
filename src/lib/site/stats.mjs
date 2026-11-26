@@ -28,26 +28,26 @@ export const CLUB_POSITIONING = {
 /**
  * Shared club statistics imported by /, /about/, /sponsors/, and machine-readable summaries.
  *
+ * Confirmed figures:
+ * - Member count: "750+" (confirmed across /, /about/, /sponsors/, and plain-text summaries).
+ *   Note: `static/Pitt_CSC_Sponsorship_Package_2026-2027.pdf` still prints "1000+"
+ *   until the PDF is regenerated externally. (SteelHacks sponsorship copy also
+ *   references a 300+ club email blast; do not reconcile that with total membership.)
+ *
  * TODO (e-board confirmation required — UNCONFIRMED: pages currently disagree):
- * - Member count: `/about/` currently displays "750+" members, while `/sponsors/`
- *   and `static/Pitt_CSC_Sponsorship_Package_2026-2027.pdf` display "1000+" active members.
- *   (SteelHacks sponsorship copy also references a 300+ club email blast; do not
- *   reconcile that with member counts without e-board confirmation.)
  * - Events per year: `/about/` currently displays "70+" events, while `/sponsors/`
  *   and `static/Pitt_CSC_Sponsorship_Package_2026-2027.pdf` display "75+" events/year.
  *
- * Until the e-board confirms a single canonical figure for each metric, both
+ * Until the e-board confirms a single canonical figure for events/year, both
  * pages read from this shared module so numbers are tracked in one place and
  * cannot silently drift further apart.
  */
 export const CLUB_STATS = {
   members: {
-    // UNCONFIRMED — pages currently disagree (750+ on /about/ vs 1000+ on /sponsors/ & 2026-2027 PDF).
-    about: "750+",
-    sponsors: "1000+",
-    confirmed: false,
-    conflictNote:
-      "UNCONFIRMED — /about/ currently shows 750+ members while /sponsors/ and the 2026-2027 sponsorship package PDF show 1000+ active members.",
+    value: "750+",
+    confirmed: true,
+    pdfNote:
+      "static/Pitt_CSC_Sponsorship_Package_2026-2027.pdf still prints 1000+ until regenerated externally.",
   },
   eventsPerYear: {
     // UNCONFIRMED — pages currently disagree (70+ on /about/ vs 75+ on /sponsors/ & 2026-2027 PDF).

@@ -34,7 +34,7 @@ import EventItem from "../components/eventItem";
 import { eventList } from "../components/data";
 
 import SafeLottie from "../components/SafeLottie";
-import { CLUB_POSITIONING } from "../lib/site/stats.mjs";
+import { CLUB_POSITIONING, CLUB_STATS } from "../lib/site/stats.mjs";
 import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 const logoAnimationOptions = {
@@ -378,6 +378,9 @@ const IndexPage = ({ data }) => {
                     To help create an engaging atmosphere for students to learn
                     more about the field of computer science and develop
                     professionally.
+                  </p>
+                  <p className="xl:text-md mt-4 block leading-loose">
+                    {`As ${CLUB_POSITIONING.largestOrgClaim} and a partner of the ${CLUB_POSITIONING.schoolPartnerName}, we serve ${CLUB_STATS.members.value} members across all majors. Our programs include Zero to Offer, Foundry, Launchpad, industry recruiting events, and hackathons including SteelHacks.`}
                   </p>
                 </div>
               </motion.div>

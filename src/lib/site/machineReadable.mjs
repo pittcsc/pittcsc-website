@@ -33,7 +33,7 @@ Also known as: ${CLUB_POSITIONING.alternateNames.join(", ")}.
 - Location: ${CLUB_CONTACT.location.city}, ${CLUB_CONTACT.location.region} (${CLUB_POSITIONING.universityName})
 - Affiliation: Student organization at the ${CLUB_POSITIONING.universityName}; partner of the ${CLUB_POSITIONING.schoolPartnerName}
 - Membership: ${CLUB_POSITIONING.openTo} ${CLUB_POSITIONING.meetingSchedule}
-- Scale (note on site figures): The Sponsors page and ${SPONSORSHIP_DATA.packageYear} sponsorship package report ${CLUB_STATS.members.sponsors} active members, ${CLUB_STATS.eventsPerYear.sponsors} events/year, ${CLUB_STATS.social.followers} social followers, ${CLUB_STATS.social.totalReelViews} total reel views, and ${CLUB_STATS.social.averageVideoViews} average views per video. The About page currently displays ${CLUB_STATS.members.about} members and ${CLUB_STATS.eventsPerYear.about} events (pending e-board confirmation).
+- Scale: ${CLUB_STATS.members.value} active members, ${CLUB_STATS.social.followers} social followers, ${CLUB_STATS.social.totalReelViews} total reel views, and ${CLUB_STATS.social.averageVideoViews} average views per video. Events per year: the Sponsors page and ${SPONSORSHIP_DATA.packageYear} sponsorship package report ${CLUB_STATS.eventsPerYear.sponsors} events/year, while the About page currently displays ${CLUB_STATS.eventsPerYear.about} events (pending e-board confirmation).
 - Flagship hackathon: SteelHacks (${CLUB_SOCIALS.steelhacks}), Pitt's annual hackathon hosted by Pitt CSC in partnership with the ${CLUB_POSITIONING.schoolPartnerName}.
 - Initiatives: ${initiativeNames}.
 - Current sponsors on /sponsors/: ${sponsorNames}.
@@ -92,10 +92,10 @@ The Computer Science Club at Pitt, shortened as CSC at Pitt, is the largest and 
 
 ## At a Glance (as shown on /about/)
 
-- Members: ${CLUB_STATS.members.about}
+- Members: ${CLUB_STATS.members.value}
 - Events: ${CLUB_STATS.eventsPerYear.about}
 
-*Note: The /sponsors/ page and ${SPONSORSHIP_DATA.packageYear} sponsorship package report ${CLUB_STATS.members.sponsors} active members and ${CLUB_STATS.eventsPerYear.sponsors} events/year; e-board confirmation is pending to align both pages.*
+*Note: The /sponsors/ page and ${SPONSORSHIP_DATA.packageYear} sponsorship package report ${CLUB_STATS.eventsPerYear.sponsors} events/year; e-board confirmation is pending to align the events/year figure.*
 
 ## Meetings & Joining
 
@@ -164,16 +164,16 @@ ${SPONSORSHIP_DATA.packageYear} Sponsorship Package (PDF): ${pdfUrl}
 
 ${CLUB_POSITIONING.summarySentence} CSC gives partners direct access to a deep, engaged pipeline of computer science talent on campus and online.
 
-## CSC at a Glance (${SPONSORSHIP_DATA.packageYear} Partnership Package)
+## CSC at a Glance
 
-- ${CLUB_STATS.members.sponsors} active members
+- ${CLUB_STATS.members.value} active members
 - Largest student organization at the University of Pittsburgh and partner of the School of Computing and Information
 - ${CLUB_STATS.eventsPerYear.sponsors} events / year, including workshops, site visits, and socials
 - ${CLUB_STATS.social.followers} followers across social platforms
 - ${CLUB_STATS.social.totalReelViews} total views on reels
 - ${CLUB_STATS.social.averageVideoViews} average views per video
 
-*Note: The /about/ page currently displays ${CLUB_STATS.members.about} members and ${CLUB_STATS.eventsPerYear.about} events; e-board confirmation is pending to align both pages.*
+*Note: The /about/ page currently displays ${CLUB_STATS.eventsPerYear.about} events; e-board confirmation is pending to align the events/year figure.*
 
 ## Current Sponsors
 
@@ -265,9 +265,9 @@ ${CLUB_POSITIONING.summarySentence}
 
 ## Club Scale & Reach
 
-- ${SPONSORSHIP_DATA.packageYear} sponsorship package and /sponsors/ page: ${CLUB_STATS.members.sponsors} active members, ${CLUB_STATS.eventsPerYear.sponsors} events/year, ${CLUB_STATS.social.followers} followers across social platforms, ${CLUB_STATS.social.totalReelViews} total reel views, ${CLUB_STATS.social.averageVideoViews} average views per video.
-- /about/ page: ${CLUB_STATS.members.about} members and ${CLUB_STATS.eventsPerYear.about} events.
-- Status: E-board confirmation is pending to align the /about/ and /sponsors/ member and event counts.
+- Active members: ${CLUB_STATS.members.value}
+- Social reach: ${CLUB_STATS.social.followers} followers across social platforms, ${CLUB_STATS.social.totalReelViews} total reel views, ${CLUB_STATS.social.averageVideoViews} average views per video.
+- Events per year: ${CLUB_STATS.eventsPerYear.sponsors} events/year on /sponsors/ and in the ${SPONSORSHIP_DATA.packageYear} sponsorship package; ${CLUB_STATS.eventsPerYear.about} events on /about/ (e-board confirmation is pending to align the events/year count).
 
 ## Initiatives & Programs
 

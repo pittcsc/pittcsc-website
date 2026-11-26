@@ -35,11 +35,10 @@ function readRepoFile(relativePath) {
   return readFileSync(resolve(REPO_ROOT, relativePath), "utf8");
 }
 
-test("shared stats module preserves conflicting figures with explicit unconfirmed flags", () => {
-  assert.equal(CLUB_STATS.members.about, "750+");
-  assert.equal(CLUB_STATS.members.sponsors, "1000+");
-  assert.equal(CLUB_STATS.members.confirmed, false);
-  assert.match(CLUB_STATS.members.conflictNote, /750\+.*1000\+/);
+test("shared stats module confirms 750+ members while preserving unconfirmed events conflict", () => {
+  assert.equal(CLUB_STATS.members.value, "750+");
+  assert.equal(CLUB_STATS.members.confirmed, true);
+  assert.match(CLUB_STATS.members.pdfNote, /1000\+/);
 
   assert.equal(CLUB_STATS.eventsPerYear.about, "70+");
   assert.equal(CLUB_STATS.eventsPerYear.sponsors, "75+");
@@ -65,15 +64,27 @@ test("home, about, and sponsors pages all import from the single shared stats so
     );
   }
 
+  const homeSource = readRepoFile("src/pages/index.js");
+  assert.match(homeSource, /CLUB_STATS\.members\.value/);
+  assert.match(homeSource, /CLUB_POSITIONING\.largestOrgClaim/);
+  assert.match(homeSource, /CLUB_POSITIONING\.schoolPartnerName/);
+  assert.match(homeSource, /Zero to Offer/);
+  assert.match(homeSource, /Foundry/);
+  assert.match(homeSource, /Launchpad/);
+  assert.match(homeSource, /recruiting/);
+  assert.match(homeSource, /hackathons/);
+  assert.match(homeSource, /SteelHacks/);
+
   const aboutSource = readRepoFile("src/pages/about.js");
   assert.ok(!aboutSource.includes("750+"), "about.js should not hardcode 750+");
   assert.ok(!aboutSource.includes("70+"), "about.js should not hardcode 70+");
-  assert.match(aboutSource, /CLUB_STATS\.members\.about/);
+  assert.match(aboutSource, /CLUB_STATS\.members\.value/);
   assert.match(aboutSource, /CLUB_STATS\.eventsPerYear\.about/);
   assert.match(aboutSource, /CLUB_POSITIONING\.summarySentence/);
 
   const sponsorsSource = readRepoFile("src/pages/sponsors.js");
-  assert.match(sponsorsSource, /CLUB_STATS\.members\.sponsors/);
+  assert.ok(!sponsorsSource.includes("1000+"), "sponsors.js should not hardcode 1000+");
+  assert.match(sponsorsSource, /CLUB_STATS\.members\.value/);
   assert.match(sponsorsSource, /CLUB_STATS\.eventsPerYear\.sponsors/);
   assert.match(sponsorsSource, /CLUB_POSITIONING\.largestOrgClaim/);
 });
@@ -276,7 +287,7 @@ test("static machine-readable files stay in sync with shared data and current le
     "sponsorship package PDF must exist in static/",
   );
 
-  // Confirm stale content JSON entries are not present in generated summaries.
+  // Confirm stale content JSON entries and unconfirmed 1000+ member figures are absent.
   for (const file of [
     "static/llms.txt",
     "static/llms-full.txt",
@@ -284,6 +295,8 @@ test("static machine-readable files stay in sync with shared data and current le
     "static/sponsors.md",
   ]) {
     const text = readRepoFile(file);
+    assert.ok(text.includes("750+"), `${file} should report confirmed 750+ members`);
+    assert.doesNotMatch(text, /1000\+/, `${file} should not retain unconfirmed 1000+ member count`);
     assert.doesNotMatch(text, /\bSAP\b/, `${file} must not pull stale content/sponsors.json`);
     assert.doesNotMatch(
       text,

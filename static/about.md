@@ -14,7 +14,7 @@ The Computer Science Club at Pitt, shortened as CSC at Pitt, is the largest and 
 - Members: 750+
 - Events: 70+
 
-*Note: The /sponsors/ page and 2026-2027 sponsorship package report 1000+ active members and 75+ events/year; e-board confirmation is pending to align both pages.*
+*Note: The /sponsors/ page and 2026-2027 sponsorship package report 75+ events/year; e-board confirmation is pending to align the events/year figure.*
 
 ## Meetings & Joining
 
