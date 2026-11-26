@@ -2,10 +2,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import vm from "node:vm";
 
-/**
- * Loads `officerList` and `initiativeLeadList` directly from `src/components/data.js`,
- * which is the active source of truth for the About page.
- */
+// data.js feeds the live About page; content/officers.json is stale. data.js uses
+// ESM syntax in a CommonJS package, so Node cannot import it and it is evaluated here.
 export function loadLeadershipData(repoRoot = process.cwd()) {
   const dataPath = resolve(repoRoot, "src/components/data.js");
   const source = readFileSync(dataPath, "utf8");

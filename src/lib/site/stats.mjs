@@ -1,9 +1,6 @@
 export const SITE_URL = "https://pittcsc.org";
 export const DEFAULT_SOCIAL_IMAGE = "/Pitt_CSC_Social_Card.png";
 
-/**
- * Confirmed organization positioning and shared facts for Computer Science Club at Pitt.
- */
 export const CLUB_POSITIONING = {
   name: "Computer Science Club at Pitt",
   shortName: "CSC at Pitt",
@@ -25,23 +22,10 @@ export const CLUB_POSITIONING = {
   meetingSchedule: "Meetings are typically held Mondays and Thursdays at 8pm.",
 };
 
-/**
- * Shared club statistics imported by /, /about/, /sponsors/, and machine-readable summaries.
- *
- * Confirmed figures:
- * - Member count: "750+" (confirmed across /, /about/, /sponsors/, and plain-text summaries).
- *   Note: `static/Pitt_CSC_Sponsorship_Package_2026-2027.pdf` still prints "1000+"
- *   until the PDF is regenerated externally. (SteelHacks sponsorship copy also
- *   references a 300+ club email blast; do not reconcile that with total membership.)
- *
- * TODO (e-board confirmation required — UNCONFIRMED: pages currently disagree):
- * - Events per year: `/about/` currently displays "70+" events, while `/sponsors/`
- *   and `static/Pitt_CSC_Sponsorship_Package_2026-2027.pdf` display "75+" events/year.
- *
- * Until the e-board confirms a single canonical figure for events/year, both
- * pages read from this shared module so numbers are tracked in one place and
- * cannot silently drift further apart.
- */
+// Every page and summary reads these figures from here so they cannot drift apart.
+// The 2026-2027 package PDF is generated outside this repo and still prints 1000+
+// members. The SteelHacks 300+ email blast counts recipients, not members.
+// TODO(e-board): confirm one events/year figure; /about/ shows 70+, /sponsors/ 75+.
 export const CLUB_STATS = {
   members: {
     value: "750+",
@@ -50,7 +34,6 @@ export const CLUB_STATS = {
       "static/Pitt_CSC_Sponsorship_Package_2026-2027.pdf still prints 1000+ until regenerated externally.",
   },
   eventsPerYear: {
-    // UNCONFIRMED — pages currently disagree (70+ on /about/ vs 75+ on /sponsors/ & 2026-2027 PDF).
     about: "70+",
     sponsors: "75+",
     confirmed: false,

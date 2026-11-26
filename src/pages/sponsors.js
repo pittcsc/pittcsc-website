@@ -59,7 +59,6 @@ const sponsors = SPONSORSHIP_DATA.sponsors.map((sponsor) => ({
   ...SPONSOR_VISUALS[sponsor.name],
 }));
 
-// "At a Glance" stats pulled from the shared stats module (see TODO in src/lib/site/stats.mjs).
 // accent alternates blue / yellow to echo the printed one-pager.
 const stats = [
   { value: CLUB_STATS.members.value, label: "active members", accent: "blue" },
@@ -70,10 +69,8 @@ const stats = [
   { value: CLUB_STATS.social.averageVideoViews, label: "average views per video", accent: "yellow" },
 ];
 
-// Sponsorship tiers, named after computing pioneers, from the shared module.
 const tiers = SPONSORSHIP_DATA.tiers;
 
-// Instagram / social add-ons, purchasable on top of any tier.
 const addOns = SPONSORSHIP_DATA.addOns;
 
 const SponsorPage = ({ data }) => {
