@@ -12,7 +12,6 @@ import {
   memberCommands,
   memberSearchPath,
   pageCommands,
-  shortcutLabel,
   wrapIndex,
 } from "../../lib/command-palette.mjs";
 import "../../styles/command-palette.scss";
@@ -21,13 +20,9 @@ const IDLE_SEARCH = { status: "idle", members: [] };
 const FAILED_SEARCH = { status: "error", members: [] };
 
 export default function CommandPalette({ identity }) {
-  // Unknown until mounted, so the server-rendered button never guesses the
-  // platform and hydration stays consistent.
-  const [apple, setApple] = useState(null);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    setApple(isApplePlatform(window.navigator));
     const toggleOnShortcut = (event) => {
       if (!isPaletteShortcut(event, isApplePlatform(window.navigator))) return;
       event.preventDefault();
@@ -37,32 +32,12 @@ export default function CommandPalette({ identity }) {
     return () => document.removeEventListener("keydown", toggleOnShortcut);
   }, []);
 
-  return (
-    <>
-      <button
-        type="button"
-        className="csc-command-trigger"
-        aria-label="Search"
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-keyshortcuts={
-          apple === null ? undefined : apple ? "Meta+K" : "Control+K"
-        }
-        onClick={() => setOpen(true)}
-      >
-        <FontAwesomeIcon icon={faMagnifyingGlass} />
-        <span className="csc-command-trigger-label">Search</span>
-        {apple !== null && (
-          <kbd className="csc-command-trigger-kbd">{shortcutLabel(apple)}</kbd>
-        )}
-      </button>
-      {open &&
-        createPortal(
-          <PaletteDialog identity={identity} onClose={() => setOpen(false)} />,
-          document.body,
-        )}
-    </>
-  );
+  return open
+    ? createPortal(
+        <PaletteDialog identity={identity} onClose={() => setOpen(false)} />,
+        document.body,
+      )
+    : null;
 }
 
 function PaletteDialog({ identity, onClose }) {

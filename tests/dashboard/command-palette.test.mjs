@@ -8,7 +8,6 @@ import {
   memberCommands,
   memberSearchPath,
   pageCommands,
-  shortcutLabel,
   wrapIndex,
 } from "../../src/lib/command-palette.mjs";
 
@@ -92,8 +91,6 @@ test("platform detection recognizes Apple devices only", () => {
   assert.equal(isApplePlatform({ platform: "Win32" }), false);
   assert.equal(isApplePlatform({ platform: "Linux x86_64" }), false);
   assert.equal(isApplePlatform(undefined), false);
-  assert.equal(shortcutLabel(true), "⌘K");
-  assert.equal(shortcutLabel(false), "Ctrl K");
 });
 
 test("the shortcut is Cmd+K on Apple platforms and Ctrl+K elsewhere", () => {

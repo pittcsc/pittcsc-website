@@ -11,10 +11,6 @@ export function isApplePlatform(nav) {
   return /mac|iphone|ipad|ipod/i.test(platform);
 }
 
-export function shortcutLabel(apple) {
-  return apple ? "⌘K" : "Ctrl K";
-}
-
 // Shift/Alt combinations are left alone so other shortcuts built on K keep
 // working. Comparing `key` rather than `code` follows the user's keyboard
 // layout, so Dvorak users press the key labelled K.
