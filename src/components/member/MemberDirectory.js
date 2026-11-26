@@ -5,6 +5,8 @@ import MemberLink from "./MemberLink";
 import MemberAvatar from "./MemberAvatar";
 import "../../styles/directory.scss";
 
+const normalize = (value) => value.trim().replace(/\s+/g, " ");
+
 export default function MemberDirectory({ identity }) {
   const request = useMemo(
     () =>
@@ -80,11 +82,22 @@ export default function MemberDirectory({ identity }) {
     return () => controller.abort();
   }, [identity.id, request, query, company, alumni, page, retry]);
 
+  // Search names as the user types, without a request per keystroke.
+  useEffect(() => {
+    const next = normalize(input);
+    if (next === query) return undefined;
+    const timer = setTimeout(() => {
+      setQuery(next);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [input, query]);
+
   function search(event) {
     event.preventDefault();
     setPage(1);
-    setQuery(input.trim().replace(/\s+/g, " "));
-    setCompany(companyInput.trim().replace(/\s+/g, " "));
+    setQuery(normalize(input));
+    setCompany(normalize(companyInput));
     setAlumni(alumniInput);
     setFiltersOpen(false);
   }
@@ -170,20 +183,23 @@ export default function MemberDirectory({ identity }) {
           </button>
         </div>
       )}
-      {loading ? (
+      {loading && !result ? (
         <p role="status">Loading members…</p>
       ) : (
         !error &&
         result && (
           <>
             <p role="status">
-              {result.total} {result.total === 1 ? "member" : "members"}
-              {query ? ` matching “${query}”` : ""}
+              {loading
+                ? "Searching…"
+                : `${result.total} ${result.total === 1 ? "member" : "members"}${
+                    query ? ` matching “${query}”` : ""
+                  }`}
             </p>
             {result.members.length === 0 ? (
               <p>No members found.</p>
             ) : (
-              <ul className="csc-directory-list">
+              <ul className="csc-directory-list" aria-busy={loading}>
                 {result.members.map((member) => (
                   <li key={member.id}>
                     <MemberLink id={member.id} className="csc-directory-member">
