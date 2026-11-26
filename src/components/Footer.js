@@ -42,6 +42,24 @@ function Footer() {
           Built with <span className="text-red-500">❤️ </span> by{" "}
           <span className="font-bold">CSC at Pitt</span>
         </p>
+        <p className="text-xs text-slate-500">
+          Machine-readable summaries:{" "}
+          <a href="/llms.txt" className="underline hover:text-primary">
+            llms.txt
+          </a>
+          {" · "}
+          <a href="/llms-full.txt" className="underline hover:text-primary">
+            llms-full.txt
+          </a>
+          {" · "}
+          <a href="/about.md" className="underline hover:text-primary">
+            About (Markdown)
+          </a>
+          {" · "}
+          <a href="/sponsors.md" className="underline hover:text-primary">
+            Sponsors (Markdown)
+          </a>
+        </p>
       </nav>
     </footer>
   );

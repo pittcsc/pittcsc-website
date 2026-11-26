@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /login/
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /attendance
+Disallow: /attendance/
+Disallow: /meet
+Disallow: /meet/
+Disallow: /qr
+Disallow: /qr/
+Disallow: /api/
+
+Sitemap: https://pittcsc.org/sitemap.xml

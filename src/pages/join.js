@@ -17,6 +17,7 @@ import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
 
 import Layout from "../layouts/layout";
+import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 import EventItem from "../components/eventItem";
 
@@ -39,7 +40,11 @@ const JoinPage = ({ data }) => {
     ReactGA.pageview("/join");
   }, []);
   return (
-    <Layout title="Join the Club | Computer Science Club @ Pitt" header="join">
+    <Layout
+      title={PAGE_SEO.join.title}
+      description={PAGE_SEO.join.description}
+      header="join"
+    >
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}

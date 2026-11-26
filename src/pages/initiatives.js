@@ -19,6 +19,7 @@ import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import Layout from "../layouts/layout";
+import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 // Constants
 const HOTJAR_ID = 2276434;
@@ -149,7 +150,8 @@ const InitiativePage = () => {
 
   return (
     <Layout
-      title="Initiatives | Computer Science Club @ Pitt"
+      title={PAGE_SEO.initiatives.title}
+      description={PAGE_SEO.initiatives.description}
       header="initiatives"
     >
       <div

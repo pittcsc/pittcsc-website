@@ -9,6 +9,8 @@ import FallReport from "../downloads/gbm-fall-2022.pdf";
 import Layout from "../layouts/layout";
 import TeamCard from "../components/TeamCard";
 import { StaticImage } from "gatsby-plugin-image";
+import { CLUB_POSITIONING, CLUB_STATS } from "../lib/site/stats.mjs";
+import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 const AboutPage = () => {
   useEffect(() => {
@@ -18,7 +20,11 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <Layout title="About Us | Computer Science Club @ Pitt" header="about">
+    <Layout
+      title={PAGE_SEO.about.title}
+      description={PAGE_SEO.about.description}
+      header="about"
+    >
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}
@@ -54,6 +60,9 @@ const AboutPage = () => {
                 </svg>
               </h1>
             </div>
+            <p className="mt-2 max-w-2xl px-4 text-center text-base text-slate-600 leading-relaxed">
+              {CLUB_POSITIONING.summarySentence}
+            </p>
             <div className="flex flex-col items-center justify-center py-4 w-10/12 text-center lg:py-8 lg:text-left xl:w-3/4">
               <div className="relative flex flex-col items-center justify-around w-full lg:flex-row">
                 <motion.div
@@ -72,13 +81,13 @@ const AboutPage = () => {
                 ></motion.div>
                 <div className="relative flex flex-col items-center justify-center my-4 p-8 w-5/6 h-32 bg-primary rounded-2xl shadow-md lg:my-2 lg:w-96 lg:h-48">
                   <span className="text-white text-6xl font-bold lg:text-8xl">
-                    750+
+                    {CLUB_STATS.members.value}
                   </span>
                   <span className="text-white text-lg lg:text-xl">Members</span>
                 </div>
                 <div className="relative flex flex-col items-center justify-center my-4 p-8 w-5/6 h-32 bg-primary rounded-2xl shadow-md lg:my-2 lg:w-96 lg:h-48">
                   <span className="text-white text-6xl font-bold lg:text-8xl">
-                    70+
+                    {CLUB_STATS.eventsPerYear.about}
                   </span>
                   <span className="text-white text-lg lg:text-xl">Events</span>
                 </div>
@@ -187,6 +196,15 @@ const AboutPage = () => {
                 )
               )}
             </div>
+            <p className="mt-8 text-center text-xs text-slate-500">
+              <a href="/about.md" className="underline hover:text-primary">
+                Plain-text version (/about.md)
+              </a>
+              {" · "}
+              <a href="/llms.txt" className="underline hover:text-primary">
+                Machine-readable summary (/llms.txt)
+              </a>
+            </p>
           </section>
         </div>
       </motion.div>

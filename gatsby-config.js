@@ -6,10 +6,11 @@ module.exports = {
   siteMetadata: {
     title: "Computer Science Club at Pitt",
     description:
-      "Website for the largest computer science student organization at the University of Pittsburgh.",
+      "The Computer Science Club at Pitt (Pitt CSC) is the largest student organization at the University of Pittsburgh and a partner of the School of Computing and Information.",
     image: "/Pitt_CSC_Social_Card.png",
     lang: "en",
     url: "https://pittcsc.org",
+    siteUrl: "https://pittcsc.org",
     twitterUsername: "@CSC_at_Pitt",
   },
   plugins: [
@@ -62,7 +63,7 @@ module.exports = {
         name: "Computer Science Club at Pitt",
         short_name: "CSC at Pitt",
         description:
-          "Website for the largest computer science student organization at the University of Pittsburgh.",
+          "The Computer Science Club at Pitt (Pitt CSC) is the largest student organization at the University of Pittsburgh and a partner of the School of Computing and Information.",
         lang: `en`,
         start_url: "/",
         background_color: "#FFFFFF",

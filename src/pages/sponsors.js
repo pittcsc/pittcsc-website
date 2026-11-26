@@ -18,9 +18,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faArrowRight, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 
 import Layout from "../layouts/layout";
+import {
+  CLUB_POSITIONING,
+  CLUB_STATS,
+  SPONSORSHIP_DATA,
+} from "../lib/site/stats.mjs";
+import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 // Sponsorship package PDF lives in /static, so it is served from the site root.
-const SPONSORSHIP_PDF = "/Pitt_CSC_Sponsorship_Package_2026-2027.pdf";
+const SPONSORSHIP_PDF = SPONSORSHIP_DATA.pdfPath;
 
 const imageContainer = {
   hidden: { opacity: 0 },
@@ -37,94 +43,35 @@ const item = {
 
 // imgClass sets a fixed height per logo so perceived visual weight is equal.
 // Wide flat logos (BNY, Roblox) need more height; square logos (CGI) need less.
-const sponsors = [
-  { src: BNY,      alt: "BNY Logo",                    href: "https://www.bny.com/",                   imgClass: "h-10" },
-  { src: CGI,      alt: "CGI Logo",                    href: "https://www.cgi.com/",                   imgClass: "h-9"  },
-  { src: ROBLOX,   alt: "Roblox Logo",                 href: "https://www.roblox.com/",                imgClass: "h-10" },
-  { src: NNL,      alt: "Naval Nuclear Lab Logo",       href: "https://navalnuclearlab.energy.gov/",    imgClass: "h-16" },
-  { src: SCM,      alt: "Stevens Capital Management",  href: "https://www.scm-lp.com/",                imgClass: "h-20" },
-  { src: AEROTECH, alt: "Aerotech Logo",               href: "https://www.aerotech.com/",              imgClass: "h-24" },
-  { src: FAST,     alt: "FAST Enterprises Logo",       href: "https://www.fastenterprises.com/",       imgClass: "h-12" },
-  { src: WESCO,    alt: "Wesco Logo",                  href: "https://www.wesco.com/",                 imgClass: "h-16" },
-];
+const SPONSOR_VISUALS = {
+  BNY: { src: BNY, imgClass: "h-10" },
+  CGI: { src: CGI, imgClass: "h-9" },
+  Roblox: { src: ROBLOX, imgClass: "h-10" },
+  "Naval Nuclear Lab": { src: NNL, imgClass: "h-16" },
+  "Stevens Capital Management": { src: SCM, imgClass: "h-20" },
+  Aerotech: { src: AEROTECH, imgClass: "h-24" },
+  "FAST Enterprises": { src: FAST, imgClass: "h-12" },
+  Wesco: { src: WESCO, imgClass: "h-16" },
+};
 
-// "At a Glance" stats pulled from the 2026-2027 partnership package.
+const sponsors = SPONSORSHIP_DATA.sponsors.map((sponsor) => ({
+  ...sponsor,
+  ...SPONSOR_VISUALS[sponsor.name],
+}));
+
 // accent alternates blue / yellow to echo the printed one-pager.
 const stats = [
-  { value: "1000+", label: "active members", accent: "blue" },
+  { value: CLUB_STATS.members.value, label: "active members", accent: "blue" },
   { value: "Largest", label: "student org at Pitt & partner of the School of Computing and Information", accent: "yellow" },
-  { value: "100M+", label: "total views on reels", accent: "yellow" },
-  { value: "75+", label: "events / year, including workshops, site visits & socials", accent: "blue" },
-  { value: "15K", label: "followers across social platforms", accent: "blue" },
-  { value: "750K", label: "average views per video", accent: "yellow" },
+  { value: CLUB_STATS.social.totalReelViews, label: "total views on reels", accent: "yellow" },
+  { value: CLUB_STATS.eventsPerYear.sponsors, label: "events / year, including workshops, site visits & socials", accent: "blue" },
+  { value: CLUB_STATS.social.followers, label: "followers across social platforms", accent: "blue" },
+  { value: CLUB_STATS.social.averageVideoViews, label: "average views per video", accent: "yellow" },
 ];
 
-// Sponsorship tiers, named after computing pioneers, from the package.
-const tiers = [
-  {
-    name: "Ada Lovelace",
-    tier: "Tier 1",
-    price: "$1,000",
-    inherits: null,
-    benefits: [
-      "Logo on the CSC website and Wiki",
-      "Recruiting & campus outreach featured in weekly newsletters",
-      "Ability to promote campus visits",
-    ],
-  },
-  {
-    name: "Alan Turing",
-    tier: "Tier 2",
-    price: "$1,500",
-    inherits: "Tier 1",
-    benefits: [
-      "Logo on CSC at Pitt t-shirts",
-      "Invitation to host one (1) custom company event",
-    ],
-  },
-  {
-    name: "John von Neumann",
-    tier: "Tier 3",
-    price: "$2,500",
-    inherits: "Tier 2",
-    benefits: [
-      "Host up to two (2) custom company events",
-      "Exclusive access to the club's member resume book",
-    ],
-  },
-  {
-    name: "Grace Hopper",
-    tier: "Tier 4",
-    price: "$5,000",
-    inherits: "Tier 3",
-    featured: true,
-    benefits: [
-      "Host up to three (3) custom company events",
-      "Exclusively sponsor a CSC initiative (Zero to Offer, Foundry, mentorship, etc.)",
-      "Present at an event during Zero to Offer or Foundry",
-    ],
-  },
-];
+const tiers = SPONSORSHIP_DATA.tiers;
 
-// Instagram / social add-ons, purchasable on top of any tier.
-const addOns = [
-  {
-    name: "1-Day Story Takeover",
-    price: "$100",
-    points: [
-      "Post stories on the CSC Instagram for a day",
-      "Highlight posted stories for a semester (+$200)",
-    ],
-  },
-  {
-    name: "Single Reel Video",
-    price: "$500",
-    points: [
-      "Feature in a custom Instagram reel",
-      "Reach thousands of engaged followers",
-    ],
-  },
-];
+const addOns = SPONSORSHIP_DATA.addOns;
 
 const SponsorPage = ({ data }) => {
   useEffect(() => {
@@ -134,7 +81,11 @@ const SponsorPage = ({ data }) => {
   }, []);
 
   return (
-    <Layout title="Sponsors | Computer Science Club at Pitt" header="sponsors">
+    <Layout
+      title={PAGE_SEO.sponsors.title}
+      description={PAGE_SEO.sponsors.description}
+      header="sponsors"
+    >
       <motion.div
         className="overflow-hidden"
         initial={{ opacity: 0 }}
@@ -157,9 +108,7 @@ const SponsorPage = ({ data }) => {
                 </svg>
               </h2>
               <p className="mt-4 max-w-2xl text-center text-slate-600 leading-relaxed">
-                As the largest student organization at Pitt, CSC gives partners
-                direct access to a deep, engaged pipeline of computer science
-                talent — on campus and online.
+                {`As ${CLUB_POSITIONING.largestOrgClaim} and a partner of the ${CLUB_POSITIONING.schoolPartnerName}, Pitt CSC gives partners direct access to a deep, engaged pipeline of computer science talent — on campus and online.`}
               </p>
             </div>
 
@@ -554,6 +503,15 @@ const SponsorPage = ({ data }) => {
                   </p>
                 </div>
               </div>
+              <p className="mt-6 text-center text-xs text-slate-500">
+                <a href="/sponsors.md" className="underline hover:text-primary">
+                  Plain-text version (/sponsors.md)
+                </a>
+                {" · "}
+                <a href="/llms.txt" className="underline hover:text-primary">
+                  Machine-readable summary (/llms.txt)
+                </a>
+              </p>
             </div>
           </section>
         </div>

@@ -3,7 +3,12 @@ import { Link } from "gatsby";
 import Layout from "../layouts/layout";
 
 const NotFoundPage = () => (
-  <Layout title="Page not found | Computer Science Club @ Pitt" showFooter={false}>
+  <Layout
+    title="Page not found | Computer Science Club at Pitt"
+    robots="noindex"
+    includeOrgJsonLd={false}
+    showFooter={false}
+  >
     <section className="flex min-h-[70vh] items-center justify-center px-6 py-20 text-center">
       <div>
         <h1 className="text-2xl font-bold text-primary md:text-3xl">

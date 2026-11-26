@@ -34,6 +34,12 @@ import EventItem from "../components/eventItem";
 import { eventList } from "../components/data";
 
 import SafeLottie from "../components/SafeLottie";
+import {
+  CLUB_POSITIONING,
+  CLUB_SOCIALS,
+  CLUB_STATS,
+} from "../lib/site/stats.mjs";
+import { PAGE_SEO } from "../lib/site/seo.mjs";
 
 const logoAnimationOptions = {
   loop: false,
@@ -199,7 +205,8 @@ const IndexPage = ({ data }) => {
 
   return (
     <Layout
-      title="Supporting the CS Community | Computer Science Club @ Pitt"
+      title={PAGE_SEO.home.title}
+      description={PAGE_SEO.home.description}
       header="home"
     >
       <motion.div
@@ -247,7 +254,7 @@ const IndexPage = ({ data }) => {
                 variants={text}
                 className="relative z-10 w-3/4 2xl:text-lg text-sm leading-loose 2xl:leading-loose md:text-base md:leading-loose xl:w-3/4 xl:leading-loose"
               >
-                Pitt's Largest Student Organization.
+                {CLUB_POSITIONING.homeTagline}
               </motion.p>
               <motion.p
                 variants={subtextAnimate}
@@ -375,6 +382,37 @@ const IndexPage = ({ data }) => {
                     To help create an engaging atmosphere for students to learn
                     more about the field of computer science and develop
                     professionally.
+                  </p>
+                  <p className="xl:text-md mt-4 block leading-loose">
+                    {`As ${CLUB_POSITIONING.largestOrgClaim} and a partner of the ${CLUB_POSITIONING.schoolPartnerName}, we serve ${CLUB_STATS.members.value} members across all majors. Our programs include `}
+                    <Link to="/initiatives/z2o/" className="underline hover:text-primary">
+                      Zero to Offer
+                    </Link>
+                    {", "}
+                    <Link to="/initiatives/foundry/" className="underline hover:text-primary">
+                      Foundry
+                    </Link>
+                    {", "}
+                    <Link to="/initiatives/launchpad/" className="underline hover:text-primary">
+                      Launchpad
+                    </Link>
+                    {", "}
+                    <Link
+                      to="/initiatives/industry-recruiting/"
+                      className="underline hover:text-primary"
+                    >
+                      industry recruiting events
+                    </Link>
+                    {", and hackathons including "}
+                    <a
+                      href={CLUB_SOCIALS.steelhacks}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-primary"
+                    >
+                      SteelHacks
+                    </a>
+                    .
                   </p>
                 </div>
               </motion.div>
