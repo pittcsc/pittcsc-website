@@ -1,39 +1,106 @@
-@import "./helpers/account-tokens";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+@import "./helpers/points-tokens";
+
+// Selectors here are deliberately specific: auth.scss styles bare elements
+// inside .csc-auth (e.g. `.csc-auth button`, and inputs at 0,5,1), and these
+// rules must win regardless of stylesheet order.
+
+.csc-auth:has(.csc-points-leaderboards) .csc-auth-cardwrap,
+.csc-auth:has(.csc-points-submissions) .csc-auth-cardwrap {
+  max-width: 72rem;
+}
+
+// Inter only on the standalone points pages; where PointsProfile is embedded
+// (My account, member profiles) it keeps the host page's typeface.
+.csc-points-leaderboards,
+.csc-points-submissions {
+  font-family: $pts-font;
+  font-size: 14px;
+  line-height: 1.5;
+  color: $pts-text;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Repeated pseudo-class to outrank the shell's gold focus outline.
+:is(.csc-points-profile, .csc-points-leaderboards)
+  :is(a, button, input, select, textarea, summary):focus-visible:focus-visible {
+  @include pts-focus-outline;
+}
+
+:is(.csc-points-profile, .csc-points-leaderboards) {
+  p[role="status"] {
+    color: $pts-text-muted;
+  }
+  a {
+    color: $pts-navy;
+    text-underline-offset: 2px;
+  }
+  button.csc-auth-secondary {
+    @include pts-button-secondary;
+  }
+}
 
 .csc-points-profile {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  margin-top: 1rem;
-  padding-top: 2rem;
-  border-top: 1px solid $acc-hairline;
+  gap: $pts-space-8;
+  min-width: 0;
+
+  .csc-points-section {
+    display: flex;
+    flex-direction: column;
+    gap: $pts-space-4;
+    min-width: 0;
+  }
+  .csc-points-section h2 {
+    @include pts-section-heading;
+  }
+  .csc-points-section p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: $pts-text-secondary;
+  }
 
   .csc-points-heading {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  .csc-points-heading p {
-    margin-top: 0.35rem;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $pts-space-2 $pts-space-4;
+
+    p {
+      margin-top: $pts-space-1;
+      color: $pts-text-muted;
+    }
+    > a {
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
   .csc-points-title-row {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: $pts-space-2;
   }
+
   .csc-points-help summary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border: 1.5px solid $acc-navy;
+    width: 20px;
+    height: 20px;
+    border: 1px solid $pts-control-border;
     border-radius: 50%;
-    color: $acc-navy;
-    font-size: 0.85rem;
-    font-weight: 700;
+    color: $pts-navy;
+    font-size: 12px;
+    font-weight: 600;
     line-height: 1;
     list-style: none;
     cursor: pointer;
@@ -41,258 +108,438 @@
     &::-webkit-details-marker {
       display: none;
     }
-    &:focus-visible {
-      outline: 3px solid $acc-gold;
-      outline-offset: 2px;
+    &:hover {
+      background: $pts-hover;
     }
+  }
+  .csc-points-help[open] summary {
+    border-color: $pts-navy;
+    background: $pts-gold;
   }
   .csc-points-help-panel {
     position: absolute;
-    top: calc(100% + 0.5rem);
+    top: calc(100% + #{$pts-space-2});
     left: 0;
     z-index: 2;
-    width: min(21rem, calc(100vw - 3rem));
-    padding: 1rem;
-    border: 1px solid $acc-line;
-    border-radius: 0.75rem;
-    background: #fff;
-    box-shadow: 0 12px 30px #1b2a4a24;
+    display: flex;
+    flex-direction: column;
+    gap: $pts-space-2;
+    width: min(336px, calc(100vw - #{2 * $pts-space-8}));
+    padding: $pts-space-4;
+    border: 1px solid $pts-border;
+    border-radius: $pts-radius-control;
+    background: $pts-white;
+    box-shadow: $pts-shadow-popover;
     box-sizing: border-box;
+  }
+  .csc-points-help-panel p {
+    font-size: 13px;
+  }
 
-    p:first-child {
-      margin-top: 0;
-    }
-    p:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .csc-points-heading a {
-    flex-shrink: 0;
-    font-weight: 700;
-    color: $acc-navy;
-  }
   .csc-points-totals {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+    gap: $pts-space-4;
   }
   .csc-points-totals > div {
+    @include pts-card;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
-    border-radius: 0.75rem;
-    background: $acc-navy-soft;
-  }
-  .csc-points-totals strong {
-    color: $acc-navy;
-    font-size: 2rem;
-    line-height: 1;
+    gap: $pts-space-2;
   }
   .csc-points-totals span {
-    margin-top: 0.4rem;
-    color: $acc-muted;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
+    color: $pts-text-muted;
   }
-  form {
+  .csc-points-totals strong {
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: $pts-text;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .csc-points-form {
+    @include pts-card;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: $pts-space-5;
+  }
+  .csc-points-form label {
+    display: block;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+    color: $pts-text;
   }
   .csc-points-form-row {
     display: grid;
-    grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 1.2fr);
-    gap: 1rem;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: $pts-space-4;
   }
-  .csc-points-summary textarea {
-    @include acc-field;
-    margin-top: 0.5rem;
+  // IDs, because the shell's input rule sits at 0,5,1.
+  #point-url,
+  #point-category,
+  #point-summary {
+    @include pts-field;
+  }
+  #point-category {
+    appearance: none;
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'%3E%3Cpath stroke='%231d2758' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right $pts-space-3 center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    cursor: pointer;
+  }
+  #point-summary {
+    display: block;
+    height: auto;
+    min-height: 112px;
+    padding: 10px $pts-space-3;
+    line-height: 1.5;
     resize: vertical;
   }
-  .csc-points-summary p {
-    font-size: 0.875rem;
+  .csc-points-summary-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $pts-space-4;
+    margin-top: 6px;
+
+    p:last-child {
+      flex-shrink: 0;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
   }
-  .csc-points-history .csc-points-submission-summary {
-    white-space: pre-line;
+  .csc-points-section .csc-points-field-help,
+  .csc-points-section .csc-points-field-error {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.45;
   }
-  .csc-points-affirm {
+  .csc-points-section .csc-points-field-help {
+    color: $pts-text-muted;
+  }
+  .csc-points-section .csc-points-field-error {
+    color: $pts-error;
+  }
+  .csc-points-summary-meta p.csc-points-field-help,
+  .csc-points-summary-meta p.csc-points-field-error {
+    margin-top: 0;
+  }
+  .csc-points-form label.csc-points-affirm {
     display: flex;
     align-items: flex-start;
-    gap: 0.7rem;
-    line-height: 1.45;
+    gap: $pts-space-3;
+    font-weight: 400;
+    line-height: 1.5;
+    color: $pts-text-secondary;
   }
   .csc-points-affirm input {
     flex: none;
-    margin-top: 0.25rem;
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    border-color: $pts-control-border;
+    border-radius: 4px;
+    color: $pts-navy;
+
+    &:focus {
+      box-shadow: none;
+    }
   }
-  .csc-points-field-help,
-  .csc-points-field-error {
-    margin-top: 0.4rem;
-    font-size: 0.875rem;
+  .csc-points-actions {
+    display: flex;
+    justify-content: flex-end;
   }
-  .csc-points-field-help {
-    color: $acc-muted;
+  .csc-points-actions button {
+    @include pts-button-primary;
   }
-  .csc-points-field-error {
-    color: $acc-error;
-  }
-  .csc-points-error {
+
+  .csc-points-error[role="alert"] {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    justify-content: space-between;
+    gap: $pts-space-3;
+    padding: $pts-space-3 $pts-space-4;
+    border: 1px solid rgba($pts-error, 0.24);
+    border-radius: $pts-radius-control;
+    background: $pts-error-bg;
+    color: $pts-error-ink;
+    font-size: 14px;
+    font-weight: 400;
   }
-  .csc-points-error button {
-    width: auto;
-  }
+
   .csc-points-history {
-    padding-top: 1.5rem;
-    border-top: 1px solid $acc-hairline;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $pts-space-3;
   }
   .csc-points-history h3 {
-    margin: 0 0 0.75rem;
-    font-size: 1.1rem;
+    @include pts-card-heading;
   }
   .csc-points-history-heading {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.5rem 1rem;
+    gap: $pts-space-2 $pts-space-4;
+    width: 100%;
 
     a {
-      color: $acc-navy;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
+  .csc-points-history > p:not([role]) {
+    font-size: 14px;
+    color: $pts-text-muted;
+  }
   .csc-points-history ul {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    width: 100%;
+    margin: 0;
     padding: 0;
+    border: 1px solid $pts-border;
+    border-radius: $pts-radius-card;
+    background: $pts-white;
     list-style: none;
   }
   .csc-points-history li {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.4rem;
+    gap: $pts-space-1;
     min-width: 0;
-    padding: 1rem;
-    border: 1px solid $acc-hairline;
-    border-radius: 0.75rem;
+    padding: $pts-space-4 $pts-space-6;
+  }
+  .csc-points-history li + li {
+    border-top: 1px solid $pts-divider;
   }
   .csc-points-history li > div {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: $pts-space-1 $pts-space-4;
     width: 100%;
   }
+  .csc-points-history li strong {
+    font-weight: 500;
+    color: $pts-text;
+  }
   .csc-points-history li span {
-    color: $acc-muted;
-    font-size: 0.875rem;
+    font-size: 13px;
+    color: $pts-text-muted;
+  }
+  .csc-points-history li p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: $pts-text-secondary;
+  }
+  .csc-points-history .csc-points-submission-summary {
+    white-space: pre-line;
   }
   .csc-points-history li a {
     max-width: 100%;
+    font-size: 13px;
     overflow-wrap: anywhere;
   }
-  .csc-points-history li button {
-    width: auto;
-    margin-top: 0.35rem;
+  .csc-points-history li button.csc-auth-secondary {
+    height: 32px;
+    margin-top: $pts-space-2;
+    padding: 0 $pts-space-3;
+    font-size: 13px;
   }
+
   @media (max-width: 650px) {
-    .csc-points-heading,
     .csc-points-form-row {
-      display: flex;
-      flex-direction: column;
+      grid-template-columns: minmax(0, 1fr);
+      gap: $pts-space-5;
     }
-    .csc-points-form-row > div {
+    .csc-points-actions button {
       width: 100%;
     }
+    .csc-points-history li {
+      padding: $pts-space-4;
+    }
+  }
+  // The shell's wrapper card already pads the page, so inner cards shrink to
+  // keep the form usable on a phone.
+  @media (max-width: 480px) {
+    .csc-points-totals {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .csc-points-totals > div,
+    .csc-points-form {
+      padding: $pts-space-4;
+    }
+    .csc-points-summary-meta {
+      flex-direction: column;
+      gap: $pts-space-1;
+
+      p:last-child {
+        text-align: left;
+      }
+    }
   }
 }
 
-.csc-auth:has(.csc-points-submissions) .csc-auth-cardwrap {
-  max-width: 72rem;
-}
 .csc-points-submissions {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
-
+  .csc-points-submissions-heading h1 {
+    @include pts-page-title;
+  }
   .csc-points-submissions-heading p {
-    margin-top: 0.35rem;
+    margin-top: $pts-space-1;
   }
 }
 
-.csc-auth:has(.csc-points-leaderboards) .csc-auth-cardwrap {
-  max-width: 72rem;
-}
 .csc-points-leaderboards {
-  h1 {
-    margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $pts-space-8;
+
+  .csc-points-title {
+    @include pts-page-title;
   }
   .csc-points-leaderboard-section {
-    margin-top: 2rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid $acc-hairline;
+    display: flex;
+    flex-direction: column;
+    gap: $pts-space-4;
   }
-  .csc-points-leaderboard-section > h2 {
-    color: $acc-navy;
+  .csc-points-leaderboard-heading h2 {
+    @include pts-section-heading;
+  }
+  .csc-points-leaderboard-heading p {
+    margin-top: $pts-space-1;
+    font-size: 14px;
+    color: $pts-text-muted;
+  }
+  .csc-points-leaderboard-section > [role="alert"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $pts-space-3;
+    padding: $pts-space-3 $pts-space-4;
+    border: 1px solid rgba($pts-error, 0.24);
+    border-radius: $pts-radius-control;
+    background: $pts-error-bg;
+
+    p {
+      color: $pts-error-ink;
+      font-size: 14px;
+    }
   }
   .csc-points-boards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
-    margin-top: 1.25rem;
+    align-items: start;
+    gap: $pts-space-4;
   }
   .csc-points-board {
-    min-width: 0;
-    padding: 1.25rem;
-    border: 1px solid $acc-hairline;
-    border-radius: 0.85rem;
-    background: $acc-mist;
+    @include pts-card;
+    padding: $pts-space-6 0 0;
+    overflow: hidden;
   }
   .csc-points-board h3 {
-    margin-bottom: 1rem;
-    color: $acc-navy;
+    @include pts-card-heading;
+    padding: 0 $pts-space-6 $pts-space-3;
   }
-  .csc-points-board ol {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .csc-points-board > p:not(.csc-points-own-rank) {
+    padding: 0 $pts-space-6 $pts-space-6;
+    font-size: 14px;
+    color: $pts-text-muted;
   }
-  .csc-points-board li {
-    display: grid;
-    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0.75rem;
-    border-radius: 0.5rem;
-    background: #fff;
+  .csc-points-board table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
   }
-  // Inset so the outline follows the rounded row without shifting the list.
-  .csc-points-board li.is-you {
-    background: $acc-navy-soft;
-    box-shadow: inset 0 0 0 2px $acc-gold;
-    font-weight: 700;
+  .csc-points-board th {
+    padding: $pts-space-2 $pts-space-6;
+    border-bottom: 1px solid $pts-divider;
+    font-size: 12px;
+    font-weight: 500;
+    color: $pts-text-muted;
+    text-align: left;
   }
-  .csc-points-board li strong {
-    color: $acc-navy;
+  .csc-points-board td {
+    padding: $pts-space-3 $pts-space-6;
+    border-bottom: 1px solid $pts-divider;
+    color: $pts-text;
+    overflow-wrap: anywhere;
+  }
+  .csc-points-board tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .csc-points-board :is(th, td):first-child {
+    width: 64px;
+    padding-right: 0;
+  }
+  .csc-points-board :is(th, td):last-child {
+    text-align: right;
+  }
+  .csc-points-board td a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .csc-points-board tr.is-you td {
+    background: $pts-gold-soft;
+    font-weight: 500;
   }
   .csc-points-rank {
-    font-weight: 700;
-    color: $acc-muted;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    border-radius: $pts-radius-pill;
+    color: $pts-text-muted;
+    font-size: 13px;
+
+    &.is-top {
+      background: $pts-gold;
+      color: $pts-navy;
+      font-weight: 500;
+    }
   }
-  .csc-points-own-rank {
-    margin-top: 1rem;
-    font-weight: 700;
+  .csc-points-board .csc-points-own-rank {
+    padding: $pts-space-3 $pts-space-6;
+    border-top: 1px solid $pts-divider;
+    font-size: 13px;
+    color: $pts-text-muted;
   }
+
   @media (max-width: 750px) {
     .csc-points-boards {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .csc-points-board {
+      padding-top: $pts-space-4;
+    }
+    .csc-points-board h3,
+    .csc-points-board > p:not(.csc-points-own-rank),
+    .csc-points-board :is(th, td),
+    .csc-points-board .csc-points-own-rank {
+      padding-inline: $pts-space-4;
+    }
+    .csc-points-board :is(th, td):first-child {
+      width: 48px;
     }
   }
 }

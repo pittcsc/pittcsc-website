@@ -1,0 +1,175 @@
+// Tokens for the refreshed Points page. Kept out of _account-tokens.scss so
+// the rest of the dashboard keeps its current look until it moves over too.
+// Only points.scss imports this file.
+
+@use "sass:color";
+
+// Palette. Every other colour is one of these four or an opacity of navy.
+$pts-white: #ffffff;
+$pts-gold: #f8e3b4;
+$pts-gray: #eeeeee;
+$pts-navy: #1d2758;
+
+$pts-navy-hover: color.mix(#000, $pts-navy, 18%);
+$pts-text: $pts-navy;
+$pts-text-secondary: rgba($pts-navy, 0.82);
+// 0.72 keeps helper text above 4.5:1 on white.
+$pts-text-muted: rgba($pts-navy, 0.72);
+$pts-divider: rgba($pts-navy, 0.12);
+$pts-border: rgba($pts-navy, 0.16);
+// Form controls need a 3:1 boundary (WCAG 1.4.11); 0.5 is the lightest navy
+// that clears it on white.
+$pts-control-border: rgba($pts-navy, 0.5);
+$pts-hover: rgba($pts-navy, 0.05);
+$pts-gold-soft: color.mix($pts-gold, $pts-white, 45%);
+$pts-disabled-text: rgba($pts-navy, 0.55);
+
+// Validation only; red is functional, not part of the brand palette.
+$pts-error: #b42318;
+$pts-error-bg: #fdecea;
+$pts-error-ink: #7a1a12;
+
+$pts-font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+  Roboto, sans-serif;
+
+$pts-space-1: 4px;
+$pts-space-2: 8px;
+$pts-space-3: 12px;
+$pts-space-4: 16px;
+$pts-space-5: 20px;
+$pts-space-6: 24px;
+$pts-space-8: 32px;
+
+$pts-radius-card: 12px;
+$pts-radius-control: 8px;
+$pts-radius-pill: 999px;
+$pts-control-height: 40px;
+
+$pts-shadow-popover: 0 4px 16px rgba($pts-navy, 0.08);
+$pts-focus-ring: 0 0 0 3px rgba($pts-navy, 0.18);
+
+@mixin pts-page-title {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $pts-text;
+}
+@mixin pts-section-heading {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: $pts-text;
+}
+@mixin pts-card-heading {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: $pts-text;
+}
+@mixin pts-card {
+  min-width: 0;
+  padding: $pts-space-6;
+  border: 1px solid $pts-border;
+  border-radius: $pts-radius-card;
+  background: $pts-white;
+  box-sizing: border-box;
+}
+@mixin pts-focus-outline {
+  outline: 2px solid $pts-navy;
+  outline-offset: 2px;
+}
+
+@mixin pts-control-size {
+  height: $pts-control-height;
+
+  // Larger touch targets where the pointer is a finger.
+  @media (pointer: coarse) {
+    height: 44px;
+  }
+}
+
+@mixin pts-field {
+  @include pts-control-size;
+  width: 100%;
+  margin: $pts-space-2 0 0;
+  padding: 0 $pts-space-3;
+  border: 1px solid $pts-control-border;
+  border-radius: $pts-radius-control;
+  background-color: $pts-white;
+  font: inherit;
+  font-size: 14px;
+  color: $pts-text;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $pts-text-muted;
+  }
+  &:hover:not(:disabled):not(:focus) {
+    border-color: rgba($pts-navy, 0.7);
+  }
+  &:focus {
+    border-color: $pts-navy;
+    outline: none;
+    // Also replaces the @tailwindcss/forms ring, a box-shadow in another blue.
+    box-shadow: $pts-focus-ring;
+  }
+  &[aria-invalid="true"] {
+    border-color: $pts-error;
+  }
+}
+
+@mixin pts-button-base {
+  @include pts-control-size;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $pts-space-2;
+  width: auto;
+  min-height: 0;
+  padding: 0 $pts-space-4;
+  border: 1px solid transparent;
+  border-radius: $pts-radius-control;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 120ms,
+    border-color 120ms;
+
+  &:disabled {
+    border-color: transparent;
+    background: $pts-gray;
+    color: $pts-disabled-text;
+    cursor: not-allowed;
+  }
+}
+
+@mixin pts-button-primary {
+  @include pts-button-base;
+  background: $pts-navy;
+  color: $pts-white;
+
+  &:hover:not(:disabled) {
+    background: $pts-navy-hover;
+  }
+}
+
+@mixin pts-button-secondary {
+  @include pts-button-base;
+  border-color: $pts-border;
+  background: $pts-white;
+  color: $pts-navy;
+
+  &:hover:not(:disabled) {
+    border-color: rgba($pts-navy, 0.32);
+    background: $pts-hover;
+  }
+}
