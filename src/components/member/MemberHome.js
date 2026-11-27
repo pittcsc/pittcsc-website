@@ -137,7 +137,7 @@ export default function MemberHome({ identity, revalidate }) {
         <p role="status">Loading events…</p>
       ) : events.length === 0 ? (
         <p className="csc-member-state">
-          No upcoming events to show right now.
+          Nothing on the calendar yet. Check back soon for the next CSC event!
         </p>
       ) : (
         <ul className="csc-member-events">

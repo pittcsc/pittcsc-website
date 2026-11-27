@@ -1,10 +1,52 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "gatsby";
 import { getAuthClient } from "../../lib/auth/client";
 import { createAccountClient } from "../../lib/account/client.mjs";
 import { isSecurePointURL } from "../../lib/points/validation.mjs";
 import SubmissionList from "./SubmissionList";
 import "../../styles/points.scss";
+
+// The close delay lets the pointer cross the gap between the icon and panel.
+function PointsHelp({ children }) {
+  const [pinned, setPinned] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const closeTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  function enter(event) {
+    if (event.pointerType !== "mouse") return;
+    clearTimeout(closeTimer.current);
+    setHovered(true);
+  }
+  function leave(event) {
+    if (event.pointerType !== "mouse") return;
+    closeTimer.current = setTimeout(() => setHovered(false), 150);
+  }
+
+  return (
+    <details
+      className="csc-points-help"
+      open={pinned || hovered}
+      onPointerEnter={enter}
+      onPointerLeave={leave}
+    >
+      <summary
+        aria-label="How points work"
+        onClick={(event) => {
+          event.preventDefault();
+          // Without clearing hover, the panel would stay open under the mouse
+          // and the click would look ignored.
+          if (pinned) setHovered(false);
+          setPinned(!pinned);
+        }}
+      >
+        i
+      </summary>
+      <div className="csc-points-help-panel">{children}</div>
+    </details>
+  );
+}
 
 export default function PointsProfile({
   identity,
@@ -178,19 +220,16 @@ export default function PointsProfile({
             <div className="csc-points-title-row">
               <h2 id="points-title">Your points</h2>
               {showForm && (
-                <details className="csc-points-help">
-                  <summary aria-label="How points work">i</summary>
-                  <div className="csc-points-help-panel">
-                    <p>
-                      Share what you completed. Each link earns 10 points once.
-                    </p>
-                    <p>
-                      Use a LeetCode submission link, a link to the paper you
-                      read, or a public GitHub PR or standalone commit. A PR and
-                      its commits count as one contribution.
-                    </p>
-                  </div>
-                </details>
+                <PointsHelp>
+                  <p>
+                    Share what you completed. Each link earns 10 points once.
+                  </p>
+                  <p>
+                    Use a LeetCode submission link, a link to the paper you
+                    read, or a public GitHub PR or standalone commit. A PR and
+                    its commits count as one contribution.
+                  </p>
+                </PointsHelp>
               )}
             </div>
             {!showForm && <p>Your scores and submitted links.</p>}
