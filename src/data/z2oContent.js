@@ -65,15 +65,15 @@ export const z2oContent = {
     },
     {
       src: "initiatives/Z2O/z2o-2.png",
-      alt: "Students listening to a Zero to Offer recruiting session",
+      alt: "Pitt CSC students posing in front of the Google Pittsburgh office sign during a Zero to Offer site visit",
     },
     {
       src: "initiatives/Z2O/z2o-3.png",
-      alt: "Group discussion during a Zero to Offer resume review",
+      alt: "Pitt CSC students posing together under the Dick's Sporting Goods sign during a Zero to Offer office visit",
     },
     {
       src: "initiatives/Z2O/z2o-4.png",
-      alt: "Students networking with speakers at Zero to Offer",
+      alt: "A Pitt CSC officer presenting a What is an internship slide to a full room during Zero to Offer",
     },
     {
       src: "initiatives/Z2O/z2o-5.png",
