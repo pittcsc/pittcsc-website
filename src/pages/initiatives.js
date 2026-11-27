@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "gatsby";
 import { GatsbyImage } from "gatsby-plugin-image";
 import { hotjar } from "react-hotjar";
@@ -13,7 +13,6 @@ import Layout from "../layouts/layout";
 import { PAGE_SEO } from "../lib/site/seo.mjs";
 import { CLUB_SOCIALS } from "../lib/site/stats.mjs";
 import { useInitiativeImages } from "../components/initiatives/useInitiativeImages";
-import { INITIATIVE_CATEGORIES } from "../components/initiatives/initiativeCatalog";
 import { z2oContent } from "../data/z2oContent";
 import { foundryContent } from "../data/foundryContent";
 import { mockInterviewsContent } from "../data/mockInterviewsContent";
@@ -184,26 +183,12 @@ const initiatives = [
 const InitiativePage = () => {
   const prefersReducedMotion = useReducedMotion();
   const images = useInitiativeImages();
-  const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => {
     hotjar.initialize(HOTJAR_ID, HOTJAR_VERSION);
     ReactGA.initialize(GA_TRACKING_ID);
     ReactGA.pageview("/initiatives");
   }, []);
-
-  const categoryCounts = useMemo(() => {
-    const counts = { All: initiatives.length };
-    for (const item of initiatives) {
-      counts[item.category] = (counts[item.category] || 0) + 1;
-    }
-    return counts;
-  }, []);
-
-  const visibleInitiatives = useMemo(() => {
-    if (activeCategory === "All") return initiatives;
-    return initiatives.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
 
   return (
     <Layout
@@ -253,45 +238,10 @@ const InitiativePage = () => {
             </p>
           </header>
 
-          {/* Category Filter Bar */}
-          <div
-            role="group"
-            aria-label="Filter initiatives by category"
-            className="mt-8 flex flex-wrap items-center gap-2 border-b border-slate-200 pb-6"
-          >
-            {INITIATIVE_CATEGORIES.map((category) => {
-              const isSelected = activeCategory === category;
-              const count = categoryCounts[category] || 0;
-              return (
-                <button
-                  key={category}
-                  type="button"
-                  aria-pressed={isSelected}
-                  onClick={() => setActiveCategory(category)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                    isSelected
-                      ? "bg-primary text-white shadow-sm"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900"
-                  }`}
-                  style={isSelected ? { backgroundColor: "#243E8B" } : undefined}
-                >
-                  <span>{category}</span>
-                  <span
-                    className={`text-xs tabular-nums ${
-                      isSelected ? "text-blue-200" : "text-slate-500"
-                    }`}
-                  >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
           {/* Initiatives Grid */}
-          <section aria-label="Pitt CSC initiatives" className="mt-8">
+          <section aria-label="Pitt CSC initiatives" className="mt-10">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
-              {visibleInitiatives.map((item, index) => {
+              {initiatives.map((item, index) => {
                 const resolved = images.resolve(item.imagePath);
                 const useContain = item.cardFit === "contain";
                 const gatsbyImg = useContain
