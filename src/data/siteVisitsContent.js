@@ -1,19 +1,57 @@
-import GOOGLE from "../images/initiatives/site-visits/google.jpg";
-
 export const siteVisitsContent = {
+  slug: "site-visits",
   title: "Site Visits",
-  description: [
-    "Site visits are facilitied by PittCSC to give students the opportunity to visit tech companies and learn about their work culture, products, and services. Students can also network with employees and learn about potential internship and job opportunities while touring a local tech office."
+  category: "Career",
+  tagline:
+    "Organized club trips to Pittsburgh-area tech offices to tour workspaces and talk with local engineers.",
+  cardBlurb:
+    "Tour Pittsburgh tech offices like Google, Duolingo, and Aurora and talk directly with local engineers.",
+  quickFacts: [
+    { label: "Where", value: "Pittsburgh-area tech offices" },
+    { label: "Who it's for", value: "Pitt CSC members" },
+    { label: "What happens", value: "Office tours, employee Q&As, and recruiting chats" },
   ],
-  highlightsTitle: "Locations include:",
+  description: [
+    "Site Visits are organized club trips to Pittsburgh-area tech offices so you can tour real engineering workspaces and see team culture firsthand. Past trips have taken members to Google, Microsoft, Dick's Sporting Goods, CGI, Aurora, and Duolingo.",
+    "During a visit, we walk through the office, hear about the products and teams based here in Pittsburgh, and spend time talking with employees about internships and full-time roles.",
+  ],
+  highlightsTitle: "Offices we've visited",
   highlightsList: [
-    "Google",
+    "Google (Pittsburgh)",
+    "Duolingo",
+    "Aurora",
     "Microsoft",
     "Dick's Sporting Goods",
     "CGI",
-    "Aurora",
-    "Duolingo"
   ],
-  mainImageTitle: "Our Google Site Visit",
-  mainImage: GOOGLE,
+  howToGetInvolved: {
+    summary:
+      "Trips are scheduled each semester based on host availability. Watch Discord, the club email list, and Google Calendar for office trip announcements and sign-ups.",
+    steps: [
+      "Join Discord and the weekly email list so you catch new site visits as soon as they drop.",
+      "Sign up once a trip is announced so you don't miss the window.",
+    ],
+  },
+  links: [
+    {
+      label: "Join Discord",
+      href: "https://discord.gg/wzPeq2GCRT",
+      external: true,
+      primary: true,
+    },
+    {
+      label: "Join the Email List",
+      href: "http://eepurl.com/bgY5c9",
+      external: true,
+    },
+    {
+      label: "Add Club Calendar",
+      href: "https://calendar.google.com/calendar/u/0/render?cid=f64u131to44gn3tn8g62ov2u1s%40group.calendar.google.com",
+      external: true,
+    },
+  ],
+  mainImage: "initiatives/site-visits/google.jpg",
+  mainImageTitle: "Our Google site visit",
+  mainImageAlt:
+    "Pitt CSC students posing together during a site visit at the Google Pittsburgh office",
 };
