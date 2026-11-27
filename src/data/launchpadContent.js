@@ -12,8 +12,8 @@ export const launchpadContent = {
     { label: "Great prep for", value: "Dev Lab, CSC Hacks, side projects, and internships" },
   ],
   description: [
-    "Intro CS classes teach you syntax and algorithms, not how to set up a dev environment, wire up data, build a clean interface, and deploy a working app. Launchpad is our workshop series designed to teach those practical engineering skills from the ground up.",
-    "Sessions walk through managing environments, writing application logic, working with data, creating intuitive user interfaces, and deploying projects live. The goal is to leave you comfortable enough to jump into Dev Lab, build something at CSC Hacks, work on your own startup idea, or contribute on an engineering team.",
+    "Launchpad is our hands-on software engineering workshop series built to teach the practical skills that take you from class assignments to shipping real apps. We walk through managing dev environments, writing application logic, working with data, creating intuitive user interfaces, and deploying live projects.",
+    "By the end of the series, you'll have the foundation to jump into Dev Lab, build something at CSC Hacks, start your own project, or contribute on an internship team.",
   ],
   highlightsTitle: "What Launchpad covers",
   highlightsList: [

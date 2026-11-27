@@ -12,8 +12,8 @@ export const siteVisitsContent = {
     { label: "What happens", value: "Office tours, employee Q&As, and recruiting chats" },
   ],
   description: [
-    "Pittsburgh has a much bigger engineering scene right down the road from Oakland than most students realize. Site Visits take you out of the classroom and inside local tech offices so you can see real workspaces and team culture firsthand.",
-    "On a typical trip, we tour the office, hear about the products and teams based in Pittsburgh, and spend time talking with employees about internships and full-time roles. Past visits have included Google, Microsoft, Dick's Sporting Goods, CGI, Aurora, and Duolingo.",
+    "Site Visits are organized club trips to Pittsburgh-area tech offices so you can tour real engineering workspaces and see team culture firsthand. Past trips have taken members to Google, Microsoft, Dick's Sporting Goods, CGI, Aurora, and Duolingo.",
+    "During a visit, we walk through the office, hear about the products and teams based here in Pittsburgh, and spend time talking with employees about internships and full-time roles.",
   ],
   highlightsTitle: "Offices we've visited",
   highlightsList: [
@@ -29,7 +29,7 @@ export const siteVisitsContent = {
       "Trips are scheduled each semester based on host availability. Watch Discord, the club email list, and Google Calendar for office trip announcements and sign-ups.",
     steps: [
       "Join Discord and the weekly email list so you catch new site visits as soon as they drop.",
-      "Sign up promptly when a trip is announced, since host offices set capacity limits.",
+      "Sign up once a trip is announced so you don't miss the window.",
     ],
   },
   links: [

@@ -12,7 +12,7 @@ export const firesideChatsContent = {
     { label: "Who it's for", value: "Open to all CSC members" },
   ],
   description: [
-    "We kicked off Fireside Chats in Fall 2024 to bring interesting people in tech right to campus for honest, unscripted conversations. Instead of sitting through a rehearsed slide deck, our club president interviews each guest live on stage, and then we pass the mic to the audience for open Q&A.",
+    "We kicked off Fireside Chats in Fall 2024 to bring interesting people in tech to campus for honest, unscripted conversations. Our club president interviews each guest live on stage, and then we pass the mic to the audience for open Q&A.",
     "So far we've flown out and hosted Dan Toomey, tech content creator Varun Rana, BobaTalks founder Jeff Nguyen, Simplify founder Michael Yan, and Berkeley AI researcher Ritwik Gupta (a Pitt CS alum who originally started SteelHacks).",
   ],
   highlightsTitle: "Guests we've hosted",
@@ -25,7 +25,7 @@ export const firesideChatsContent = {
   ],
   howToGetInvolved: {
     summary:
-      "We book Fireside Chats around guest availability rather than a fixed weekly schedule. They're free and open to members, so watch announcements and come a few minutes early for a good seat.",
+      "We schedule Fireside Chats around guest availability, so dates vary across the semester. They're free and open to members, and it helps to show up a few minutes early for a good seat.",
     steps: [
       "Follow @csc.at.pitt on Instagram and watch Discord for speaker drops.",
       "Add the club Google Calendar for exact dates and room locations.",

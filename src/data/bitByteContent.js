@@ -13,8 +13,8 @@ export const bitByteContent = {
     { label: "Events", value: "Bit/Byte Kickoff, Bit/Byte Picnic, and meetups" },
   ],
   description: [
-    "Figuring out CS at Pitt on your own is way harder than it needs to be: picking professors, planning electives, and knowing when internship applications even open. Bit/Byte pairs newer students (Bits) with experienced upperclassmen (Bytes) based on career interests and preferences, so you have someone in your corner who just went through the same classes and recruiting cycles.",
-    "Mentors help with course schedules, resume reviews, interview prep, and getting plugged into the rest of CSC. It's casual and student-run, not a stiff advising meeting. Alongside 1-on-1 check-ins, we get everyone together for the Bit/Byte Kickoff and the Bit/Byte Picnic so you meet other pairs too.",
+    "Bit/Byte is our peer mentorship program pairing newer CS students (Bits) with experienced upperclassmen (Bytes). We match pairs based on career interests and preferences, so you have someone in your corner who has already taken the same Pitt classes and gone through the same recruiting cycles.",
+    "Mentors help with picking professors, planning electives, reviewing resumes, prepping for interviews, and getting plugged into CSC. Everything stays relaxed and student-run, and we also bring everyone together for the Bit/Byte Kickoff and the Bit/Byte Picnic so you meet other pairs too.",
   ],
   highlightsTitle: "What's part of Bit/Byte",
   highlightsList: [

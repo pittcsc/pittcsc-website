@@ -13,7 +13,7 @@ export const devLabContent = {
     { label: "Handbook", value: "Full engineering guides on the Pitt CS Wiki" },
   ],
   description: [
-    "Solo dorm-room projects and 24-hour hackathons only show you part of what software engineering looks like. Dev Lab is our semester-long program where students either propose a project to lead or join an active team shipping software for the Pitt community.",
+    "Dev Lab is our semester-long project program where students propose an idea to lead or join an active team shipping software for the Pitt community. If you want experience closer to an engineering internship than a solo class project or weekend hackathon, this is where you get it.",
     "Teams are structured to feel like an actual engineering internship. Software engineers, UI/UX designers, product managers, and DevOps engineers work together using Agile sprints, Kanban boards, technical design docs, GitHub pull requests, code reviews, databases, testing, and real deployments.",
     "All of our Dev Lab guides live openly on the Pitt CS Wiki, covering local setup, Git, clean code, testing, Agile/PM, code review, design docs, and when to use AI, alongside a list of active projects and open project ideas.",
   ],

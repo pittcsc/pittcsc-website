@@ -13,7 +13,7 @@ export const consultingContent = {
   ],
   description: [
     "CSC Consulting puts together a small team of students matched to a partner company's project goal and the technical skills needed to pull it off. Over the semester, the team works directly with the company to scope requirements, design the architecture, write the code, and hand off a finished product.",
-    "Unlike open club workshops, Consulting runs through a thorough application and interview process so every team has the skill mix to deliver for an outside client. Projects are built for real use, with past work reaching thousands of people.",
+    "Consulting runs through a thorough application and interview process so every team has the technical skill mix needed to deliver for an outside client. Projects are built to ship, with past work reaching thousands of people.",
   ],
   highlightsTitle: "What Consulting involves",
   highlightsList: [

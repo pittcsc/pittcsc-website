@@ -12,7 +12,7 @@ export const industryRecruitingContent = {
     { label: "Format", value: "Tech talks, role Q&As, coding challenges, networking" },
   ],
   description: [
-    "A career fair booth gives you about ninety seconds in a noisy room. Our industry recruiting events bring engineers, hiring managers, and campus ambassadors directly to Pitt CSC meetings so you can actually hear what teams build and ask honest questions.",
+    "Throughout the semester, we bring engineers, hiring managers, and campus ambassadors directly to Pitt CSC meetings so you can hear what their teams actually build and ask honest questions outside a crowded career fair.",
     "Some nights are technical talks or behind-the-scenes role breakdowns; others are coding competitions or casual networking. Past sessions have included Roblox (including Roblox Kaiju Cats), Character.AI, the CGI Code Competition, a tech talk with Naval Nuclear Lab, and a coding challenge with FAST Enterprises and BNY.",
     "Even if you aren't actively recruiting yet, showing up is an easy way to see what different software roles look like and hear directly from people doing the job.",
   ],

@@ -13,9 +13,9 @@ export const foundryContent = {
     { label: "Eligibility", value: "Rolling year-round (tracked on your dashboard)" },
   ],
   description: [
-    "Foundry is our newer, smaller community for Pitt CSC members who want more out of the club than dropping into an occasional GBM. It's built around consistent work and pushing yourself alongside people who are excited to improve, with structured interview practice, student presentations, project building, mentorship, and peer accountability.",
-    "You don't apply with an essay. You earn active status by logging your work on the site: sign in with your Pitt email and submit verified LeetCode problems, research papers you read, or public GitHub PRs and commits on the points page (10 points each).",
-    "Once you hit 50 points within the last 30 days, your Foundry status turns active and you're eligible for Foundry events. Points expire 30 days after you earn them rather than resetting every month, so staying active just means keeping a steady pace. Staff can also grant 30-day active status when needed.",
+    "Foundry is our newer, smaller community for Pitt CSC members who want more out of the club. It's built around consistent work and pushing yourself alongside people who are excited to improve, with structured interview practice, student presentations, project building, mentorship, and peer accountability.",
+    "You earn active status by logging your work on the site: sign in with your Pitt email and submit verified LeetCode problems, research papers you read, or public GitHub PRs and commits on the Points page (10 points each).",
+    "Hit 50 points within any rolling 30-day window and your Foundry status turns active, making you eligible for Foundry events. Points expire 30 days after you earn them with no monthly reset, so staying active just means keeping a steady pace. Staff can also grant 30-day active status when needed.",
   ],
   highlightsTitle: "What you do in Foundry",
   highlightsList: [
@@ -29,9 +29,9 @@ export const foundryContent = {
     summary:
       "You can start earning points toward Foundry today right from your Pitt CSC member account.",
     steps: [
-      "Sign in at /login with your Pitt email.",
-      "Log LeetCode submissions, research papers, or public GitHub PRs and commits at /dashboard/points (10 points each).",
-      "Reach 50 points in any rolling 30-day window and track your status at /dashboard/foundry.",
+      "Sign in to the site with your Pitt email.",
+      "Log LeetCode submissions, research papers, or public GitHub PRs and commits on the Points page (10 points each).",
+      "Reach 50 points in any rolling 30-day window and track your status on your Foundry dashboard.",
     ],
   },
   links: [
@@ -53,7 +53,7 @@ export const foundryContent = {
     },
   ],
   mainImage: "initiatives/foundry/CSC_CGI_Code_Comp-032.jpg",
-  mainImageTitle: "Working together in Foundry",
+  mainImageTitle: "Pitt CSC members at a coding competition",
   mainImageAlt:
-    "Pitt CSC students collaborating on coding problems and projects",
+    "Two Pitt CSC students smiling and pointing at a Sony ULT headphones prize box after a club coding competition",
 };
